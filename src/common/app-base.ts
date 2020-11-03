@@ -15,7 +15,7 @@ export const SPINE_SCALE = 4;
  * General purpose app functionality.
  */
 export class AppBase extends Application {
-	public dpr: number = Math.ceil(Math.min(window.devicePixelRatio, MAX_DPR));
+	public dpr: number = Math.round(Math.min(window.devicePixelRatio, MAX_DPR));
 	public width: number = 0;
 	public height: number = 0;
 	public root: Container = new Container();
