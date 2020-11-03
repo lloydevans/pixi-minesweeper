@@ -1,0 +1,34 @@
+{
+    "name": "tiny-webpack-typescript",
+    "version": "0.0.0",
+    "scripts": {
+        "start": "npm run serve",
+        "serve": "npx --no-install webpack-dev-server",
+        "serve-modern": "npm run serve -- --env.modern",
+        "serve-prod": "npm run serve -- --env.prod",
+        "build": "npx --no-install webpack",
+        "build-modern": "npm run build -- --env.modern",
+        "build-prod": "npm run build -- --env.prod"
+    },
+    "dependencies": {
+        "tslib": "^2.0.1"
+    },
+    "devDependencies": {
+        "css-loader": "4.3.0",
+        "html-webpack-plugin": "^4.5.0",
+        "style-loader": "1.2.1",
+        "ts-loader": "^8.0.4",
+        "typescript": "^4.0.3",
+        "webpack": "^4.44.2",
+        "webpack-cli": "^3.3.12",
+        "webpack-dev-server": "3.11.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/<ORG>/<REPO>.git"
+    },
+    "bugs": {
+        "url": "https://github.com/<ORG>/<REPO>/issues"
+    },
+    "homepage": "https://github.com/<ORG>/<REPO>#readme"
+}
