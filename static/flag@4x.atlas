@@ -1,0 +1,20 @@
+
+flag@4x.png
+size: 256,512
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+flag-cloth
+  rotate: false
+  xy: 2, 2
+  size: 92, 90
+  orig: 92, 90
+  offset: 0, 0
+  index: -1
+flag-pole
+  rotate: false
+  xy: 2, 94
+  size: 158, 222
+  orig: 158, 222
+  offset: 0, 0
+  index: -1

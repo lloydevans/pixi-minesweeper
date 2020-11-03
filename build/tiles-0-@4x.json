@@ -1,0 +1,100 @@
+{"frames": {
+
+"back-0":
+{
+	"frame": {"x":2,"y":2,"w":256,"h":256},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":256},
+	"sourceSize": {"w":256,"h":256}
+},
+"back-edge-0":
+{
+	"frame": {"x":2,"y":776,"w":24,"h":240},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":24,"h":240},
+	"sourceSize": {"w":256,"h":256}
+},
+"back-edge-1":
+{
+	"frame": {"x":28,"y":970,"w":48,"h":256},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":48,"h":256},
+	"sourceSize": {"w":256,"h":256}
+},
+"dig":
+{
+	"frame": {"x":28,"y":776,"w":160,"h":192},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":48,"y":32,"w":160,"h":192},
+	"sourceSize": {"w":256,"h":256}
+},
+"front-0":
+{
+	"frame": {"x":2,"y":260,"w":256,"h":256},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":256},
+	"sourceSize": {"w":256,"h":256}
+},
+"front-1":
+{
+	"frame": {"x":2,"y":518,"w":256,"h":256},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":256},
+	"sourceSize": {"w":256,"h":256}
+},
+"front-2":
+{
+	"frame": {"x":448,"y":2,"w":256,"h":256},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":256},
+	"sourceSize": {"w":256,"h":256}
+},
+"front-3":
+{
+	"frame": {"x":706,"y":2,"w":256,"h":256},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":256},
+	"sourceSize": {"w":256,"h":256}
+},
+"front-4":
+{
+	"frame": {"x":260,"y":260,"w":256,"h":256},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":256},
+	"sourceSize": {"w":256,"h":256}
+},
+"front-edge-0":
+{
+	"frame": {"x":190,"y":858,"w":40,"h":256},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":256},
+	"sourceSize": {"w":256,"h":256}
+},
+"front-edge-1":
+{
+	"frame": {"x":190,"y":776,"w":80,"h":256},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":256},
+	"sourceSize": {"w":256,"h":256}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "tiles-0-@4x.png",
+	"format": "RGBA8888",
+	"size": {"w":1024,"h":1024},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:ade0ba6a00dd2be8ede631de247ddfac:b4eeebb8b1c45db27908b146d220cb8b:ab823ae46f4df32a392938ff3f8f4678$"
+}
+}

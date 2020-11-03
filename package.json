@@ -1,34 +1,67 @@
 {
-    "name": "tiny-webpack-typescript",
-    "version": "0.0.0",
-    "scripts": {
-        "start": "npm run serve",
-        "serve": "npx --no-install webpack-dev-server",
-        "serve-modern": "npm run serve -- --env.modern",
-        "serve-prod": "npm run serve -- --env.prod",
-        "build": "npx --no-install webpack",
-        "build-modern": "npm run build -- --env.modern",
-        "build-prod": "npm run build -- --env.prod"
-    },
-    "dependencies": {
-        "tslib": "^2.0.1"
-    },
-    "devDependencies": {
-        "css-loader": "4.3.0",
-        "html-webpack-plugin": "^4.5.0",
-        "style-loader": "1.2.1",
-        "ts-loader": "^8.0.4",
-        "typescript": "^4.0.3",
-        "webpack": "^4.44.2",
-        "webpack-cli": "^3.3.12",
-        "webpack-dev-server": "3.11.0"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/<ORG>/<REPO>.git"
-    },
-    "bugs": {
-        "url": "https://github.com/<ORG>/<REPO>/issues"
-    },
-    "homepage": "https://github.com/<ORG>/<REPO>#readme"
+	"name": "pixi-minesweeper",
+	"version": "0.0.0",
+	"scripts": {
+		"start": "npm run serve-editor -- --env.modern",
+		"test": "npx --no-install jest",
+		"test-watch": "npm run test -- --watch",
+		"serve": "npx --no-install webpack-dev-server",
+		"serve-editor": "npm run serve -- --env.editor",
+		"serve-prod": "npm run serve -- --env.prod",
+		"build-dev": "npx --no-install webpack",
+		"build": "npm run build-dev -- --env.prod",
+		"prettier": "npx --no-install prettier src/**/*.ts"
+	},
+	"prettier": {
+		"tabWidth": 4,
+		"printWidth": 120,
+		"endOfLine": "auto",
+		"trailingComma": "none",
+		"useTabs": true
+	},
+	"dependencies": {
+		"@types/createjs": "0.0.29",
+		"@types/lodash": "^4.14.164",
+		"core-js": "^3.6.5",
+		"lodash": "^4.17.20",
+		"pixi-particles": "^4.3.0",
+		"pixi-spine": "^2.1.10",
+		"pixi.js-legacy": "^5.3.3",
+		"reset-css": "^5.0.1",
+		"screenfull": "^5.0.2",
+		"tslib": "^2.0.1",
+		"tweenjs": "^1.0.2"
+	},
+	"devDependencies": {
+		"@types/dat.gui": "^0.7.5",
+		"@babel/core": "^7.12.3",
+		"@babel/preset-env": "^7.12.1",
+		"@types/jest": "^26.0.15",
+		"babel-jest": "^26.6.1",
+		"prettier": "^2.1.2",
+		"copy-webpack-plugin": "^6.2.1",
+		"dat.gui": "^0.7.7",
+		"css-loader": "4.3.0",
+		"html-webpack-plugin": "^4.5.0",
+		"imports-loader": "^1.2.0",
+		"jest": "^26.6.1",
+		"jest-canvas-mock": "^2.3.0",
+		"jest-puppeteer": "^4.4.0",
+		"puppeteer": "^5.4.1",
+		"style-loader": "1.2.1",
+		"ts-jest": "^26.4.3",
+		"ts-loader": "^8.0.4",
+		"typescript": "^4.0.3",
+		"webpack": "^4.44.2",
+		"webpack-cli": "^3.3.12",
+		"webpack-dev-server": "3.11.0"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/<ORG>/<REPO>.git"
+	},
+	"bugs": {
+		"url": "https://github.com/<ORG>/<REPO>/issues"
+	},
+	"homepage": "https://github.com/<ORG>/<REPO>#readme"
 }

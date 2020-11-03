@@ -1,11 +1,25 @@
 {
-    "compilerOptions": {
-        "strict": true,
-        "importHelpers": true,
-        "moduleResolution": "node",
-        "lib": ["ES2020", "DOM"],
-        "target": "ES5",
-        "module": "ES2015",
-        "sourceMap": true
-    }
+	"include": [
+		//
+		"src/index.ts",
+		"node_modules/pixi-spine/dist/pixi-spine.d.ts"
+	],
+	"compilerOptions": {
+		"strict": true,
+		"lib": ["DOM", "ES2019"],
+		"target": "ES5",
+		"module": "ES2015",
+		"moduleResolution": "node",
+		"importHelpers": true,
+		"sourceMap": true,
+		"declaration": true,
+		"outDir": "./dts",
+		"noImplicitAny": true,
+		"strictNullChecks": true,
+		"strictFunctionTypes": true,
+		"noImplicitThis": true,
+		"noUnusedLocals": false,
+		"noImplicitReturns": true,
+		"esModuleInterop": true
+	}
 }

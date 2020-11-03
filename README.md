@@ -1,1 +1,1 @@
-# tiny-webpack-typescript
+# pixi-minesweeper

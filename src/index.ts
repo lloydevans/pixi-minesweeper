@@ -1,6 +1,39 @@
-import './style.css';
+/**
+ * Production entry file.
+ */
 
-let el = window.document.createElement('h1');
-window.document.body.appendChild(el);
-el.id = 'title';
-el.innerText = 'Hello World';
+import "core-js";
+
+import * as PIXI from "pixi.js-legacy";
+window.PIXI = PIXI;
+import "pixi-spine";
+
+// CreateJS lib imports.
+import "tweenjs/lib/tweenjs";
+createjs.Ticker.timingMode = createjs.Ticker.RAF;
+createjs.Ticker.maxDelta = 100;
+
+import { MSApp } from "./ms-app";
+
+function start() {
+	window.document.body.style.background = "black";
+	window.document.body.style.overflow = "hidden";
+	window.document.body.style.margin = "0px";
+	window.document.body.style.padding = "0px";
+	window.document.body.style.border = "0px";
+
+	const app = new MSApp();
+
+	app.init();
+
+    // TODO: Loading bar
+	app.loader.onComplete.once(() => {
+		window.document.body.appendChild(app.view);
+	});
+}
+
+if (window.document.readyState === "loading") {
+	window.addEventListener("load", start);
+} else {
+	start();
+}

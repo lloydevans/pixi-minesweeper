@@ -1,54 +1,82 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require("path");
+const webpack = require("webpack");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = (env = {}) => {
-    /**
-     * Build options.
-     */
-    env = { ...{ prod: false, modern: false }, ...env };
+	/**
+	 * Build options.
+	 */
+	env = {
+		...{
+			prod: false,
+			modern: false,
+			editor: false
+		},
+		...env
+	};
 
-    /**
-     * @type {import("webpack").Configuration}
-     */
-    let config = {
-        entry: './src/index.ts',
+	/**
+	 * @type {import("webpack").Configuration}
+	 */
+	let config = {
+		entry: env.editor ? "./src/index-editor.ts" : "./src/index.ts",
 
-        output: {
-            filename: 'bundle.js',
-            path: path.join(__dirname, 'build'),
-        },
+		devtool: "source-map",
 
-        devtool: 'source-map',
+		stats: {
+			assets: false
+		},
 
-        module: {
-            rules: [
-                {
-                    test: /\.css$/i,
-                    use: ['style-loader', 'css-loader'],
-                },
-                {
-                    test: /\.tsx?$/,
-                    loader: 'ts-loader',
-                    options: {
-                        compilerOptions: {
-                            target: env.modern ? 'ES2019' : 'ES5',
-                        },
-                    },
-                },
-            ],
-        },
+		devServer: {
+			clientLogLevel: "none",
+			host: "0.0.0.0",
+			port: 8080,
+			hot: false,
+			open: false,
+			inline: false,
+			compress: true
+		},
 
-        resolve: {
-            extensions: ['.tsx', '.ts', '.js', '.css'],
-        },
+		output: {
+			filename: "bundle.js",
+			path: path.join(__dirname, "build")
+		},
 
-        plugins: [
-            // Auto generate HTML
-            new HtmlWebpackPlugin(),
-        ],
+		module: {
+			rules: [
+				{
+					test: /\.css$/i,
+					use: ["style-loader", "css-loader"]
+				},
+				{
+					test: /\.tsx?$/,
+					loader: "ts-loader",
+					options: {
+						compilerOptions: {
+							target: env.modern ? "ES2019" : "ES5"
+						}
+					}
+				},
+				{
+					test: require.resolve("tweenjs/lib/tweenjs"),
+					use: "imports-loader?wrapper=window"
+				}
+			]
+		},
 
-        mode: env.prod ? 'production' : 'development',
-    };
+		resolve: {
+			extensions: [".tsx", ".ts", ".js", ".css"]
+		},
 
-    return config;
+		plugins: [
+			new HtmlWebpackPlugin({ template: "src/index.html" }),
+			new CopyWebpackPlugin({ patterns: [{ from: "static" }] }),
+			new webpack.ProvidePlugin({ PIXI: "pixi.js-legacy" })
+		],
+
+		mode: env.prod ? "production" : "development"
+	};
+
+	return config;
 };

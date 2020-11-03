@@ -1,0 +1,44 @@
+{"frames": {
+
+"button-cross":
+{
+	"frame": {"x":168,"y":110,"w":118,"h":118},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":38,"y":38,"w":118,"h":118},
+	"sourceSize": {"w":192,"h":192}
+},
+"button-dig":
+{
+	"frame": {"x":334,"y":2,"w":156,"h":116},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":18,"y":38,"w":156,"h":116},
+	"sourceSize": {"w":192,"h":192}
+},
+"button-flag":
+{
+	"frame": {"x":168,"y":2,"w":106,"h":164},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":64,"y":14,"w":106,"h":164},
+	"sourceSize": {"w":192,"h":192}
+},
+"button-restart":
+{
+	"frame": {"x":2,"y":2,"w":164,"h":138},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":26,"y":28,"w":164,"h":138},
+	"sourceSize": {"w":192,"h":192}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "textures-0-@3x.png",
+	"format": "RGBA8888",
+	"size": {"w":512,"h":512},
+	"scale": "0.75",
+	"smartupdate": "$TexturePacker:SmartUpdate:78aa71eb042ff9eb98eda397d0d56639:04743ca167b9a2b9112e06101ffdc84d:8ee5bdb806829dd5c4d136269e7ac79a$"
+}
+}
