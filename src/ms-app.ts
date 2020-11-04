@@ -362,8 +362,6 @@ export class MSApp extends AppBase {
 
 		let cellState = this.state.cellAt(msCell.ix, msCell.iy);
 
-		console.log(e.data.pointerType);
-
 		switch (e.data.pointerType) {
 			case "mouse":
 				let isRightClick = e.data.button === 2;
