@@ -219,7 +219,6 @@ export class MSApp extends AppBase {
 				const state = this.state.cellAt(x, y);
 				if (state.view) {
 					state.view.updateState(state);
-					state.view.updateEdgeSprites();
 				}
 			}
 		}
