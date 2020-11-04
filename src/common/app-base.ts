@@ -164,7 +164,7 @@ export class AppBase extends Application {
 	 */
 	public addAtlas(atlasName: string, scale: number = this.dpr) {
 		// Pixi auto detects and compensates scale based on suffix in form `@nx`.
-		this.loader.add(atlasName, atlasName + "-0-@" + scale + "x.json", { scale: 2 });
+		this.loader.add(atlasName, atlasName + "-0-@" + scale + "x.json");
 	}
 
 	/**
