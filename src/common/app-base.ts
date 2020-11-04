@@ -27,6 +27,7 @@ export class AppBase extends Application {
 	public init() {
 		this.stage.addChild(this.root);
 		this.ticker.add(this.update, this);
+		this.resizeRoot(window.innerWidth, window.innerHeight, this.getWindowDpr());
 		this.events.emit("init");
 	}
 
