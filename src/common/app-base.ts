@@ -1,4 +1,4 @@
-import { Application, Container, ILoaderOptions, LoaderResource, Texture, utils } from "pixi.js-legacy";
+import { Application, Container, LoaderResource, loaders, Texture, utils } from "pixi.js-legacy";
 import * as screenfull from "screenfull";
 
 /**
@@ -146,8 +146,7 @@ export class AppBase extends Application {
 	 * @param scale
 	 */
 	public addSpine(spineName: string, scale: number = this.dpr) {
-		let metadata: ILoaderOptions = {
-			// @ts-ignore
+		let metadata: loaders.IMetadata = {
 			spineSkeletonScale: 1 / SPINE_SCALE,
 			spineAtlasFile: spineName + "@" + scale + "x.atlas"
 		};
