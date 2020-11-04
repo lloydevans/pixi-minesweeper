@@ -1,10 +1,10 @@
-export type RgbaValue = { r: number; g: number; b: number; a: number };
+export type RgbaObject = { r: number; g: number; b: number; a: number };
 
 /**
  *
  * @param num
  */
-export function numToRgba(num: number): RgbaValue {
+export function numToRgba(num: number): RgbaObject {
 	return {
 		r: Math.floor(num / (256 * 256)) % 256,
 		g: Math.floor(num / 256) % 256,
@@ -17,7 +17,7 @@ export function numToRgba(num: number): RgbaValue {
  *
  * @param hex
  */
-export function hexToRgba(hex: string): RgbaValue {
+export function hexToRgba(hex: string): RgbaObject {
 	const num = hexToNum(hex);
 	return numToRgba(num);
 }
@@ -26,7 +26,7 @@ export function hexToRgba(hex: string): RgbaValue {
  *
  * @param rgba
  */
-export function rgbToHex(rgba: RgbaValue): string {
+export function rgbToHex(rgba: RgbaObject): string {
 	const rg = rgba.b | (rgba.g << 8) | (rgba.r << 16);
 	return "#" + (0x1000000 + rg).toString(16).slice(1);
 }
@@ -35,7 +35,7 @@ export function rgbToHex(rgba: RgbaValue): string {
  *
  * @param rgba
  */
-export function rgbToNum(rgba: RgbaValue): number {
+export function rgbToNum(rgba: RgbaObject): number {
 	const hex = rgbToHex(rgba);
 	return hexToNum(hex);
 }
