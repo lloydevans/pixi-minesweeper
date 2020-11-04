@@ -49,9 +49,9 @@ export class AppBase extends Application {
 	/**
 	 *
 	 */
-	public requestFullscreen() {
+	public async requestFullscreen(): Promise<void> {
 		if (screenfull.isEnabled) {
-			screenfull.request(this.view);
+			return screenfull.request(this.view);
 		}
 	}
 
