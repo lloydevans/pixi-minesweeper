@@ -2,23 +2,31 @@
  * Entry file for a basic editor mode, used for development.
  */
 
+// Polyfills
 import "core-js";
 
+// PixiJS lib imports.
 import * as PIXI from "pixi.js-legacy";
-window.PIXI = PIXI;
 import "pixi-spine";
+
+// Put PIXI on window for console debugging.
+window.PIXI = PIXI;
 
 // CreateJS lib imports.
 import "tweenjs/lib/tweenjs";
 createjs.Ticker.timingMode = createjs.Ticker.RAF;
 createjs.Ticker.maxDelta = 100;
 
+// Import dat.gui for quick debug UI.
 import * as dat from "dat.gui";
 let gui = new dat.GUI();
 gui.open();
 
 import { MSApp } from "./ms-app";
 
+/**
+ *
+ */
 function start() {
 	const app = new MSApp();
 

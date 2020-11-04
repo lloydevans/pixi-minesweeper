@@ -97,7 +97,7 @@ export class MSUi extends Container {
 			this.flagsCount.text = flagCount;
 		}
 
-		let time = Math.min(MAX_TIME, Math.floor(this.app.time)).toString();
+		let time = Math.min(MAX_TIME, Math.floor(this.app.currentTime)).toString();
 		if (time !== this.timeCount.text) {
 			this.timeCount.text = time;
 		}

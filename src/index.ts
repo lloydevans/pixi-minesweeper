@@ -2,7 +2,10 @@
  * Production entry file.
  */
 
+// Polyfills
 import "core-js";
+
+// Pixi imports
 import "pixi.js-legacy";
 import "pixi-spine";
 
@@ -13,6 +16,9 @@ createjs.Ticker.maxDelta = 100;
 
 import { MSApp } from "./ms-app";
 
+/**
+ *
+ */
 function start() {
 	window.document.body.style.background = "black";
 	window.document.body.style.overflow = "hidden";
@@ -24,7 +30,7 @@ function start() {
 
 	app.init();
 
-    // TODO: Loading bar
+	// TODO: Loading bar
 	app.loader.onComplete.once(() => {
 		window.document.body.appendChild(app.view);
 	});

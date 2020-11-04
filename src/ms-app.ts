@@ -39,10 +39,13 @@ const DEFAULT_GAME_CONFIG_MOBILE: MSGameConfig = {
  */
 export class MSApp extends AppBase {
 	public state: MSState = new MSState();
-	public timeActive = false;
-	public time = 0;
 	public config!: MSConfig;
+	public get currentTime() {
+		return this.time;
+	}
 
+	private time = 0;
+	private timeActive = false;
 	private gameConfig: MSGameConfig;
 	private background: Graphics = new Graphics();
 	private board: Sprite = Sprite.from(Texture.WHITE);
@@ -52,7 +55,7 @@ export class MSApp extends AppBase {
 	private grid: Container = new Container();
 	private isFirstClick: boolean = true;
 	private touchUi: MSTouchUi = new MSTouchUi(this);
-	private ui: MSUi;
+	private ui: MSUi = new MSUi(this);
 
 	/**
 	 *
@@ -65,7 +68,6 @@ export class MSApp extends AppBase {
 		// Temporary until game dififculty selection screen is in.
 		this.gameConfig = utils.isMobile.phone ? DEFAULT_GAME_CONFIG_MOBILE : DEFAULT_GAME_CONFIG_DESKTOP;
 
-		this.ui = new MSUi(this);
 		this.container.y = 32;
 
 		this.root.addChild(this.background);

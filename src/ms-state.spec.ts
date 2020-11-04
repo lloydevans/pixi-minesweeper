@@ -1,5 +1,4 @@
 import { MSState } from "./ms-state";
-import { MSCellState } from "./ms-cell-state";
 
 const MOCK_CONFIG = {
 	startMines: 10,
@@ -103,9 +102,9 @@ describe("MSState tests", () => {
 	it("should place mine at 0,0", () => {
 		let state = getState();
 		let coords: [number, number] = [0, 0];
-		state.placeMine(...coords);
-
 		let oob: [number, number] = [-1, 0];
+
+		state.placeMine(...coords);
 		expect(() => state.placeMine(...oob)).toThrowError();
 
 		let cell = state.cellAt(...coords);
@@ -191,7 +190,7 @@ describe("MSState tests", () => {
 	it("should reveal second move", () => {
 		let state = getState();
 
-		let nextCell = state.find((el: MSCellState) => !el.mine && !el.flag && el.adjacent === 0 && el.covered);
+		let nextCell = state.find((el) => !el.mine && !el.flag && el.adjacent === 0 && el.covered);
 
 		if (!nextCell) {
 			throw new Error();
