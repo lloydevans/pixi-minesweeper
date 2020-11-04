@@ -143,15 +143,13 @@ export class MSApp extends AppBase {
 		let refBoardWidth = REF_WIDTH * this.state.width;
 		let refBoardHeight = REF_HEIGHT * this.state.height;
 
-		if (refBoardWidth > maxWidth || refBoardHeight > maxHeight) {
-			if (refBoardWidth - maxWidth > refBoardHeight - maxHeight) {
-				this.cellWidth = Math.floor(clamp(REF_WIDTH * (maxWidth / refBoardWidth), 16, REF_WIDTH));
-				this.cellHeight = Math.floor(clamp(REF_HEIGHT * (maxWidth / refBoardWidth), 16, REF_HEIGHT));
-			} //
-			else {
-				this.cellWidth = Math.floor(clamp(REF_WIDTH * (maxHeight / refBoardHeight), 16, REF_WIDTH));
-				this.cellHeight = Math.floor(clamp(REF_HEIGHT * (maxHeight / refBoardHeight), 16, REF_HEIGHT));
-			}
+		if (refBoardWidth - maxWidth > refBoardHeight - maxHeight) {
+			this.cellWidth = Math.floor(clamp(REF_WIDTH * (maxWidth / refBoardWidth), 16, REF_WIDTH));
+			this.cellHeight = Math.floor(clamp(REF_HEIGHT * (maxWidth / refBoardWidth), 16, REF_HEIGHT));
+		} //
+		else {
+			this.cellWidth = Math.floor(clamp(REF_WIDTH * (maxHeight / refBoardHeight), 16, REF_WIDTH));
+			this.cellHeight = Math.floor(clamp(REF_HEIGHT * (maxHeight / refBoardHeight), 16, REF_HEIGHT));
 		}
 
 		let dimensionsX = this.state.width * this.cellWidth;
