@@ -13,7 +13,6 @@
 		"prettier": "npx --no-install prettier src/**/*.ts"
 	},
 	"prettier": {
-		"tabWidth": 4,
 		"printWidth": 120,
 		"endOfLine": "auto",
 		"trailingComma": "none",
