@@ -3,9 +3,7 @@
  */
 
 import "core-js";
-
-import * as PIXI from "pixi.js-legacy";
-window.PIXI = PIXI;
+import "pixi.js-legacy";
 import "pixi-spine";
 
 // CreateJS lib imports.
