@@ -15,7 +15,7 @@ export const SPINE_SCALE = 4;
  * General purpose app functionality.
  */
 export class AppBase extends Application {
-	public dpr: number = this.getWindowDpr();
+	public dpr: number = 1;
 	public width: number = 0;
 	public height: number = 0;
 	public root: Container = new Container();
@@ -35,12 +35,14 @@ export class AppBase extends Application {
 	 * @param dt
 	 */
 	private update(dt: number) {
+		let currentDpr = this.getWindowDpr();
+
 		if (
 			window.innerWidth !== this.width || //
 			window.innerHeight !== this.height ||
-			this.dpr !== this.getWindowDpr()
+			this.dpr !== currentDpr
 		) {
-			this.resizeRoot();
+			this.resizeRoot(window.innerWidth, window.innerHeight, currentDpr);
 		}
 
 		this.events.emit("update", dt);
@@ -65,10 +67,10 @@ export class AppBase extends Application {
 	/**
 	 *
 	 */
-	private resizeRoot() {
-		this.width = window.innerWidth;
-		this.height = window.innerHeight;
-		this.dpr = this.getWindowDpr();
+	private resizeRoot(width: number, height: number, dpr: number) {
+		this.width = width;
+		this.height = height;
+		this.dpr = dpr;
 
 		this.view.style.width = this.width + "px";
 		this.view.style.height = this.height + "px";
