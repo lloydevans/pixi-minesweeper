@@ -1,4 +1,5 @@
-import { MSCellState, MSState } from "./ms-state";
+import { MSState } from "./ms-state";
+import { MSCellState } from "./ms-cell-state";
 
 const MOCK_CONFIG = {
 	startMines: 10,
