@@ -130,6 +130,9 @@ export class MSCell extends Container {
 		this.addChild(this.hover);
 		this.addChild(...Object.values(this.edges));
 
+		this.on("mouseover", this.animateHoverStart, this);
+		this.on("mouseout", this.animateHoverEnd, this);
+
 		// @ts-ignore // Missing type.
 		this.tabIndex = this.app.state.indexOf(this.ix, this.iy);
 		this.accessibleHint = `cell:${this.ix},${this.iy}`;
