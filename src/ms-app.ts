@@ -179,11 +179,13 @@ export class MSApp extends AppBase {
 		for (let x = 0; x < this.state.width; x++) {
 			for (let y = 0; y < this.state.height; y++) {
 				let cellState = this.state.cellAt(x, y);
-				let msCell = new MSCell(this, this.cellWidth, this.cellHeight);
+				let msCell = new MSCell(this, cellState);
 				cellState.view = msCell;
 				this.grid.addChild(msCell);
 			}
 		}
+
+		this.grid.children.forEach((el) => (el as MSCell).init());
 
 		this.grid.x = -(this.state.width / 2) * this.cellWidth;
 		this.grid.y = -(this.state.height / 2) * this.cellHeight;
@@ -200,11 +202,7 @@ export class MSApp extends AppBase {
 	private updateCellSize(cellWidth: number, cellHeight: number) {
 		this.cellWidth = cellWidth;
 		this.cellHeight = cellHeight;
-		for (let x = 0; x < this.state.width; x++) {
-			for (let y = 0; y < this.state.height; y++) {
-				this.state.cellAt(x, y).view?.updateCellSize(this.cellWidth, this.cellHeight);
-			}
-		}
+		this.grid.scale.set(cellWidth / REF_WIDTH);
 		this.grid.x = -(this.state.width / 2) * this.cellWidth;
 		this.grid.y = -(this.state.height / 2) * this.cellHeight;
 	}
@@ -264,13 +262,9 @@ export class MSApp extends AppBase {
 		let tween = Tween.get(this);
 
 		while (unplacedFlags.length > 0) {
-			let el = unplacedFlags.splice(Math.floor(Math.random() * unplacedFlags.length), 1)[0];
-			tween = tween
-				.call(() => {
-					this.state.placeFlag(el.x, el.y);
-					this.updateCellStates();
-				})
-				.wait(50);
+			let idx = Math.floor(Math.random() * unplacedFlags.length);
+			let el = unplacedFlags.splice(idx, 1)[0];
+			tween = tween.call(() => el.view!.setFlagEnabled(true)).wait(50);
 		}
 	}
 
@@ -281,63 +275,113 @@ export class MSApp extends AppBase {
 		this.endGame();
 
 		let result = this.state.getLossData();
-
 		let tween = Tween.get(this);
 
 		result.incorrect.splice(result.incorrect.indexOf(firstMine), 1);
-
-		tween = tween
-			.call(() => {
-				firstMine.view?.showResult();
-				this.updateCellStates();
-			})
-			.wait(50);
+		tween = tween.call(() => firstMine.view!.animateResult()).wait(50);
 
 		while (result.incorrect.length > 0) {
 			let idx = Math.floor(Math.random() * result.incorrect.length);
 			let el = result.incorrect.splice(idx, 1)[0];
-			tween = tween
-				.call(() => {
-					el.view?.showResult();
-					this.updateCellStates();
-				})
-				.wait(50);
+			tween = tween.call(() => el.view!.animateResult()).wait(50);
 		}
 
 		while (result.correct.length > 0) {
 			let idx = Math.floor(Math.random() * result.correct.length);
 			let el = result.correct.splice(idx, 1)[0];
+			tween = tween.call(() => el.view!.animateResult()).wait(50);
+		}
+	}
+
+	/**
+	 * Animate win.
+	 */
+	private async animateFill(cells: MSCellState): Promise<void> {
+		this.grid.interactiveChildren = false;
+
+		let tween = Tween.get(this);
+
+		for (let i = 0; i < Math.max(this.state.width, this.state.height); i++) {
+			let t = i * 2 + 1;
+
 			tween = tween
 				.call(() => {
-					el.view?.showResult();
-					this.updateCellStates();
+					for (let c = 0; c < t; c++) {
+						let x = cells.x - i + c;
+						let y = cells.y - i;
+						if (this.state.coordsInBounds(x, y)) {
+							this.state.cellAt(x, y).view!.updateState();
+						}
+					}
+					for (let c = 0; c < t; c++) {
+						let x = cells.x + i;
+						let y = cells.y - i + c;
+
+						if (this.state.coordsInBounds(x, y)) {
+							this.state.cellAt(x, y).view!.updateState();
+						}
+					}
+					for (let c = 0; c < t; c++) {
+						let x = cells.x + i - c;
+						let y = cells.y + i;
+
+						if (this.state.coordsInBounds(x, y)) {
+							this.state.cellAt(x, y).view!.updateState();
+						}
+					}
+					for (let c = 0; c < t; c++) {
+						let x = cells.x - i;
+						let y = cells.y - i + c;
+
+						if (this.state.coordsInBounds(x, y)) {
+							this.state.cellAt(x, y).view!.updateState();
+						}
+					}
 				})
-				.wait(50);
+				.wait(33);
+		}
+
+		tween.call(() => (this.grid.interactiveChildren = true));
+
+		await new Promise((resolve) => tween.on("complete", resolve));
+	}
+
+	/**
+	 *
+	 */
+	public async leftClick(cellState: MSCellState) {
+		let msCell = cellState.view;
+
+		if (msCell) {
+			if (this.isFirstClick) {
+				this.isFirstClick = false;
+				let result = this.state.selectFirst(msCell.ix, msCell.iy);
+				if (result.length > 1) {
+					await this.animateFill(cellState);
+				}
+				this.checkWin();
+			} //
+			else {
+				let result = this.state.select(msCell.ix, msCell.iy);
+
+				if (cellState.mine) {
+					this.animateLose(cellState);
+				} //
+				else {
+					if (result.length > 1) {
+						this.animateFill(cellState);
+					} else {
+						msCell.updateState();
+					}
+				}
+			}
 		}
 	}
 
 	/**
 	 *
 	 */
-	public leftClick(cellState: MSCellState) {
-		let msCell = cellState.view;
-
-		if (msCell) {
-			if (this.isFirstClick) {
-				this.isFirstClick = false;
-				this.state.selectFirst(msCell.ix, msCell.iy);
-			} //
-			else {
-				this.state.select(msCell.ix, msCell.iy);
-
-				if (cellState.mine) {
-					this.animateLose(cellState);
-				}
-			}
-		}
-
-		this.updateCellStates();
-
+	public checkWin() {
 		if (this.state.isWin()) {
 			this.animateWin();
 		}

@@ -15,8 +15,6 @@ export const REF_HEIGHT = 64;
  *
  */
 export class MSCell extends Container {
-	public cellWidth: number;
-	public cellHeight: number;
 	public get ix(): number {
 		return this.viewState.x;
 	}
@@ -31,9 +29,10 @@ export class MSCell extends Container {
 	private front: TilingSprite;
 	private hover: Sprite;
 	private feedback: Spine;
-	private text: Text;
+	private adjacentText: Text;
 	private textureBack: Texture;
 	private textureFront: Texture;
+	// TODO: customisable tiling asset
 	private textureBackTileSize: number = 32;
 	private textureFrontTileSize: number = 32;
 	private edges: {
@@ -42,14 +41,8 @@ export class MSCell extends Container {
 		u: Sprite;
 		d: Sprite;
 	};
-	private viewState: MSCellState = {
-		x: -1,
-		y: -1,
-		adjacent: 0,
-		covered: true,
-		mine: false,
-		flag: false
-	};
+	private state: MSCellState;
+	private viewState: MSCellState;
 
 	/**
 	 *
@@ -58,13 +51,19 @@ export class MSCell extends Container {
 	 * @param cellWidth
 	 * @param cellHeight
 	 */
-	constructor(app: MSApp, cellWidth: number, cellHeight: number) {
+	constructor(app: MSApp, state: MSCellState) {
 		super();
 
 		this.app = app;
-		this.cellWidth = cellWidth;
-		this.cellHeight = cellHeight;
-
+		this.state = state;
+		this.viewState = {
+			x: -1,
+			y: -1,
+			adjacent: 0,
+			covered: true,
+			mine: false,
+			flag: false
+		};
 		this.mine = this.createMine();
 		this.flag = this.createFlag();
 
@@ -91,10 +90,10 @@ export class MSCell extends Container {
 			fontWeight: this.app.config.colorNumberWeight,
 			fontSize: Math.floor(REF_WIDTH * 0.65)
 		});
-		this.text = new GameText(this.app, "", textStyle);
-		this.text.anchor.set(0.5);
-		this.text.x = REF_WIDTH / 2;
-		this.text.y = REF_HEIGHT / 2;
+		this.adjacentText = new GameText(this.app, "", textStyle);
+		this.adjacentText.anchor.set(0.5);
+		this.adjacentText.x = REF_WIDTH / 2;
+		this.adjacentText.y = REF_HEIGHT / 2;
 
 		this.front = new TilingSprite(this.textureFront);
 		this.front.scale.set(REF_WIDTH / this.textureFrontTileSize);
@@ -123,12 +122,12 @@ export class MSCell extends Container {
 
 		this.addChild(this.back);
 		this.addChild(this.mine);
-		this.addChild(this.text);
+		this.addChild(this.adjacentText);
 		this.addChild(this.front);
+		this.addChild(...Object.values(this.edges));
 		this.addChild(this.flag);
 		this.addChild(this.feedback);
 		this.addChild(this.hover);
-		this.addChild(...Object.values(this.edges));
 
 		this.on("mouseover", this.animateHoverStart, this);
 		this.on("mouseout", this.animateHoverEnd, this);
@@ -136,7 +135,14 @@ export class MSCell extends Container {
 		// @ts-ignore // Missing type.
 		this.tabIndex = this.app.state.indexOf(this.ix, this.iy);
 		this.accessibleHint = `cell:${this.ix},${this.iy}`;
-		this.updateCellSize(cellWidth, cellHeight);
+	}
+
+	/**
+	 *
+	 */
+	public init() {
+		this.updateState();
+		this.updateGridPosition();
 		this.setInteractiveEnabled(true);
 	}
 
@@ -169,24 +175,11 @@ export class MSCell extends Container {
 
 	/**
 	 *
-	 * @param cellWidth
-	 * @param cellHeight
 	 */
-	public updateCellSize(cellWidth: number, cellHeight: number) {
-		this.cellWidth = cellWidth;
-		this.cellHeight = cellHeight;
-		this.scale.set(cellWidth / REF_WIDTH);
-		this.updateGridPosition(cellWidth, cellHeight);
-	}
+	private updateGridPosition() {
+		this.x = this.ix * REF_WIDTH;
+		this.y = this.iy * REF_HEIGHT;
 
-	/**
-	 *
-	 * @param ix
-	 * @param iy
-	 */
-	private updateGridPosition(cellWidth: number, cellHeight: number) {
-		this.x = this.ix * cellWidth;
-		this.y = this.iy * cellHeight;
 		this.back.tilePosition.x = -this.viewState.x * this.textureBackTileSize;
 		this.back.tilePosition.y = -this.viewState.y * this.textureBackTileSize;
 		this.front.tilePosition.x = -this.viewState.x * this.textureFrontTileSize;
@@ -201,9 +194,10 @@ export class MSCell extends Container {
 		let sprite = new Sprite(texture);
 		sprite.alpha = 0.5;
 		sprite.anchor.set(0.5);
-		sprite.width = this.cellWidth;
-		sprite.height = this.cellHeight;
-		sprite.position.set(this.cellWidth / 2, this.cellHeight / 2);
+		sprite.visible = false;
+		sprite.width = REF_WIDTH;
+		sprite.height = REF_HEIGHT;
+		sprite.position.set(REF_WIDTH / 2, REF_HEIGHT / 2);
 		sprite.angle = angle;
 		return sprite;
 	}
@@ -217,28 +211,41 @@ export class MSCell extends Container {
 			el.texture = this.app.getFrame("tiles", frameName);
 		});
 
-		this.edges.l.visible =
-			this.ix - 1 < 0 || //
-			this.app.state.cellAt(this.ix - 1, this.iy).covered !== this.viewState.covered;
-
-		this.edges.r.visible =
-			this.ix + 1 >= this.app.state.width ||
-			this.app.state.cellAt(this.ix + 1, this.iy).covered !== this.viewState.covered;
-
-		this.edges.u.visible =
-			this.iy - 1 < 0 || //
-			this.app.state.cellAt(this.ix, this.iy - 1).covered !== this.viewState.covered;
-
-		this.edges.d.visible =
-			this.iy + 1 >= this.app.state.height ||
-			this.app.state.cellAt(this.ix, this.iy + 1).covered !== this.viewState.covered;
+		if (this.ix - 1 > -1) {
+			let l = this.app.state.cellAt(this.ix - 1, this.iy).view!;
+			this.edges.l.visible = l.viewState.covered !== this.viewState.covered;
+			l.edges.r.visible = l.viewState.covered !== this.viewState.covered;
+		} else {
+			this.edges.l.visible = true;
+		}
+		if (this.ix + 1 < this.app.state.width) {
+			let r = this.app.state.cellAt(this.ix + 1, this.iy).view!;
+			this.edges.r.visible = r.viewState.covered !== this.viewState.covered;
+			r.edges.l.visible = r.viewState.covered !== this.viewState.covered;
+		} else {
+			this.edges.r.visible = true;
+		}
+		if (this.iy - 1 > -1) {
+			let u = this.app.state.cellAt(this.ix, this.iy - 1).view!;
+			this.edges.u.visible = u.viewState.covered !== this.viewState.covered;
+			u.edges.d.visible = u.viewState.covered !== this.viewState.covered;
+		} else {
+			this.edges.u.visible = true;
+		}
+		if (this.iy + 1 < this.app.state.height) {
+			let d = this.app.state.cellAt(this.ix, this.iy + 1).view!;
+			this.edges.d.visible = d.viewState.covered !== this.viewState.covered;
+			d.edges.u.visible = d.viewState.covered !== this.viewState.covered;
+		} else {
+			this.edges.d.visible = true;
+		}
 	}
 
 	/**
 	 *
 	 * @param state
 	 */
-	public updateState(state: MSCellState) {
+	public updateState(state: MSCellState = this.state) {
 		if (state.flag !== this.viewState.flag) {
 			this.setFlagEnabled(state.flag);
 		}
@@ -255,11 +262,11 @@ export class MSCell extends Container {
 			this.setText(state.adjacent);
 		} //
 		else {
-			this.text.visible = false;
+			this.adjacentText.visible = false;
 		}
 
 		if (this.viewState.x !== state.x || this.viewState.y !== state.y) {
-			this.updateGridPosition(state.x, state.y);
+			this.updateGridPosition();
 		}
 
 		this.front.alpha = this.app.state.config.cheatMode ? 0.9 : 1;
@@ -272,11 +279,32 @@ export class MSCell extends Container {
 	/**
 	 *
 	 */
+	public animateResult() {
+		if (this.viewState.mine && this.viewState.flag) {
+			this.animateCorrect();
+		}
+
+		if (this.viewState.mine && !this.viewState.flag) {
+			this.setCoveredEnabled(false);
+			this.updateEdgeSprites();
+			this.animateIncorrect();
+			this.explodeMine();
+		}
+
+		if (!this.viewState.mine && this.viewState.flag) {
+			this.adjacentText.text = "";
+			this.animateIncorrect();
+		}
+	}
+
+	/**
+	 *
+	 */
 	public animatePress() {
 		Tween.get(this.hover).to(
 			{
-				width: this.cellWidth - 32,
-				height: this.cellHeight - 32,
+				width: REF_WIDTH - 32,
+				height: REF_HEIGHT - 32,
 				alpha: 0
 			},
 			150,
@@ -300,37 +328,13 @@ export class MSCell extends Container {
 
 	/**
 	 *
-	 */
-	public showResult() {
-		this.setInteractiveEnabled(false);
-
-		let cellState = this.app.state.cellAt(this.ix, this.iy);
-
-		if (cellState.mine && !cellState.flag) {
-			this.app.state.cellAt(this.ix, this.iy).covered = false;
-			this.setCoveredEnabled(false);
-			this.animateIncorrect();
-			this.explodeMine();
-		}
-
-		if (cellState.mine && cellState.flag) {
-			this.animateCorrect();
-		}
-
-		if (!cellState.mine && cellState.flag) {
-			this.animateIncorrect();
-		}
-	}
-
-	/**
-	 *
 	 * @param total
 	 */
 	private setText(total: number) {
 		let key = total.toString() as NumberKey;
-		this.text.style.fill = this.app.config.colorNumbers[key] ?? 0;
-		this.text.visible = true;
-		this.text.text = key;
+		this.adjacentText.style.fill = this.app.config.colorNumbers[key] ?? 0;
+		this.adjacentText.visible = true;
+		this.adjacentText.text = key;
 	}
 
 	/**
@@ -338,6 +342,7 @@ export class MSCell extends Container {
 	 * @param enabled
 	 */
 	public setCoveredEnabled(enabled = true) {
+		this.viewState.covered = enabled;
 		if (enabled) {
 			this.setInteractiveEnabled(true);
 			this.front.visible = true;
@@ -366,6 +371,7 @@ export class MSCell extends Container {
 	 *
 	 */
 	public setMineEnabled(enabled = true) {
+		this.viewState.mine = enabled;
 		if (enabled) {
 			this.mine.visible = true;
 		} else {
@@ -377,6 +383,7 @@ export class MSCell extends Container {
 	 *
 	 */
 	public setFlagEnabled(enabled = true) {
+		this.viewState.flag = enabled;
 		if (this.flag) {
 			if (enabled) {
 				this.flag.state.setAnimation(0, "place-confirm", false);
