@@ -289,23 +289,29 @@ export class MSState {
 	}
 
 	/**
-	 * uncover a selected cell.
+	 * User action on a cell. Uncovered cells are returned in an array.
 	 *
 	 * @param x
 	 * @param y
 	 */
-	public select(x: number, y: number) {
+	public select(x: number, y: number): MSCellState[] {
 		let cell = this.cellAt(x, y);
 
+		let result: MSCellState[] = [];
+
 		if (cell.adjacent === 0 && !cell.mine) {
-			this.fill(x, y);
+			this.fill(x, y, result);
 		} //
 		else if (cell.adjacent > 0) {
+			result.push(cell);
 			this.uncover(x, y);
 		} //
 		else if (cell.mine) {
+			result.push(cell);
 			this.uncover(x, y);
 		}
+
+		return result;
 	}
 
 	/**
@@ -314,7 +320,7 @@ export class MSState {
 	 * @param x
 	 * @param y
 	 */
-	public selectFirst(x: number, y: number) {
+	public selectFirst(x: number, y: number): MSCellState[] {
 		let cell = this.cellAt(x, y);
 		let foundMove = !cell.mine && cell.adjacent === 0;
 		let i = 0;
@@ -331,7 +337,7 @@ export class MSState {
 			i++;
 		}
 
-		this.select(x, y);
+		return this.select(x, y);
 	}
 
 	/**
