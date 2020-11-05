@@ -223,7 +223,7 @@ export class MSState {
 	/**
 	 * Return array of unplaced flags.
 	 */
-	public getUnplacedFlag() {
+	public getUnplacedFlags() {
 		let result = [];
 
 		for (let i = 0; i < this.cells.length; i++) {

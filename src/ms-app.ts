@@ -259,7 +259,7 @@ export class MSApp extends AppBase {
 	private animateWin() {
 		this.endGame();
 
-		let unplacedFlags = this.state.getUnplacedFlag();
+		let unplacedFlags = this.state.getUnplacedFlags();
 
 		let tween = Tween.get(this);
 
