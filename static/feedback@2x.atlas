@@ -4,9 +4,16 @@ size: 512,256
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
-cross
+border
   rotate: false
   xy: 132, 2
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+cross
+  rotate: false
+  xy: 262, 2
   size: 128, 128
   orig: 128, 128
   offset: 0, 0

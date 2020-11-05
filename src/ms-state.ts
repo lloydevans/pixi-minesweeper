@@ -354,10 +354,11 @@ export class MSState {
 	 * @param x
 	 * @param y
 	 */
-	private fill(x: number, y: number) {
+	private fill(x: number, y: number, result: MSCellState[]) {
 		let cell = this.cellAt(x, y);
 
 		if (cell.covered) {
+			result.push(cell);
 			this.uncover(x, y);
 
 			if (cell.adjacent > 0) {
@@ -365,35 +366,35 @@ export class MSState {
 			}
 
 			if (x > 0) {
-				this.fill(x - 1, y);
+				this.fill(x - 1, y, result);
 
 				if (y > 0) {
-					this.fill(x - 1, y - 1);
+					this.fill(x - 1, y - 1, result);
 				}
 
 				if (y < this.height - 1) {
-					this.fill(x - 1, y + 1);
+					this.fill(x - 1, y + 1, result);
 				}
 			}
 
 			if (x < this.width - 1) {
-				this.fill(x + 1, y);
+				this.fill(x + 1, y, result);
 
 				if (y > 0) {
-					this.fill(x + 1, y - 1);
+					this.fill(x + 1, y - 1, result);
 				}
 
 				if (y < this.height - 1) {
-					this.fill(x + 1, y + 1);
+					this.fill(x + 1, y + 1, result);
 				}
 			}
 
 			if (y > 0) {
-				this.fill(x, y - 1);
+				this.fill(x, y - 1, result);
 			}
 
 			if (y < this.height - 1) {
-				this.fill(x, y + 1);
+				this.fill(x, y + 1, result);
 			}
 		}
 	}
