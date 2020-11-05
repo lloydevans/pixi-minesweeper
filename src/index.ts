@@ -5,6 +5,8 @@
 // Polyfills
 import "core-js";
 
+import "./firebase";
+
 // Pixi imports
 import "pixi.js-legacy";
 import "pixi-spine";

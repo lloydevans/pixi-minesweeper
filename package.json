@@ -22,6 +22,7 @@
 		"@types/createjs": "0.0.29",
 		"@types/lodash": "^4.14.164",
 		"core-js": "^3.6.5",
+		"firebase": "^8.0.0",
 		"lodash": "^4.17.20",
 		"pixi-particles": "^4.3.0",
 		"pixi-spine": "^2.1.10",
