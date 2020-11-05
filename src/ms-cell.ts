@@ -379,9 +379,11 @@ export class MSCell extends Container {
 	public setFlagEnabled(enabled = true) {
 		if (this.flag) {
 			if (enabled) {
-				this.placeFlag();
+				this.flag.state.setAnimation(0, "place-confirm", false);
+				this.flag.visible = true;
 			} else {
-				this.clearFlag();
+				this.flag.state.setAnimation(0, "destroy", false);
+				this.flag.state.addAnimation(0, "hidden", false, 0);
 			}
 		}
 	}
@@ -405,40 +407,5 @@ export class MSCell extends Container {
 	 */
 	public explodeMine() {
 		this.mine.state.setAnimation(0, "explode", false);
-	}
-
-	/**
-	 *
-	 */
-	public placeFlagStart() {
-		this.flag.state.setAnimation(0, "place-start", false);
-		this.flag.visible = true;
-	}
-
-	/**
-	 *
-	 */
-	public placeFlag() {
-		this.flag.state.setAnimation(0, "place-confirm", false);
-		this.flag.visible = true;
-	}
-
-	/**
-	 *
-	 */
-	public clearFlagStart() {
-		if (this.flag) {
-			this.flag.state.setAnimation(0, "destroy-start", false);
-		}
-	}
-
-	/**
-	 *
-	 */
-	public clearFlag() {
-		if (this.flag) {
-			this.flag.state.setAnimation(0, "destroy", false);
-			this.flag.state.addAnimation(0, "hidden", false, 0);
-		}
 	}
 }
