@@ -350,30 +350,29 @@ export class MSApp extends AppBase {
 	 *
 	 */
 	public async leftClick(cellState: MSCellState) {
-		let msCell = cellState.view;
+		let msCell = cellState.view!;
 
-		if (msCell) {
-			if (this.isFirstClick) {
-				this.isFirstClick = false;
-				let result = this.state.selectFirst(msCell.ix, msCell.iy);
-				if (result.length > 1) {
-					await this.animateFill(cellState);
-				}
-				this.checkWin();
+		if (this.isFirstClick) {
+			this.isFirstClick = false;
+			let result = this.state.selectFirst(msCell.ix, msCell.iy);
+			if (result.length > 1) {
+				await this.animateFill(cellState);
+			}
+			this.checkWin();
+		} //
+		else {
+			let result = this.state.select(msCell.ix, msCell.iy);
+
+			if (cellState.mine) {
+				this.animateLose(cellState);
 			} //
 			else {
-				let result = this.state.select(msCell.ix, msCell.iy);
-
-				if (cellState.mine) {
-					this.animateLose(cellState);
-				} //
-				else {
-					if (result.length > 1) {
-						this.animateFill(cellState);
-					} else {
-						msCell.updateState();
-					}
+				if (result.length > 1) {
+					this.animateFill(cellState);
+				} else {
+					msCell.updateState();
 				}
+				this.checkWin();
 			}
 		}
 	}
