@@ -250,17 +250,32 @@ export class MSApp extends AppBase {
 
 		this.state.init(config);
 
-		this.ui.visible = true;
-
 		this.time = 0;
 		this.timeActive = true;
 		this.isFirstClick = true;
+		this.ui.visible = true;
 		this.touchUi.hide();
 		this.grid.interactiveChildren = true;
 
 		this.initGrid();
 		this.updateCellStates();
 		this.onResize(this.width, this.height);
+	}
+
+	/**
+	 *
+	 * @param config
+	 */
+	public restartGame(config: MSGameConfig = this.gameConfig) {
+		Tween.removeAllTweens();
+
+		this.time = 0;
+		this.timeActive = true;
+		this.isFirstClick = true;
+		this.touchUi.hide();
+		this.grid.interactiveChildren = true;
+		this.state.reset();
+		this.updateCellStates();
 	}
 
 	/**

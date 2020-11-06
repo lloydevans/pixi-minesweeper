@@ -71,8 +71,25 @@ export class MSState {
 		this.height = config.gridHeight;
 
 		this.initCells();
-
 		this.shuffleMines(config.startMines);
+	}
+
+	/**
+	 *
+	 */
+	public reset() {
+		for (let x = 0; x < this.width; x++) {
+			for (let y = 0; y < this.height; y++) {
+				let cell = this.cells[this.indexOf(x, y)];
+				cell.x = x;
+				cell.y = y;
+				cell.adjacent = 0;
+				cell.mine = false;
+				cell.flag = false;
+				cell.covered = true;
+			}
+		}
+		this.shuffleMines(this.config.startMines);
 	}
 
 	/**

@@ -67,7 +67,7 @@ export class MSUi extends Container {
 		this.timeCount.y = -24;
 
 		this.buttonRestart = new Button(this.app, this.app.getFrame("textures", "button-restart"));
-		this.buttonRestart.on("pointertap", () => this.app.newGame());
+		this.buttonRestart.on("pointertap", () => this.app.restartGame());
 
 		this.timeContainer.addChild(this.timeGraphic);
 		this.timeContainer.addChild(this.timeCount);
