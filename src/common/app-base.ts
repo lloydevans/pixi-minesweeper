@@ -7,11 +7,6 @@ import * as screenfull from "screenfull";
 export const MAX_DPR = 4;
 
 /**
- * Spine animation reference pixel ratio.
- */
-export const SPINE_SCALE = 4;
-
-/**
  * General purpose app functionality.
  */
 export class AppBase extends Application {
@@ -157,7 +152,7 @@ export class AppBase extends Application {
 	 */
 	public addSpine(spineName: string, scale: number = this.dpr) {
 		let metadata: loaders.IMetadata = {
-			spineSkeletonScale: 1 / SPINE_SCALE,
+			spineSkeletonScale: 1 / MAX_DPR,
 			spineAtlasFile: spineName + "@" + scale + "x.atlas"
 		};
 
