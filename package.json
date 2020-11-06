@@ -2,7 +2,7 @@
 	"name": "pixi-minesweeper",
 	"version": "0.0.0",
 	"scripts": {
-		"start": "npm run serve-editor -- --env.modern",
+		"start": "npm run serve -- --env.modern",
 		"test": "npx --no-install jest",
 		"test-watch": "npm run test -- --watch",
 		"serve": "npx --no-install webpack-dev-server",
