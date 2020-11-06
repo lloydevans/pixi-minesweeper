@@ -455,7 +455,10 @@ export class MSApp extends AppBase {
 
 			case "touch":
 				if (cellState.view) {
-					if (cellState === this.touchUi.targetCell) {
+					if (this.isFirstClick) {
+						this.leftClick(cellState);
+					} //
+					else if (cellState === this.touchUi.targetCell) {
 						this.touchUi.hide();
 					} //
 					else {
