@@ -1,11 +1,11 @@
 import { BLEND_MODES, Container, Rectangle, Sprite, Text, TextStyle, Texture, TilingSprite } from "pixi.js-legacy";
+import { Ease } from "./common/ease";
 import { GameText } from "./common/game-text";
 import { Spine } from "./common/spine";
 import { Tween } from "./common/tween";
-import { Ease } from "./common/ease";
 import { MSApp } from "./ms-app";
-import type { NumberKey } from "./ms-config";
 import type { MSCellState } from "./ms-cell-state";
+import type { NumberKey } from "./ms-config";
 
 // Reference size of cell graphics before any scaling.
 export const REF_WIDTH = 64;
@@ -22,18 +22,14 @@ export class MSCell extends Container {
 		return this.viewState.y;
 	}
 
+	private flag?: Spine;
+	private mine?: Spine;
 	private app: MSApp;
-	private flag: Spine;
-	private mine: Spine;
-	private back: TilingSprite;
 	private front: TilingSprite;
 	private hover: Sprite;
 	private feedback: Spine;
 	private adjacentText: Text;
-	private textureBack: Texture;
 	private textureFront: Texture;
-	// TODO: customisable tiling asset
-	private textureBackTileSize: number = 32;
 	private textureFrontTileSize: number = 32;
 	private edges: {
 		l: Sprite;
@@ -75,7 +71,6 @@ export class MSCell extends Container {
 		};
 
 		this.textureFront = this.app.getFrame("tiles", "front-0");
-		this.textureBack = this.app.getFrame("tiles", "back-0");
 
 		this.hover = Sprite.from(Texture.WHITE);
 		this.hover.anchor.set(0.5);
@@ -102,13 +97,6 @@ export class MSCell extends Container {
 		this.front.visible = true;
 		this.front.cacheAsBitmap = true;
 
-		this.back = new TilingSprite(this.textureBack);
-		this.back.width = this.textureBackTileSize;
-		this.back.height = this.textureBackTileSize;
-		this.back.scale.set(REF_WIDTH / this.textureBackTileSize);
-		this.back.visible = false;
-		this.back.cacheAsBitmap = true;
-
 		this.feedback = new Spine(this.app.getSpine("feedback"));
 		this.feedback.state.setAnimation(0, "idle", true);
 		this.feedback.x = REF_WIDTH / 2;
@@ -122,7 +110,6 @@ export class MSCell extends Container {
 
 		this.hitArea = new Rectangle(0, 0, REF_WIDTH, REF_HEIGHT);
 
-		this.addChild(this.back);
 		this.addChild(this.mine);
 		this.addChild(this.adjacentText);
 		this.addChild(this.front);
@@ -181,9 +168,6 @@ export class MSCell extends Container {
 	private updateGridPosition() {
 		this.x = this.ix * REF_WIDTH;
 		this.y = this.iy * REF_HEIGHT;
-
-		this.back.tilePosition.x = -this.viewState.x * this.textureBackTileSize;
-		this.back.tilePosition.y = -this.viewState.y * this.textureBackTileSize;
 		this.front.tilePosition.x = -this.viewState.x * this.textureFrontTileSize;
 		this.front.tilePosition.y = -this.viewState.y * this.textureFrontTileSize;
 	}
@@ -348,11 +332,9 @@ export class MSCell extends Container {
 		if (enabled) {
 			this.setInteractiveEnabled(true);
 			this.front.visible = true;
-			this.back.visible = false;
 		} else {
 			this.setInteractiveEnabled(false);
 			this.front.visible = false;
-			this.back.visible = true;
 		}
 	}
 
@@ -374,10 +356,12 @@ export class MSCell extends Container {
 	 */
 	public setMineEnabled(enabled = true) {
 		this.viewState.mine = enabled;
-		if (enabled) {
-			this.mine.visible = true;
-		} else {
-			this.mine.visible = false;
+		if (this.mine) {
+			if (enabled) {
+				this.mine.visible = true;
+			} else {
+				this.mine.visible = false;
+			}
 		}
 	}
 
@@ -415,6 +399,6 @@ export class MSCell extends Container {
 	 *
 	 */
 	public explodeMine() {
-		this.mine.state.setAnimation(0, "explode", false);
+		this.mine?.state.setAnimation(0, "explode", false);
 	}
 }

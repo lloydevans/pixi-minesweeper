@@ -7,7 +7,7 @@ import {
 	SCALE_MODES,
 	Sprite,
 	Texture,
-	utils
+	TilingSprite
 } from "pixi.js-legacy";
 import { AppBase } from "./common/app-base";
 import { hexToNum } from "./common/color";
@@ -16,22 +16,20 @@ import { preventContextMenu } from "./common/utils";
 import { clamp } from "./maths/clamp";
 import { MSCell, REF_HEIGHT, REF_WIDTH } from "./ms-cell";
 import type { MSCellState } from "./ms-cell-state";
-import type { MSConfig, MSGameConfig } from "./ms-config";
 import { MS_CONFIG_DEFAULT } from "./ms-config";
+import type { MSConfig, MSGameConfig } from "./ms-config";
+import { MSMenu } from "./ms-menu";
 import { MSState } from "./ms-state";
 import { MSTouchUi } from "./ms-touch-ui";
 import { MSUi } from "./ms-ui";
 
-const DEFAULT_GAME_CONFIG_DESKTOP: MSGameConfig = {
+// Temp hard coded value
+const BOARD_TILE_SCALE = 2;
+
+export const INITIAL_GAME_CONFIG: MSGameConfig = {
 	startMines: 10,
 	gridWidth: 9,
 	gridHeight: 9
-};
-
-const DEFAULT_GAME_CONFIG_MOBILE: MSGameConfig = {
-	startMines: 10,
-	gridWidth: 8,
-	gridHeight: 16
 };
 
 /**
@@ -55,7 +53,9 @@ export class MSApp extends AppBase {
 	private grid: Container = new Container();
 	private isFirstClick: boolean = true;
 	private touchUi: MSTouchUi = new MSTouchUi(this);
+	private menu: MSMenu = new MSMenu(this);
 	private ui: MSUi = new MSUi(this);
+	private boardBack?: TilingSprite;
 
 	/**
 	 *
@@ -65,17 +65,14 @@ export class MSApp extends AppBase {
 
 		preventContextMenu();
 
-		// Temporary until game dififculty selection screen is in.
-		this.gameConfig = utils.isMobile.phone ? DEFAULT_GAME_CONFIG_MOBILE : DEFAULT_GAME_CONFIG_DESKTOP;
+		this.gameConfig = { ...INITIAL_GAME_CONFIG };
 
-		this.container.y = 32;
+		this.container.y = 16;
 
 		this.root.addChild(this.background);
 		this.root.addChild(this.container);
 		this.root.addChild(this.ui);
 		this.root.addChild(this.touchUi);
-		this.container.addChild(this.board);
-		this.container.addChild(this.grid);
 
 		this.events.on("init", this.onInit, this);
 		this.events.on("resize", this.onResize, this);
@@ -86,6 +83,8 @@ export class MSApp extends AppBase {
 	 * Init callback.
 	 */
 	private onInit() {
+		this.grid.interactiveChildren = false;
+
 		this.addSpine("mine");
 		this.addSpine("flag");
 		this.addSpine("timer");
@@ -103,17 +102,37 @@ export class MSApp extends AppBase {
 	 */
 	private onLoad() {
 		this.config = this.parseConfig(this.getJson("config"));
+
+		this.boardBack = new TilingSprite(this.getFrame("tiles", "back-0"));
+
 		this.board.tint = hexToNum(this.config.colorBoard);
+
 		let tilesAtlas = this.getAtlas("tiles");
-		if (tilesAtlas?.spritesheet) {
+
+		if (tilesAtlas.spritesheet) {
 			tilesAtlas.spritesheet.baseTexture.mipmap = MIPMAP_MODES.OFF;
 			tilesAtlas.spritesheet.baseTexture.scaleMode = SCALE_MODES.NEAREST;
 			tilesAtlas.spritesheet.baseTexture.update();
 		}
 
-		this.ui.init();
+		this.menu.init();
 		this.touchUi.init();
-		this.newGame();
+
+		this.ui.init();
+		this.ui.visible = false;
+
+		this.container.addChild(this.board);
+		this.container.addChild(this.boardBack);
+		this.container.addChild(this.grid);
+		this.container.addChild(this.menu);
+
+		this.board.zIndex = 0;
+		this.boardBack.zIndex = 10;
+		this.grid.zIndex = 20;
+		this.menu.zIndex = 30;
+		this.container.sortChildren();
+
+		this.onResize(this.width, this.height);
 	}
 
 	/**
@@ -138,8 +157,9 @@ export class MSApp extends AppBase {
 		this.background.beginFill(hexToNum(this.config?.colorBackground || "#ffffff"));
 		this.background.drawRect(-width / 2, -height / 2, width, height);
 
-		let maxWidth = this.width - 128;
-		let maxHeight = this.height - 128;
+		let margin = 200;
+		let maxWidth = this.width - margin;
+		let maxHeight = this.height - margin;
 		let refBoardWidth = REF_WIDTH * this.state.width;
 		let refBoardHeight = REF_HEIGHT * this.state.height;
 
@@ -160,7 +180,17 @@ export class MSApp extends AppBase {
 		this.board.y = -boardHeight / 2;
 		this.board.width = boardWidth;
 		this.board.height = boardHeight;
-		this.updateCellSize(this.cellWidth, this.cellHeight);
+		this.grid.scale.set(this.cellWidth / REF_WIDTH);
+		this.grid.x = -(this.state.width / 2) * this.cellWidth;
+		this.grid.y = -(this.state.height / 2) * this.cellHeight;
+
+		if (this.boardBack) {
+			this.boardBack.tileScale.set(BOARD_TILE_SCALE * (this.cellWidth / REF_WIDTH));
+			this.boardBack.width = this.state.width * this.cellWidth;
+			this.boardBack.height = this.state.height * this.cellHeight;
+			this.boardBack.x = (-this.state.width * this.cellWidth) / 2;
+			this.boardBack.y = (-this.state.height * this.cellHeight) / 2;
+		}
 	}
 
 	/**
@@ -176,6 +206,7 @@ export class MSApp extends AppBase {
 	 */
 	private initGrid() {
 		this.grid.removeChildren().forEach((el) => el.destroy());
+
 		for (let x = 0; x < this.state.width; x++) {
 			for (let y = 0; y < this.state.height; y++) {
 				let cellState = this.state.cellAt(x, y);
@@ -195,19 +226,6 @@ export class MSApp extends AppBase {
 	}
 
 	/**
-	 *
-	 * @param cellWidth
-	 * @param cellHeight
-	 */
-	private updateCellSize(cellWidth: number, cellHeight: number) {
-		this.cellWidth = cellWidth;
-		this.cellHeight = cellHeight;
-		this.grid.scale.set(cellWidth / REF_WIDTH);
-		this.grid.x = -(this.state.width / 2) * this.cellWidth;
-		this.grid.y = -(this.state.height / 2) * this.cellHeight;
-	}
-
-	/**
 	 * Update all cell state. TODO: more efficient update.
 	 *
 	 */
@@ -215,9 +233,7 @@ export class MSApp extends AppBase {
 		for (let x = 0; x < this.state.width; x++) {
 			for (let y = 0; y < this.state.height; y++) {
 				const state = this.state.cellAt(x, y);
-				if (state.view) {
-					state.view.updateState(state);
-				}
+				state.view!.updateState();
 			}
 		}
 	}
@@ -230,7 +246,11 @@ export class MSApp extends AppBase {
 	public newGame(config: MSGameConfig = this.gameConfig) {
 		Tween.removeAllTweens();
 
+		this.gameConfig = { ...config };
+
 		this.state.init(config);
+
+		this.ui.visible = true;
 
 		this.time = 0;
 		this.timeActive = true;
@@ -241,6 +261,19 @@ export class MSApp extends AppBase {
 		this.initGrid();
 		this.updateCellStates();
 		this.onResize(this.width, this.height);
+	}
+
+	/**
+	 * Start a new game with given config.
+	 *
+	 * @param config
+	 */
+	public previewGame(config: MSGameConfig = this.gameConfig) {
+		this.state.init(config);
+		this.onResize(this.width, this.height);
+		if (this.boardBack) {
+			this.boardBack.visible = true;
+		}
 	}
 
 	/**
@@ -351,17 +384,20 @@ export class MSApp extends AppBase {
 	 */
 	public async leftClick(cellState: MSCellState) {
 		let msCell = cellState.view!;
+		let x = msCell.ix;
+		let y = msCell.iy;
 
 		if (this.isFirstClick) {
 			this.isFirstClick = false;
-			let result = this.state.selectFirst(msCell.ix, msCell.iy);
+			let result = this.state.selectFirst(x, y);
 			if (result.length > 1) {
 				await this.animateFill(cellState);
 			}
-			this.checkWin();
 		} //
 		else {
-			let result = this.state.select(msCell.ix, msCell.iy);
+			let result = this.state.select(x, y);
+
+			msCell.updateState();
 
 			if (cellState.mine) {
 				this.animateLose(cellState);
@@ -369,12 +405,13 @@ export class MSApp extends AppBase {
 			else {
 				if (result.length > 1) {
 					await this.animateFill(cellState);
-				} else {
-					msCell.updateState();
 				}
-				this.checkWin();
 			}
 		}
+
+		this.updateCellStates();
+
+		this.checkWin();
 	}
 
 	/**

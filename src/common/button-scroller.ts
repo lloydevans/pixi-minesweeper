@@ -15,24 +15,41 @@ export interface ButtonScrollerOptions {
 
 export class ButtonScroller extends Container {
 	app: AppBase;
-	min: number;
-	max: number;
-	current: number;
-	default: number;
-	number: GameText;
-	buttonLeft: Button;
-	buttonRight: Button;
-	label: GameText;
+
+	private _min: number;
+	get min(): number {
+		return this._min;
+	}
+
+	private _max: number;
+	get max(): number {
+		return this._max;
+	}
+
+	private _current: number;
+	get current(): number {
+		return this._current;
+	}
+
+	private _default: number;
+	get default(): number {
+		return this._default;
+	}
+
+	private number: GameText;
+	private buttonLeft: Button;
+	private buttonRight: Button;
+	private label: GameText;
 
 	constructor(app: AppBase, options: ButtonScrollerOptions) {
 		super();
 
 		this.app = app;
 
-		this.min = options.min;
-		this.max = options.max;
-		this.default = options.default;
-		this.current = this.default;
+		this._min = options.min;
+		this._max = options.max;
+		this._default = options.default;
+		this._current = this.default;
 
 		this.buttonLeft = new Button(this.app, options.textureArrow);
 		this.buttonLeft.anchor.set(0.5);
@@ -54,13 +71,14 @@ export class ButtonScroller extends Container {
 
 		this.addChild(this.label, this.number, this.buttonLeft, this.buttonRight);
 
-		this.buttonLeft.on("tap", () => this.set(this.current - 1));
-		this.buttonRight.on("tap", () => this.set(this.current + 1));
+		this.buttonLeft.on("pointertap", () => this.set(this.current - 1));
+		this.buttonRight.on("pointertap", () => this.set(this.current + 1));
+
 		this.set(this.default);
 	}
 
 	set(value: number) {
-		this.current = Math.floor(clamp(value, this.min, this.max));
+		this._current = Math.floor(clamp(value, this.min, this.max));
 		this.number.text = this.current.toString();
 		this.buttonLeft.interactive = this.current !== this.min;
 		this.buttonLeft.alpha = this.current !== this.min ? 1 : 0.5;
@@ -68,5 +86,15 @@ export class ButtonScroller extends Container {
 		this.buttonRight.alpha = this.current !== this.max ? 1 : 0.5;
 
 		this.emit("set", this.current);
+	}
+
+	setMin(value: number) {
+		this._min = value;
+		this.set(this.current);
+	}
+
+	setMax(value: number) {
+		this._max = value;
+		this.set(this.current);
 	}
 }
