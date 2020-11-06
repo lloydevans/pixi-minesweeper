@@ -138,6 +138,13 @@ export class MSCell extends Container {
 	/**
 	 *
 	 */
+	public reset() {
+		this.feedback.visible = false;
+	}
+
+	/**
+	 *
+	 */
 	private createFlag(): Spine {
 		let flag = new Spine(this.app.getSpine("flag"));
 		flag.stateData.defaultMix = 0.05;
@@ -331,7 +338,6 @@ export class MSCell extends Container {
 		this.viewState.covered = enabled;
 		if (enabled) {
 			this.setInteractiveEnabled(true);
-			this.feedback.visible = false;
 			this.front.visible = true;
 		} else {
 			this.setInteractiveEnabled(false);

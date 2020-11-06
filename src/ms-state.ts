@@ -87,6 +87,7 @@ export class MSState {
 				cell.mine = false;
 				cell.flag = false;
 				cell.covered = true;
+				cell.view!.reset();
 			}
 		}
 		this.shuffleMines(this.config.startMines);
