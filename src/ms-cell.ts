@@ -95,6 +95,7 @@ export class MSCell extends Container {
 		this.front.width = this.textureFrontTileSize;
 		this.front.height = this.textureFrontTileSize;
 		this.front.visible = true;
+		// TODO: Needs optimisation, this causes lag on board init.
 		this.front.cacheAsBitmap = true;
 
 		this.feedback = new Spine(this.app.getSpine("feedback"));
