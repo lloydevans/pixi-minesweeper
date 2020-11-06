@@ -1,25 +1,27 @@
 import { InteractionEvent, Sprite, Texture } from "pixi.js-legacy";
 import { AppBase } from "./app-base";
 
+export interface ButtonConfig {}
+
 /**
  * Very quick button class.
  */
 export class Button extends Sprite {
-	private app: AppBase;
-	private content: Sprite;
+	protected app: AppBase;
+	protected back: Sprite;
 
 	constructor(app: AppBase, texture: Texture) {
 		super();
 
 		this.app = app;
-		this.content = Sprite.from(texture);
-		this.content.anchor.set(0.5);
+		this.back = Sprite.from(texture);
+		this.back.anchor.set(0.5);
 
 		this.buttonMode = true;
 		this.accessible = true;
 		this.interactive = true;
 
-		this.addChild(this.content);
+		this.addChild(this.back);
 
 		this.on("mouseout", this.onPointerOut, this);
 		this.on("mouseover", this.onPointerOver, this);
@@ -34,37 +36,37 @@ export class Button extends Sprite {
 	 *
 	 * @param e
 	 */
-	private onPointerOut(e: InteractionEvent) {}
+	protected onPointerOut(e: InteractionEvent) {}
 
 	/**
 	 *
 	 * @param e
 	 */
-	private onPointerOver(e: InteractionEvent) {}
+	protected onPointerOver(e: InteractionEvent) {}
 
 	/**
 	 *
 	 * @param e
 	 */
-	private onPointerUp(e: InteractionEvent) {}
+	protected onPointerUp(e: InteractionEvent) {}
 
 	/**
 	 *
 	 * @param e
 	 */
-	private onPointerDown(e: InteractionEvent) {}
+	protected onPointerDown(e: InteractionEvent) {}
 
 	/**
 	 *
 	 * @param e
 	 */
-	private onPointerCancel(e: InteractionEvent) {}
+	protected onPointerCancel(e: InteractionEvent) {}
 
 	/**
 	 *
 	 * @param e
 	 */
-	private onPointerTap(e: InteractionEvent) {
+	protected onPointerTap(e: InteractionEvent) {
 		this.emit("tap", e);
 	}
 }
