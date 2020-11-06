@@ -100,12 +100,14 @@ export class MSCell extends Container {
 		this.front.width = this.textureFrontTileSize;
 		this.front.height = this.textureFrontTileSize;
 		this.front.visible = true;
+		this.front.cacheAsBitmap = true;
 
 		this.back = new TilingSprite(this.textureBack);
 		this.back.width = this.textureBackTileSize;
 		this.back.height = this.textureBackTileSize;
 		this.back.scale.set(REF_WIDTH / this.textureBackTileSize);
 		this.back.visible = false;
+		this.back.cacheAsBitmap = true;
 
 		this.feedback = new Spine(this.app.getSpine("feedback"));
 		this.feedback.state.setAnimation(0, "idle", true);
