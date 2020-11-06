@@ -98,7 +98,7 @@ export class MSCell extends Container {
 		this.front.cacheAsBitmap = true;
 
 		this.feedback = new Spine(this.app.getSpine("feedback"));
-		this.feedback.state.setAnimation(0, "idle", true);
+		this.feedback.visible = false;
 		this.feedback.x = REF_WIDTH / 2;
 		this.feedback.y = REF_HEIGHT / 2;
 
@@ -331,6 +331,7 @@ export class MSCell extends Container {
 		this.viewState.covered = enabled;
 		if (enabled) {
 			this.setInteractiveEnabled(true);
+			this.feedback.visible = false;
 			this.front.visible = true;
 		} else {
 			this.setInteractiveEnabled(false);
@@ -385,6 +386,7 @@ export class MSCell extends Container {
 	 *
 	 */
 	public animateCorrect() {
+		this.feedback.visible = true;
 		this.feedback.state.setAnimation(0, "correct", false);
 	}
 
@@ -392,6 +394,7 @@ export class MSCell extends Container {
 	 *
 	 */
 	public animateIncorrect() {
+		this.feedback.visible = true;
 		this.feedback.state.setAnimation(0, "incorrect", false);
 	}
 
