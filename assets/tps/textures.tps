@@ -9,7 +9,7 @@
         <array>
             <struct type="AutoSDSettings">
                 <key>scale</key>
-                <double>1</double>
+                <double>4</double>
                 <key>extension</key>
                 <string>@4x</string>
                 <key>spriteFilter</key>
@@ -26,7 +26,7 @@
             </struct>
             <struct type="AutoSDSettings">
                 <key>scale</key>
-                <double>0.75</double>
+                <double>3</double>
                 <key>extension</key>
                 <string>@3x</string>
                 <key>spriteFilter</key>
@@ -43,7 +43,7 @@
             </struct>
             <struct type="AutoSDSettings">
                 <key>scale</key>
-                <double>0.5</double>
+                <double>2</double>
                 <key>extension</key>
                 <string>@2x</string>
                 <key>spriteFilter</key>
@@ -60,7 +60,7 @@
             </struct>
             <struct type="AutoSDSettings">
                 <key>scale</key>
-                <double>0.25</double>
+                <double>1</double>
                 <key>extension</key>
                 <string>@1x</string>
                 <key>spriteFilter</key>
@@ -85,7 +85,7 @@
         <key>dataFormat</key>
         <string>json</string>
         <key>textureFileName</key>
-        <filename>../static/tiles-{n}-{v}.png</filename>
+        <filename>../../static/textures-{n}-{v}.png</filename>
         <key>flipPVR</key>
         <false/>
         <key>pvrCompressionQuality</key>
@@ -159,7 +159,7 @@
             <key>sizeConstraints</key>
             <enum type="AlgorithmSettings::SizeConstraints">POT</enum>
             <key>forceSquared</key>
-            <true/>
+            <false/>
             <key>maxRects</key>
             <struct type="AlgorithmMaxRectsSettings">
                 <key>heuristic</key>
@@ -183,7 +183,7 @@
             <key>data</key>
             <struct type="DataFile">
                 <key>name</key>
-                <filename>../static/tiles-{n}-{v}.json</filename>
+                <filename>../../static/textures-{n}-{v}.json</filename>
             </struct>
         </map>
         <key>multiPack</key>
@@ -210,15 +210,15 @@
         <key>globalSpriteSettings</key>
         <struct type="SpriteSettings">
             <key>scale</key>
-            <double>1</double>
+            <double>0.25</double>
             <key>scaleMode</key>
-            <enum type="ScaleMode">Fast</enum>
+            <enum type="ScaleMode">Smooth</enum>
             <key>extrude</key>
             <uint>0</uint>
             <key>trimThreshold</key>
             <uint>1</uint>
             <key>trimMargin</key>
-            <uint>0</uint>
+            <uint>1</uint>
             <key>trimMode</key>
             <enum type="SpriteSettings::TrimMode">Trim</enum>
             <key>tracerTolerance</key>
@@ -232,17 +232,10 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">tiles/back-0.png</key>
-            <key type="filename">tiles/back-edge-0.png</key>
-            <key type="filename">tiles/back-edge-1.png</key>
-            <key type="filename">tiles/dig.png</key>
-            <key type="filename">tiles/front-0.png</key>
-            <key type="filename">tiles/front-1.png</key>
-            <key type="filename">tiles/front-2.png</key>
-            <key type="filename">tiles/front-3.png</key>
-            <key type="filename">tiles/front-4.png</key>
-            <key type="filename">tiles/front-edge-0.png</key>
-            <key type="filename">tiles/front-edge-1.png</key>
+            <key type="filename">../textures/button-cross.png</key>
+            <key type="filename">../textures/button-dig.png</key>
+            <key type="filename">../textures/button-flag.png</key>
+            <key type="filename">../textures/button-restart.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0,0</point_f>
@@ -257,10 +250,40 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">../textures/button-long.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0,0</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>128,32,256,64</rect>
+                <key>scale9Paddings</key>
+                <rect>128,32,256,64</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">../textures/title.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0,0</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>512,128,1024,256</rect>
+                <key>scale9Paddings</key>
+                <rect>512,128,1024,256</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
         </map>
         <key>fileList</key>
         <array>
-            <filename>tiles</filename>
+            <filename>../textures</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>
