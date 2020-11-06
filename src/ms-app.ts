@@ -368,7 +368,7 @@ export class MSApp extends AppBase {
 			} //
 			else {
 				if (result.length > 1) {
-					this.animateFill(cellState);
+					await this.animateFill(cellState);
 				} else {
 					msCell.updateState();
 				}
