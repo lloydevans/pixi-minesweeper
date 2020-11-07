@@ -1,5 +1,4 @@
 import defaults from "lodash/defaults";
-import sample from "lodash/sample";
 import {
 	Container,
 	Graphics,
@@ -35,7 +34,7 @@ export const INITIAL_GAME_CONFIG: MSGameConfig = {
  * Core App class.
  */
 export class MSApp extends AppBase {
-	public msCellPool: { [key: string]: MSCell } = {};
+	public msCellPool: MSCell[] = [];
 	public state: MSState = new MSState();
 	public config!: MSConfig;
 	public get currentTime() {
@@ -69,8 +68,6 @@ export class MSApp extends AppBase {
 		preventContextMenu();
 
 		this.gameConfig = { ...INITIAL_GAME_CONFIG };
-
-		this.container.y = 16;
 
 		this.root.addChild(this.background);
 		this.root.addChild(this.container);
@@ -159,20 +156,22 @@ export class MSApp extends AppBase {
 		this.background.beginFill(hexToNum(this.config?.colorBackground || "#ffffff"));
 		this.background.drawRect(-width / 2, -height / 2, width, height);
 
-		let margin = 100;
+		let margin = 64;
 		let maxWidth = this.width - margin * 2;
 		let maxHeight = this.height - margin * 2;
 		let refBoardWidth = REF_WIDTH * this.state.width;
 		let refBoardHeight = REF_HEIGHT * this.state.height;
+		let scale = 1;
 
-		if (refBoardWidth - maxWidth > refBoardHeight - maxHeight) {
-			this.cellWidth = Math.floor(clamp(REF_WIDTH * (maxWidth / refBoardWidth), 16, REF_WIDTH));
-			this.cellHeight = Math.floor(clamp(REF_HEIGHT * (maxWidth / refBoardWidth), 16, REF_HEIGHT));
-		} //
-		else {
-			this.cellWidth = Math.floor(clamp(REF_WIDTH * (maxHeight / refBoardHeight), 16, REF_WIDTH));
-			this.cellHeight = Math.floor(clamp(REF_HEIGHT * (maxHeight / refBoardHeight), 16, REF_HEIGHT));
+		if (refBoardHeight > maxHeight) {
+			scale = clamp(maxHeight / refBoardHeight, 0.1, 1);
 		}
+		if (refBoardWidth * scale > maxWidth) {
+			scale = clamp(maxWidth / refBoardWidth, 0.1, 1);
+		}
+
+		this.cellWidth = REF_WIDTH * scale;
+		this.cellHeight = REF_HEIGHT * scale;
 
 		let dimensionsX = this.state.width * this.cellWidth;
 		let dimensionsY = this.state.height * this.cellHeight;
@@ -446,8 +445,8 @@ export class MSApp extends AppBase {
 	 * @param y
 	 */
 	public getCellView(x: number, y: number): MSCell {
-		let key = `${x}:${y}`;
-		let poolCell = this.msCellPool[key];
+		let idx = this.state.indexOf(x, y);
+		let poolCell = this.msCellPool[idx];
 
 		if (!poolCell) {
 			throw new Error(`Can't find view cell at ${x},${y}`);
@@ -466,13 +465,12 @@ export class MSApp extends AppBase {
 	 * @param y
 	 */
 	public createCellView(x: number, y: number): MSCell {
-		let key = `${x}:${y}`;
-		let poolCell = (this.msCellPool[key] = new MSCell(this));
-		this.grid.addChild(poolCell);
-
-		poolCell.on("pointertap", this.onPointerTap, this);
-
-		return poolCell;
+		let idx = this.state.indexOf(x, y);
+		let msCell = new MSCell(this);
+		this.msCellPool[idx] = msCell;
+		this.grid.addChild(msCell);
+		msCell.on("pointertap", this.onPointerTap, this);
+		return msCell;
 	}
 
 	/**

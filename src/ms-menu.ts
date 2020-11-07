@@ -47,7 +47,7 @@ export class MSMenu extends Container {
 			label: "Width",
 			default: INITIAL_GAME_CONFIG.gridWidth,
 			min: 4,
-			max: 16
+			max: 32
 		});
 		this.widthScroller.x = 64;
 		this.widthScroller.y = -80;
@@ -58,7 +58,7 @@ export class MSMenu extends Container {
 			label: "Height",
 			default: INITIAL_GAME_CONFIG.gridWidth,
 			min: 4,
-			max: 16
+			max: 32
 		});
 		this.heightScroller.x = 64;
 		this.heightScroller.y = -20;
