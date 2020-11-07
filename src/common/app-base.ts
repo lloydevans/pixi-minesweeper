@@ -1,5 +1,6 @@
 import { Application, Container, LoaderResource, loaders, Texture, utils } from "pixi.js-legacy";
 import * as screenfull from "screenfull";
+import { clamp } from "../maths/clamp";
 
 /**
  * Max selectable device pixel ratio.
@@ -57,7 +58,7 @@ export class AppBase extends Application {
 	 *
 	 */
 	private getWindowDpr() {
-		return Math.round(Math.min(window.devicePixelRatio, MAX_DPR));
+		return Math.round(clamp(window.devicePixelRatio, 1, MAX_DPR));
 	}
 
 	/**
