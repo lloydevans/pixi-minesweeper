@@ -1,4 +1,5 @@
 import defaults from "lodash/defaults";
+import sample from "lodash/sample";
 import {
 	Container,
 	Graphics,
@@ -11,6 +12,7 @@ import {
 } from "pixi.js-legacy";
 import { AppBase } from "./common/app-base";
 import { hexToNum } from "./common/color";
+import { delay } from "./common/delay";
 import { Tween } from "./common/tween";
 import { preventContextMenu } from "./common/utils";
 import { clamp } from "./maths/clamp";
@@ -23,9 +25,6 @@ import { MSState } from "./ms-state";
 import { MSTouchUi } from "./ms-touch-ui";
 import { MSUi } from "./ms-ui";
 
-// Temp hard coded value
-const BOARD_TILE_SCALE = 2;
-
 export const INITIAL_GAME_CONFIG: MSGameConfig = {
 	startMines: 10,
 	gridWidth: 9,
@@ -36,6 +35,7 @@ export const INITIAL_GAME_CONFIG: MSGameConfig = {
  * Core App class.
  */
 export class MSApp extends AppBase {
+	public msCellPool: { [key: string]: MSCell } = {};
 	public state: MSState = new MSState();
 	public config!: MSConfig;
 	public get currentTime() {
@@ -187,7 +187,7 @@ export class MSApp extends AppBase {
 		this.grid.y = -(this.state.height / 2) * this.cellHeight;
 
 		if (this.boardBack) {
-			this.boardBack.tileScale.set(BOARD_TILE_SCALE * (this.cellWidth / REF_WIDTH));
+			this.boardBack.tileScale.set(2 * (this.cellWidth / REF_WIDTH));
 			this.boardBack.width = this.state.width * this.cellWidth;
 			this.boardBack.height = this.state.height * this.cellHeight;
 			this.boardBack.x = (-this.state.width * this.cellWidth) / 2;
@@ -206,25 +206,47 @@ export class MSApp extends AppBase {
 	/**
 	 *
 	 */
-	private initGrid() {
-		this.grid.removeChildren().forEach((el) => el.destroy());
+	private async initGrid() {
+		this.grid.removeChildren().forEach((el) => (el as MSCell).reset());
 
-		for (let x = 0; x < this.state.width; x++) {
-			for (let y = 0; y < this.state.height; y++) {
-				let cellState = this.state.cellAt(x, y);
-				let msCell = new MSCell(this, cellState);
-				cellState.view = msCell;
-				this.grid.addChild(msCell);
+		for (let i = 0; i < this.state.totalCells; i++) {
+			let [x, y] = this.state.coordsOf(i);
+
+			let msCell;
+
+			try {
+				msCell = this.getCellView(x, y);
+			} catch {
+				msCell = this.createCellView(x, y);
+			}
+
+			this.grid.addChild(msCell);
+
+			msCell.visible = false;
+		}
+
+		let indexes: number[] = [];
+		for (let i = 0; i < this.state.totalCells; i++) {
+			indexes.push(i);
+		}
+
+		while (indexes.length > 0) {
+			let idx = (Math.random() * indexes.length) | 0;
+			let cellIdx = indexes.splice(idx, 1)[0];
+			let [x, y] = this.state.coordsOf(cellIdx);
+			let cellState = this.state.cellAt(x, y)!;
+			let msCell = this.getCellView(x, y);
+			msCell.init(cellState);
+			msCell.updateViewState();
+			msCell.visible = true;
+
+			if (indexes.length % Math.floor(this.state.totalCells / 16) === 0) {
+				await delay(16);
 			}
 		}
 
-		this.grid.children.forEach((el) => (el as MSCell).init());
-
 		this.grid.x = -(this.state.width / 2) * this.cellWidth;
 		this.grid.y = -(this.state.height / 2) * this.cellHeight;
-		this.grid.children.forEach((cell) => {
-			cell.on("pointertap", this.onPointerTap, this);
-		});
 	}
 
 	/**
@@ -232,12 +254,7 @@ export class MSApp extends AppBase {
 	 *
 	 */
 	public updateCellStates() {
-		for (let x = 0; x < this.state.width; x++) {
-			for (let y = 0; y < this.state.height; y++) {
-				const state = this.state.cellAt(x, y);
-				state.view!.updateState();
-			}
-		}
+		this.state.forEach((el) => this.getCellView(el.x, el.y).updateViewState());
 	}
 
 	/**
@@ -245,38 +262,21 @@ export class MSApp extends AppBase {
 	 *
 	 * @param config
 	 */
-	public newGame(config: MSGameConfig = this.gameConfig) {
+	public async newGame(config: MSGameConfig = this.gameConfig) {
 		Tween.removeAllTweens();
 
-		this.gameConfig = { ...config };
-
-		this.state.init(config);
-
 		this.time = 0;
-		this.timeActive = true;
+		this.state.init(config);
+		this.grid.interactiveChildren = false;
+		this.gameConfig = { ...config };
 		this.isFirstClick = true;
 		this.ui.visible = true;
 		this.touchUi.hide();
-		this.grid.interactiveChildren = true;
-
-		this.initGrid();
-		this.updateCellStates();
 		this.onResize(this.width, this.height);
-	}
 
-	/**
-	 *
-	 */
-	public restartGame() {
-		Tween.removeAllTweens();
-
-		this.time = 0;
+		await this.initGrid();
 		this.timeActive = true;
-		this.isFirstClick = true;
-		this.touchUi.hide();
 		this.grid.interactiveChildren = true;
-		this.state.reset();
-		this.updateCellStates();
 	}
 
 	/**
@@ -313,7 +313,9 @@ export class MSApp extends AppBase {
 		while (unplacedFlags.length > 0) {
 			let idx = Math.floor(Math.random() * unplacedFlags.length);
 			let el = unplacedFlags.splice(idx, 1)[0];
-			tween = tween.call(() => el.view!.setFlagEnabled(true)).wait(50);
+			tween = tween //
+				.call(() => this.getCellView(el.x, el.y).setFlagEnabled(true))
+				.wait(50);
 		}
 	}
 
@@ -327,25 +329,33 @@ export class MSApp extends AppBase {
 		let tween = Tween.get(this);
 
 		result.incorrect.splice(result.incorrect.indexOf(firstMine), 1);
-		tween = tween.call(() => firstMine.view!.animateResult()).wait(50);
+		tween = tween //
+			.call(() => this.getCellView(firstMine.x, firstMine.y).animateResult())
+			.wait(50);
 
 		while (result.incorrect.length > 0) {
 			let idx = Math.floor(Math.random() * result.incorrect.length);
 			let el = result.incorrect.splice(idx, 1)[0];
-			tween = tween.call(() => el.view!.animateResult()).wait(50);
+			let msCell = this.getCellView(el.x, el.y);
+			tween = tween //
+				.call(() => msCell.animateResult())
+				.wait(50);
 		}
 
 		while (result.correct.length > 0) {
 			let idx = Math.floor(Math.random() * result.correct.length);
 			let el = result.correct.splice(idx, 1)[0];
-			tween = tween.call(() => el.view!.animateResult()).wait(50);
+			let msCell = this.getCellView(el.x, el.y);
+			tween = tween //
+				.call(() => msCell.animateResult())
+				.wait(50);
 		}
 	}
 
 	/**
-	 * Animate win.
+	 *
 	 */
-	private async animateFill(cells: MSCellState): Promise<void> {
+	public async animatedUpdateFrom(cell: MSCellState, predicate: (cell: MSCell) => void): Promise<void> {
 		this.grid.interactiveChildren = false;
 
 		let tween = Tween.get(this);
@@ -356,34 +366,34 @@ export class MSApp extends AppBase {
 			tween = tween
 				.call(() => {
 					for (let c = 0; c < t; c++) {
-						let x = cells.x - i + c;
-						let y = cells.y - i;
+						let x = cell.x - i + c;
+						let y = cell.y - i;
 						if (this.state.coordsInBounds(x, y)) {
-							this.state.cellAt(x, y).view!.updateState();
+							predicate(this.getCellView(x, y));
 						}
 					}
 					for (let c = 0; c < t; c++) {
-						let x = cells.x + i;
-						let y = cells.y - i + c;
+						let x = cell.x + i;
+						let y = cell.y - i + c;
 
 						if (this.state.coordsInBounds(x, y)) {
-							this.state.cellAt(x, y).view!.updateState();
+							predicate(this.getCellView(x, y));
 						}
 					}
 					for (let c = 0; c < t; c++) {
-						let x = cells.x + i - c;
-						let y = cells.y + i;
+						let x = cell.x + i - c;
+						let y = cell.y + i;
 
 						if (this.state.coordsInBounds(x, y)) {
-							this.state.cellAt(x, y).view!.updateState();
+							predicate(this.getCellView(x, y));
 						}
 					}
 					for (let c = 0; c < t; c++) {
-						let x = cells.x - i;
-						let y = cells.y - i + c;
+						let x = cell.x - i;
+						let y = cell.y - i + c;
 
 						if (this.state.coordsInBounds(x, y)) {
-							this.state.cellAt(x, y).view!.updateState();
+							predicate(this.getCellView(x, y));
 						}
 					}
 				})
@@ -399,7 +409,7 @@ export class MSApp extends AppBase {
 	 *
 	 */
 	public async leftClick(cellState: MSCellState) {
-		let msCell = cellState.view!;
+		let msCell = this.getCellView(cellState.x, cellState.y);
 		let x = msCell.ix;
 		let y = msCell.iy;
 
@@ -407,20 +417,20 @@ export class MSApp extends AppBase {
 			this.isFirstClick = false;
 			let result = this.state.selectFirst(x, y);
 			if (result.length > 1) {
-				await this.animateFill(cellState);
+				await this.animatedUpdateFrom(cellState, (cell) => cell.updateViewState());
 			}
 		} //
 		else {
 			let result = this.state.select(x, y);
 
-			msCell.updateState();
+			msCell.updateViewState();
 
 			if (cellState.mine) {
 				this.animateLose(cellState);
 			} //
 			else {
 				if (result.length > 1) {
-					await this.animateFill(cellState);
+					await this.animatedUpdateFrom(cellState, (cell) => cell.updateViewState());
 				}
 			}
 		}
@@ -428,6 +438,41 @@ export class MSApp extends AppBase {
 		this.updateCellStates();
 
 		this.checkWin();
+	}
+
+	/**
+	 *
+	 * @param x
+	 * @param y
+	 */
+	public getCellView(x: number, y: number): MSCell {
+		let key = `${x}:${y}`;
+		let poolCell = this.msCellPool[key];
+
+		if (!poolCell) {
+			throw new Error(`Can't find view cell at ${x},${y}`);
+		}
+
+		if (!poolCell.parent) {
+			poolCell.setParent(this.grid);
+		}
+
+		return poolCell;
+	}
+
+	/**
+	 *
+	 * @param x
+	 * @param y
+	 */
+	public createCellView(x: number, y: number): MSCell {
+		let key = `${x}:${y}`;
+		let poolCell = (this.msCellPool[key] = new MSCell(this));
+		this.grid.addChild(poolCell);
+
+		poolCell.on("pointertap", this.onPointerTap, this);
+
+		return poolCell;
 	}
 
 	/**
@@ -445,7 +490,10 @@ export class MSApp extends AppBase {
 	 */
 	public rightClick(cellState: MSCellState) {
 		cellState.flag = !cellState.flag;
-		cellState.view?.updateState(cellState);
+
+		let msCell = this.getCellView(cellState.x, cellState.y);
+
+		msCell.updateViewState(cellState);
 	}
 
 	/**
@@ -456,6 +504,10 @@ export class MSApp extends AppBase {
 		let msCell = e.currentTarget as MSCell;
 
 		let cellState = this.state.cellAt(msCell.ix, msCell.iy);
+
+		if (!cellState) {
+			throw new Error(`Can't find cell at ${msCell.ix},${msCell.iy}`);
+		}
 
 		switch (e.data.pointerType) {
 			case "mouse":
@@ -470,21 +522,20 @@ export class MSApp extends AppBase {
 				break;
 
 			case "touch":
-				if (cellState.view) {
-					if (this.isFirstClick) {
-						this.leftClick(cellState);
-					} //
-					else if (cellState === this.touchUi.targetCell) {
-						this.touchUi.hide();
-					} //
-					else {
-						this.touchUi.show();
-						this.touchUi.setTargetCell(cellState);
-						let local = this.root.toLocal(cellState.view?.getGlobalPosition());
-						this.touchUi.x = local.x + this.cellWidth / 2;
-						this.touchUi.y = local.y + this.cellHeight / 2;
-					}
+				if (this.isFirstClick) {
+					this.leftClick(cellState);
+				} //
+				else if (cellState === this.touchUi.targetCell) {
+					this.touchUi.hide();
+				} //
+				else {
+					this.touchUi.show();
+					this.touchUi.setTargetCell(cellState);
+					let local = this.root.toLocal(msCell.getGlobalPosition());
+					this.touchUi.x = local.x + this.cellWidth / 2;
+					this.touchUi.y = local.y + this.cellHeight / 2;
 				}
+
 				break;
 		}
 	}

@@ -107,7 +107,6 @@ export class MSMenu extends Container {
 		let gridHeight = this.heightScroller.current;
 		let startMines = this.minesScroller.current;
 		this.minesScroller.setMax(gridWidth * gridHeight - 2);
-		// this.minesScroller.set((gridWidth * gridHeight) / 3);
 		this.app.previewGame({ startMines, gridWidth, gridHeight });
 	}
 }

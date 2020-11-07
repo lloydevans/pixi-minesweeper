@@ -1,5 +1,3 @@
-import { MSCell } from "./ms-cell";
-
 /**
  *
  */
@@ -33,9 +31,4 @@ export interface MSCellState {
 	 * Whether the cell contains a flag or not.
 	 */
 	flag: boolean;
-
-	/**
-	 * View object reference.
-	 */
-	view?: MSCell;
 }

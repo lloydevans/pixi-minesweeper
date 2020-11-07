@@ -58,7 +58,7 @@ export class MSState {
 			throw new Error("Grid height bigger than " + MAX_GRID_HEIGHT);
 		}
 		if (config.startMines < 1) {
-			throw new Error(`Must have at least 1 mine`);
+			throw new Error("Must have at least 1 mine");
 		}
 		if (config.startMines > config.gridWidth * config.gridHeight - 1) {
 			throw new Error(
@@ -87,7 +87,6 @@ export class MSState {
 				cell.mine = false;
 				cell.flag = false;
 				cell.covered = true;
-				cell.view!.reset();
 			}
 		}
 		this.shuffleMines(this.config.startMines);
@@ -117,16 +116,20 @@ export class MSState {
 	}
 
 	/**
+	 *
+	 * @param predicate
+	 */
+	public forEach(predicate: (cell: MSCellState, i: number) => void) {
+		this.cells.forEach(predicate);
+	}
+
+	/**
 	 * Get cell at coords.
 	 *
 	 * @param x
 	 * @param y
 	 */
-	public cellAt(x: number, y: number): MSCellState {
-		if (!this.coordsInBounds(x, y)) {
-			throw new Error("cellAt: Coords out of bounds");
-		}
-
+	public cellAt(x: number, y: number): MSCellState | undefined {
 		return this.cells[x + y * this.width];
 	}
 
@@ -147,11 +150,12 @@ export class MSState {
 	 * @param y
 	 */
 	public placeFlag(x: number, y: number) {
-		if (!this.coordsInBounds(x, y)) {
-			throw new Error("placeFlag: Coords out of bounds");
+		let cell = this.cellAt(x, y);
+
+		if (!cell) {
+			throw new Error(`Can't find cell at ${x},${y}`);
 		}
 
-		let cell = this.cellAt(x, y);
 		cell.flag = true;
 	}
 
@@ -162,11 +166,12 @@ export class MSState {
 	 * @param y
 	 */
 	public clearFlag(x: number, y: number) {
-		if (!this.coordsInBounds(x, y)) {
-			throw new Error("clearFlag: Coords out of bounds");
+		let cell = this.cellAt(x, y);
+
+		if (!cell) {
+			throw new Error(`Can't find cell at ${x},${y}`);
 		}
 
-		let cell = this.cellAt(x, y);
 		cell.flag = false;
 	}
 
@@ -176,11 +181,12 @@ export class MSState {
 	 * @param index
 	 */
 	public placeMine(x: number, y: number) {
-		if (!this.coordsInBounds(x, y)) {
-			throw new Error("placeMine: Coords out of bounds");
+		let cell = this.cellAt(x, y);
+
+		if (!cell) {
+			throw new Error(`Can't find cell at ${x},${y}`);
 		}
 
-		let cell = this.cellAt(x, y);
 		cell.mine = true;
 	}
 
@@ -191,11 +197,12 @@ export class MSState {
 	 * @param y
 	 */
 	public clearMine(x: number, y: number) {
-		if (!this.coordsInBounds(x, y)) {
-			throw new Error("clearMine: Coords out of bounds");
+		let cell = this.cellAt(x, y);
+
+		if (!cell) {
+			throw new Error(`Can't find cell at ${x},${y}`);
 		}
 
-		let cell = this.cellAt(x, y);
 		if (cell.mine) {
 			cell.mine = false;
 		}
@@ -315,6 +322,10 @@ export class MSState {
 	public select(x: number, y: number): MSCellState[] {
 		let cell = this.cellAt(x, y);
 
+		if (!cell) {
+			throw new Error(`Can't find cell at ${x},${y}`);
+		}
+
 		let result: MSCellState[] = [];
 
 		if (cell.adjacent === 0 && !cell.mine) {
@@ -340,6 +351,11 @@ export class MSState {
 	 */
 	public selectFirst(x: number, y: number): MSCellState[] {
 		let cell = this.cellAt(x, y);
+
+		if (!cell) {
+			throw new Error(`Can't find cell at ${x},${y}`);
+		}
+
 		let foundMove = !cell.mine && cell.adjacent === 0;
 		let i = 0;
 
@@ -365,6 +381,11 @@ export class MSState {
 	 */
 	public uncover(x: number, y: number) {
 		let cell = this.cellAt(x, y);
+
+		if (!cell) {
+			throw new Error(`Can't find cell at ${x},${y}`);
+		}
+
 		cell.covered = false;
 
 		if (cell.flag) {
@@ -380,6 +401,10 @@ export class MSState {
 	 */
 	private fill(x: number, y: number, result: MSCellState[]) {
 		let cell = this.cellAt(x, y);
+
+		if (!cell) {
+			throw new Error(`Can't find cell at ${x},${y}`);
+		}
 
 		if (cell.covered) {
 			result.push(cell);

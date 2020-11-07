@@ -18,6 +18,15 @@ export enum AnimTrack {
 	Hover
 }
 
+const INITIAL_STATE = {
+	x: -1,
+	y: -1,
+	adjacent: 0,
+	covered: true,
+	mine: false,
+	flag: false
+};
+
 /**
  *
  */
@@ -48,23 +57,12 @@ export class MSCell extends Container {
 	 * @param cellWidth
 	 * @param cellHeight
 	 */
-	constructor(app: MSApp, state: MSCellState) {
+	constructor(app: MSApp) {
 		super();
 
 		this.app = app;
-		this.state = state;
-		this.viewState = {
-			x: -1,
-			y: -1,
-			adjacent: 0,
-			covered: true,
-			mine: false,
-			flag: false
-		};
-
-		this.anim = new Spine(this.app.getSpine("grid-square"));
-		this.anim.x = REF_WIDTH / 2;
-		this.anim.y = REF_HEIGHT / 2;
+		this.state = { ...INITIAL_STATE };
+		this.viewState = { ...INITIAL_STATE };
 
 		this.edges = {
 			l: this.createEdgeSprite(0),
@@ -72,6 +70,10 @@ export class MSCell extends Container {
 			u: this.createEdgeSprite(90),
 			d: this.createEdgeSprite(-90)
 		};
+
+		this.anim = new Spine(this.app.getSpine("grid-square"));
+		this.anim.x = REF_WIDTH / 2;
+		this.anim.y = REF_HEIGHT / 2;
 
 		let textStyle = new TextStyle({
 			fontWeight: this.app.config.colorNumberWeight,
@@ -88,27 +90,27 @@ export class MSCell extends Container {
 			el.height = REF_HEIGHT;
 		});
 
-		this.hitArea = new Rectangle(0, 0, REF_WIDTH, REF_HEIGHT);
-
 		this.addChild(this.adjacentText);
 		this.addChild(this.anim);
 		this.addChild(...Object.values(this.edges));
 
+		this.hitArea = new Rectangle(0, 0, REF_WIDTH, REF_HEIGHT);
+
 		this.on("mouseover", this.animateHoverStart, this);
 		this.on("mouseout", this.animateHoverEnd, this);
-
-		// @ts-ignore // Missing type.
-		this.tabIndex = this.app.state.indexOf(this.ix, this.iy);
-		this.accessibleHint = `cell:${this.ix},${this.iy}`;
-
-		this.reset();
 	}
 
 	/**
 	 *
 	 */
-	public init() {
-		this.updateState();
+	public init(state: MSCellState) {
+		this.state = state;
+
+		// @ts-ignore // Missing type.
+		this.tabIndex = this.app.state.indexOf(this.ix, this.iy);
+		this.accessibleHint = `cell:${this.ix},${this.iy}`;
+		this.reset();
+		this.updateViewState();
 		this.updateGridPosition();
 		this.setInteractiveEnabled(true);
 	}
@@ -117,9 +119,17 @@ export class MSCell extends Container {
 	 *
 	 */
 	public reset() {
+		this.viewState = {
+			x: -1,
+			y: -1,
+			adjacent: 0,
+			covered: true,
+			mine: false,
+			flag: false
+		};
 		let coverType = (this.state.x + this.state.y) % 2 === 0 ? "even" : "odd";
 		this.anim.state.setAnimation(AnimTrack.FillColor, "covered-" + coverType, false);
-		this.anim.state.setAnimation(AnimTrack.Cover, "covered", false);
+		this.anim.state.setAnimation(AnimTrack.Cover, this.app.state.config.cheatMode ? "covered-cheat" : "covered", false);
 		this.anim.state.setAnimation(AnimTrack.Flag, "flag-hidden", false);
 		this.anim.state.setAnimation(AnimTrack.Mine, "mine-hidden", false);
 		this.anim.state.setAnimation(AnimTrack.Feedback, "feedback-hidden", false);
@@ -160,28 +170,28 @@ export class MSCell extends Container {
 		});
 
 		if (this.ix - 1 > -1) {
-			let l = this.app.state.cellAt(this.ix - 1, this.iy).view!;
+			let l = this.app.getCellView(this.ix - 1, this.iy);
 			this.edges.l.visible = l.viewState.covered !== this.viewState.covered;
 			l.edges.r.visible = l.viewState.covered !== this.viewState.covered;
 		} else {
 			this.edges.l.visible = true;
 		}
 		if (this.ix + 1 < this.app.state.width) {
-			let r = this.app.state.cellAt(this.ix + 1, this.iy).view!;
+			let r = this.app.getCellView(this.ix + 1, this.iy);
 			this.edges.r.visible = r.viewState.covered !== this.viewState.covered;
 			r.edges.l.visible = r.viewState.covered !== this.viewState.covered;
 		} else {
 			this.edges.r.visible = true;
 		}
 		if (this.iy - 1 > -1) {
-			let u = this.app.state.cellAt(this.ix, this.iy - 1).view!;
+			let u = this.app.getCellView(this.ix, this.iy - 1);
 			this.edges.u.visible = u.viewState.covered !== this.viewState.covered;
 			u.edges.d.visible = u.viewState.covered !== this.viewState.covered;
 		} else {
 			this.edges.u.visible = true;
 		}
 		if (this.iy + 1 < this.app.state.height) {
-			let d = this.app.state.cellAt(this.ix, this.iy + 1).view!;
+			let d = this.app.getCellView(this.ix, this.iy + 1);
 			this.edges.d.visible = d.viewState.covered !== this.viewState.covered;
 			d.edges.u.visible = d.viewState.covered !== this.viewState.covered;
 		} else {
@@ -193,7 +203,7 @@ export class MSCell extends Container {
 	 *
 	 * @param state
 	 */
-	public updateState(state: MSCellState = this.state) {
+	public updateViewState(state: MSCellState = this.state) {
 		if (state.flag !== this.viewState.flag) {
 			this.setFlagEnabled(state.flag);
 		}
@@ -282,7 +292,11 @@ export class MSCell extends Container {
 	public setCoveredEnabled(enabled = true) {
 		this.viewState.covered = enabled;
 		if (enabled) {
-			this.anim.state.setAnimation(AnimTrack.Cover, "covered", false);
+			this.anim.state.setAnimation(
+				AnimTrack.Cover,
+				this.app.state.config.cheatMode ? "covered-cheat" : "covered",
+				false
+			);
 			this.setInteractiveEnabled(true);
 		} else {
 			this.anim.state.setAnimation(AnimTrack.Cover, "covered-dig-end", false);
