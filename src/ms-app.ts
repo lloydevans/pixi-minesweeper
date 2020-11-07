@@ -63,6 +63,9 @@ export class MSApp extends AppBase {
 	constructor() {
 		super({});
 
+		// @ts-ignore
+		window.ms = this;
+
 		preventContextMenu();
 
 		this.gameConfig = { ...INITIAL_GAME_CONFIG };
@@ -85,8 +88,7 @@ export class MSApp extends AppBase {
 	private onInit() {
 		this.grid.interactiveChildren = false;
 
-		this.addSpine("mine");
-		this.addSpine("flag");
+		this.addSpine("grid-square");
 		this.addSpine("timer");
 		this.addSpine("feedback");
 		this.addAtlas("textures");
@@ -157,9 +159,9 @@ export class MSApp extends AppBase {
 		this.background.beginFill(hexToNum(this.config?.colorBackground || "#ffffff"));
 		this.background.drawRect(-width / 2, -height / 2, width, height);
 
-		let margin = 200;
-		let maxWidth = this.width - margin;
-		let maxHeight = this.height - margin;
+		let margin = 100;
+		let maxWidth = this.width - margin * 2;
+		let maxHeight = this.height - margin * 2;
 		let refBoardWidth = REF_WIDTH * this.state.width;
 		let refBoardHeight = REF_HEIGHT * this.state.height;
 
@@ -264,9 +266,8 @@ export class MSApp extends AppBase {
 
 	/**
 	 *
-	 * @param config
 	 */
-	public restartGame(config: MSGameConfig = this.gameConfig) {
+	public restartGame() {
 		Tween.removeAllTweens();
 
 		this.time = 0;

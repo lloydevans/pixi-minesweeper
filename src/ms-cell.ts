@@ -1,8 +1,6 @@
-import { BLEND_MODES, Container, Rectangle, Sprite, Text, TextStyle, Texture, TilingSprite } from "pixi.js-legacy";
-import { Ease } from "./common/ease";
+import { Container, Rectangle, Sprite, Text, TextStyle } from "pixi.js-legacy";
 import { GameText } from "./common/game-text";
 import { Spine } from "./common/spine";
-import { Tween } from "./common/tween";
 import { MSApp } from "./ms-app";
 import type { MSCellState } from "./ms-cell-state";
 import type { NumberKey } from "./ms-config";
@@ -10,6 +8,15 @@ import type { NumberKey } from "./ms-config";
 // Reference size of cell graphics before any scaling.
 export const REF_WIDTH = 64;
 export const REF_HEIGHT = 64;
+
+export enum AnimTrack {
+	FillColor,
+	Cover,
+	Feedback,
+	Mine,
+	Flag,
+	Hover
+}
 
 /**
  *
@@ -22,21 +29,15 @@ export class MSCell extends Container {
 		return this.viewState.y;
 	}
 
-	private flag?: Spine;
-	private mine?: Spine;
 	private app: MSApp;
-	private front: TilingSprite;
-	private hover: Sprite;
-	private feedback: Spine;
-	private adjacentText: Text;
-	private textureFront: Texture;
-	private textureFrontTileSize: number = 32;
+	private anim: Spine;
 	private edges: {
 		l: Sprite;
 		r: Sprite;
 		u: Sprite;
 		d: Sprite;
 	};
+	private adjacentText: Text;
 	private state: MSCellState;
 	private viewState: MSCellState;
 
@@ -60,8 +61,10 @@ export class MSCell extends Container {
 			mine: false,
 			flag: false
 		};
-		this.mine = this.createMine();
-		this.flag = this.createFlag();
+
+		this.anim = new Spine(this.app.getSpine("grid-square"));
+		this.anim.x = REF_WIDTH / 2;
+		this.anim.y = REF_HEIGHT / 2;
 
 		this.edges = {
 			l: this.createEdgeSprite(0),
@@ -70,38 +73,14 @@ export class MSCell extends Container {
 			d: this.createEdgeSprite(-90)
 		};
 
-		this.textureFront = this.app.getFrame("tiles", "front-0");
-
-		this.hover = Sprite.from(Texture.WHITE);
-		this.hover.anchor.set(0.5);
-		this.hover.alpha = 0;
-		this.hover.width = REF_WIDTH;
-		this.hover.height = REF_HEIGHT;
-		this.hover.x = REF_WIDTH / 2;
-		this.hover.y = REF_HEIGHT / 2;
-		this.hover.blendMode = BLEND_MODES.ADD;
-
 		let textStyle = new TextStyle({
 			fontWeight: this.app.config.colorNumberWeight,
-			fontSize: Math.floor(REF_WIDTH * 0.65)
+			fontSize: Math.floor(REF_WIDTH * 0.5)
 		});
 		this.adjacentText = new GameText(this.app, "", textStyle);
 		this.adjacentText.anchor.set(0.5);
 		this.adjacentText.x = REF_WIDTH / 2;
 		this.adjacentText.y = REF_HEIGHT / 2;
-
-		this.front = new TilingSprite(this.textureFront);
-		this.front.scale.set(REF_WIDTH / this.textureFrontTileSize);
-		this.front.width = this.textureFrontTileSize;
-		this.front.height = this.textureFrontTileSize;
-		this.front.visible = true;
-		// TODO: Needs optimisation, this causes lag on board init.
-		this.front.cacheAsBitmap = true;
-
-		this.feedback = new Spine(this.app.getSpine("feedback"));
-		this.feedback.visible = false;
-		this.feedback.x = REF_WIDTH / 2;
-		this.feedback.y = REF_HEIGHT / 2;
 
 		Object.values(this.edges).forEach((el) => {
 			el.position.set(REF_WIDTH / 2, REF_HEIGHT / 2);
@@ -111,13 +90,9 @@ export class MSCell extends Container {
 
 		this.hitArea = new Rectangle(0, 0, REF_WIDTH, REF_HEIGHT);
 
-		this.addChild(this.mine);
 		this.addChild(this.adjacentText);
-		this.addChild(this.front);
+		this.addChild(this.anim);
 		this.addChild(...Object.values(this.edges));
-		this.addChild(this.flag);
-		this.addChild(this.feedback);
-		this.addChild(this.hover);
 
 		this.on("mouseover", this.animateHoverStart, this);
 		this.on("mouseout", this.animateHoverEnd, this);
@@ -125,6 +100,8 @@ export class MSCell extends Container {
 		// @ts-ignore // Missing type.
 		this.tabIndex = this.app.state.indexOf(this.ix, this.iy);
 		this.accessibleHint = `cell:${this.ix},${this.iy}`;
+
+		this.reset();
 	}
 
 	/**
@@ -140,34 +117,13 @@ export class MSCell extends Container {
 	 *
 	 */
 	public reset() {
-		this.feedback.visible = false;
-	}
-
-	/**
-	 *
-	 */
-	private createFlag(): Spine {
-		let flag = new Spine(this.app.getSpine("flag"));
-		flag.stateData.defaultMix = 0.05;
-		flag.x = REF_WIDTH / 2 - 2;
-		flag.y = REF_HEIGHT - 12;
-		flag.visible = false;
-		flag.scale.set(0.75);
-		this.addChild(flag);
-		return flag;
-	}
-
-	/**
-	 *
-	 */
-	private createMine(): Spine {
-		let mine = new Spine(this.app.getSpine("mine"));
-		mine.state.setAnimation(0, "idle", true);
-		mine.x = REF_WIDTH / 2;
-		mine.y = REF_HEIGHT / 2;
-		mine.visible = false;
-		this.addChild(mine);
-		return mine;
+		let coverType = (this.state.x + this.state.y) % 2 === 0 ? "even" : "odd";
+		this.anim.state.setAnimation(AnimTrack.FillColor, "covered-" + coverType, false);
+		this.anim.state.setAnimation(AnimTrack.Cover, "covered", false);
+		this.anim.state.setAnimation(AnimTrack.Flag, "flag-hidden", false);
+		this.anim.state.setAnimation(AnimTrack.Mine, "mine-hidden", false);
+		this.anim.state.setAnimation(AnimTrack.Feedback, "feedback-hidden", false);
+		this.anim.state.setAnimation(AnimTrack.Hover, "hover-hidden", false);
 	}
 
 	/**
@@ -176,8 +132,6 @@ export class MSCell extends Container {
 	private updateGridPosition() {
 		this.x = this.ix * REF_WIDTH;
 		this.y = this.iy * REF_HEIGHT;
-		this.front.tilePosition.x = -this.viewState.x * this.textureFrontTileSize;
-		this.front.tilePosition.y = -this.viewState.y * this.textureFrontTileSize;
 	}
 
 	/**
@@ -263,8 +217,6 @@ export class MSCell extends Container {
 			this.updateGridPosition();
 		}
 
-		this.front.alpha = this.app.state.config.cheatMode ? 0.9 : 1;
-
 		Object.assign(this.viewState, state);
 
 		this.updateEdgeSprites();
@@ -295,29 +247,21 @@ export class MSCell extends Container {
 	 *
 	 */
 	public animatePress() {
-		Tween.get(this.hover).to(
-			{
-				width: REF_WIDTH - 32,
-				height: REF_HEIGHT - 32,
-				alpha: 0
-			},
-			150,
-			Ease.sineOut
-		);
+		this.anim.state.setAnimation(AnimTrack.Hover, "hover-press", false);
 	}
 
 	/**
 	 *
 	 */
 	public animateHoverStart() {
-		Tween.get(this.hover).to({ alpha: 0.25 }, 50);
+		this.anim.state.setAnimation(AnimTrack.Hover, "hover-over", false);
 	}
 
 	/**
 	 *
 	 */
 	public animateHoverEnd() {
-		Tween.get(this.hover).to({ alpha: 0 }, 50);
+		this.anim.state.setAnimation(AnimTrack.Hover, "hover-out", false);
 	}
 
 	/**
@@ -338,11 +282,11 @@ export class MSCell extends Container {
 	public setCoveredEnabled(enabled = true) {
 		this.viewState.covered = enabled;
 		if (enabled) {
+			this.anim.state.setAnimation(AnimTrack.Cover, "covered", false);
 			this.setInteractiveEnabled(true);
-			this.front.visible = true;
 		} else {
+			this.anim.state.setAnimation(AnimTrack.Cover, "covered-dig-end", false);
 			this.setInteractiveEnabled(false);
-			this.front.visible = false;
 		}
 	}
 
@@ -364,12 +308,10 @@ export class MSCell extends Container {
 	 */
 	public setMineEnabled(enabled = true) {
 		this.viewState.mine = enabled;
-		if (this.mine) {
-			if (enabled) {
-				this.mine.visible = true;
-			} else {
-				this.mine.visible = false;
-			}
+		if (enabled) {
+			this.anim.state.setAnimation(AnimTrack.Mine, "mine-explode", false);
+		} else {
+			this.anim.state.setAnimation(AnimTrack.Mine, "mine-hidden", false);
 		}
 	}
 
@@ -378,14 +320,11 @@ export class MSCell extends Container {
 	 */
 	public setFlagEnabled(enabled = true) {
 		this.viewState.flag = enabled;
-		if (this.flag) {
-			if (enabled) {
-				this.flag.state.setAnimation(0, "place-confirm", false);
-				this.flag.visible = true;
-			} else {
-				this.flag.state.setAnimation(0, "destroy", false);
-				this.flag.state.addAnimation(0, "hidden", false, 0);
-			}
+
+		if (enabled) {
+			this.anim.state.setAnimation(AnimTrack.Flag, "flag-place-end", false);
+		} else {
+			this.anim.state.setAnimation(AnimTrack.Flag, "flag-destroy", false);
 		}
 	}
 
@@ -393,22 +332,20 @@ export class MSCell extends Container {
 	 *
 	 */
 	public animateCorrect() {
-		this.feedback.visible = true;
-		this.feedback.state.setAnimation(0, "correct", false);
+		this.anim.state.setAnimation(AnimTrack.Feedback, "feedback-correct", false);
 	}
 
 	/**
 	 *
 	 */
 	public animateIncorrect() {
-		this.feedback.visible = true;
-		this.feedback.state.setAnimation(0, "incorrect", false);
+		this.anim.state.setAnimation(AnimTrack.Feedback, "feedback-incorrect", false);
 	}
 
 	/**
 	 *
 	 */
 	public explodeMine() {
-		this.mine?.state.setAnimation(0, "explode", false);
+		this.anim.state.setAnimation(AnimTrack.Mine, "mine-explode", false);
 	}
 }

@@ -44,10 +44,9 @@ export class MSUi extends Container {
 		this.flagsContainer = new Container();
 		this.flagsContainer.y = -8;
 
-		this.flagsGraphic = new Spine(this.app.getSpine("flag"));
-		this.flagsGraphic.state.setAnimation(0, "place-confirm", false);
-		this.flagsGraphic.scale.set(0.75);
-		this.flagsGraphic.y = -4;
+		this.flagsGraphic = new Spine(this.app.getSpine("grid-square"));
+		this.flagsGraphic.state.setAnimation(0, "flag-idle", false);
+		this.flagsGraphic.y = -24;
 
 		this.flagsCount = new GameText(this.app, "", textStyle);
 		this.flagsCount.anchor.set(0, 0.5);

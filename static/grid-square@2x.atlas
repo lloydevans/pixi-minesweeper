@@ -1,0 +1,55 @@
+
+grid-square@2x.png
+size: 1024,256
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+border
+  rotate: false
+  xy: 293, 2
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+cross
+  rotate: false
+  xy: 423, 2
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+fill
+  rotate: false
+  xy: 163, 2
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+flag-cloth
+  rotate: false
+  xy: 2, 85
+  size: 46, 45
+  orig: 46, 45
+  offset: 0, 0
+  index: -1
+flag-pole
+  rotate: true
+  xy: 50, 51
+  size: 79, 111
+  orig: 79, 111
+  offset: 0, 0
+  index: -1
+mine
+  rotate: false
+  xy: 553, 2
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+tick
+  rotate: false
+  xy: 683, 2
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
