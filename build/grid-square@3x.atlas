@@ -1,0 +1,55 @@
+
+grid-square@3x.png
+size: 2048,256
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+border
+  rotate: false
+  xy: 196, 2
+  size: 192, 192
+  orig: 192, 192
+  offset: 0, 0
+  index: -1
+cross
+  rotate: false
+  xy: 390, 2
+  size: 192, 192
+  orig: 192, 192
+  offset: 0, 0
+  index: -1
+fill
+  rotate: false
+  xy: 2, 2
+  size: 192, 192
+  orig: 192, 192
+  offset: 0, 0
+  index: -1
+flag-cloth
+  rotate: false
+  xy: 1093, 126
+  size: 69, 68
+  orig: 69, 68
+  offset: 0, 0
+  index: -1
+flag-pole
+  rotate: false
+  xy: 972, 27
+  size: 119, 167
+  orig: 119, 167
+  offset: 0, 0
+  index: -1
+mine
+  rotate: false
+  xy: 584, 2
+  size: 192, 192
+  orig: 192, 192
+  offset: 0, 0
+  index: -1
+tick
+  rotate: false
+  xy: 778, 2
+  size: 192, 192
+  orig: 192, 192
+  offset: 0, 0
+  index: -1
