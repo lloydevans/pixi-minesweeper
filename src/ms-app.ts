@@ -249,7 +249,6 @@ export class MSApp extends AppBase {
 	}
 
 	/**
-	 * Update all cell state. TODO: more efficient update.
 	 *
 	 */
 	public updateCellStates() {
@@ -433,8 +432,6 @@ export class MSApp extends AppBase {
 				}
 			}
 		}
-
-		this.updateCellStates();
 
 		this.checkWin();
 	}
