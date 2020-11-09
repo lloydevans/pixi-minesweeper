@@ -1,6 +1,8 @@
+import * as Tone from "tone";
 import { InteractionEvent, Sprite, Texture } from "pixi.js-legacy";
 import { AppBase } from "./app-base";
 import { sounds } from "../ms-tone";
+import { Tween } from "./tween";
 
 export interface ButtonConfig {
 	texture: Texture;
@@ -67,8 +69,13 @@ export class Button extends Sprite {
 	 *
 	 * @param e
 	 */
-	protected onPointerDown(e: InteractionEvent) {
+	protected async onPointerDown(e: InteractionEvent) {
 		this.alpha = 0.5;
+
+		if (Tone.context.state !== "running") {
+			await Tone.start();
+		}
+
 		sounds.blop.playbackRate = 2;
 		sounds.blop.start();
 	}
