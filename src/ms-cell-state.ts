@@ -32,3 +32,15 @@ export interface MSCellState {
 	 */
 	flag: boolean;
 }
+
+/**
+ *
+ */
+export const CELL_STATE_DEFAULTS = {
+	x: -1,
+	y: -1,
+	adjacent: 0,
+	covered: false,
+	mine: false,
+	flag: false
+};

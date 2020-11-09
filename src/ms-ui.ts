@@ -17,6 +17,7 @@ export class MSUi extends Container {
 
 	// These definitely get set in initilisation.
 	private buttonRestart!: Button;
+	private buttonCross!: Button;
 	private flagsContainer!: Container;
 	private flagsGraphic!: Spine;
 	private flagsCount!: Text;
@@ -39,7 +40,7 @@ export class MSUi extends Container {
 	 * Initialisation must be called after assets are loaded.
 	 */
 	init() {
-		let textStyle = new TextStyle({ fill: 0xffffff, fontWeight: "bold" });
+		let textStyle = new TextStyle({ fill: 0xffffff, fontWeight: "bold", fontSize: 42 });
 
 		this.flagsContainer = new Container();
 		this.flagsContainer.y = -8;
@@ -65,7 +66,14 @@ export class MSUi extends Container {
 		this.timeCount.x = 38;
 		this.timeCount.y = -24;
 
-		this.buttonRestart = new Button(this.app, this.app.getFrame("textures", "button-restart"));
+		this.buttonCross = new Button(this.app, {
+			texture: this.app.getFrame("textures", "button-cross")
+		});
+		this.buttonCross.on("pointertap", () => this.app.showMenu());
+
+		this.buttonRestart = new Button(this.app, {
+			texture: this.app.getFrame("textures", "button-restart")
+		});
 		this.buttonRestart.on("pointertap", () => this.app.newGame());
 
 		this.timeContainer.addChild(this.timeGraphic);
@@ -77,6 +85,7 @@ export class MSUi extends Container {
 		this.addChild(this.timeContainer);
 		this.addChild(this.flagsContainer);
 		this.addChild(this.buttonRestart);
+		this.addChild(this.buttonCross);
 
 		this.app.events.on("update", this.onUpdate, this);
 		this.app.events.on("resize", this.onResize, this);
@@ -108,9 +117,11 @@ export class MSUi extends Container {
 	onResize(width: number, height: number) {
 		this.buttonRestart.x = width / 2 - 64;
 		this.buttonRestart.y = -height / 2 + 42;
+		this.buttonCross.x = width / 2 - 148;
+		this.buttonCross.y = -height / 2 + 42;
 		this.flagsContainer.x = -width / 2 + 32;
 		this.flagsContainer.y = -height / 2 + 64;
-		this.timeContainer.x = -width / 2 + 148;
+		this.timeContainer.x = -width / 2 + 170;
 		this.timeContainer.y = -height / 2 + 64;
 	}
 }

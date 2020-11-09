@@ -5,7 +5,7 @@ import { Button } from "./button";
 import { GameText } from "./game-text";
 
 export interface ButtonScrollerOptions {
-	textureArrow: Texture;
+	arrowTexture: Texture;
 	textStyle: TextStyle;
 	label: string;
 	default: number;
@@ -20,10 +20,22 @@ export class ButtonScroller extends Container {
 	get min(): number {
 		return this._min;
 	}
+	set min(value: number) {
+		this._min = value;
+		if (this.current > this._min) {
+			this.set(this._min);
+		}
+	}
 
 	private _max: number;
 	get max(): number {
 		return this._max;
+	}
+	set max(value: number) {
+		this._max = value;
+		if (this.current > this._max) {
+			this.set(this._max);
+		}
 	}
 
 	private _current: number;
@@ -51,15 +63,13 @@ export class ButtonScroller extends Container {
 		this._default = options.default;
 		this._current = this.default;
 
-		this.buttonLeft = new Button(this.app, options.textureArrow);
+		this.buttonLeft = new Button(this.app, { texture: options.arrowTexture });
+		this.buttonLeft.rotation = Math.PI;
 		this.buttonLeft.anchor.set(0.5);
-		this.buttonLeft.scale.set(3);
 		this.buttonLeft.x = -64;
 
-		this.buttonRight = new Button(this.app, options.textureArrow);
+		this.buttonRight = new Button(this.app, { texture: options.arrowTexture });
 		this.buttonRight.anchor.set(0.5);
-		this.buttonRight.scale.set(3);
-		this.buttonRight.scale.y = -3;
 		this.buttonRight.x = 64;
 
 		this.number = new GameText(this.app, this.default.toString(), options.textStyle);
@@ -86,15 +96,5 @@ export class ButtonScroller extends Container {
 		this.buttonRight.alpha = this.current !== this.max ? 1 : 0.5;
 
 		this.emit("set", this.current);
-	}
-
-	setMin(value: number) {
-		this._min = value;
-		this.set(this.current);
-	}
-
-	setMax(value: number) {
-		this._max = value;
-		this.set(this.current);
 	}
 }

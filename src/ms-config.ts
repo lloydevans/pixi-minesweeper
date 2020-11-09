@@ -33,11 +33,6 @@ export interface MSConfig {
 		"7": string;
 		"8": string;
 	};
-	levels: {
-		easy: MSGameConfig;
-		medium: MSGameConfig;
-		hard: MSGameConfig;
-	};
 }
 
 /**
@@ -52,30 +47,13 @@ export const MS_CONFIG_DEFAULT: MSConfig = {
 	colorNumberFont: "Arial",
 	colorNumberWeight: "bold",
 	colorNumbers: {
-		"1": "#326cff",
-		"2": "#007a00",
-		"3": "#962727",
-		"4": "#FAC7D2",
-		"5": "#FB7B04",
-		"6": "#762407",
-		"7": "#AD0E71",
-		"8": "#4A6C98"
-	},
-	levels: {
-		easy: {
-			startMines: 4,
-			gridWidth: 6,
-			gridHeight: 6
-		},
-		medium: {
-			startMines: 10,
-			gridWidth: 10,
-			gridHeight: 10
-		},
-		hard: {
-			startMines: 30,
-			gridWidth: 16,
-			gridHeight: 16
-		}
+		"1": "#4b6f9c",
+		"2": "#5c9c49",
+		"3": "#995848",
+		"4": "#544896",
+		"5": "#964872",
+		"6": "#469183",
+		"7": "#818a6a",
+		"8": "#51524f"
 	}
 };

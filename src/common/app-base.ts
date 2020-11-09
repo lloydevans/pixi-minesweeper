@@ -1,6 +1,6 @@
+import clamp from "lodash/clamp";
 import { Application, Container, LoaderResource, loaders, Texture, utils } from "pixi.js-legacy";
 import * as screenfull from "screenfull";
-import { clamp } from "../maths/clamp";
 
 /**
  * Max selectable device pixel ratio.
@@ -76,8 +76,8 @@ export class AppBase extends Application {
 		this.renderer.resize(this.width, this.height);
 
 		// Center root container but this could be made optional.
-		this.root.x = (this.renderer.width * (1 / this.dpr)) / 2;
-		this.root.y = (this.renderer.height * (1 / this.dpr)) / 2;
+		this.root.x = this.renderer.width / this.dpr / 2;
+		this.root.y = this.renderer.height / this.dpr / 2;
 
 		this.events.emit("resize", this.width, this.height);
 	}
@@ -178,7 +178,7 @@ export class AppBase extends Application {
 	 * @param atlasName
 	 * @param scale
 	 */
-	public addJson(name: string, url: string) {
-		this.loader.add(name, url);
+	public addJson(jsonName: string, url: string) {
+		this.loader.add(jsonName, url);
 	}
 }

@@ -2,7 +2,7 @@
 	"name": "pixi-minesweeper",
 	"version": "0.0.0",
 	"scripts": {
-		"start": "npm run serve -- --env.modern",
+		"start": "npm run serve",
 		"test": "npx --no-install jest",
 		"test-watch": "npm run test -- --watch",
 		"serve": "npx --no-install webpack-dev-server",
@@ -29,6 +29,7 @@
 		"pixi.js-legacy": "^5.3.3",
 		"reset-css": "^5.0.1",
 		"screenfull": "^5.0.2",
+		"tone": "^14.7.58",
 		"tslib": "^2.0.1",
 		"tweenjs": "^1.0.2"
 	},

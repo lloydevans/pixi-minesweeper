@@ -13,7 +13,7 @@ export class ButtonText extends Button {
 	private label: GameText;
 
 	constructor(app: AppBase, options: ButtonTextOption) {
-		super(app, options.backTexture);
+		super(app, { texture: options.backTexture });
 
 		this.label = new GameText(this.app, options.text, options.textStyle);
 		this.label.anchor.set(0.5);

@@ -1,9 +1,9 @@
-import defer from "lodash/defer";
 import { Container, Graphics, Sprite, TextStyle, Texture } from "pixi.js-legacy";
 import { ButtonScroller } from "./common/button-scroller";
 import { ButtonText } from "./common/button-text";
 import { INITIAL_GAME_CONFIG, MSApp } from "./ms-app";
 import { REF_HEIGHT } from "./ms-cell";
+import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MIN_GRID_HEIGHT, MIN_GRID_WIDTH } from "./ms-state";
 
 export class MSMenu extends Container {
 	private title!: Sprite;
@@ -30,7 +30,6 @@ export class MSMenu extends Container {
 
 		this.title = Sprite.from(this.app.getFrame("textures", "title"));
 		this.title.y = -REF_HEIGHT * 2.5;
-		this.title.scale.set(0.75);
 		this.title.anchor.set(0.5);
 
 		this.buttonStart = new ButtonText(this.app, {
@@ -38,45 +37,45 @@ export class MSMenu extends Container {
 			text: "Start",
 			backTexture: this.app.getFrame("textures", "button-long")
 		});
-		this.buttonStart.position.set(0, 128);
+		this.buttonStart.position.set(0, 160);
 		this.buttonStart.anchor.set(0.5);
 
 		this.widthScroller = new ButtonScroller(this.app, {
 			textStyle,
-			textureArrow: Texture.WHITE,
+			arrowTexture: this.app.getFrame("textures", "button-arrow"),
 			label: "Width",
 			default: INITIAL_GAME_CONFIG.gridWidth,
-			min: 4,
-			max: 32
+			min: MIN_GRID_WIDTH,
+			max: MAX_GRID_WIDTH
 		});
 		this.widthScroller.x = 64;
 		this.widthScroller.y = -80;
 
 		this.heightScroller = new ButtonScroller(this.app, {
 			textStyle,
-			textureArrow: Texture.WHITE,
+			arrowTexture: this.app.getFrame("textures", "button-arrow"),
 			label: "Height",
 			default: INITIAL_GAME_CONFIG.gridWidth,
-			min: 4,
-			max: 32
+			min: MIN_GRID_HEIGHT,
+			max: MAX_GRID_HEIGHT
 		});
 		this.heightScroller.x = 64;
-		this.heightScroller.y = -20;
+		this.heightScroller.y = -10;
 
 		this.minesScroller = new ButtonScroller(this.app, {
 			textStyle,
-			textureArrow: Texture.WHITE,
+			arrowTexture: this.app.getFrame("textures", "button-arrow"),
 			label: "Mines",
 			default: INITIAL_GAME_CONFIG.startMines,
 			min: 1,
 			max: INITIAL_GAME_CONFIG.gridWidth * INITIAL_GAME_CONFIG.gridHeight - 2
 		});
 		this.minesScroller.x = 64;
-		this.minesScroller.y = 40;
+		this.minesScroller.y = 60;
 
 		this.background = new Graphics();
 		this.background.beginFill(0xaaaaaa, 0.8);
-		this.background.drawRect(-200, -200, 400, 400);
+		this.background.drawRect(-200, -220, 400, 450);
 		this.background.endFill();
 
 		this.addChild(this.background);
@@ -90,12 +89,17 @@ export class MSMenu extends Container {
 		this.heightScroller.on("set", this.updatePreview, this);
 		this.updatePreview();
 
-		this.buttonStart.on("tap", () => {
-			this.visible = false;
+		this.buttonStart.on("pointertap", () => {
 			let gridWidth = this.widthScroller.current;
 			let gridHeight = this.heightScroller.current;
 			let startMines = this.minesScroller.current;
-			defer(() => this.app.newGame({ startMines, gridWidth, gridHeight }));
+
+			this.app.newGame({
+				startMines,
+				gridWidth,
+				gridHeight
+			});
+			this.app.showGame();
 		});
 	}
 
@@ -106,7 +110,7 @@ export class MSMenu extends Container {
 		let gridWidth = this.widthScroller.current;
 		let gridHeight = this.heightScroller.current;
 		let startMines = this.minesScroller.current;
-		this.minesScroller.setMax(gridWidth * gridHeight - 2);
+		this.minesScroller.max = gridWidth * gridHeight - 2;
 		this.app.previewGame({ startMines, gridWidth, gridHeight });
 	}
 }

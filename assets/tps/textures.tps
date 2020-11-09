@@ -4,12 +4,12 @@
         <key>fileFormatVersion</key>
         <int>4</int>
         <key>texturePackerVersion</key>
-        <string>5.3.0</string>
+        <string>5.4.0</string>
         <key>autoSDSettings</key>
         <array>
             <struct type="AutoSDSettings">
                 <key>scale</key>
-                <double>4</double>
+                <double>1</double>
                 <key>extension</key>
                 <string>@4x</string>
                 <key>spriteFilter</key>
@@ -26,7 +26,7 @@
             </struct>
             <struct type="AutoSDSettings">
                 <key>scale</key>
-                <double>3</double>
+                <double>0.75</double>
                 <key>extension</key>
                 <string>@3x</string>
                 <key>spriteFilter</key>
@@ -43,7 +43,7 @@
             </struct>
             <struct type="AutoSDSettings">
                 <key>scale</key>
-                <double>2</double>
+                <double>0.5</double>
                 <key>extension</key>
                 <string>@2x</string>
                 <key>spriteFilter</key>
@@ -60,7 +60,7 @@
             </struct>
             <struct type="AutoSDSettings">
                 <key>scale</key>
-                <double>1</double>
+                <double>0.25</double>
                 <key>extension</key>
                 <string>@1x</string>
                 <key>spriteFilter</key>
@@ -232,6 +232,7 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
+            <key type="filename">../textures/button-arrow.png</key>
             <key type="filename">../textures/button-cross.png</key>
             <key type="filename">../textures/button-dig.png</key>
             <key type="filename">../textures/button-flag.png</key>

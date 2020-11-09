@@ -1,8 +1,16 @@
 {"frames": {
 
+"button-arrow":
+{
+	"frame": {"x":126,"y":326,"w":116,"h":152},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":38,"y":20,"w":116,"h":152},
+	"sourceSize": {"w":192,"h":192}
+},
 "button-cross":
 {
-	"frame": {"x":362,"y":2,"w":118,"h":118},
+	"frame": {"x":126,"y":480,"w":118,"h":118},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":38,"y":38,"w":118,"h":118},
@@ -10,7 +18,7 @@
 },
 "button-dig":
 {
-	"frame": {"x":362,"y":122,"w":156,"h":116},
+	"frame": {"x":126,"y":168,"w":156,"h":116},
 	"rotated": true,
 	"trimmed": true,
 	"spriteSourceSize": {"x":18,"y":38,"w":156,"h":116},
@@ -18,15 +26,15 @@
 },
 "button-flag":
 {
-	"frame": {"x":196,"y":142,"w":106,"h":164},
-	"rotated": true,
+	"frame": {"x":126,"y":2,"w":106,"h":164},
+	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":64,"y":14,"w":106,"h":164},
 	"sourceSize": {"w":192,"h":192}
 },
 "button-long":
 {
-	"frame": {"x":2,"y":2,"w":768,"h":192},
+	"frame": {"x":2,"y":1044,"w":768,"h":192},
 	"rotated": true,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":768,"h":192},
@@ -34,7 +42,7 @@
 },
 "button-restart":
 {
-	"frame": {"x":196,"y":2,"w":164,"h":138},
+	"frame": {"x":2,"y":1814,"w":164,"h":138},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":26,"y":28,"w":164,"h":138},
@@ -42,19 +50,19 @@
 },
 "title":
 {
-	"frame": {"x":196,"y":250,"w":1384,"h":162},
+	"frame": {"x":2,"y":2,"w":1040,"h":122},
 	"rotated": true,
 	"trimmed": true,
-	"spriteSourceSize": {"x":76,"y":104,"w":1384,"h":162},
-	"sourceSize": {"w":1536,"h":384}
+	"spriteSourceSize": {"x":56,"y":78,"w":1040,"h":122},
+	"sourceSize": {"w":1152,"h":288}
 }},
 "meta": {
 	"app": "https://www.codeandweb.com/texturepacker",
 	"version": "1.0",
 	"image": "textures-0-@3x.png",
 	"format": "RGBA8888",
-	"size": {"w":512,"h":2048},
-	"scale": "0.75",
-	"smartupdate": "$TexturePacker:SmartUpdate:ef7e52b0414b8dce56a30f2f6469d8ea:3f15803038aae3d0942418b0e9c09aa6:8ee5bdb806829dd5c4d136269e7ac79a$"
+	"size": {"w":256,"h":2048},
+	"scale": "0.1875",
+	"smartupdate": "$TexturePacker:SmartUpdate:01c5f581ebe6ae82966e568dd4a0cab9:96ba285a618013492ebabc711b375f88:8ee5bdb806829dd5c4d136269e7ac79a$"
 }
 }

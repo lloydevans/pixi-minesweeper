@@ -1,7 +1,10 @@
 import { InteractionEvent, Sprite, Texture } from "pixi.js-legacy";
 import { AppBase } from "./app-base";
+import { sounds } from "../ms-tone";
 
-export interface ButtonConfig {}
+export interface ButtonConfig {
+	texture: Texture;
+}
 
 /**
  * Very quick button class.
@@ -9,12 +12,14 @@ export interface ButtonConfig {}
 export class Button extends Sprite {
 	protected app: AppBase;
 	protected back: Sprite;
+	protected config: ButtonConfig;
 
-	constructor(app: AppBase, texture: Texture) {
+	constructor(app: AppBase, config: ButtonConfig) {
 		super();
 
 		this.app = app;
-		this.back = Sprite.from(texture);
+		this.config = { ...config };
+		this.back = Sprite.from(config.texture);
 		this.back.anchor.set(0.5);
 
 		this.buttonMode = true;
@@ -23,8 +28,8 @@ export class Button extends Sprite {
 
 		this.addChild(this.back);
 
-		this.on("mouseout", this.onPointerOut, this);
 		this.on("mouseover", this.onPointerOver, this);
+		this.on("pointerout", this.onPointerOut, this);
 		this.on("pointertap", this.onPointerTap, this);
 		this.on("pointerdown", this.onPointerDown, this);
 		this.on("pointerup", this.onPointerUp, this);
@@ -36,37 +41,49 @@ export class Button extends Sprite {
 	 *
 	 * @param e
 	 */
-	protected onPointerOut(e: InteractionEvent) {}
-
-	/**
-	 *
-	 * @param e
-	 */
-	protected onPointerOver(e: InteractionEvent) {}
-
-	/**
-	 *
-	 * @param e
-	 */
-	protected onPointerUp(e: InteractionEvent) {}
-
-	/**
-	 *
-	 * @param e
-	 */
-	protected onPointerDown(e: InteractionEvent) {}
-
-	/**
-	 *
-	 * @param e
-	 */
-	protected onPointerCancel(e: InteractionEvent) {}
-
-	/**
-	 *
-	 * @param e
-	 */
-	protected onPointerTap(e: InteractionEvent) {
-		this.emit("tap", e);
+	protected onPointerOut(e: InteractionEvent) {
+		this.alpha = 1;
 	}
+
+	/**
+	 *
+	 * @param e
+	 */
+	protected onPointerOver(e: InteractionEvent) {
+		this.alpha = 0.5;
+	}
+
+	/**
+	 *
+	 * @param e
+	 */
+	protected onPointerUp(e: InteractionEvent) {
+		this.alpha = 1;
+		sounds.blop.playbackRate = 3;
+		sounds.blop.start();
+	}
+
+	/**
+	 *
+	 * @param e
+	 */
+	protected onPointerDown(e: InteractionEvent) {
+		this.alpha = 0.5;
+		sounds.blop.playbackRate = 2;
+		sounds.blop.start();
+	}
+
+	/**
+	 *
+	 * @param e
+	 */
+	protected onPointerCancel(e: InteractionEvent) {
+		this.alpha = 1;
+	}
+
+	/**
+	 *
+	 * @param e
+	 */
+	protected onPointerTap(e: InteractionEvent) {}
 }

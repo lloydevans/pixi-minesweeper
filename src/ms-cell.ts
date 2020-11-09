@@ -1,9 +1,12 @@
+import isEqual from "lodash/isEqual";
 import { Container, Rectangle, Sprite, Text, TextStyle } from "pixi.js-legacy";
 import { GameText } from "./common/game-text";
 import { Spine } from "./common/spine";
 import { MSApp } from "./ms-app";
+import { CELL_STATE_DEFAULTS } from "./ms-cell-state";
 import type { MSCellState } from "./ms-cell-state";
 import type { NumberKey } from "./ms-config";
+import { sounds } from "./ms-tone";
 
 // Reference size of cell graphics before any scaling.
 export const REF_WIDTH = 64;
@@ -15,17 +18,9 @@ export enum AnimTrack {
 	Feedback,
 	Mine,
 	Flag,
-	Hover
+	Hover,
+	Dig
 }
-
-const INITIAL_STATE = {
-	x: -1,
-	y: -1,
-	adjacent: 0,
-	covered: true,
-	mine: false,
-	flag: false
-};
 
 /**
  *
@@ -37,7 +32,9 @@ export class MSCell extends Container {
 	public get iy(): number {
 		return this.viewState.y;
 	}
-
+	public get needsUpdate(): boolean {
+		return !isEqual(this.state, this.viewState);
+	}
 	private app: MSApp;
 	private anim: Spine;
 	private edges: {
@@ -47,8 +44,8 @@ export class MSCell extends Container {
 		d: Sprite;
 	};
 	private adjacentText: Text;
-	private state: MSCellState;
 	private viewState: MSCellState;
+	public state: MSCellState;
 
 	/**
 	 *
@@ -61,9 +58,8 @@ export class MSCell extends Container {
 		super();
 
 		this.app = app;
-		this.state = { ...INITIAL_STATE };
-		this.viewState = { ...INITIAL_STATE };
-
+		this.state = { ...CELL_STATE_DEFAULTS };
+		this.viewState = { ...CELL_STATE_DEFAULTS };
 		this.edges = {
 			l: this.createEdgeSprite(0),
 			r: this.createEdgeSprite(180),
@@ -72,8 +68,9 @@ export class MSCell extends Container {
 		};
 
 		this.anim = new Spine(this.app.getSpine("grid-square"));
-		this.anim.x = REF_WIDTH / 2;
-		this.anim.y = REF_HEIGHT / 2;
+		this.anim.stateData.setMix("flag-hidden", "flag-place-start", 0);
+		this.anim.stateData.setMix("flag-destroy", "flag-place-start", 0);
+		this.anim.stateData.defaultMix = 0;
 
 		let textStyle = new TextStyle({
 			fontWeight: this.app.config.colorNumberWeight,
@@ -81,20 +78,12 @@ export class MSCell extends Container {
 		});
 		this.adjacentText = new GameText(this.app, "", textStyle);
 		this.adjacentText.anchor.set(0.5);
-		this.adjacentText.x = REF_WIDTH / 2;
-		this.adjacentText.y = REF_HEIGHT / 2;
-
-		Object.values(this.edges).forEach((el) => {
-			el.position.set(REF_WIDTH / 2, REF_HEIGHT / 2);
-			el.width = REF_WIDTH;
-			el.height = REF_HEIGHT;
-		});
 
 		this.addChild(this.adjacentText);
 		this.addChild(this.anim);
 		this.addChild(...Object.values(this.edges));
 
-		this.hitArea = new Rectangle(0, 0, REF_WIDTH, REF_HEIGHT);
+		this.hitArea = new Rectangle(-REF_WIDTH / 2, -REF_HEIGHT / 2, REF_WIDTH, REF_HEIGHT);
 
 		this.on("mouseover", this.animateHoverStart, this);
 		this.on("mouseout", this.animateHoverEnd, this);
@@ -119,29 +108,21 @@ export class MSCell extends Container {
 	 *
 	 */
 	public reset() {
-		this.viewState = {
-			x: -1,
-			y: -1,
-			adjacent: 0,
-			covered: true,
-			mine: false,
-			flag: false
-		};
 		let coverType = (this.state.x + this.state.y) % 2 === 0 ? "even" : "odd";
-		this.anim.state.setAnimation(AnimTrack.FillColor, "covered-" + coverType, false);
-		this.anim.state.setAnimation(AnimTrack.Cover, this.app.state.config.cheatMode ? "covered-cheat" : "covered", false);
+		this.anim.state.setAnimation(AnimTrack.FillColor, "fill-" + coverType, false);
 		this.anim.state.setAnimation(AnimTrack.Flag, "flag-hidden", false);
 		this.anim.state.setAnimation(AnimTrack.Mine, "mine-hidden", false);
 		this.anim.state.setAnimation(AnimTrack.Feedback, "feedback-hidden", false);
 		this.anim.state.setAnimation(AnimTrack.Hover, "hover-hidden", false);
+		this.anim.state.setAnimation(AnimTrack.Dig, "dig-hidden", false);
 	}
 
 	/**
 	 *
 	 */
 	private updateGridPosition() {
-		this.x = this.ix * REF_WIDTH;
-		this.y = this.iy * REF_HEIGHT;
+		this.x = this.ix * REF_WIDTH + REF_WIDTH / 2;
+		this.y = this.iy * REF_HEIGHT + REF_HEIGHT / 2;
 	}
 
 	/**
@@ -155,7 +136,6 @@ export class MSCell extends Container {
 		sprite.visible = false;
 		sprite.width = REF_WIDTH;
 		sprite.height = REF_HEIGHT;
-		sprite.position.set(REF_WIDTH / 2, REF_HEIGHT / 2);
 		sprite.angle = angle;
 		return sprite;
 	}
@@ -214,6 +194,9 @@ export class MSCell extends Container {
 
 		if (state.covered !== this.viewState.covered) {
 			this.setCoveredEnabled(state.covered);
+			if (!state.covered) {
+				this.animateDigEnd();
+			}
 		}
 
 		if (state.adjacent !== 0 && !state.mine) {
@@ -276,6 +259,53 @@ export class MSCell extends Container {
 
 	/**
 	 *
+	 */
+	public animatePlaceFlagStart() {
+		this.anim.state.setAnimation(AnimTrack.Flag, "flag-place-start", false);
+	}
+
+	/**
+	 *
+	 */
+	public animateDigStart() {
+		this.anim.state.setAnimation(AnimTrack.Dig, "dig-start", false);
+	}
+
+	/**
+	 *
+	 */
+	public animateDigEnd() {
+		this.anim.state.setAnimation(AnimTrack.Dig, "dig-end", false);
+	}
+
+	/**
+	 *
+	 */
+	public animateDigCancel() {
+		if (this.anim.state.getCurrent(AnimTrack.Dig).animation.name === "dig-start") {
+			this.anim.state.setAnimation(AnimTrack.Dig, "dig-cancel", false);
+			this.animateHoverEnd();
+			sounds.blop.playbackRate = 3;
+			sounds.blop.start();
+			sounds.drip.start();
+		}
+	}
+
+	/**
+	 *
+	 */
+	public animatePlaceFlagCancel() {
+		if (this.anim.state.getCurrent(AnimTrack.Flag).animation.name === "flag-place-start") {
+			this.anim.state.setAnimation(AnimTrack.Flag, "flag-destroy", false);
+			this.animateHoverEnd();
+			sounds.blop.playbackRate = 3;
+			sounds.blop.start();
+			sounds.drip.start();
+		}
+	}
+
+	/**
+	 *
 	 * @param total
 	 */
 	private setText(total: number) {
@@ -292,14 +322,11 @@ export class MSCell extends Container {
 	public setCoveredEnabled(enabled = true) {
 		this.viewState.covered = enabled;
 		if (enabled) {
-			this.anim.state.setAnimation(
-				AnimTrack.Cover,
-				this.app.state.config.cheatMode ? "covered-cheat" : "covered",
-				false
-			);
+			let stateName = this.app.state.config.cheatMode ? "covered-cheat" : "covered";
+			this.anim.state.setAnimation(AnimTrack.Cover, stateName, false);
 			this.setInteractiveEnabled(true);
 		} else {
-			this.anim.state.setAnimation(AnimTrack.Cover, "covered-dig-end", false);
+			this.anim.state.setAnimation(AnimTrack.Cover, "covered-out", false);
 			this.setInteractiveEnabled(false);
 		}
 	}

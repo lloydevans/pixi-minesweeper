@@ -6,49 +6,63 @@ filter: Linear,Linear
 repeat: none
 border
   rotate: false
-  xy: 151, 2
+  xy: 2, 3
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 cross
   rotate: false
-  xy: 217, 2
+  xy: 68, 3
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
+dirt
+  rotate: true
+  xy: 357, 5
+  size: 20, 12
+  orig: 20, 12
+  offset: 0, 0
+  index: -1
 fill
   rotate: false
-  xy: 85, 2
+  xy: 134, 3
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 flag-cloth
   rotate: false
-  xy: 2, 43
+  xy: 332, 2
   size: 23, 23
   orig: 23, 23
   offset: 0, 0
   index: -1
 flag-pole
   rotate: true
-  xy: 27, 26
+  xy: 332, 27
   size: 40, 56
   orig: 40, 56
   offset: 0, 0
   index: -1
 mine
   rotate: false
-  xy: 283, 2
+  xy: 200, 3
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
+spade
+  rotate: false
+  xy: 390, 10
+  size: 20, 57
+  orig: 20, 57
+  offset: 0, 0
+  index: -1
 tick
   rotate: false
-  xy: 349, 2
+  xy: 266, 3
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
