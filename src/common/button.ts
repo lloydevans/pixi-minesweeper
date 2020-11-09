@@ -1,8 +1,7 @@
-import * as Tone from "tone";
 import { InteractionEvent, Sprite, Texture } from "pixi.js-legacy";
-import { AppBase } from "./app-base";
+import * as Tone from "tone";
 import { sounds } from "../ms-tone";
-import { Tween } from "./tween";
+import { AppBase } from "./app-base";
 
 export interface ButtonConfig {
 	texture: Texture;
