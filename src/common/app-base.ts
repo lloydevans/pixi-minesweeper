@@ -6,6 +6,7 @@ import * as screenfull from "screenfull";
  * Max selectable device pixel ratio.
  */
 export const MAX_DPR = 4;
+export const MIN_DPR = 0.5;
 
 /**
  * General purpose app functionality.
@@ -58,6 +59,13 @@ export class AppBase extends Application {
 	 *
 	 */
 	private getWindowDpr() {
+		return clamp(window.devicePixelRatio, MIN_DPR, MAX_DPR);
+	}
+
+	/**
+	 *
+	 */
+	private getAssetDpr() {
 		return Math.round(clamp(window.devicePixelRatio, 1, MAX_DPR));
 	}
 
@@ -151,7 +159,7 @@ export class AppBase extends Application {
 	 * @param spineName
 	 * @param scale
 	 */
-	public addSpine(spineName: string, scale: number = this.dpr) {
+	public addSpine(spineName: string, scale: number = this.getAssetDpr()) {
 		let metadata: loaders.IMetadata = {
 			spineSkeletonScale: 1 / MAX_DPR,
 			spineAtlasFile: spineName + "@" + scale + "x.atlas"
@@ -167,7 +175,7 @@ export class AppBase extends Application {
 	 * @param atlasName
 	 * @param scale
 	 */
-	public addAtlas(atlasName: string, scale: number = this.dpr) {
+	public addAtlas(atlasName: string, scale: number = this.getAssetDpr()) {
 		// Pixi auto detects and compensates scale based on suffix in form `@nx`.
 		this.loader.add(atlasName, atlasName + "-0-@" + scale + "x.json");
 	}
