@@ -1,5 +1,5 @@
+import clamp from "lodash/clamp";
 import { Container, TextStyle, Texture } from "pixi.js-legacy";
-import { clamp } from "../maths/clamp";
 import { AppBase } from "./app-base";
 import { Button } from "./button";
 import { GameText } from "./game-text";
