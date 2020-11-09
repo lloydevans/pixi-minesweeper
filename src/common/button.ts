@@ -58,8 +58,13 @@ export class Button extends Sprite {
 	 *
 	 * @param e
 	 */
-	protected onPointerUp(e: InteractionEvent) {
+	protected async onPointerUp(e: InteractionEvent) {
 		this.alpha = 1;
+
+		if (Tone.context.state !== "running") {
+			await Tone.start();
+		}
+
 		sounds.blop.playbackRate = 3;
 		sounds.blop.start();
 	}
