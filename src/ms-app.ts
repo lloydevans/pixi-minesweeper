@@ -142,7 +142,7 @@ export class MSApp extends AppBase {
 			let length = this.cellPool.length;
 			for (let i = 0; i < 5; i++) {
 				let idx = length + i;
-				if (idx > maxCells) {
+				if (idx > maxCells - 1) {
 					break;
 				}
 
