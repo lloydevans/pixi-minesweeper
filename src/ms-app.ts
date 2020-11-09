@@ -226,17 +226,11 @@ export class MSApp extends AppBase {
 			let [x, y] = this.state.coordsOf(i);
 			let msCell = this.getCellView(x, y);
 			this.grid.addChild(msCell);
+			this.cellPool[i].init({
+				...CELL_STATE_DEFAULTS,
+				...{ x, y, covered: false }
+			});
 		}
-
-		this.cellPool.forEach((el, i) => {
-			let [x, y] = this.state.coordsOf(i);
-			if (el.parent) {
-				el.init({
-					...CELL_STATE_DEFAULTS,
-					...{ x, y, covered: false }
-				});
-			}
-		});
 
 		await delay(250);
 
@@ -454,6 +448,8 @@ export class MSApp extends AppBase {
 			return _continue;
 		}
 	): Promise<void> {
+		this.grid.interactiveChildren = false;
+
 		let max = Math.max(this.state.width, this.state.height);
 		for (let i = 0; i < max; i++) {
 			let t = i * 2 + 1;
@@ -501,6 +497,8 @@ export class MSApp extends AppBase {
 
 			await delay(66);
 		}
+
+		this.grid.interactiveChildren = true;
 	}
 
 	/**
