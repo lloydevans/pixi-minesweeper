@@ -50,7 +50,7 @@ export class MSApp extends AppBase {
 	private touchUi: MSTouchUi = new MSTouchUi(this);
 	private menu: MSMenu = new MSMenu(this);
 	private ui: MSUi = new MSUi(this);
-	private boardBack?: TilingSprite;
+	private gridBack?: TilingSprite;
 	private isLoaded: boolean = false;
 
 	/**
@@ -100,7 +100,7 @@ export class MSApp extends AppBase {
 
 		this.config = this.parseConfig(this.getJson("config"));
 
-		this.boardBack = new TilingSprite(this.getFrame("tiles", "back-0"));
+		this.gridBack = new TilingSprite(this.getFrame("tiles", "back-0"));
 
 		this.board.tint = hexToNum(this.config.colorBoard);
 
@@ -119,7 +119,7 @@ export class MSApp extends AppBase {
 		this.ui.visible = false;
 
 		this.container.addChild(this.board);
-		this.container.addChild(this.boardBack);
+		this.container.addChild(this.gridBack);
 		this.container.addChild(this.grid);
 		this.container.addChild(this.menu);
 
@@ -193,12 +193,12 @@ export class MSApp extends AppBase {
 		this.grid.x = -(this.state.width / 2) * this.cellWidth;
 		this.grid.y = -(this.state.height / 2) * this.cellHeight;
 
-		if (this.boardBack) {
-			this.boardBack.tileScale.set(2 * (this.cellWidth / REF_WIDTH));
-			this.boardBack.width = this.state.width * this.cellWidth;
-			this.boardBack.height = this.state.height * this.cellHeight;
-			this.boardBack.x = (-this.state.width * this.cellWidth) / 2;
-			this.boardBack.y = (-this.state.height * this.cellHeight) / 2;
+		if (this.gridBack) {
+			this.gridBack.tileScale.set(2 * (this.cellWidth / REF_WIDTH));
+			this.gridBack.width = this.state.width * this.cellWidth;
+			this.gridBack.height = this.state.height * this.cellHeight;
+			this.gridBack.x = (-this.state.width * this.cellWidth) / 2;
+			this.gridBack.y = (-this.state.height * this.cellHeight) / 2;
 		}
 	}
 
@@ -355,8 +355,8 @@ export class MSApp extends AppBase {
 	public previewGame(config: MSGameConfig = this.gameConfig) {
 		this.state.init(config);
 		this.onResize(this.width, this.height);
-		if (this.boardBack) {
-			this.boardBack.visible = true;
+		if (this.gridBack) {
+			this.gridBack.visible = true;
 		}
 	}
 
