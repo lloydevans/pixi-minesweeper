@@ -14,7 +14,12 @@ sounds.click.volume.value = -6;
 let unlock = async () => {
 	document.body.removeEventListener("click", unlock);
 	document.body.removeEventListener("touchend", unlock);
-	await Tone.start();
+
+	try {
+		await Tone.start();
+	} catch (err) {
+		console.log(err);
+	}
 };
 
 document.body.addEventListener("click", unlock);
