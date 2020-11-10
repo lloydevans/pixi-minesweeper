@@ -415,7 +415,7 @@ export class MSApp extends AppBase {
 			sounds.click.playbackRate = 0.9 + Math.random() * 0.2;
 			sounds.click.start();
 
-			if (!msCell.state!.flag) {
+			if (!msCell.state.flag) {
 				msCell.animateDigEnd();
 			}
 
