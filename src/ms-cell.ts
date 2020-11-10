@@ -116,7 +116,7 @@ export class MSCell extends Container {
   }
 
   /**
-   * Check if the cell needs it's viewstate updated.
+   * Check if the cell needs its viewstate updated.
    */
 	public needsUpdate(): boolean {
 		return !isEqual(this.state, this.viewState);
