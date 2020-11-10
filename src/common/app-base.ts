@@ -2,9 +2,6 @@ import clamp from "lodash/clamp";
 import { Application, Container, LoaderResource, loaders, Texture, utils } from "pixi.js-legacy";
 import * as screenfull from "screenfull";
 
-/**
- * Max selectable device pixel ratio.
- */
 export const MAX_DPR = 4;
 export const MIN_DPR = 0.5;
 
