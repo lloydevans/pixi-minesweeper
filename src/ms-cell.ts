@@ -113,11 +113,11 @@ export class MSCell extends Container {
 		this.anim.state.setAnimation(AnimTrack.Feedback, "feedback-hidden", false);
 		this.anim.state.setAnimation(AnimTrack.Hover, "hover-hidden", false);
 		this.anim.state.setAnimation(AnimTrack.Dig, "dig-hidden", false);
-  }
+	}
 
-  /**
-   * Check if the cell needs its viewstate updated.
-   */
+	/**
+	 * Check if the cell needs its viewstate updated.
+	 */
 	public needsUpdate(): boolean {
 		return !isEqual(this.state, this.viewState);
 	}
