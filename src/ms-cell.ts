@@ -101,6 +101,7 @@ export class MSCell extends Container {
 		this.reset();
 		this.updateViewState();
 		this.updateGridPosition();
+		this.updateEdgeSprites();
 		this.setInteractiveEnabled(true);
 	}
 
@@ -211,8 +212,6 @@ export class MSCell extends Container {
 		}
 
 		Object.assign(this.viewState, state);
-
-		this.updateEdgeSprites();
 	}
 
 	/**
@@ -328,6 +327,8 @@ export class MSCell extends Container {
 			this.anim.state.setAnimation(AnimTrack.Cover, "covered-out", false);
 			this.setInteractiveEnabled(false);
 		}
+
+		this.updateEdgeSprites();
 	}
 
 	/**
