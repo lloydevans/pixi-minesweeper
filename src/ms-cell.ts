@@ -12,7 +12,7 @@ import { sounds } from "./ms-tone";
 export const REF_WIDTH = 64;
 export const REF_HEIGHT = 64;
 
-export enum AnimTrack {
+enum AnimTrack {
 	FillColor,
 	Cover,
 	Feedback,
