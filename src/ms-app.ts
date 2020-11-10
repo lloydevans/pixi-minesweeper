@@ -498,7 +498,7 @@ export class MSApp extends AppBase {
 	/**
 	 * Default callback for `this.animatedUpdateFrom`.
 	 *
-	 * @param cell
+	 * @param cell - Current MSCell instance.
 	 */
 	private cellUpdateCb(cell: MSCell): boolean {
 		let needsUpdate = cell.needsUpdate;
