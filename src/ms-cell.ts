@@ -32,9 +32,6 @@ export class MSCell extends Container {
 	public get iy(): number {
 		return this.viewState.y;
 	}
-	public get needsUpdate(): boolean {
-		return !isEqual(this.state, this.viewState);
-	}
 	private app: MSApp;
 	private anim: Spine;
 	private edges: {
@@ -116,6 +113,13 @@ export class MSCell extends Container {
 		this.anim.state.setAnimation(AnimTrack.Feedback, "feedback-hidden", false);
 		this.anim.state.setAnimation(AnimTrack.Hover, "hover-hidden", false);
 		this.anim.state.setAnimation(AnimTrack.Dig, "dig-hidden", false);
+  }
+
+  /**
+   * Check if the cell needs it's viewstate updated.
+   */
+	public needsUpdate(): boolean {
+		return !isEqual(this.state, this.viewState);
 	}
 
 	/**

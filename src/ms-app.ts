@@ -498,7 +498,7 @@ export class MSApp extends AppBase {
 	 * @param cell - Current MSCell instance.
 	 */
 	private cellUpdateCb(cell: MSCell): boolean {
-		let needsUpdate = cell.needsUpdate;
+		let needsUpdate = cell.needsUpdate();
 		if (needsUpdate) {
 			cell.updateViewState();
 		}
