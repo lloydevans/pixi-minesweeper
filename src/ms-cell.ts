@@ -220,6 +220,73 @@ export class MSCell extends Container {
 
 	/**
 	 *
+	 * @param total
+	 */
+	private setText(total: number) {
+		let key = total.toString() as NumberKey;
+		this.adjacentText.style.fill = this.app.config.colorNumbers[key] ?? 0;
+		this.adjacentText.visible = true;
+		this.adjacentText.text = key;
+	}
+
+	/**
+	 *
+	 * @param enabled
+	 */
+	public setCoveredEnabled(enabled = true) {
+		this.viewState.covered = enabled;
+		if (enabled) {
+			let stateName = this.app.state.config.cheatMode ? "covered-cheat" : "covered";
+			this.anim.state.setAnimation(AnimTrack.Cover, stateName, false);
+			this.setInteractiveEnabled(true);
+		} else {
+			this.anim.state.setAnimation(AnimTrack.Cover, "covered-out", false);
+			this.setInteractiveEnabled(false);
+		}
+
+		this.updateEdgeSprites();
+	}
+
+	/**
+	 *
+	 * @param enabled
+	 */
+	public setInteractiveEnabled(enabled = true) {
+		if (!enabled) {
+			this.animateHoverEnd();
+		}
+		this.interactive = enabled;
+		this.buttonMode = enabled;
+		this.accessible = enabled;
+	}
+
+	/**
+	 *
+	 */
+	public setMineEnabled(enabled = true) {
+		this.viewState.mine = enabled;
+		if (enabled) {
+			this.anim.state.setAnimation(AnimTrack.Mine, "mine-explode", false);
+		} else {
+			this.anim.state.setAnimation(AnimTrack.Mine, "mine-hidden", false);
+		}
+	}
+
+	/**
+	 *
+	 */
+	public setFlagEnabled(enabled = true) {
+		this.viewState.flag = enabled;
+
+		if (enabled) {
+			this.anim.state.setAnimation(AnimTrack.Flag, "flag-place-end", false);
+		} else {
+			this.anim.state.setAnimation(AnimTrack.Flag, "flag-destroy", false);
+		}
+	}
+
+	/**
+	 *
 	 */
 	public animateResult() {
 		if (this.state.mine && this.state.flag) {
@@ -303,73 +370,6 @@ export class MSCell extends Container {
 			sounds.blop.playbackRate = 3;
 			sounds.blop.start();
 			sounds.drip.start();
-		}
-	}
-
-	/**
-	 *
-	 * @param total
-	 */
-	private setText(total: number) {
-		let key = total.toString() as NumberKey;
-		this.adjacentText.style.fill = this.app.config.colorNumbers[key] ?? 0;
-		this.adjacentText.visible = true;
-		this.adjacentText.text = key;
-	}
-
-	/**
-	 *
-	 * @param enabled
-	 */
-	public setCoveredEnabled(enabled = true) {
-		this.viewState.covered = enabled;
-		if (enabled) {
-			let stateName = this.app.state.config.cheatMode ? "covered-cheat" : "covered";
-			this.anim.state.setAnimation(AnimTrack.Cover, stateName, false);
-			this.setInteractiveEnabled(true);
-		} else {
-			this.anim.state.setAnimation(AnimTrack.Cover, "covered-out", false);
-			this.setInteractiveEnabled(false);
-		}
-
-		this.updateEdgeSprites();
-	}
-
-	/**
-	 *
-	 * @param enabled
-	 */
-	public setInteractiveEnabled(enabled = true) {
-		if (!enabled) {
-			this.animateHoverEnd();
-		}
-		this.interactive = enabled;
-		this.buttonMode = enabled;
-		this.accessible = enabled;
-	}
-
-	/**
-	 *
-	 */
-	public setMineEnabled(enabled = true) {
-		this.viewState.mine = enabled;
-		if (enabled) {
-			this.anim.state.setAnimation(AnimTrack.Mine, "mine-explode", false);
-		} else {
-			this.anim.state.setAnimation(AnimTrack.Mine, "mine-hidden", false);
-		}
-	}
-
-	/**
-	 *
-	 */
-	public setFlagEnabled(enabled = true) {
-		this.viewState.flag = enabled;
-
-		if (enabled) {
-			this.anim.state.setAnimation(AnimTrack.Flag, "flag-place-end", false);
-		} else {
-			this.anim.state.setAnimation(AnimTrack.Flag, "flag-destroy", false);
 		}
 	}
 
