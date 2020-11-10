@@ -266,7 +266,7 @@ export class MSApp extends AppBase {
 			let msCell = this.getCellView(x, y);
 			msCell.init(cellState);
 
-			if (indexes.length % Math.floor(this.state.totalCells / 8) === 0) {
+			if (indexes.length % Math.floor(this.state.totalCells / 12) === 0) {
 				sounds.blop.playbackRate = x / this.state.width + y / this.state.height + 1;
 				sounds.blop.start();
 				await delay(33);
