@@ -235,9 +235,6 @@ export class MSApp extends AppBase {
 		await delay(250);
 
 		await this.transitionCells();
-
-		this.grid.x = -(this.state.width / 2) * this.cellWidth;
-		this.grid.y = -(this.state.height / 2) * this.cellHeight;
 	}
 
 	/**
