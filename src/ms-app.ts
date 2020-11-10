@@ -42,8 +42,8 @@ export class MSApp extends AppBase {
 	private gameConfig: MSGameConfig;
 	private background: Graphics = new Graphics();
 	private board: Sprite = Sprite.from(Texture.WHITE);
-	private cellHeight: number = REF_WIDTH;
-	private cellWidth: number = REF_HEIGHT;
+	private cellWidth: number = REF_WIDTH;
+	private cellHeight: number = REF_HEIGHT;
 	private container: Container = new Container();
 	private grid: MSGrid = new MSGrid();
 	private isFirstClick: boolean = true;
