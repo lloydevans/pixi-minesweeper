@@ -219,18 +219,18 @@ export class MSCell extends Container {
 	 *
 	 */
 	public animateResult() {
-		if (this.viewState.mine && this.viewState.flag) {
+		if (this.state.mine && this.state.flag) {
 			this.animateCorrect();
 		}
 
-		if (this.viewState.mine && !this.viewState.flag) {
-			this.setCoveredEnabled(false);
-			this.updateEdgeSprites();
+		if (this.state.mine && !this.state.flag) {
+			this.state.covered = false;
+			this.updateViewState();
 			this.animateIncorrect();
 			this.explodeMine();
 		}
 
-		if (!this.viewState.mine && this.viewState.flag) {
+		if (!this.state.mine && this.state.flag) {
 			this.adjacentText.text = "";
 			this.animateIncorrect();
 		}
