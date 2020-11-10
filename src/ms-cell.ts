@@ -3,7 +3,7 @@ import { Container, Rectangle, Sprite, Text, TextStyle } from "pixi.js-legacy";
 import { GameText } from "./common/game-text";
 import { Spine } from "./common/spine";
 import { MSApp } from "./ms-app";
-import { CELL_STATE_DEFAULTS } from "./ms-cell-state";
+import { CELL_STATE_DEFAULT } from "./ms-cell-state";
 import type { MSCellState } from "./ms-cell-state";
 import type { NumberKey } from "./ms-config";
 import { sounds } from "./ms-tone";
@@ -58,8 +58,8 @@ export class MSCell extends Container {
 		super();
 
 		this.app = app;
-		this.state = { ...CELL_STATE_DEFAULTS };
-		this.viewState = { ...CELL_STATE_DEFAULTS };
+		this.state = { ...CELL_STATE_DEFAULT };
+		this.viewState = { ...CELL_STATE_DEFAULT };
 		this.edges = {
 			l: this.createEdgeSprite(0),
 			r: this.createEdgeSprite(180),

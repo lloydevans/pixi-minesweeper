@@ -8,7 +8,7 @@ import { Ease } from "./common/ease";
 import { Tween } from "./common/tween";
 import { preventContextMenu } from "./common/utils";
 import { MSCell, REF_HEIGHT, REF_WIDTH } from "./ms-cell";
-import { CELL_STATE_DEFAULTS } from "./ms-cell-state";
+import { CELL_STATE_DEFAULT } from "./ms-cell-state";
 import type { MSCellState } from "./ms-cell-state";
 import { MS_CONFIG_DEFAULT } from "./ms-config";
 import type { MSConfig, MSGameConfig } from "./ms-config";
@@ -227,7 +227,7 @@ export class MSApp extends AppBase {
 			let msCell = this.getCellView(x, y);
 			this.grid.addChild(msCell);
 			this.cellPool[i].init({
-				...CELL_STATE_DEFAULTS,
+				...CELL_STATE_DEFAULT,
 				...{ x, y, covered: false }
 			});
 		}

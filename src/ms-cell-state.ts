@@ -36,7 +36,7 @@ export interface MSCellState {
 /**
  *
  */
-export const CELL_STATE_DEFAULTS = {
+export const CELL_STATE_DEFAULT = {
 	x: -1,
 	y: -1,
 	adjacent: 0,
