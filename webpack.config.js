@@ -70,7 +70,7 @@ module.exports = (env = {}) => {
 		},
 
 		plugins: [
-			new HtmlWebpackPlugin({ template: "src/index.html" }),
+			new HtmlWebpackPlugin({ template: "src/index.html", hash: true }),
 			new CopyWebpackPlugin({ patterns: [{ from: "static" }] }),
 			new webpack.ProvidePlugin({ PIXI: "pixi.js-legacy" })
 		],
