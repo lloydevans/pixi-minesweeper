@@ -114,10 +114,10 @@ export class MSState {
 
 	/**
 	 *
-	 * @param predicate
+	 * @param cb
 	 */
-	public forEach(predicate: (cell: MSCellState, i: number) => void) {
-		this.cells.forEach(predicate);
+	public forEach(cb: (cell: MSCellState, i: number) => void) {
+		this.cells.forEach(cb);
 	}
 
 	/**
@@ -131,7 +131,7 @@ export class MSState {
 	}
 
 	/**
-	 * Find a cell that satisfies predicate.
+	 * Returns the value of the first cell where predicate is true, and undefined otherwise.
 	 *
 	 * @param x
 	 * @param y
