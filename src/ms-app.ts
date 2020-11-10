@@ -436,31 +436,25 @@ export class MSApp extends AppBase {
 	}
 
 	/**
+	 * Animate cell updates outwards from a target position.
 	 *
+	 * @param cell - Cell to animate outwards from.
+	 * @param cb - Runs once for each cell. One cell per round updated must return true to continue the animation.
 	 */
-	public async animatedUpdateFrom(
-		cell: MSCellState,
-		predicate: (cell: MSCell) => boolean = (cell) => {
-			let _continue = cell.needsUpdate;
-			if (_continue) {
-				cell.updateViewState();
-			}
-			return _continue;
-		}
-	): Promise<void> {
+	public async animatedUpdateFrom(cell: MSCellState, cb = this.cellUpdateCb): Promise<void> {
 		this.grid.interactiveChildren = false;
 
 		let max = Math.max(this.state.width, this.state.height);
 		for (let i = 0; i < max; i++) {
 			let t = i * 2 + 1;
 
-			let _continue = false;
+			let _break = true;
 
 			for (let c = 0; c < t; c++) {
 				let x = cell.x - i + c;
 				let y = cell.y - i;
 				if (this.state.coordsInBounds(x, y)) {
-					predicate(this.getCellView(x, y)) && !_continue && (_continue = true);
+					cb(this.getCellView(x, y)) && _break && (_break = false);
 				}
 			}
 			for (let c = 0; c < t; c++) {
@@ -468,7 +462,7 @@ export class MSApp extends AppBase {
 				let y = cell.y - i + c;
 
 				if (this.state.coordsInBounds(x, y)) {
-					predicate(this.getCellView(x, y)) && !_continue && (_continue = true);
+					cb(this.getCellView(x, y)) && _break && (_break = false);
 				}
 			}
 			for (let c = 0; c < t; c++) {
@@ -476,7 +470,7 @@ export class MSApp extends AppBase {
 				let y = cell.y + i;
 
 				if (this.state.coordsInBounds(x, y)) {
-					predicate(this.getCellView(x, y)) && !_continue && (_continue = true);
+					cb(this.getCellView(x, y)) && _break && (_break = false);
 				}
 			}
 			for (let c = 0; c < t; c++) {
@@ -484,11 +478,11 @@ export class MSApp extends AppBase {
 				let y = cell.y - i + c;
 
 				if (this.state.coordsInBounds(x, y)) {
-					predicate(this.getCellView(x, y)) && !_continue && (_continue = true);
+					cb(this.getCellView(x, y)) && _break && (_break = false);
 				}
 			}
 
-			if (!_continue) {
+			if (_break) {
 				break;
 			}
 
@@ -499,6 +493,19 @@ export class MSApp extends AppBase {
 		}
 
 		this.grid.interactiveChildren = true;
+	}
+
+	/**
+	 * Default callback for `this.animatedUpdateFrom`.
+	 *
+	 * @param cell
+	 */
+	private cellUpdateCb(cell: MSCell): boolean {
+		let needsUpdate = cell.needsUpdate;
+		if (needsUpdate) {
+			cell.updateViewState();
+		}
+		return needsUpdate;
 	}
 
 	/**
