@@ -224,8 +224,7 @@ export class MSCell extends Container {
 		}
 
 		if (this.state.mine && !this.state.flag) {
-			this.state.covered = false;
-			this.updateViewState();
+			this.setCoveredEnabled(false);
 			this.animateIncorrect();
 			this.explodeMine();
 		}
