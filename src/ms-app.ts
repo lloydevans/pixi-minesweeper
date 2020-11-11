@@ -178,7 +178,7 @@ export class MSApp extends AppBase {
 			this.isFirstClick = false;
 			let result = this.state.selectFirst(x, y);
 			if (result.length > 1) {
-				await this.animatedUpdateFrom(cellState);
+				await this.animateUpdateFrom(cellState);
 			} else {
 				msCell.updateViewState();
 			}
@@ -204,7 +204,7 @@ export class MSApp extends AppBase {
 			} //
 			else {
 				if (result.length > 1) {
-					await this.animatedUpdateFrom(cellState);
+					await this.animateUpdateFrom(cellState);
 				} else {
 					msCell.updateViewState();
 				}
@@ -520,7 +520,7 @@ export class MSApp extends AppBase {
 	 * @param cell - Cell to animate outwards from.
 	 * @param cb - Runs once for each cell. One cell per round updated must return true to continue the animation.
 	 */
-	private async animatedUpdateFrom(cell: MSCellState, cb = this.cellUpdateCb): Promise<void> {
+	private async animateUpdateFrom(cell: MSCellState, cb = this.cellUpdateCb): Promise<void> {
 		this.grid.interactiveChildren = false;
 
 		let maxSide = Math.max(this.state.width, this.state.height);
