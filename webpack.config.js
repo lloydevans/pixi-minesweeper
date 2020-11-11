@@ -40,7 +40,7 @@ module.exports = (env = {}) => {
 
 		output: {
 			filename: "bundle.js",
-			path: path.join(__dirname, "..", "pixi-minesweeper-hosting", "public")
+			path: path.join(__dirname, "build")
 		},
 
 		module: {
