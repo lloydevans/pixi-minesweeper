@@ -13,9 +13,8 @@ const MAX_TIME = 999;
  * Class handle UI elements.
  */
 export class MSUi extends Component<MSApp> {
-	private background: PIXI.Graphics;
-
 	// These definitely get set in initilisation.
+	private background!: PIXI.Graphics;
 	private buttonRestart!: Button;
 	private buttonCross!: Button;
 	private flagsContainer!: PIXI.Container;
@@ -26,20 +25,11 @@ export class MSUi extends Component<MSApp> {
 	private timeCount!: GameText;
 
 	/**
-	 *
-	 * @param app
-	 */
-	constructor(app: MSApp) {
-		super(app);
-
-		this.background = new PIXI.Graphics();
-		this.addChild(this.background);
-	}
-
-	/**
 	 * Initialisation must be called after assets are loaded.
 	 */
 	init() {
+		this.background = new PIXI.Graphics();
+
 		let textStyle = new PIXI.TextStyle({ fill: 0xffffff, fontWeight: "bold", fontSize: 42 });
 
 		this.flagsContainer = new PIXI.Container();
@@ -82,6 +72,7 @@ export class MSUi extends Component<MSApp> {
 		this.flagsContainer.addChild(this.flagsGraphic);
 		this.flagsContainer.addChild(this.flagsCount);
 
+		this.addChild(this.background);
 		this.addChild(this.timeContainer);
 		this.addChild(this.flagsContainer);
 		this.addChild(this.buttonRestart);

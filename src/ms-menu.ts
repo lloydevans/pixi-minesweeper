@@ -14,10 +14,6 @@ export class MSMenu extends Component<MSApp> {
 	private heightScroller!: ButtonScroller;
 	private minesScroller!: ButtonScroller;
 
-	constructor(app: MSApp) {
-		super(app);
-	}
-
 	public init() {
 		let textStyle = new PIXI.TextStyle({
 			fontFamily: "Arial",

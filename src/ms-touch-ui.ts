@@ -13,10 +13,6 @@ export class MSTouchUi extends Component<MSApp> {
 	private buttonFlag!: Button;
 	private buttonDig!: Button;
 
-	constructor(app: MSApp) {
-		super(app);
-	}
-
 	/**
 	 *
 	 */
