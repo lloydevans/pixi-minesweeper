@@ -165,6 +165,10 @@ describe("MSState tests", () => {
 		let coords: [number, number] = [0, 0];
 		let cell = state.cellAt(...coords);
 
+		if (!cell) {
+			throw new Error("Cell not found");
+		}
+
 		state.placeFlag(...coords);
 		expect(cell.flag).toBe(true);
 
