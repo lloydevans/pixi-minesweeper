@@ -59,9 +59,6 @@ export class MSApp extends AppBase {
 	constructor() {
 		super({});
 
-		// @ts-ignore
-		window.ms = this;
-
 		preventContextMenu();
 
 		this.config = { ...MS_CONFIG_DEFAULT };
