@@ -238,15 +238,15 @@ export class MSApp extends AppBase {
 
 		this.config = this.parseConfig(this.getJson("config"));
 
-		this.gridBack = new TilingSprite(this.getFrame("tiles", "back-0"));
+		this.gridBack = new PIXI.TilingSprite(this.getFrame("tiles", "back-0"));
 
 		this.board.tint = hexToNum(this.config.colorBoard);
 
 		let tilesAtlas = this.getAtlas("tiles");
 
 		if (tilesAtlas.spritesheet) {
-			tilesAtlas.spritesheet.baseTexture.mipmap = MIPMAP_MODES.OFF;
-			tilesAtlas.spritesheet.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+			tilesAtlas.spritesheet.baseTexture.mipmap = PIXI.MIPMAP_MODES.OFF;
+			tilesAtlas.spritesheet.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
 			tilesAtlas.spritesheet.baseTexture.update();
 		}
 
