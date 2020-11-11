@@ -260,6 +260,23 @@ export class MSState {
 	}
 
 	/**
+	 * Return array of unplaced flags.
+	 */
+	public getCorrectFlags() {
+		let result = [];
+
+		for (let i = 0; i < this.cells.length; i++) {
+			const cell = this.cells[i];
+
+			if (cell.covered && cell.mine && cell.flag) {
+				result.push(cell);
+			}
+		}
+
+		return result;
+	}
+
+	/**
 	 * Check if the current game is in win state.
 	 *
 	 */

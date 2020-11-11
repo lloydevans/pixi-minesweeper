@@ -464,7 +464,18 @@ export class MSApp extends AppBase {
 			let msCell = this.getCellView(el.x, el.y);
 			msCell.setFlagEnabled(true);
 			msCell.animateCorrect();
-			sounds.chime.playbackRate = 1;
+			sounds.chime.start();
+
+			await delay(66);
+		}
+
+		let correctFlags = this.state.getCorrectFlags();
+
+		while (correctFlags.length > 0) {
+			let idx = Math.floor(Math.random() * correctFlags.length);
+			let el = correctFlags.splice(idx, 1)[0];
+			let msCell = this.getCellView(el.x, el.y);
+			msCell.animateCorrect();
 			sounds.chime.start();
 
 			await delay(66);
