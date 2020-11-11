@@ -1,6 +1,6 @@
 import clamp from "lodash/clamp";
 import defaults from "lodash/defaults";
-import * as PIXI from "pixi.js-legacy"; // prettier-ignore
+import * as PIXI from "pixi.js-legacy";
 import { AppBase } from "./common/app-base";
 import { hexToNum } from "./common/color";
 import { delay } from "./common/delay";
