@@ -47,6 +47,8 @@ export class Button extends Sprite {
 	 * Start audio context.
 	 */
 	private async toneStart() {
+		this.off("pointerdown", this.toneStart, this);
+		this.off("pointerup", this.toneStart, this);
 		if (Tone.context.state !== "running") {
 			try {
 				await Tone.start();
@@ -54,8 +56,6 @@ export class Button extends Sprite {
 				console.log(err);
 			}
 		}
-		this.off("pointerdown", this.toneStart, this);
-		this.off("pointerup", this.toneStart, this);
 	}
 
 	/**
