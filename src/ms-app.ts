@@ -136,7 +136,7 @@ export class MSApp extends AppBase {
 		let cell = this.cellPool[idx];
 
 		if (!cell) {
-			throw new Error(`Can't find view cell at ${x},${y}`);
+			throw new Error(`Can't find cell view at ${x},${y}`);
 		}
 
 		return cell;
@@ -221,6 +221,7 @@ export class MSApp extends AppBase {
 		this.addSpine("timer");
 		this.addAtlas("textures");
 		this.addAtlas("tiles");
+		this.addAtlas("bg", 1);
 		this.addJson("config", "config.json");
 		this.loader.load();
 
@@ -240,11 +241,17 @@ export class MSApp extends AppBase {
 		this.board.tint = hexToNum(this.config.colorBoard);
 
 		let tilesAtlas = this.getAtlas("tiles");
-
 		if (tilesAtlas.spritesheet) {
 			tilesAtlas.spritesheet.baseTexture.mipmap = PIXI.MIPMAP_MODES.OFF;
 			tilesAtlas.spritesheet.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
 			tilesAtlas.spritesheet.baseTexture.update();
+		}
+
+		let bgAtlas = this.getAtlas("bg");
+		if (bgAtlas.spritesheet) {
+			bgAtlas.spritesheet.baseTexture.mipmap = PIXI.MIPMAP_MODES.OFF;
+			bgAtlas.spritesheet.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+			bgAtlas.spritesheet.baseTexture.update();
 		}
 
 		this.menu.init();

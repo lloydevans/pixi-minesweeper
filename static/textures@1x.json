@@ -59,10 +59,10 @@
 "meta": {
 	"app": "https://www.codeandweb.com/texturepacker",
 	"version": "1.0",
-	"image": "textures-0-@1x.png",
+	"image": "textures@1x.png",
 	"format": "RGBA8888",
 	"size": {"w":128,"h":512},
 	"scale": "0.0625",
-	"smartupdate": "$TexturePacker:SmartUpdate:01c5f581ebe6ae82966e568dd4a0cab9:96ba285a618013492ebabc711b375f88:8ee5bdb806829dd5c4d136269e7ac79a$"
+	"smartupdate": "$TexturePacker:SmartUpdate:b0fa8dd58134b43f0553e5caf0ac1ecf:96ba285a618013492ebabc711b375f88:0d4797ab0a62cbf7baf7b92840fcf112$"
 }
 }

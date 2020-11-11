@@ -85,7 +85,7 @@
         <key>dataFormat</key>
         <string>json</string>
         <key>textureFileName</key>
-        <filename>../../static/tiles-{n}-{v}.png</filename>
+        <filename>../../static/tiles{v}.png</filename>
         <key>flipPVR</key>
         <false/>
         <key>pvrCompressionQuality</key>
@@ -183,11 +183,11 @@
             <key>data</key>
             <struct type="DataFile">
                 <key>name</key>
-                <filename>../../static/tiles-{n}-{v}.json</filename>
+                <filename>../../static/tiles{v}.json</filename>
             </struct>
         </map>
         <key>multiPack</key>
-        <true/>
+        <false/>
         <key>forceIdenticalLayout</key>
         <false/>
         <key>outputFormat</key>
