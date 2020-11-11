@@ -46,10 +46,7 @@ export class MSCell extends Container {
 
 	/**
 	 *
-	 * @param app
-	 * @param cell
-	 * @param cellWidth
-	 * @param cellHeight
+	 * @param app - App reference.
 	 */
 	constructor(app: MSApp) {
 		super();

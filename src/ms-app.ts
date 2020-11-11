@@ -29,9 +29,8 @@ export const INITIAL_GAME_CONFIG: MSGameConfig = {
  * Core App class.
  */
 export class MSApp extends AppBase {
-	public cellPool: MSCell[] = [];
 	public state: MSState = new MSState();
-	public config!: MSConfig;
+	public config: MSConfig;
 	public get currentTime() {
 		return this.time;
 	}
@@ -39,19 +38,20 @@ export class MSApp extends AppBase {
 	private time = 0;
 	private timeActive = false;
 	private transitionIdx = 0;
+	private cellPool: MSCell[] = [];
 	private gameConfig: MSGameConfig;
-	private background: Graphics = new Graphics();
-	private board: Sprite = Sprite.from(Texture.WHITE);
-	private cellWidth: number = REF_WIDTH;
-	private cellHeight: number = REF_HEIGHT;
-	private container: Container = new Container();
-	private grid: MSGrid = new MSGrid();
-	private isFirstClick: boolean = true;
-	private touchUi: MSTouchUi = new MSTouchUi(this);
-	private menu: MSMenu = new MSMenu(this);
-	private ui: MSUi = new MSUi(this);
+	private background = new Graphics();
+	private board = Sprite.from(Texture.WHITE);
+	private cellWidth = REF_WIDTH;
+	private cellHeight = REF_HEIGHT;
+	private container = new Container();
+	private grid = new MSGrid();
+	private isFirstClick = true;
+	private touchUi = new MSTouchUi(this);
+	private menu = new MSMenu(this);
+	private ui = new MSUi(this);
 	private gridBack?: TilingSprite;
-	private isLoaded: boolean = false;
+	private isLoaded = false;
 
 	/**
 	 *
@@ -64,6 +64,7 @@ export class MSApp extends AppBase {
 
 		preventContextMenu();
 
+		this.config = { ...MS_CONFIG_DEFAULT };
 		this.gameConfig = { ...INITIAL_GAME_CONFIG };
 
 		this.root.addChild(this.background);
@@ -74,6 +75,143 @@ export class MSApp extends AppBase {
 		this.events.on("init", this.onInit, this);
 		this.events.on("resize", this.onResize, this);
 		this.events.on("update", this.onUpdate, this);
+	}
+
+	/**
+	 * Start a new game with given config.
+	 *
+	 * @param config
+	 */
+	public async newGame(config: MSGameConfig = this.gameConfig) {
+		Tween.removeAllTweens();
+
+		this.time = 0;
+		this.state.init(config);
+		this.grid.interactiveChildren = false;
+		this.gameConfig = { ...config };
+		this.isFirstClick = true;
+		this.touchUi.hide();
+		await this.initGrid();
+		this.timeActive = true;
+		this.grid.interactiveChildren = true;
+	}
+
+	/**
+	 *
+	 */
+	public showGame() {
+		Tween.get(this.container.position).to({ y: 32 }, 300, Ease.sineInOut);
+		this.menu.visible = false;
+		this.grid.visible = true;
+		this.ui.visible = true;
+	}
+
+	/**
+	 *
+	 */
+	public showMenu() {
+		Tween.get(this.container.position).to({ y: 0 }, 300, Ease.sineInOut);
+		this.menu.visible = true;
+		this.grid.visible = false;
+		this.ui.visible = false;
+	}
+
+	/**
+	 * Start a new game with given config.
+	 *
+	 * @param config
+	 */
+	public previewGame(config: MSGameConfig = this.gameConfig) {
+		this.state.init(config);
+		this.onResize(this.width, this.height);
+		if (this.gridBack) {
+			this.gridBack.visible = true;
+		}
+	}
+
+	/**
+	 *
+	 * @param x
+	 * @param y
+	 */
+	public getCellView(x: number, y: number): MSCell {
+		let idx = this.state.indexOf(x, y);
+		let cell = this.cellPool[idx];
+
+		if (!cell) {
+			throw new Error(`Can't find view cell at ${x},${y}`);
+		}
+
+		return cell;
+	}
+
+	/**
+	 *
+	 * @param cellState
+	 */
+	public rightClick(cellState: MSCellState) {
+		cellState.flag = !cellState.flag;
+
+		if (cellState.flag) {
+			sounds.blop.playbackRate = 2;
+			sounds.blop.start();
+		} //
+		else {
+			sounds.blop.playbackRate = 3;
+			sounds.blop.start();
+		}
+
+		let msCell = this.getCellView(cellState.x, cellState.y);
+
+		msCell.updateViewState();
+	}
+
+	/**
+	 *
+	 */
+	public async leftClick(cellState: MSCellState) {
+		let msCell = this.getCellView(cellState.x, cellState.y);
+		let x = msCell.ix;
+		let y = msCell.iy;
+
+		if (this.isFirstClick) {
+			this.isFirstClick = false;
+			let result = this.state.selectFirst(x, y);
+			if (result.length > 1) {
+				await this.animatedUpdateFrom(cellState);
+			} else {
+				msCell.updateViewState();
+			}
+		} //
+		else {
+			let result = this.state.select(x, y);
+
+			if (cellState.covered) {
+				sounds.blop.playbackRate = 2;
+				sounds.blop.start();
+			} //
+			else {
+				sounds.blop.playbackRate = 3;
+				sounds.blop.start();
+			}
+
+			if (cellState.mine) {
+				if (cellState.flag) {
+					this.state.clearFlag(x, y);
+				}
+				msCell.updateViewState();
+				this.animateLose(cellState);
+			} //
+			else {
+				if (result.length > 1) {
+					await this.animatedUpdateFrom(cellState);
+				} else {
+					msCell.updateViewState();
+				}
+			}
+		}
+
+		this.checkWin();
 	}
 
 	/**
@@ -160,7 +298,7 @@ export class MSApp extends AppBase {
 	 */
 	private onResize(width: number, height: number) {
 		this.background.clear();
-		this.background.beginFill(hexToNum(this.config?.colorBackground || "#ffffff"));
+		this.background.beginFill(hexToNum(this.config.colorBackground));
 		this.background.drawRect(-width / 2, -height / 2, width, height);
 
 		let marginX = 64;
@@ -206,7 +344,7 @@ export class MSApp extends AppBase {
 	 *
 	 * @param config
 	 */
-	public parseConfig(config: Partial<MSConfig> = {}): MSConfig {
+	private parseConfig(config: Partial<MSConfig> = {}): MSConfig {
 		return defaults(config, MS_CONFIG_DEFAULT);
 	}
 
@@ -240,12 +378,11 @@ export class MSApp extends AppBase {
 	/**
 	 *
 	 */
-	private async transitionCells() {
+	private transitionCells() {
 		switch (this.transitionIdx) {
 			default:
 			case 0:
-				await this.noiseWipe();
-				break;
+				return this.noiseWipe();
 		}
 	}
 
@@ -301,63 +438,8 @@ export class MSApp extends AppBase {
 	/**
 	 *
 	 */
-	public updateCellStates() {
+	private updateCellStates() {
 		this.state.forEach((el) => this.getCellView(el.x, el.y).updateViewState());
-	}
-
-	/**
-	 * Start a new game with given config.
-	 *
-	 * @param config
-	 */
-	public async newGame(config: MSGameConfig = this.gameConfig) {
-		Tween.removeAllTweens();
-
-		this.time = 0;
-		this.state.init(config);
-		this.grid.interactiveChildren = false;
-		this.gameConfig = { ...config };
-		this.isFirstClick = true;
-		this.ui.visible = true;
-		this.touchUi.hide();
-		this.onResize(this.width, this.height);
-
-		await this.initGrid();
-		this.timeActive = true;
-		this.grid.interactiveChildren = true;
-	}
-
-	/**
-	 *
-	 */
-	public showGame() {
-		Tween.get(this.container.position).to({ y: 32 }, 300, Ease.sineInOut);
-		this.menu.visible = false;
-		this.grid.visible = true;
-		this.ui.visible = true;
-	}
-
-	/**
-	 *
-	 */
-	public showMenu() {
-		Tween.get(this.container.position).to({ y: 0 }, 300, Ease.sineInOut);
-		this.menu.visible = true;
-		this.grid.visible = false;
-		this.ui.visible = false;
-	}
-
-	/**
-	 * Start a new game with given config.
-	 *
-	 * @param config
-	 */
-	public previewGame(config: MSGameConfig = this.gameConfig) {
-		this.state.init(config);
-		this.onResize(this.width, this.height);
-		if (this.gridBack) {
-			this.gridBack.visible = true;
-		}
 	}
 
 	/**
@@ -438,11 +520,12 @@ export class MSApp extends AppBase {
 	 * @param cell - Cell to animate outwards from.
 	 * @param cb - Runs once for each cell. One cell per round updated must return true to continue the animation.
 	 */
-	public async animatedUpdateFrom(cell: MSCellState, cb = this.cellUpdateCb): Promise<void> {
+	private async animatedUpdateFrom(cell: MSCellState, cb = this.cellUpdateCb): Promise<void> {
 		this.grid.interactiveChildren = false;
 
-		let max = Math.max(this.state.width, this.state.height);
-		for (let i = 0; i < max; i++) {
+		let maxSide = Math.max(this.state.width, this.state.height);
+
+		for (let i = 0; i < maxSide; i++) {
 			let t = i * 2 + 1;
 
 			let _break = true;
@@ -450,6 +533,7 @@ export class MSApp extends AppBase {
 			for (let c = 0; c < t; c++) {
 				let x = cell.x - i + c;
 				let y = cell.y - i;
+
 				if (this.state.coordsInBounds(x, y)) {
 					cb(this.getCellView(x, y)) && _break && (_break = false);
 				}
@@ -483,7 +567,7 @@ export class MSApp extends AppBase {
 				break;
 			}
 
-			sounds.blop.playbackRate = (i / max) * 3 + 1;
+			sounds.blop.playbackRate = (i / maxSide) * 3 + 1;
 			sounds.blop.start();
 
 			await delay(66);
@@ -510,27 +594,7 @@ export class MSApp extends AppBase {
 	 * @param x
 	 * @param y
 	 */
-	public getCellView(x: number, y: number): MSCell {
-		let idx = this.state.indexOf(x, y);
-		let poolCell = this.cellPool[idx];
-
-		if (!poolCell) {
-			throw new Error(`Can't find view cell at ${x},${y}`);
-		}
-
-		if (!poolCell.parent) {
-			poolCell.setParent(this.grid);
-		}
-
-		return poolCell;
-	}
-
-	/**
-	 *
-	 * @param x
-	 * @param y
-	 */
-	public createCellView(x: number, y: number): MSCell {
+	private createCellView(x: number, y: number): MSCell {
 		let idx = this.state.indexOf(x, y);
 		let msCell = new MSCell(this);
 		this.cellPool[idx] = msCell;
@@ -543,79 +607,10 @@ export class MSApp extends AppBase {
 	/**
 	 *
 	 */
-	public checkWin() {
+	private checkWin() {
 		if (this.state.isWin()) {
 			this.animateWin();
 		}
-	}
-
-	/**
-	 *
-	 */
-	public async leftClick(cellState: MSCellState) {
-		let msCell = this.getCellView(cellState.x, cellState.y);
-		let x = msCell.ix;
-		let y = msCell.iy;
-
-		if (this.isFirstClick) {
-			this.isFirstClick = false;
-			let result = this.state.selectFirst(x, y);
-			if (result.length > 1) {
-				await this.animatedUpdateFrom(cellState);
-			} else {
-				msCell.updateViewState();
-			}
-		} //
-		else {
-			let result = this.state.select(x, y);
-
-			if (cellState.covered) {
-				sounds.blop.playbackRate = 2;
-				sounds.blop.start();
-			} //
-			else {
-				sounds.blop.playbackRate = 3;
-				sounds.blop.start();
-			}
-
-			if (cellState.mine) {
-				if (cellState.flag) {
-					this.state.clearFlag(x, y);
-				}
-				msCell.updateViewState();
-				this.animateLose(cellState);
-			} //
-			else {
-				if (result.length > 1) {
-					await this.animatedUpdateFrom(cellState);
-				} else {
-					msCell.updateViewState();
-				}
-			}
-		}
-
-		this.checkWin();
-	}
-
-	/**
-	 *
-	 * @param cellState
-	 */
-	public rightClick(cellState: MSCellState) {
-		cellState.flag = !cellState.flag;
-
-		if (cellState.flag) {
-			sounds.blop.playbackRate = 2;
-			sounds.blop.start();
-		} //
-		else {
-			sounds.blop.playbackRate = 3;
-			sounds.blop.start();
-		}
-
-		let msCell = this.getCellView(cellState.x, cellState.y);
-
-		msCell.updateViewState();
 	}
 
 	/**
