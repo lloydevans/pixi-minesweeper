@@ -61,7 +61,7 @@ export class MSState {
 		if (config.startMines < 1) {
 			throw new Error("Must have at least 1 mine");
 		}
-		if (config.startMines > config.gridWidth * config.gridHeight - 1) {
+		if (config.startMines > config.gridWidth * config.gridHeight - 2) {
 			throw new Error(
 				`Too many mines (${config.startMines}) for grid size: ${config.gridWidth} x ${config.gridHeight}`
 			);
