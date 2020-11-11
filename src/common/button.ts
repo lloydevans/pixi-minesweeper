@@ -53,9 +53,9 @@ export class Button extends Sprite {
 			} catch (err) {
 				console.log(err);
 			}
-			this.off("pointerdown", this.toneStart, this);
-			this.off("pointerup", this.toneStart, this);
 		}
+		this.off("pointerdown", this.toneStart, this);
+		this.off("pointerup", this.toneStart, this);
 	}
 
 	/**
