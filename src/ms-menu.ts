@@ -1,4 +1,4 @@
-import { Container, Graphics, Sprite, TextStyle, Texture } from "pixi.js-legacy";
+import { Container, Graphics, Sprite, TextStyle } from "pixi.js-legacy";
 import { ButtonScroller } from "./common/button-scroller";
 import { ButtonText } from "./common/button-text";
 import { INITIAL_GAME_CONFIG, MSApp } from "./ms-app";
