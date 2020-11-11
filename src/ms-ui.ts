@@ -1,4 +1,4 @@
-import { Container, Graphics, Text, TextStyle } from "pixi.js-legacy";
+import * as PIXI from "pixi.js-legacy";
 import { Button } from "./common/button";
 import { GameText } from "./common/game-text";
 import { Spine } from "./common/spine";
@@ -11,19 +11,19 @@ const MAX_TIME = 999;
 /**
  * Class handle UI elements.
  */
-export class MSUi extends Container {
+export class MSUi extends PIXI.Container {
 	private app: MSApp;
-	private background: Graphics;
+	private background: PIXI.Graphics;
 
 	// These definitely get set in initilisation.
 	private buttonRestart!: Button;
 	private buttonCross!: Button;
-	private flagsContainer!: Container;
+	private flagsContainer!: PIXI.Container;
 	private flagsGraphic!: Spine;
-	private flagsCount!: Text;
-	private timeContainer!: Container;
+	private flagsCount!: GameText;
+	private timeContainer!: PIXI.Container;
 	private timeGraphic!: Spine;
-	private timeCount!: Text;
+	private timeCount!: GameText;
 
 	/**
 	 *
@@ -32,7 +32,7 @@ export class MSUi extends Container {
 	constructor(app: MSApp) {
 		super();
 		this.app = app;
-		this.background = new Graphics();
+		this.background = new PIXI.Graphics();
 		this.addChild(this.background);
 	}
 
@@ -40,9 +40,9 @@ export class MSUi extends Container {
 	 * Initialisation must be called after assets are loaded.
 	 */
 	init() {
-		let textStyle = new TextStyle({ fill: 0xffffff, fontWeight: "bold", fontSize: 42 });
+		let textStyle = new PIXI.TextStyle({ fill: 0xffffff, fontWeight: "bold", fontSize: 42 });
 
-		this.flagsContainer = new Container();
+		this.flagsContainer = new PIXI.Container();
 		this.flagsContainer.y = -8;
 
 		this.flagsGraphic = new Spine(this.app.getSpine("grid-square"));
@@ -54,7 +54,7 @@ export class MSUi extends Container {
 		this.flagsCount.x = 38;
 		this.flagsCount.y = -24;
 
-		this.timeContainer = new Container();
+		this.timeContainer = new PIXI.Container();
 		this.timeContainer.y = -8;
 
 		this.timeGraphic = new Spine(this.app.getSpine("timer"));

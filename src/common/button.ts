@@ -1,18 +1,18 @@
-import { InteractionEvent, Sprite, Texture } from "pixi.js-legacy";
+import * as PIXI from "pixi.js-legacy";
 import * as Tone from "tone";
 import { sounds } from "../ms-tone";
 import { AppBase } from "./app-base";
 
 export interface ButtonConfig {
-	texture: Texture;
+	texture: PIXI.Texture;
 }
 
 /**
  * Very quick button class.
  */
-export class Button extends Sprite {
+export class Button extends PIXI.Sprite {
 	protected app: AppBase;
-	protected back: Sprite;
+	protected back: PIXI.Sprite;
 	protected config: ButtonConfig;
 
 	constructor(app: AppBase, config: ButtonConfig) {
@@ -20,7 +20,7 @@ export class Button extends Sprite {
 
 		this.app = app;
 		this.config = { ...config };
-		this.back = Sprite.from(config.texture);
+		this.back = PIXI.Sprite.from(config.texture);
 		this.back.anchor.set(0.5);
 
 		this.buttonMode = true;
@@ -62,7 +62,7 @@ export class Button extends Sprite {
 	 *
 	 * @param e
 	 */
-	protected onPointerOut(e: InteractionEvent) {
+	protected onPointerOut(e: PIXI.InteractionEvent) {
 		this.alpha = 1;
 	}
 
@@ -70,7 +70,7 @@ export class Button extends Sprite {
 	 *
 	 * @param e
 	 */
-	protected onPointerOver(e: InteractionEvent) {
+	protected onPointerOver(e: PIXI.InteractionEvent) {
 		this.alpha = 0.5;
 	}
 
@@ -78,7 +78,7 @@ export class Button extends Sprite {
 	 *
 	 * @param e
 	 */
-	protected async onPointerUp(e: InteractionEvent) {
+	protected async onPointerUp(e: PIXI.InteractionEvent) {
 		this.alpha = 1;
 
 		sounds.blop.playbackRate = 3;
@@ -89,7 +89,7 @@ export class Button extends Sprite {
 	 *
 	 * @param e
 	 */
-	protected async onPointerDown(e: InteractionEvent) {
+	protected async onPointerDown(e: PIXI.InteractionEvent) {
 		this.alpha = 0.5;
 
 		sounds.blop.playbackRate = 2;
@@ -100,7 +100,7 @@ export class Button extends Sprite {
 	 *
 	 * @param e
 	 */
-	protected onPointerCancel(e: InteractionEvent) {
+	protected onPointerCancel(e: PIXI.InteractionEvent) {
 		this.alpha = 1;
 	}
 
@@ -108,5 +108,5 @@ export class Button extends Sprite {
 	 *
 	 * @param e
 	 */
-	protected onPointerTap(e: InteractionEvent) {}
+	protected onPointerTap(e: PIXI.InteractionEvent) {}
 }

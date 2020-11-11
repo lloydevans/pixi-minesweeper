@@ -1,13 +1,13 @@
-import { Container, Graphics, Sprite, TextStyle } from "pixi.js-legacy";
+import * as PIXI from "pixi.js-legacy";
 import { ButtonScroller } from "./common/button-scroller";
 import { ButtonText } from "./common/button-text";
 import { INITIAL_GAME_CONFIG, MSApp } from "./ms-app";
 import { REF_HEIGHT } from "./ms-cell";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MIN_GRID_HEIGHT, MIN_GRID_WIDTH } from "./ms-state";
 
-export class MSMenu extends Container {
-	private title!: Sprite;
-	private background!: Graphics;
+export class MSMenu extends PIXI.Container {
+	private title!: PIXI.Sprite;
+	private background!: PIXI.Graphics;
 	private buttonStart!: ButtonText;
 	private widthScroller!: ButtonScroller;
 	private heightScroller!: ButtonScroller;
@@ -21,14 +21,14 @@ export class MSMenu extends Container {
 	}
 
 	public init() {
-		let textStyle = new TextStyle({
+		let textStyle = new PIXI.TextStyle({
 			fontFamily: "Arial",
 			fontWeight: "Bold",
 			fill: 0xffffff,
 			fontSize: 36
 		});
 
-		this.title = Sprite.from(this.app.getFrame("textures", "title"));
+		this.title = PIXI.Sprite.from(this.app.getFrame("textures", "title"));
 		this.title.y = -REF_HEIGHT * 2.5;
 		this.title.anchor.set(0.5);
 
@@ -73,7 +73,7 @@ export class MSMenu extends Container {
 		this.minesScroller.x = 64;
 		this.minesScroller.y = 60;
 
-		this.background = new Graphics();
+		this.background = new PIXI.Graphics();
 		this.background.beginFill(0xaaaaaa, 0.8);
 		this.background.drawRect(-200, -220, 400, 450);
 		this.background.endFill();

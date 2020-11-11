@@ -1,5 +1,5 @@
 import isEqual from "lodash/isEqual";
-import { Container, Rectangle, Sprite, Text, TextStyle } from "pixi.js-legacy";
+import * as PIXI from "pixi.js-legacy";
 import { GameText } from "./common/game-text";
 import { Spine } from "./common/spine";
 import { MSApp } from "./ms-app";
@@ -25,7 +25,7 @@ enum AnimTrack {
 /**
  *
  */
-export class MSCell extends Container {
+export class MSCell extends PIXI.Container {
 	public get ix(): number {
 		return this.viewState.x;
 	}
@@ -35,12 +35,12 @@ export class MSCell extends Container {
 	private app: MSApp;
 	private anim: Spine;
 	private edges: {
-		l: Sprite;
-		r: Sprite;
-		u: Sprite;
-		d: Sprite;
+		l: PIXI.Sprite;
+		r: PIXI.Sprite;
+		u: PIXI.Sprite;
+		d: PIXI.Sprite;
 	};
-	private adjacentText: Text;
+	private adjacentText: GameText;
 	private viewState: MSCellState;
 	public state: MSCellState;
 
@@ -66,7 +66,7 @@ export class MSCell extends Container {
 		this.anim.stateData.setMix("flag-destroy", "flag-place-start", 0);
 		this.anim.stateData.defaultMix = 0;
 
-		let textStyle = new TextStyle({
+		let textStyle = new PIXI.TextStyle({
 			fontWeight: this.app.config.colorNumberWeight,
 			fontSize: Math.floor(REF_WIDTH * 0.5)
 		});
@@ -77,7 +77,7 @@ export class MSCell extends Container {
 		this.addChild(this.anim);
 		this.addChild(...Object.values(this.edges));
 
-		this.hitArea = new Rectangle(-REF_WIDTH / 2, -REF_HEIGHT / 2, REF_WIDTH, REF_HEIGHT);
+		this.hitArea = new PIXI.Rectangle(-REF_WIDTH / 2, -REF_HEIGHT / 2, REF_WIDTH, REF_HEIGHT);
 
 		this.on("mouseover", this.animateHoverStart, this);
 		this.on("mouseout", this.animateHoverEnd, this);
@@ -130,9 +130,9 @@ export class MSCell extends Container {
 	/**
 	 *
 	 */
-	private createEdgeSprite(angle = 0): Sprite {
+	private createEdgeSprite(angle = 0): PIXI.Sprite {
 		let texture = this.app.getFrame("tiles", "front-edge-0");
-		let sprite = new Sprite(texture);
+		let sprite = new PIXI.Sprite(texture);
 		sprite.alpha = 0.5;
 		sprite.anchor.set(0.5);
 		sprite.visible = false;

@@ -1,5 +1,5 @@
 import clamp from "lodash/clamp";
-import { Application, Container, LoaderResource, loaders, Texture, utils } from "pixi.js-legacy";
+import * as PIXI from "pixi.js-legacy";
 import * as screenfull from "screenfull";
 
 export const MAX_DPR = 4;
@@ -8,12 +8,13 @@ export const MIN_DPR = 0.5;
 /**
  * General purpose app functionality.
  */
-export class AppBase extends Application {
-	public dpr: number = 1;
-	public width: number = 0;
-	public height: number = 0;
-	public root: Container = new Container();
-	public events: utils.EventEmitter = new utils.EventEmitter();
+export class AppBase extends PIXI.Application {
+	public events = new PIXI.utils.EventEmitter();
+	public width = 0;
+	public height = 0;
+	public dpr = 1;
+
+	protected root = new PIXI.Container();
 
 	/**
 	 *
@@ -91,7 +92,7 @@ export class AppBase extends Application {
 	 *
 	 * @param atlasName
 	 */
-	public getAtlas(atlasName: string): LoaderResource {
+	public getAtlas(atlasName: string): PIXI.LoaderResource {
 		let atlas = this.loader.resources[atlasName];
 
 		if (!atlas) {
@@ -109,10 +110,10 @@ export class AppBase extends Application {
 	 * @param atlasName
 	 * @param frameName
 	 */
-	public getFrame(atlasName: string, frameName: string): Texture {
+	public getFrame(atlasName: string, frameName: string): PIXI.Texture {
 		let atlas = this.getAtlas(atlasName);
 
-		if (!atlas.textures || !(atlas.textures[frameName] instanceof Texture)) {
+		if (!atlas.textures || !(atlas.textures[frameName] instanceof PIXI.Texture)) {
 			throw new Error(`Can't find frame "${frameName}" in atlas "${atlasName}"`);
 		}
 
@@ -157,7 +158,7 @@ export class AppBase extends Application {
 	 * @param scale
 	 */
 	public addSpine(spineName: string, scale: number = this.getAssetDpr()) {
-		let metadata: loaders.IMetadata = {
+		let metadata: PIXI.loaders.IMetadata = {
 			spineSkeletonScale: 1 / MAX_DPR,
 			spineAtlasFile: spineName + "@" + scale + "x.atlas"
 		};

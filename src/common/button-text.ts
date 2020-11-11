@@ -1,11 +1,11 @@
-import { Texture, TextStyle } from "pixi.js-legacy";
+import * as PIXI from "pixi.js-legacy";
 import { AppBase } from "./app-base";
 import { GameText } from "./game-text";
 import { Button } from "./button";
 
 export interface ButtonTextOption {
-	backTexture: Texture;
-	textStyle: TextStyle;
+	backTexture: PIXI.Texture;
+	textStyle: PIXI.TextStyle;
 	text: string;
 }
 

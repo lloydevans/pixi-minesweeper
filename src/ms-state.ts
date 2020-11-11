@@ -1,11 +1,11 @@
 import type { MSCellState } from "./ms-cell-state";
 import type { MSGameConfig } from "./ms-config";
-import { utils } from "pixi.js-legacy";
+import * as PIXI from "pixi.js-legacy";
 
 export const MIN_GRID_WIDTH = 4;
 export const MIN_GRID_HEIGHT = 4;
-export const MAX_GRID_WIDTH = utils.isMobile.any ? 24 : 32;
-export const MAX_GRID_HEIGHT = utils.isMobile.any ? 24 : 32;
+export const MAX_GRID_WIDTH = PIXI.utils.isMobile.any ? 24 : 32;
+export const MAX_GRID_HEIGHT = PIXI.utils.isMobile.any ? 24 : 32;
 
 /**
  *

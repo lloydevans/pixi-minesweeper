@@ -1,6 +1,6 @@
 import clamp from "lodash/clamp";
 import defaults from "lodash/defaults";
-import { Container, Graphics, InteractionEvent, MIPMAP_MODES, SCALE_MODES, Sprite, Texture, TilingSprite } from "pixi.js-legacy"; // prettier-ignore
+import * as PIXI from "pixi.js-legacy"; // prettier-ignore
 import { AppBase } from "./common/app-base";
 import { hexToNum } from "./common/color";
 import { delay } from "./common/delay";
@@ -40,17 +40,17 @@ export class MSApp extends AppBase {
 	private transitionIdx = 0;
 	private cellPool: MSCell[] = [];
 	private gameConfig: MSGameConfig;
-	private background = new Graphics();
-	private board = Sprite.from(Texture.WHITE);
+	private background = new PIXI.Graphics();
+	private board = PIXI.Sprite.from(PIXI.Texture.WHITE);
 	private cellWidth = REF_WIDTH;
 	private cellHeight = REF_HEIGHT;
-	private container = new Container();
+	private container = new PIXI.Container();
 	private grid = new MSGrid();
 	private isFirstClick = true;
 	private touchUi = new MSTouchUi(this);
 	private menu = new MSMenu(this);
 	private ui = new MSUi(this);
-	private gridBack?: TilingSprite;
+	private gridBack?: PIXI.TilingSprite;
 	private isLoaded = false;
 
 	/**
@@ -617,7 +617,7 @@ export class MSApp extends AppBase {
 	 *
 	 * @param e
 	 */
-	private onPointerTap(e: InteractionEvent) {
+	private onPointerTap(e: PIXI.InteractionEvent) {
 		let msCell = e.currentTarget as MSCell;
 
 		let cellState = this.state.cellAt(msCell.ix, msCell.iy);
@@ -661,7 +661,7 @@ export class MSApp extends AppBase {
 	 *
 	 * @param e
 	 */
-	private onPointerDown(e: InteractionEvent) {
+	private onPointerDown(e: PIXI.InteractionEvent) {
 		let msCell = e.currentTarget as MSCell;
 
 		let cellState = this.state.cellAt(msCell.ix, msCell.iy);
@@ -692,7 +692,7 @@ export class MSApp extends AppBase {
 	 *
 	 * @param e
 	 */
-	private onPointerOut(e: InteractionEvent) {
+	private onPointerOut(e: PIXI.InteractionEvent) {
 		let msCell = e.currentTarget as MSCell;
 
 		let cellState = this.state.cellAt(msCell.ix, msCell.iy);
