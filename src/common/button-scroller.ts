@@ -1,4 +1,4 @@
-import clamp from "lodash/clamp";
+import clamp from "lodash-es/clamp";
 import { Container, TextStyle, Texture } from "pixi.js-legacy";
 import { AppBase } from "./app-base";
 import { Button } from "./button";

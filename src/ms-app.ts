@@ -1,5 +1,5 @@
-import clamp from "lodash/clamp";
-import defaults from "lodash/defaults";
+import clamp from "lodash-es/clamp";
+import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
 import { AppBase } from "./common/app-base";
 import { hexToNum } from "./common/color";

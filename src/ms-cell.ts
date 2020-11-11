@@ -1,4 +1,4 @@
-import isEqual from "lodash/isEqual";
+import isEqual from "lodash-es/isEqual";
 import * as PIXI from "pixi.js-legacy";
 import { GameText } from "./common/game-text";
 import { Spine } from "./common/spine";

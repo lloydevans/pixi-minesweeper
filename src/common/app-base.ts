@@ -1,4 +1,4 @@
-import clamp from "lodash/clamp";
+import clamp from "lodash-es/clamp";
 import * as PIXI from "pixi.js-legacy";
 import * as screenfull from "screenfull";
 
