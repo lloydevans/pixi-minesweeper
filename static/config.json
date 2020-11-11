@@ -1,9 +1,6 @@
 {
-	"colorCellUncovered": "#bfb46b",
-	"colorCellCovered": "#b8e66e",
 	"colorBackground": "#303030",
 	"colorBoard": "#bda355",
-	"colorUiBar": "#7b6536",
 	"colorNumberFont": "Arial",
 	"colorNumberSize": 21,
 	"colorNumberWeight": "bold",
@@ -16,22 +13,5 @@
 		"6": "#469183",
 		"7": "#818a6a",
 		"8": "#51524f"
-	},
-	"levels": {
-		"easy": {
-			"startMines": 4,
-			"gridWidth": 6,
-			"gridHeight": 6
-		},
-		"medium": {
-			"startMines": 10,
-			"gridWidth": 10,
-			"gridHeight": 10
-		},
-		"hard": {
-			"startMines": 30,
-			"gridWidth": 16,
-			"gridHeight": 16
-		}
 	}
 }

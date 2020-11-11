@@ -16,11 +16,8 @@ export interface MSGameConfig {
  *
  */
 export interface MSConfig {
-	colorCellUncovered: string;
-	colorCellCovered: string;
 	colorBackground: string;
 	colorBoard: string;
-	colorUiBar: string;
 	colorNumberFont: string;
 	colorNumberWeight: "regular" | "bold";
 	colorNumbers: {
@@ -39,11 +36,8 @@ export interface MSConfig {
  *
  */
 export const MS_CONFIG_DEFAULT: MSConfig = {
-	colorCellUncovered: "#bfb46b",
-	colorCellCovered: "#b8e66e",
 	colorBackground: "#303030",
 	colorBoard: "#bda355",
-	colorUiBar: "#7b6536",
 	colorNumberFont: "Arial",
 	colorNumberWeight: "bold",
 	colorNumbers: {
