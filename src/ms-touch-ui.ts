@@ -1,20 +1,20 @@
 import * as PIXI from "pixi.js-legacy";
 import { Button } from "./common/button";
+import { Component } from "./common/component";
 import { MSApp } from "./ms-app";
 import { MSCellState } from "./ms-cell-state";
 
 /**
  * UI overlay for touch and accesible controls.
  */
-export class MSTouchUi extends PIXI.Container {
+export class MSTouchUi extends Component<MSApp> {
 	public targetCell?: MSCellState;
-	private app: MSApp;
+
 	private buttonFlag!: Button;
 	private buttonDig!: Button;
 
 	constructor(app: MSApp) {
-		super();
-		this.app = app;
+		super(app);
 	}
 
 	/**

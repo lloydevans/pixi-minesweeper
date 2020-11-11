@@ -4,20 +4,18 @@ import { ButtonText } from "./common/button-text";
 import { INITIAL_GAME_CONFIG, MSApp } from "./ms-app";
 import { REF_HEIGHT } from "./ms-cell";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MIN_GRID_HEIGHT, MIN_GRID_WIDTH } from "./ms-state";
+import { Component } from "./common/component";
 
-export class MSMenu extends PIXI.Container {
+export class MSMenu extends Component<MSApp> {
 	private title!: PIXI.Sprite;
 	private background!: PIXI.Graphics;
 	private buttonStart!: ButtonText;
 	private widthScroller!: ButtonScroller;
 	private heightScroller!: ButtonScroller;
 	private minesScroller!: ButtonScroller;
-	private app: MSApp;
 
 	constructor(app: MSApp) {
-		super();
-
-		this.app = app;
+		super(app);
 	}
 
 	public init() {

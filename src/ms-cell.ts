@@ -3,6 +3,7 @@ import * as PIXI from "pixi.js-legacy";
 import { GameText } from "./common/game-text";
 import { Spine } from "./common/spine";
 import { MSApp } from "./ms-app";
+import { Component } from "./common/component";
 import { CELL_STATE_DEFAULT } from "./ms-cell-state";
 import type { MSCellState } from "./ms-cell-state";
 import type { NumberKey } from "./ms-config";
@@ -25,14 +26,13 @@ enum AnimTrack {
 /**
  *
  */
-export class MSCell extends PIXI.Container {
+export class MSCell extends Component<MSApp> {
 	public get ix(): number {
 		return this.viewState.x;
 	}
 	public get iy(): number {
 		return this.viewState.y;
 	}
-	private app: MSApp;
 	private anim: Spine;
 	private edges: {
 		l: PIXI.Sprite;
@@ -49,9 +49,8 @@ export class MSCell extends PIXI.Container {
 	 * @param app - App reference.
 	 */
 	constructor(app: MSApp) {
-		super();
+		super(app);
 
-		this.app = app;
 		this.state = { ...CELL_STATE_DEFAULT };
 		this.viewState = { ...CELL_STATE_DEFAULT };
 		this.edges = {

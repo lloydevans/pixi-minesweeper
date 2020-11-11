@@ -3,6 +3,7 @@ import { Button } from "./common/button";
 import { GameText } from "./common/game-text";
 import { Spine } from "./common/spine";
 import { MSApp } from "./ms-app";
+import { Component } from "./common/component";
 
 /**
  */
@@ -11,8 +12,7 @@ const MAX_TIME = 999;
 /**
  * Class handle UI elements.
  */
-export class MSUi extends PIXI.Container {
-	private app: MSApp;
+export class MSUi extends Component<MSApp> {
 	private background: PIXI.Graphics;
 
 	// These definitely get set in initilisation.
@@ -30,8 +30,8 @@ export class MSUi extends PIXI.Container {
 	 * @param app
 	 */
 	constructor(app: MSApp) {
-		super();
-		this.app = app;
+		super(app);
+
 		this.background = new PIXI.Graphics();
 		this.addChild(this.background);
 	}
