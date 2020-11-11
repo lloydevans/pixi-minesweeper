@@ -81,8 +81,10 @@ export class Button extends PIXI.Sprite {
 	protected async onPointerUp(e: PIXI.InteractionEvent) {
 		this.alpha = 1;
 
-		sounds.blop.playbackRate = 3;
-		sounds.blop.start();
+		if (Tone.context.state === "running") {
+			sounds.blop.playbackRate = 3;
+			sounds.blop.start();
+		}
 	}
 
 	/**
@@ -92,8 +94,10 @@ export class Button extends PIXI.Sprite {
 	protected async onPointerDown(e: PIXI.InteractionEvent) {
 		this.alpha = 0.5;
 
-		sounds.blop.playbackRate = 2;
-		sounds.blop.start();
+		if (Tone.context.state === "running") {
+			sounds.blop.playbackRate = 2;
+			sounds.blop.start();
+		}
 	}
 
 	/**
