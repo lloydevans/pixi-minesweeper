@@ -19,8 +19,8 @@ type MidiNote = {
 	velocity: number;
 };
 
-const DURATION = 31.34;
-const BUFFER = 1;
+const DURATION = 31.31;
+const BUFFER = 0.5;
 
 let synth = new Tone.PolySynth(Tone.Synth, {
 	envelope: {
@@ -35,6 +35,8 @@ let synth = new Tone.PolySynth(Tone.Synth, {
 	volume: -24,
 }).toDestination();
 
+let playIdx = 0;
+
 let isPlaying = false;
 
 /**
@@ -48,7 +50,11 @@ export async function playMidi(midi: any) {
 
 	isPlaying = true;
 
-	let start = Tone.now() + 1;
+	playIdx++;
+
+	let _playIdx = playIdx;
+
+	let start = Tone.now();
 
 	let original = midi.tracks[0].notes as MidiNote[];
 
@@ -56,7 +62,7 @@ export async function playMidi(midi: any) {
 
 	let loops = 0;
 
-	while (isPlaying) {
+	while (isPlaying && _playIdx === playIdx) {
 		let now = Tone.now();
 
 		while (notes[0].time + start + DURATION * loops < now + BUFFER) {
@@ -80,7 +86,9 @@ export async function playMidi(midi: any) {
 			}
 		}
 
-		if (!isPlaying) break;
+		if (!isPlaying) {
+			break;
+		}
 
 		await delay(BUFFER * 1000);
 	}
