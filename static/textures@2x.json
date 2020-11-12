@@ -2,15 +2,15 @@
 
 "button-arrow":
 {
-	"frame": {"x":114,"y":780,"w":76,"h":104},
-	"rotated": false,
+	"frame": {"x":132,"y":252,"w":76,"h":104},
+	"rotated": true,
 	"trimmed": true,
 	"spriteSourceSize": {"x":26,"y":12,"w":76,"h":104},
 	"sourceSize": {"w":128,"h":128}
 },
 "button-cross":
 {
-	"frame": {"x":114,"y":886,"w":80,"h":80},
+	"frame": {"x":132,"y":330,"w":80,"h":80},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":24,"y":24,"w":80,"h":80},
@@ -18,7 +18,7 @@
 },
 "button-dig":
 {
-	"frame": {"x":76,"y":698,"w":104,"h":80},
+	"frame": {"x":132,"y":170,"w":104,"h":80},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":12,"y":24,"w":104,"h":80},
@@ -26,15 +26,15 @@
 },
 "button-flag":
 {
-	"frame": {"x":2,"y":698,"w":72,"h":112},
-	"rotated": false,
+	"frame": {"x":132,"y":2,"w":72,"h":112},
+	"rotated": true,
 	"trimmed": true,
 	"spriteSourceSize": {"x":42,"y":8,"w":72,"h":112},
 	"sourceSize": {"w":128,"h":128}
 },
 "button-long":
 {
-	"frame": {"x":86,"y":2,"w":512,"h":128},
+	"frame": {"x":2,"y":2,"w":512,"h":128},
 	"rotated": true,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":512,"h":128},
@@ -42,19 +42,11 @@
 },
 "button-restart":
 {
-	"frame": {"x":2,"y":812,"w":110,"h":92},
+	"frame": {"x":132,"y":76,"w":110,"h":92},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":16,"y":18,"w":110,"h":92},
 	"sourceSize": {"w":128,"h":128}
-},
-"title":
-{
-	"frame": {"x":2,"y":2,"w":694,"h":82},
-	"rotated": true,
-	"trimmed": true,
-	"spriteSourceSize": {"x":38,"y":52,"w":694,"h":82},
-	"sourceSize": {"w":768,"h":192}
 }},
 "meta": {
 	"app": "https://www.codeandweb.com/texturepacker",
@@ -63,6 +55,6 @@
 	"format": "RGBA8888",
 	"size": {"w":256,"h":1024},
 	"scale": "0.125",
-	"smartupdate": "$TexturePacker:SmartUpdate:b0fa8dd58134b43f0553e5caf0ac1ecf:96ba285a618013492ebabc711b375f88:0d4797ab0a62cbf7baf7b92840fcf112$"
+	"smartupdate": "$TexturePacker:SmartUpdate:9ffe287c70176eb1bf9fbed21fcb68f9:5e5fe95602511d1fa80a042725f18aa2:0d4797ab0a62cbf7baf7b92840fcf112$"
 }
 }

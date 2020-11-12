@@ -108,7 +108,7 @@
             <key>sizeConstraints</key>
             <enum type="AlgorithmSettings::SizeConstraints">POT</enum>
             <key>forceSquared</key>
-            <true/>
+            <false/>
             <key>maxRects</key>
             <struct type="AlgorithmMaxRectsSettings">
                 <key>heuristic</key>
@@ -185,6 +185,10 @@
             <key type="filename">../bg/bg-green-b.png</key>
             <key type="filename">../bg/bg-green-c.png</key>
             <key type="filename">../bg/bg-green-d.png</key>
+            <key type="filename">../bg/bg-swamp-a.png</key>
+            <key type="filename">../bg/bg-swamp-b.png</key>
+            <key type="filename">../bg/bg-swamp-c.png</key>
+            <key type="filename">../bg/bg-swamp-d.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0,0</point_f>
