@@ -57,7 +57,7 @@ export async function playMidi(midi: any) {
 	while (isPlaying) {
 		let now = Tone.now();
 
-		while (notes[0].time < now + BUFFER) {
+		while (notes[0].time + start < now + BUFFER) {
 			let note = notes.shift()!;
 
 			try {
