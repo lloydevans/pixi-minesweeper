@@ -26,9 +26,14 @@ export class AppBase extends PIXI.Application {
 	public readonly events = new PIXI.utils.EventEmitter();
 
 	/**
-	 *
+	 * Global app tween group.
 	 */
 	protected readonly tweenGroup = new TweenGroup(false, 1);
+
+	/**
+	 * Root container.
+	 */
+	protected readonly root = new PIXI.Container();
 
 	/**
 	 * Current app ready state. Modified via setReady,
@@ -62,8 +67,6 @@ export class AppBase extends PIXI.Application {
 	private _width = 0;
 	private _height = 0;
 	private _ready = false;
-
-	protected root = new PIXI.Container();
 
 	/**
 	 *
