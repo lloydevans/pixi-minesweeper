@@ -3,7 +3,6 @@ import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
 import { AppBase } from "./common/app-base";
 import { hexToNum } from "./common/color";
-import { delay } from "./common/delay";
 import { Ease } from "./common/ease";
 import { preventContextMenu } from "./common/utils";
 import { MSBg } from "./ms-bg";
@@ -361,7 +360,7 @@ export class MSApp extends AppBase {
 		this.grid.removeChildren();
 
 		while (this.cellPool.length < this.state.totalCells) {
-			await delay(100);
+			await this.delay(100);
 		}
 
 		for (let i = 0; i < this.state.totalCells; i++) {
@@ -374,7 +373,7 @@ export class MSApp extends AppBase {
 			});
 		}
 
-		await delay(250);
+		await this.delay(250);
 
 		await this.transitionCells();
 	}
@@ -410,7 +409,7 @@ export class MSApp extends AppBase {
 			if (indexes.length % Math.floor(this.state.totalCells / 12) === 0) {
 				sounds.blop.playbackRate = x / this.state.width + y / this.state.height + 1;
 				sounds.blop.start();
-				await delay(33);
+				await this.delay(33);
 			}
 		}
 	}
@@ -434,7 +433,7 @@ export class MSApp extends AppBase {
 			if (indexes.length % (this.state.width * Math.round(this.state.height / 10)) === 0) {
 				sounds.blop.playbackRate = x / this.state.width + y / this.state.height + 1;
 				sounds.blop.start();
-				await delay(33);
+				await this.delay(33);
 			}
 		}
 	}
@@ -470,7 +469,7 @@ export class MSApp extends AppBase {
 			msCell.animateCorrect();
 			sounds.chime.start();
 
-			await delay(66);
+			await this.delay(66);
 		}
 
 		let correctFlags = this.state.getCorrectFlags();
@@ -482,7 +481,7 @@ export class MSApp extends AppBase {
 			msCell.animateCorrect();
 			sounds.chime.start();
 
-			await delay(66);
+			await this.delay(66);
 		}
 	}
 
@@ -497,7 +496,7 @@ export class MSApp extends AppBase {
 		result.incorrect.splice(result.incorrect.indexOf(firstMine), 1);
 		this.getCellView(firstMine.x, firstMine.y).animateResult();
 
-		await delay(500);
+		await this.delay(500);
 
 		while (result.incorrect.length > 0) {
 			let idx = Math.floor(Math.random() * result.incorrect.length);
@@ -514,7 +513,7 @@ export class MSApp extends AppBase {
 				msCell.animateDigEnd();
 			}
 
-			await delay(50);
+			await this.delay(50);
 		}
 
 		while (result.correct.length > 0) {
@@ -526,7 +525,7 @@ export class MSApp extends AppBase {
 			sounds.chime.playbackRate = 1;
 			sounds.chime.start();
 
-			await delay(100);
+			await this.delay(100);
 		}
 	}
 
@@ -586,7 +585,7 @@ export class MSApp extends AppBase {
 			sounds.blop.playbackRate = (i / maxSide) * 3 + 1;
 			sounds.blop.start();
 
-			await delay(66);
+			await this.delay(66);
 		}
 
 		this.grid.interactiveChildren = true;

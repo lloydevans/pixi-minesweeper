@@ -102,6 +102,13 @@ export class AppBase extends PIXI.Application {
 	}
 
 	/**
+	 *
+	 */
+	public delay(time: number) {
+		return new Promise((resolve) => this.tween(this).wait(time).call(resolve));
+	}
+
+	/**
 	 * This is a rough way for components to be able to wait until required resources
 	 * are loaded before running initiailisation logic.
 	 */
