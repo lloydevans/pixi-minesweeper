@@ -9,11 +9,47 @@ export const MIN_DPR = 0.5;
  * General purpose app functionality.
  */
 export class AppBase extends PIXI.Application {
-	public events = new PIXI.utils.EventEmitter();
-	public ready = false;
-	public width = 0;
-	public height = 0;
-	public dpr = 1;
+	/**
+	 * Global event emitter.
+	 * "init" () => void
+	 * "ready" () => void
+	 * "update" (dt: number) => void
+	 * "resize" (width: number, height: number) => void
+	 */
+	public readonly events = new PIXI.utils.EventEmitter();
+
+	/**
+	 * Current app ready state. Modified via setReady,
+	 */
+	public get ready() {
+		return this._ready;
+	}
+
+	/**
+	 * Renderer pixel ratio. Use resizeRoot to modify.
+	 */
+	public get dpr() {
+		return this._dpr;
+	}
+
+	/**
+	 * Renderer virtual width. Use resizeRoot to modify.
+	 */
+	public get width() {
+		return this._width;
+	}
+
+	/**
+	 * Renderer virtual height. Use resizeRoot to modify.
+	 */
+	public get height() {
+		return this._height;
+	}
+
+	private _dpr = 1;
+	private _width = 0;
+	private _height = 0;
+	private _ready = false;
 
 	protected root = new PIXI.Container();
 
@@ -51,7 +87,7 @@ export class AppBase extends PIXI.Application {
 	 */
 	public setReady() {
 		if (!this.ready) {
-			this.ready = true;
+			this._ready = true;
 			this.events.emit("ready");
 		}
 	}
@@ -83,9 +119,9 @@ export class AppBase extends PIXI.Application {
 	 *
 	 */
 	private resizeRoot(width: number, height: number, dpr: number) {
-		this.width = width;
-		this.height = height;
-		this.dpr = dpr;
+		this._width = width;
+		this._height = height;
+		this._dpr = dpr;
 
 		this.view.style.width = this.width + "px";
 		this.view.style.height = this.height + "px";
@@ -197,7 +233,6 @@ export class AppBase extends PIXI.Application {
 	 * @param scale
 	 */
 	public addBitmapFont(assetPath: string, scale: number = this.getAssetDpr()) {
-		// Pixi auto detects and compensates scale based on suffix in form `@nx`.
 		this.loader.add(assetPath, assetPath + "@" + scale + "x.fnt");
 	}
 
