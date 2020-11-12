@@ -25,7 +25,7 @@ enum AnimTrack {
 	EdgeL,
 	EdgeR,
 	EdgeU,
-	EdgeD
+	EdgeD,
 }
 
 /**
@@ -60,7 +60,7 @@ export class MSCell extends Component<MSApp> {
 
 		this.adjacentText = new GameText(this.app, "", {
 			fontName: "bmfont",
-			fontSize: 38
+			fontSize: 38,
 		});
 		this.adjacentText._anchor.set(0.5);
 

@@ -44,7 +44,7 @@ function start() {
 		gridWidth: 16,
 		gridHeight: 16,
 		cheatMode: false,
-		start: () => app.newGame({ ...guiParams })
+		start: () => app.newGame({ ...guiParams }),
 	};
 
 	gui.add(guiParams, "start");

@@ -24,7 +24,7 @@ export class MSState {
 	public config: MSGameConfig = {
 		startMines: 1,
 		gridWidth: 4,
-		gridHeight: 4
+		gridHeight: 4,
 	};
 	public get totalMines() {
 		return this.cells.filter((el) => el.mine).length;
@@ -106,7 +106,7 @@ export class MSState {
 					adjacent: 0,
 					covered: true,
 					mine: false,
-					flag: false
+					flag: false,
 				};
 			}
 		}
@@ -222,7 +222,7 @@ export class MSState {
 	public getLossData() {
 		let lossData: LossData = {
 			correct: [],
-			incorrect: []
+			incorrect: [],
 		};
 
 		for (let i = 0; i < this.cells.length; i++) {

@@ -160,7 +160,7 @@ export class AppBase extends PIXI.Application {
 	public addSpine(spinePath: string, scale: number = this.getAssetDpr()) {
 		let metadata: PIXI.loaders.IMetadata = {
 			spineSkeletonScale: 1 / MAX_DPR,
-			spineAtlasFile: spinePath + "@" + scale + "x.atlas"
+			spineAtlasFile: spinePath + "@" + scale + "x.atlas",
 		};
 
 		// Add spine asset with our own compensation scale.

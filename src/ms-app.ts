@@ -23,7 +23,7 @@ import { MSUi } from "./ms-ui";
 export const INITIAL_GAME_CONFIG: MSGameConfig = {
 	startMines: 10,
 	gridWidth: 9,
-	gridHeight: 9
+	gridHeight: 9,
 };
 
 /**
@@ -369,7 +369,7 @@ export class MSApp extends AppBase {
 			this.grid.addChild(msCell);
 			this.cellPool[i].init({
 				...CELL_STATE_DEFAULT,
-				...{ x, y, covered: false }
+				...{ x, y, covered: false },
 			});
 		}
 

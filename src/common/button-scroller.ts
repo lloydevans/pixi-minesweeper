@@ -73,13 +73,13 @@ export class ButtonScroller extends Container {
 
 		this.number = new GameText(this.app, this.default.toString(), {
 			fontName: "bmfont",
-			fontSize: 38
+			fontSize: 38,
 		});
 		this.number._anchor.set(0.5);
 
 		this.label = new GameText(this.app, options.label, {
 			fontName: "bmfont",
-			fontSize: 38
+			fontSize: 38,
 		});
 		this.label._anchor.set(1, 0.5);
 		this.label.position.set(-106, 0);

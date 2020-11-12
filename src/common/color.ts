@@ -9,7 +9,7 @@ export function numToRgba(num: number): RgbaObject {
 		r: Math.floor(num / (256 * 256)) % 256,
 		g: Math.floor(num / 256) % 256,
 		b: num % 256,
-		a: 1
+		a: 1,
 	};
 }
 

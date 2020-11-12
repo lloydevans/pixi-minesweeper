@@ -4,7 +4,7 @@ const MOCK_CONFIG = {
 	startMines: 10,
 	gridWidth: 10,
 	gridHeight: 10,
-	cells: []
+	cells: [],
 };
 
 function getState() {

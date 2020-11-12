@@ -5,7 +5,7 @@ export const sounds = {
 	click: new Tone.Player("click.m4a").toDestination(),
 	clack: new Tone.Player("clack.m4a").toDestination(),
 	chime: new Tone.Player("chime.m4a").toDestination(),
-	drip: new Tone.Player("drip.m4a").toDestination()
+	drip: new Tone.Player("drip.m4a").toDestination(),
 };
 
 sounds.blop.volume.value = -12;

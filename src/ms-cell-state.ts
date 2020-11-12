@@ -42,5 +42,5 @@ export const CELL_STATE_DEFAULT = {
 	adjacent: 0,
 	covered: false,
 	mine: false,
-	flag: false
+	flag: false,
 };

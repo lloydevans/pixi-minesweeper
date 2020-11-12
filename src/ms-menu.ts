@@ -18,14 +18,14 @@ export class MSMenu extends Component<MSApp> {
 	public init() {
 		this.title = new GameText(this.app, "MINESWEEPER", {
 			fontName: "bmfont",
-			fontSize: 72
+			fontSize: 72,
 		});
 		this.title.y = -190;
 		this.title._anchor.set(0.5);
 
 		this.buttonStart = new ButtonText(this.app, {
 			backTexture: this.app.getFrame("textures", "button-long"),
-			text: "START"
+			text: "START",
 		});
 		this.buttonStart.position.set(0, 180);
 		this.buttonStart.anchor.set(0.5);
@@ -35,7 +35,7 @@ export class MSMenu extends Component<MSApp> {
 			label: "Width",
 			default: INITIAL_GAME_CONFIG.gridWidth,
 			min: MIN_GRID_WIDTH,
-			max: MAX_GRID_WIDTH
+			max: MAX_GRID_WIDTH,
 		});
 		this.widthScroller.x = 64;
 		this.widthScroller.y = -80;
@@ -45,7 +45,7 @@ export class MSMenu extends Component<MSApp> {
 			label: "Height",
 			default: INITIAL_GAME_CONFIG.gridWidth,
 			min: MIN_GRID_HEIGHT,
-			max: MAX_GRID_HEIGHT
+			max: MAX_GRID_HEIGHT,
 		});
 		this.heightScroller.x = 64;
 		this.heightScroller.y = 0;
@@ -55,7 +55,7 @@ export class MSMenu extends Component<MSApp> {
 			label: "Mines",
 			default: INITIAL_GAME_CONFIG.startMines,
 			min: 1,
-			max: INITIAL_GAME_CONFIG.gridWidth * INITIAL_GAME_CONFIG.gridHeight - 2
+			max: INITIAL_GAME_CONFIG.gridWidth * INITIAL_GAME_CONFIG.gridHeight - 2,
 		});
 		this.minesScroller.x = 64;
 		this.minesScroller.y = 80;
@@ -82,7 +82,7 @@ export class MSMenu extends Component<MSApp> {
 			this.app.newGame({
 				startMines,
 				gridWidth,
-				gridHeight
+				gridHeight,
 			});
 			this.app.showGame();
 		});

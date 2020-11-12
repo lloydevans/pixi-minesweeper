@@ -38,7 +38,7 @@ export class MSUi extends Component<MSApp> {
 
 		this.flagsCount = new GameText(this.app, "", {
 			fontName: "bmfont",
-			fontSize: 38
+			fontSize: 38,
 		});
 		this.flagsCount._anchor.set(0, 0.5);
 		this.flagsCount.x = 38;
@@ -53,19 +53,19 @@ export class MSUi extends Component<MSApp> {
 
 		this.timeCount = new GameText(this.app, "", {
 			fontName: "bmfont",
-			fontSize: 38
+			fontSize: 38,
 		});
 		this.timeCount._anchor.set(0, 0.5);
 		this.timeCount.x = 38;
 		this.timeCount.y = -24;
 
 		this.buttonCross = new Button(this.app, {
-			texture: this.app.getFrame("textures", "button-cross")
+			texture: this.app.getFrame("textures", "button-cross"),
 		});
 		this.buttonCross.on("pointertap", () => this.app.showMenu());
 
 		this.buttonRestart = new Button(this.app, {
-			texture: this.app.getFrame("textures", "button-restart")
+			texture: this.app.getFrame("textures", "button-restart"),
 		});
 		this.buttonRestart.on("pointertap", () => this.app.newGame());
 

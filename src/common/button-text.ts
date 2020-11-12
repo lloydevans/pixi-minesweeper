@@ -16,7 +16,7 @@ export class ButtonText extends Button {
 
 		this.label = new GameText(this.app, options.text, {
 			fontName: "bmfont",
-			fontSize: 36
+			fontSize: 36,
 		});
 		this.label._anchor.set(0.5);
 
