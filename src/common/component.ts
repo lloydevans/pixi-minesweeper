@@ -1,6 +1,13 @@
 import * as PIXI from "pixi.js-legacy";
 import { AppBase } from "./app-base";
 
+// These are copied from the Container inline type.
+export type ComponentDestroyOptions = {
+	children?: boolean;
+	texture?: boolean;
+	baseTexture?: boolean;
+};
+
 /**
  * The start of a core component class.
  */
@@ -48,7 +55,7 @@ export class Component<T extends AppBase> extends PIXI.Container {
 	 *
 	 * @param options - Destroy options.
 	 */
-	public destroy(options?: { children?: boolean; texture?: boolean; baseTexture?: boolean }) {
+	public destroy(options?: ComponentDestroyOptions) {
 		this.update && this.app.events.off("update", this.update, this);
 		this.resize && this.app.events.off("resize", this.resize, this);
 		this.cleanup && this.cleanup();
@@ -75,7 +82,8 @@ export class Component<T extends AppBase> extends PIXI.Container {
 	protected update?(dt: number): void;
 
 	/**
-	 * Optional method called on resize.
+	 * Optional method called on resize. Note, this is called once after init
+	 * regardles of wether the app has resized or not.
 	 *
 	 * @param width - App virtual width.
 	 * @param height - App virtual height.
