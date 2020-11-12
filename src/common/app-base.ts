@@ -10,6 +10,7 @@ export const MIN_DPR = 0.5;
  */
 export class AppBase extends PIXI.Application {
 	public events = new PIXI.utils.EventEmitter();
+	public ready = false;
 	public width = 0;
 	public height = 0;
 	public dpr = 1;
@@ -42,6 +43,17 @@ export class AppBase extends PIXI.Application {
 		}
 
 		this.events.emit("update", dt);
+	}
+
+	/**
+	 * This is a rough way for components to be able to wait until required resources
+	 * are loaded before running initiailisation logic.
+	 */
+	public setReady() {
+		if (!this.ready) {
+			this.ready = true;
+			this.events.emit("ready");
+		}
 	}
 
 	/**

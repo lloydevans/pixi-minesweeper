@@ -75,8 +75,9 @@ export class MSCell extends Component<MSApp> {
 
 	/**
 	 *
+	 * @param state
 	 */
-	public init(state: MSCellState) {
+	public setState(state: MSCellState) {
 		this.state = state;
 
 		// @ts-ignore // Missing type.

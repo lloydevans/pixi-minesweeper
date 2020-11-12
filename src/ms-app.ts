@@ -119,11 +119,6 @@ export class MSApp extends AppBase {
 			bgAtlas.spritesheet.baseTexture.update();
 		}
 
-		this.menu.init();
-		this.touchUi.init();
-
-		this.bg.init();
-		this.ui.init();
 		this.ui.visible = false;
 
 		this.container.addChild(this.board);
@@ -132,6 +127,8 @@ export class MSApp extends AppBase {
 		this.root.addChild(this.menu);
 
 		this.onResize(this.width, this.height);
+
+		this.setReady();
 	}
 
 	/**
@@ -146,8 +143,8 @@ export class MSApp extends AppBase {
 
 		// Generate cell view instances in the bakground.
 		let maxCells = MAX_GRID_WIDTH * MAX_GRID_HEIGHT;
-		if (this.isLoaded && this.cellPool.length < maxCells) {
-			let length = this.cellPool.length;
+		let length = this.cellPool.length;
+		if (this.isLoaded && length < maxCells) {
 			for (let i = 0; i < 5; i++) {
 				let idx = length + i;
 				if (idx > maxCells - 1) {
@@ -367,7 +364,7 @@ export class MSApp extends AppBase {
 			let [x, y] = this.state.coordsOf(i);
 			let msCell = this.getCellView(x, y);
 			this.grid.addChild(msCell);
-			this.cellPool[i].init({
+			this.cellPool[i].setState({
 				...CELL_STATE_DEFAULT,
 				...{ x, y, covered: false },
 			});
@@ -404,7 +401,7 @@ export class MSApp extends AppBase {
 			let [x, y] = this.state.coordsOf(cellIdx);
 			let cellState = this.state.cellAt(x, y)!;
 			let msCell = this.getCellView(x, y);
-			msCell.init(cellState);
+			msCell.setState(cellState);
 
 			if (indexes.length % Math.floor(this.state.totalCells / 12) === 0) {
 				sounds.blop.playbackRate = x / this.state.width + y / this.state.height + 1;
@@ -428,7 +425,7 @@ export class MSApp extends AppBase {
 			let [x, y] = this.state.coordsOf(cellIdx);
 			let cellState = this.state.cellAt(x, y)!;
 			let msCell = this.getCellView(x, y);
-			msCell.init(cellState);
+			msCell.setState(cellState);
 
 			if (indexes.length % (this.state.width * Math.round(this.state.height / 10)) === 0) {
 				sounds.blop.playbackRate = x / this.state.width + y / this.state.height + 1;

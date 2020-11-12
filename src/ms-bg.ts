@@ -17,7 +17,7 @@ export class MSBg extends Component<MSApp> {
 	private scroll: number = 0;
 	private bgSet: BGSet = "bg-swamp";
 
-	public init(bgSet: BGSet = this.bgSet) {
+	protected init(bgSet: BGSet = this.bgSet) {
 		this.layers.push(
 			this.createBgLayer(bgSet + "-a"),
 			this.createBgLayer(bgSet + "-b"),
@@ -27,20 +27,17 @@ export class MSBg extends Component<MSApp> {
 
 		this.addChild(...this.layers);
 
-		this.app.events.on("resize", this.onResize, this);
-		this.app.events.on("update", this.onUpdate, this);
-
-		this.onResize(this.app.width, this.app.height);
+		this.resize(this.app.width, this.app.height);
 	}
 
-	private onUpdate(dt: number) {
+	protected update(dt: number) {
 		this.scroll += this.speed * dt;
 		for (let i = 0, l = this.layers.length; i < l; i++) {
 			this.layers[i].tilePosition.x = this.scroll * Ease.sineIn(i / l);
 		}
 	}
 
-	private onResize(width: number, height: number) {
+	protected resize(width: number, height: number) {
 		for (let i = 0; i < this.layers.length; i++) {
 			const el = this.layers[i];
 			el.tileScale.y = height / REF_BG_HEIGHT;

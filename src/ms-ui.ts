@@ -26,7 +26,7 @@ export class MSUi extends Component<MSApp> {
 	/**
 	 * Initialisation must be called after assets are loaded.
 	 */
-	init() {
+	protected init() {
 		this.background = new PIXI.Graphics();
 
 		this.flagsContainer = new PIXI.Container();
@@ -80,10 +80,6 @@ export class MSUi extends Component<MSApp> {
 		this.addChild(this.flagsContainer);
 		this.addChild(this.buttonRestart);
 		this.addChild(this.buttonCross);
-
-		this.app.events.on("update", this.onUpdate, this);
-		this.app.events.on("resize", this.onResize, this);
-		this.onResize(this.app.width, this.app.height);
 	}
 
 	/**
@@ -93,7 +89,7 @@ export class MSUi extends Component<MSApp> {
 	 *
 	 * @param dt
 	 */
-	onUpdate(dt: number) {
+	protected update(dt: number) {
 		let flagCount = this.app.state.flagCount.toString();
 		if (flagCount !== this.flagsCount.text) {
 			this.flagsCount.text = flagCount;
@@ -108,7 +104,7 @@ export class MSUi extends Component<MSApp> {
 	/**
 	 * Resize callback.
 	 */
-	onResize(width: number, height: number) {
+	protected resize(width: number, height: number) {
 		this.buttonRestart.x = width / 2 - 64;
 		this.buttonRestart.y = -height / 2 + 42;
 		this.buttonCross.x = width / 2 - 148;

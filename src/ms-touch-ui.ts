@@ -16,7 +16,7 @@ export class MSTouchUi extends Component<MSApp> {
 	/**
 	 *
 	 */
-	public init() {
+	protected init() {
 		this.visible = false;
 
 		let cursor = new PIXI.Graphics();

@@ -15,7 +15,7 @@ export class MSMenu extends Component<MSApp> {
 	private minesScroller!: ButtonScroller;
 	private container = new PIXI.Container();
 
-	public init() {
+	protected init() {
 		this.title = new GameText(this.app, "MINESWEEPER", {
 			fontName: "bmfont",
 			fontSize: 72,
@@ -86,10 +86,6 @@ export class MSMenu extends Component<MSApp> {
 			});
 			this.app.showGame();
 		});
-
-		this.app.events.on("resize", this.onResize, this);
-
-		this.onResize(this.app.width, this.app.height);
 	}
 
 	/**
@@ -97,7 +93,7 @@ export class MSMenu extends Component<MSApp> {
 	 * @param width
 	 * @param height
 	 */
-	onResize(width: number, height: number) {
+	protected resize(width: number, height: number) {
 		this.background.clear();
 		this.background.beginFill(0, 0.5);
 		this.background.drawRect(-width / 2, -height / 2, width, height);
@@ -114,10 +110,12 @@ export class MSMenu extends Component<MSApp> {
 		}
 	}
 
+	protected update(dt: number) {}
+
 	/**
 	 *
 	 */
-	updatePreview() {
+	protected updatePreview() {
 		let gridWidth = this.widthScroller.current;
 		let gridHeight = this.heightScroller.current;
 		let startMines = this.minesScroller.current;
