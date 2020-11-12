@@ -19,9 +19,9 @@ import { MSTouchUi } from "./ms-touch-ui";
 import { MSUi } from "./ms-ui";
 
 export const INITIAL_GAME_CONFIG: MSGameConfig = {
-	startMines: 10,
+	startMines: 5,
 	gridWidth: 9,
-	gridHeight: 9,
+	gridHeight: 7,
 };
 
 /**
