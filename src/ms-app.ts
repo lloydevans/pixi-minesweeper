@@ -15,7 +15,7 @@ import type { MSConfig, MSGameConfig } from "./ms-config";
 import { MSGrid } from "./ms-grid";
 import { MSMenu } from "./ms-menu";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MSState } from "./ms-state";
-import { playMidi, sounds } from "./ms-tone";
+import { playMidi, sounds, stopMidi } from "./ms-tone";
 import { MSTouchUi } from "./ms-touch-ui";
 import { MSUi } from "./ms-ui";
 
@@ -222,14 +222,13 @@ export class MSApp extends AppBase {
 
 		this.timeActive = true;
 		this.grid.interactiveChildren = true;
-
-		playMidi(this.getJson("jazz"));
 	}
 
 	/**
 	 *
 	 */
 	public showGame() {
+		playMidi(this.getJson("jazz"));
 		this.tween(this.container.position).to({ y: 32 }, 300, Ease.sineInOut);
 		this.menu.visible = false;
 		this.grid.visible = true;
@@ -240,6 +239,7 @@ export class MSApp extends AppBase {
 	 *
 	 */
 	public showMenu() {
+		stopMidi();
 		this.tween(this.container.position).to({ y: 0 }, 300, Ease.sineInOut);
 		this.menu.visible = true;
 		this.grid.visible = false;
