@@ -54,29 +54,40 @@ export async function playMidi(midi: any) {
 
 	let notes = [...original];
 
+	let loops = 0;
+
 	while (isPlaying) {
 		let now = Tone.now();
 
-		while (notes[0].time + start < now + BUFFER) {
+		while (notes[0].time + start + DURATION * loops < now + BUFFER) {
+			let loopOffset = DURATION * loops;
 			let note = notes.shift()!;
-
 			try {
-				synth.triggerAttackRelease(note.name, note.duration, note.time + start, note.velocity);
+				synth.triggerAttackRelease(
+					//
+					note.name,
+					note.duration,
+					note.time + start + loopOffset,
+					note.velocity
+				);
 			} catch (err) {
 				console.log(err);
 			}
 
 			if (notes.length === 0) {
-				original.forEach((el) => {
-					el.time += DURATION;
-				});
-
 				notes = notes.concat(original);
+				loops++;
 			}
 		}
 
+		if (!isPlaying) break;
+
 		await delay(BUFFER * 1000);
 	}
+}
+
+export function stopMidi() {
+	isPlaying = false;
 }
 
 let unlock = async () => {
