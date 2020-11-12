@@ -43,7 +43,7 @@ export class MSBg extends Component<MSApp> {
 	private onResize(width: number, height: number) {
 		for (let i = 0; i < this.layers.length; i++) {
 			const el = this.layers[i];
-			el.tileScale.y = (height / REF_BG_HEIGHT) * 1.2;
+			el.tileScale.y = height / REF_BG_HEIGHT;
 			el.tileScale.x = el.tileScale.y;
 			el.width = width;
 			el.height = height;
@@ -55,7 +55,7 @@ export class MSBg extends Component<MSApp> {
 		sprite.width = this.app.width;
 		sprite.height = this.app.height;
 		sprite.anchor.set(0.5);
-		sprite.tint = 0x555555;
+		sprite.tint = 0x888888;
 		return sprite;
 	}
 }
