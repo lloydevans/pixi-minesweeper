@@ -16,6 +16,8 @@ export class MSMenu extends Component<MSApp> {
 	private container = new PIXI.Container();
 
 	protected init() {
+		this.background = new PIXI.Graphics();
+
 		this.title = new GameText(this.app, "MINESWEEPER", {
 			fontName: "bmfont",
 			fontSize: 72,
@@ -37,18 +39,14 @@ export class MSMenu extends Component<MSApp> {
 			min: MIN_GRID_WIDTH,
 			max: MAX_GRID_WIDTH,
 		});
-		this.widthScroller.x = 64;
-		this.widthScroller.y = -80;
 
 		this.heightScroller = new ButtonScroller(this.app, {
 			arrowTexture: this.app.getFrame("textures", "button-arrow"),
 			label: "Height",
-			default: INITIAL_GAME_CONFIG.gridWidth,
+			default: INITIAL_GAME_CONFIG.gridHeight,
 			min: MIN_GRID_HEIGHT,
 			max: MAX_GRID_HEIGHT,
 		});
-		this.heightScroller.x = 64;
-		this.heightScroller.y = 0;
 
 		this.minesScroller = new ButtonScroller(this.app, {
 			arrowTexture: this.app.getFrame("textures", "button-arrow"),
@@ -57,10 +55,13 @@ export class MSMenu extends Component<MSApp> {
 			min: 1,
 			max: INITIAL_GAME_CONFIG.gridWidth * INITIAL_GAME_CONFIG.gridHeight - 2,
 		});
+
+		this.widthScroller.x = 64;
+		this.widthScroller.y = -80;
+		this.heightScroller.x = 64;
+		this.heightScroller.y = 0;
 		this.minesScroller.x = 64;
 		this.minesScroller.y = 80;
-
-		this.background = new PIXI.Graphics();
 
 		this.addChild(this.background);
 		this.addChild(this.container);
@@ -109,8 +110,6 @@ export class MSMenu extends Component<MSApp> {
 			this.container.scale.y = this.container.scale.x;
 		}
 	}
-
-	protected update(dt: number) {}
 
 	/**
 	 *
