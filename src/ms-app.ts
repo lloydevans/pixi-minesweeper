@@ -5,7 +5,6 @@ import { AppBase } from "./common/app-base";
 import { hexToNum } from "./common/color";
 import { delay } from "./common/delay";
 import { Ease } from "./common/ease";
-import { Tween } from "./common/tween";
 import { preventContextMenu } from "./common/utils";
 import { MSBg } from "./ms-bg";
 import { MSCell, REF_HEIGHT, REF_WIDTH } from "./ms-cell";
@@ -16,7 +15,7 @@ import type { MSConfig, MSGameConfig } from "./ms-config";
 import { MSGrid } from "./ms-grid";
 import { MSMenu } from "./ms-menu";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MSState } from "./ms-state";
-import { sounds } from "./ms-tone";
+import { playMidi, sounds } from "./ms-tone";
 import { MSTouchUi } from "./ms-touch-ui";
 import { MSUi } from "./ms-ui";
 
@@ -88,6 +87,7 @@ export class MSApp extends AppBase {
 		this.addAtlas("bg", 1);
 		this.addBitmapFont("bmfont");
 		this.addJson("config", "config.json");
+		this.addJson("jazz", "jazz.json");
 		this.loader.load();
 
 		this.loader.onComplete.once(this.onLoad, this);
@@ -217,9 +217,13 @@ export class MSApp extends AppBase {
 		this.gameConfig = { ...config };
 		this.isFirstClick = true;
 		this.touchUi.hide();
+
 		await this.initGrid();
+
 		this.timeActive = true;
 		this.grid.interactiveChildren = true;
+
+		playMidi(this.getJson("jazz"));
 	}
 
 	/**
