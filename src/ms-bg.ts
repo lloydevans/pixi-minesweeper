@@ -26,8 +26,6 @@ export class MSBg extends Component<MSApp> {
 		);
 
 		this.addChild(...this.layers);
-
-		this.resize(this.app.width, this.app.height);
 	}
 
 	protected update(dt: number) {
