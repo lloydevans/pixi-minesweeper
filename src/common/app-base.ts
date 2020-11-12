@@ -11,13 +11,13 @@ export const MIN_DPR = 0.5;
 export class AppBase extends PIXI.Application {
 	/**
 	 * Global event emitter.
-   *
+	 *
 	 * "init" () => void
-   *
+	 *
 	 * "ready" () => void
-   *
+	 *
 	 * "update" (dt: number) => void
-   *
+	 *
 	 * "resize" (width: number, height: number) => void
 	 */
 	public readonly events = new PIXI.utils.EventEmitter();
