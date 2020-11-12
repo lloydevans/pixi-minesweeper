@@ -5,11 +5,9 @@ export class GameText extends PIXI.BitmapText {
 	private app: AppBase;
 
 	// Anchor is number | Point?
-	public readonly _anchor = new PIXI.ObservablePoint(function () {
-		// @ts-ignore
-		this.anchor.x = this._anchor.x;
-		// @ts-ignore
-		this.anchor.y = this._anchor.y;
+	public readonly _anchor = new PIXI.ObservablePoint(function (this: GameText) {
+		(this.anchor as PIXI.Point).x = this._anchor.x;
+		(this.anchor as PIXI.Point).y = this._anchor.y;
 	}, this);
 
 	constructor(
