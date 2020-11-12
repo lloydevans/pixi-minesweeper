@@ -2,6 +2,7 @@
 	"include": [
 		//
 		"src/index.ts",
+		"custom.d.ts",
 		"node_modules/pixi-spine/dist/pixi-spine.d.ts"
 	],
 	"compilerOptions": {

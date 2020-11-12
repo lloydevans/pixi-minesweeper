@@ -1,6 +1,9 @@
 import clamp from "lodash-es/clamp";
 import * as PIXI from "pixi.js-legacy";
 import * as screenfull from "screenfull";
+import { TweenGroup } from "./tween-group";
+import { TweenProps } from "./tween-props";
+import { Tween } from "./tween";
 
 export const MAX_DPR = 4;
 export const MIN_DPR = 0.5;
@@ -21,6 +24,11 @@ export class AppBase extends PIXI.Application {
 	 * "resize" (width: number, height: number) => void
 	 */
 	public readonly events = new PIXI.utils.EventEmitter();
+
+	/**
+	 *
+	 */
+	protected readonly tweenGroup = new TweenGroup(false, 1);
 
 	/**
 	 * Current app ready state. Modified via setReady,
@@ -83,6 +91,14 @@ export class AppBase extends PIXI.Application {
 		}
 
 		this.events.emit("update", dt);
+	}
+
+	/**
+	 *
+	 */
+	public tween<T>(target: T, options?: TweenProps): Tween<T> {
+		let tween = this.tweenGroup.get(target, options);
+		return tween;
 	}
 
 	/**

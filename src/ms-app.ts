@@ -209,7 +209,7 @@ export class MSApp extends AppBase {
 	 * @param config
 	 */
 	public async newGame(config: MSGameConfig = this.gameConfig) {
-		Tween.removeAllTweens();
+		this.tweenGroup.reset();
 
 		this.time = 0;
 		this.state.init(config);
@@ -226,7 +226,7 @@ export class MSApp extends AppBase {
 	 *
 	 */
 	public showGame() {
-		Tween.get(this.container.position).to({ y: 32 }, 300, Ease.sineInOut);
+		this.tween(this.container.position).to({ y: 32 }, 300, Ease.sineInOut);
 		this.menu.visible = false;
 		this.grid.visible = true;
 		this.ui.visible = true;
@@ -236,7 +236,7 @@ export class MSApp extends AppBase {
 	 *
 	 */
 	public showMenu() {
-		Tween.get(this.container.position).to({ y: 0 }, 300, Ease.sineInOut);
+		this.tween(this.container.position).to({ y: 0 }, 300, Ease.sineInOut);
 		this.menu.visible = true;
 		this.grid.visible = false;
 		this.ui.visible = false;

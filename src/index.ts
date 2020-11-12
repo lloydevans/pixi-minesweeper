@@ -13,6 +13,7 @@ import "pixi-spine";
 
 // CreateJS lib imports.
 import "tweenjs/lib/tweenjs";
+import "../libs/tween-group";
 createjs.Ticker.timingMode = createjs.Ticker.RAF;
 createjs.Ticker.maxDelta = 100;
 
