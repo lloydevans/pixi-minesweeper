@@ -1,68 +1,82 @@
 
 grid-square@4x.png
-size: 2048,512
+size: 1024,1024
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
+back-edge-0
+  rotate: false
+  xy: 628, 518
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
 border
   rotate: false
-  xy: 2, 2
+  xy: 2, 435
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 cross
   rotate: false
-  xy: 260, 2
+  xy: 260, 358
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 dirt
-  rotate: true
-  xy: 1516, 97
+  rotate: false
+  xy: 2, 726
   size: 78, 48
   orig: 78, 48
   offset: 0, 0
   index: -1
 fill
   rotate: false
-  xy: 518, 2
+  xy: 518, 260
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 flag-cloth
-  rotate: true
-  xy: 1744, 166
+  rotate: false
+  xy: 310, 684
   size: 92, 90
   orig: 92, 90
   offset: 0, 0
   index: -1
 flag-pole
   rotate: true
-  xy: 1292, 100
+  xy: 404, 616
   size: 158, 222
   orig: 158, 222
   offset: 0, 0
   index: -1
+front-edge-0
+  rotate: false
+  xy: 2, 177
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
 mine
   rotate: false
-  xy: 776, 2
+  xy: 260, 100
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 spade
   rotate: true
-  xy: 1516, 177
+  xy: 82, 693
   size: 81, 226
   orig: 81, 226
   offset: 0, 0
   index: -1
 tick
   rotate: false
-  xy: 1034, 2
+  xy: 518, 2
   size: 256, 256
   orig: 256, 256
   offset: 0, 0

@@ -4,65 +4,79 @@ size: 1024,256
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
+back-edge-0
+  rotate: false
+  xy: 319, 83
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
 border
   rotate: false
-  xy: 2, 2
+  xy: 449, 83
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
 cross
   rotate: false
-  xy: 132, 2
+  xy: 579, 83
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
 dirt
-  rotate: true
-  xy: 765, 48
+  rotate: false
+  xy: 2, 187
   size: 39, 24
   orig: 39, 24
   offset: 0, 0
   index: -1
 fill
   rotate: false
-  xy: 262, 2
+  xy: 709, 83
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
 flag-cloth
-  rotate: true
-  xy: 880, 84
+  rotate: false
+  xy: 158, 166
   size: 46, 45
   orig: 46, 45
   offset: 0, 0
   index: -1
 flag-pole
   rotate: true
-  xy: 652, 51
+  xy: 206, 132
   size: 79, 111
   orig: 79, 111
   offset: 0, 0
   index: -1
+front-edge-0
+  rotate: false
+  xy: 839, 83
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
 mine
   rotate: false
-  xy: 392, 2
+  xy: 2, 40
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
 spade
   rotate: true
-  xy: 765, 89
+  xy: 43, 170
   size: 41, 113
   orig: 41, 113
   offset: 0, 0
   index: -1
 tick
   rotate: false
-  xy: 522, 2
+  xy: 132, 2
   size: 128, 128
   orig: 128, 128
   offset: 0, 0

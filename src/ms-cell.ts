@@ -20,7 +20,11 @@ enum AnimTrack {
 	Mine,
 	Flag,
 	Hover,
-	Dig
+	Dig,
+	EdgeL,
+	EdgeR,
+	EdgeU,
+	EdgeD
 }
 
 /**
@@ -34,12 +38,6 @@ export class MSCell extends Component<MSApp> {
 		return this.viewState.y;
 	}
 	private anim: Spine;
-	private edges: {
-		l: PIXI.Sprite;
-		r: PIXI.Sprite;
-		u: PIXI.Sprite;
-		d: PIXI.Sprite;
-	};
 	private adjacentText: GameText;
 	private viewState: MSCellState;
 	public state: MSCellState;
@@ -53,12 +51,6 @@ export class MSCell extends Component<MSApp> {
 
 		this.state = { ...CELL_STATE_DEFAULT };
 		this.viewState = { ...CELL_STATE_DEFAULT };
-		this.edges = {
-			l: this.createEdgeSprite(0),
-			r: this.createEdgeSprite(180),
-			u: this.createEdgeSprite(90),
-			d: this.createEdgeSprite(-90)
-		};
 
 		this.anim = new Spine(this.app.getSpine("grid-square"));
 		this.anim.stateData.setMix("flag-hidden", "flag-place-start", 0);
@@ -74,7 +66,6 @@ export class MSCell extends Component<MSApp> {
 
 		this.addChild(this.adjacentText);
 		this.addChild(this.anim);
-		this.addChild(...Object.values(this.edges));
 
 		this.hitArea = new PIXI.Rectangle(-REF_WIDTH / 2, -REF_HEIGHT / 2, REF_WIDTH, REF_HEIGHT);
 
@@ -102,6 +93,7 @@ export class MSCell extends Component<MSApp> {
 	 *
 	 */
 	public reset() {
+		// TODO: Clear tracks instead of hidden states?
 		let coverType = (this.state.x + this.state.y) % 2 === 0 ? "even" : "odd";
 		this.anim.state.setAnimation(AnimTrack.FillColor, "fill-" + coverType, false);
 		this.anim.state.setAnimation(AnimTrack.Flag, "flag-hidden", false);
@@ -109,6 +101,20 @@ export class MSCell extends Component<MSApp> {
 		this.anim.state.setAnimation(AnimTrack.Feedback, "feedback-hidden", false);
 		this.anim.state.setAnimation(AnimTrack.Hover, "hover-hidden", false);
 		this.anim.state.setAnimation(AnimTrack.Dig, "dig-hidden", false);
+		this.anim.state.setAnimation(AnimTrack.EdgeL, "edge-l-hidden", false);
+		this.anim.state.setAnimation(AnimTrack.EdgeR, "edge-r-hidden", false);
+		this.anim.state.setAnimation(AnimTrack.EdgeU, "edge-u-hidden", false);
+		this.anim.state.setAnimation(AnimTrack.EdgeD, "edge-d-hidden", false);
+	}
+
+	/**
+	 *
+	 * @param edge
+	 */
+	public setEdgeVisible(edge: "l" | "r" | "u" | "d", visible: boolean) {
+		let stateName = "edge-" + edge + "-" + (visible ? "visible" : "hidden");
+		let key = ("Edge" + edge.toUpperCase()) as keyof typeof AnimTrack;
+		this.anim.state.setAnimation(AnimTrack[key], stateName, false);
 	}
 
 	/**
@@ -129,54 +135,40 @@ export class MSCell extends Component<MSApp> {
 	/**
 	 *
 	 */
-	private createEdgeSprite(angle = 0): PIXI.Sprite {
-		let texture = this.app.getFrame("tiles", "front-edge-0");
-		let sprite = new PIXI.Sprite(texture);
-		sprite.alpha = 0.5;
-		sprite.anchor.set(0.5);
-		sprite.visible = false;
-		sprite.width = REF_WIDTH;
-		sprite.height = REF_HEIGHT;
-		sprite.angle = angle;
-		return sprite;
-	}
-
-	/**
-	 *
-	 */
 	public updateEdgeSprites() {
-		Object.values(this.edges).forEach((el) => {
-			let frameName = this.viewState.covered ? "front-edge-0" : "back-edge-0";
-			el.texture = this.app.getFrame("tiles", frameName);
-		});
+		this.anim.setSkinByName(this.viewState.covered ? "front" : "back");
 
 		if (this.ix - 1 > -1) {
 			let l = this.app.getCellView(this.ix - 1, this.iy);
-			this.edges.l.visible = l.viewState.covered !== this.viewState.covered;
-			l.edges.r.visible = l.viewState.covered !== this.viewState.covered;
+			let visible = l.viewState.covered !== this.viewState.covered;
+			this.setEdgeVisible("l", visible);
+			l.setEdgeVisible("r", visible);
 		} else {
-			this.edges.l.visible = true;
+			this.setEdgeVisible("l", true);
 		}
 		if (this.ix + 1 < this.app.state.width) {
 			let r = this.app.getCellView(this.ix + 1, this.iy);
-			this.edges.r.visible = r.viewState.covered !== this.viewState.covered;
-			r.edges.l.visible = r.viewState.covered !== this.viewState.covered;
+			let visible = r.viewState.covered !== this.viewState.covered;
+			this.setEdgeVisible("r", visible);
+			r.setEdgeVisible("l", visible);
 		} else {
-			this.edges.r.visible = true;
+			this.setEdgeVisible("r", true);
 		}
 		if (this.iy - 1 > -1) {
 			let u = this.app.getCellView(this.ix, this.iy - 1);
-			this.edges.u.visible = u.viewState.covered !== this.viewState.covered;
-			u.edges.d.visible = u.viewState.covered !== this.viewState.covered;
+			let visible = u.viewState.covered !== this.viewState.covered;
+			this.setEdgeVisible("u", visible);
+			u.setEdgeVisible("d", visible);
 		} else {
-			this.edges.u.visible = true;
+			this.setEdgeVisible("u", true);
 		}
 		if (this.iy + 1 < this.app.state.height) {
 			let d = this.app.getCellView(this.ix, this.iy + 1);
-			this.edges.d.visible = d.viewState.covered !== this.viewState.covered;
-			d.edges.u.visible = d.viewState.covered !== this.viewState.covered;
+			let visible = d.viewState.covered !== this.viewState.covered;
+			this.setEdgeVisible("d", visible);
+			d.setEdgeVisible("u", visible);
 		} else {
-			this.edges.d.visible = true;
+			this.setEdgeVisible("d", true);
 		}
 	}
 

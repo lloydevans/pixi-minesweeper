@@ -1,68 +1,82 @@
 
 grid-square@1x.png
-size: 512,128
+size: 1024,128
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
+back-edge-0
+  rotate: false
+  xy: 166, 2
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 border
   rotate: false
-  xy: 2, 3
+  xy: 232, 2
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 cross
   rotate: false
-  xy: 68, 3
+  xy: 298, 2
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 dirt
-  rotate: true
-  xy: 357, 5
+  rotate: false
+  xy: 2, 54
   size: 20, 12
   orig: 20, 12
   offset: 0, 0
   index: -1
 fill
   rotate: false
-  xy: 134, 3
+  xy: 364, 2
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 flag-cloth
   rotate: false
-  xy: 332, 2
+  xy: 83, 43
   size: 23, 23
   orig: 23, 23
   offset: 0, 0
   index: -1
 flag-pole
   rotate: true
-  xy: 332, 27
+  xy: 108, 26
   size: 40, 56
   orig: 40, 56
   offset: 0, 0
   index: -1
+front-edge-0
+  rotate: false
+  xy: 430, 2
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 mine
   rotate: false
-  xy: 200, 3
+  xy: 496, 2
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 spade
-  rotate: false
-  xy: 390, 10
+  rotate: true
+  xy: 24, 46
   size: 20, 57
   orig: 20, 57
   offset: 0, 0
   index: -1
 tick
   rotate: false
-  xy: 266, 3
+  xy: 562, 2
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
