@@ -499,13 +499,14 @@ export class MSApp extends AppBase {
 			let idx = Math.floor(Math.random() * result.incorrect.length);
 			let el = result.incorrect.splice(idx, 1)[0];
 			let msCell = this.getCellView(el.x, el.y);
+			let cellState = this.state.cellAt(el.x, el.y)!;
 
 			msCell.animateResult();
 
 			sounds.click.playbackRate = 0.9 + Math.random() * 0.2;
 			sounds.click.start();
 
-			if (!msCell.state.flag) {
+			if (!cellState.flag) {
 				msCell.animateDigEnd();
 			}
 

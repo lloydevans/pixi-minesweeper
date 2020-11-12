@@ -38,10 +38,11 @@ export class MSCell extends Component<MSApp> {
 	public get iy(): number {
 		return this.viewState.y;
 	}
+
 	private anim: Spine;
-	private adjacentText: GameText;
+	private state: MSCellState;
 	private viewState: MSCellState;
-	public state: MSCellState;
+	private adjacentText: GameText;
 
 	/**
 	 *
