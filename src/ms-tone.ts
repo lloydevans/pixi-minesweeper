@@ -71,7 +71,7 @@ export async function playMidi(midi: any) {
 					el.time += DURATION;
 				});
 
-				notes.push(...original);
+				notes.concat(original);
 			}
 		}
 
