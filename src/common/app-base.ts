@@ -99,9 +99,11 @@ export class AppBase extends PIXI.Application {
 	/**
 	 *
 	 */
-	public async requestFullscreen(): Promise<void> {
+	public requestFullscreen(): Promise<void> {
 		if (screenfull.isEnabled) {
 			return screenfull.request(this.view);
+		} else {
+			return Promise.resolve();
 		}
 	}
 
