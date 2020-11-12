@@ -113,8 +113,8 @@ export class MSCell extends Component<MSApp> {
 	 */
 	public setEdgeVisible(edge: "l" | "r" | "u" | "d", visible: boolean) {
 		let stateName = "edge-" + edge + "-" + (visible ? "visible" : "hidden");
-		let key = ("Edge" + edge.toUpperCase()) as keyof typeof AnimTrack;
-		this.anim.state.setAnimation(AnimTrack[key], stateName, false);
+		let animTrackKey = ("Edge" + edge.toUpperCase()) as keyof typeof AnimTrack;
+		this.anim.state.setAnimation(AnimTrack[animTrackKey], stateName, false);
 	}
 
 	/**
