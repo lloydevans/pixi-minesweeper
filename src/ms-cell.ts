@@ -8,6 +8,7 @@ import { CELL_STATE_DEFAULT } from "./ms-cell-state";
 import type { MSCellState } from "./ms-cell-state";
 import type { NumberKey } from "./ms-config";
 import { sounds } from "./ms-tone";
+import { hexToNum } from "./common/color";
 
 // Reference size of cell graphics before any scaling.
 export const REF_WIDTH = 64;
@@ -57,12 +58,11 @@ export class MSCell extends Component<MSApp> {
 		this.anim.stateData.setMix("flag-destroy", "flag-place-start", 0);
 		this.anim.stateData.defaultMix = 0;
 
-		let textStyle = new PIXI.TextStyle({
-			fontWeight: this.app.config.colorNumberWeight,
-			fontSize: Math.floor(REF_WIDTH * 0.5)
+		this.adjacentText = new GameText(this.app, "", {
+			fontName: "bmfont",
+			fontSize: 38
 		});
-		this.adjacentText = new GameText(this.app, "", textStyle);
-		this.adjacentText.anchor.set(0.5);
+		this.adjacentText._anchor.set(0.5);
 
 		this.addChild(this.adjacentText);
 		this.addChild(this.anim);
@@ -212,7 +212,7 @@ export class MSCell extends Component<MSApp> {
 	 */
 	private setText(total: number) {
 		let key = total.toString() as NumberKey;
-		this.adjacentText.style.fill = this.app.config.colorNumbers[key] ?? 0;
+		this.adjacentText.tint = hexToNum(this.app.config.colorNumbers[key]);
 		this.adjacentText.visible = true;
 		this.adjacentText.text = key;
 	}

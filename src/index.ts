@@ -11,8 +11,6 @@ import "./firebase";
 import "pixi.js-legacy";
 import "pixi-spine";
 
-// PIXI.settings.SORTABLE_CHILDREN = true;
-
 // CreateJS lib imports.
 import "tweenjs/lib/tweenjs";
 createjs.Ticker.timingMode = createjs.Ticker.RAF;

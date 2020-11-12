@@ -5,7 +5,6 @@ import { Button } from "./button";
 
 export interface ButtonTextOption {
 	backTexture: PIXI.Texture;
-	textStyle: PIXI.TextStyle;
 	text: string;
 }
 
@@ -15,8 +14,11 @@ export class ButtonText extends Button {
 	constructor(app: AppBase, options: ButtonTextOption) {
 		super(app, { texture: options.backTexture });
 
-		this.label = new GameText(this.app, options.text, options.textStyle);
-		this.label.anchor.set(0.5);
+		this.label = new GameText(this.app, options.text, {
+			fontName: "bmfont",
+			fontSize: 36
+		});
+		this.label._anchor.set(0.5);
 
 		this.addChild(this.label);
 	}

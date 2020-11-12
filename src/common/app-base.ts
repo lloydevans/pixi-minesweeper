@@ -90,16 +90,16 @@ export class AppBase extends PIXI.Application {
 
 	/**
 	 *
-	 * @param atlasName
+	 * @param atlasPath
 	 */
-	public getAtlas(atlasName: string): PIXI.LoaderResource {
-		let atlas = this.loader.resources[atlasName];
+	public getAtlas(atlasPath: string): PIXI.LoaderResource {
+		let atlas = this.loader.resources[atlasPath];
 
 		if (!atlas) {
-			throw new Error(`Can't find atlas: "${atlasName}"`);
+			throw new Error(`Can't find atlas: "${atlasPath}"`);
 		}
 		if (!atlas.spritesheet) {
-			throw new Error(`Not a valid atlas: "${atlasName}"`);
+			throw new Error(`Not a valid atlas: "${atlasPath}"`);
 		}
 
 		return atlas;
@@ -107,14 +107,14 @@ export class AppBase extends PIXI.Application {
 
 	/**
 	 *
-	 * @param atlasName
+	 * @param atlasPath
 	 * @param frameName
 	 */
-	public getFrame(atlasName: string, frameName: string): PIXI.Texture {
-		let atlas = this.getAtlas(atlasName);
+	public getFrame(atlasPath: string, frameName: string): PIXI.Texture {
+		let atlas = this.getAtlas(atlasPath);
 
 		if (!atlas.textures || !(atlas.textures[frameName] instanceof PIXI.Texture)) {
-			throw new Error(`Can't find frame "${frameName}" in atlas "${atlasName}"`);
+			throw new Error(`Can't find frame "${frameName}" in atlas "${atlasPath}"`);
 		}
 
 		return atlas.textures[frameName];
@@ -122,16 +122,16 @@ export class AppBase extends PIXI.Application {
 
 	/**
 	 *
-	 * @param spineName
+	 * @param spinePath
 	 */
-	public getSpine(spineName: string) {
-		let spine = this.loader.resources[spineName];
+	public getSpine(spinePath: string) {
+		let spine = this.loader.resources[spinePath];
 
 		if (!spine) {
-			throw new Error(`Can't find spine: "${spineName}"`);
+			throw new Error(`Can't find spine: "${spinePath}"`);
 		}
 		if (!spine.spineData) {
-			throw new Error(`Not a valid spine: "${spineName}"`);
+			throw new Error(`Not a valid spine: "${spinePath}"`);
 		}
 
 		return spine.spineData;
@@ -141,11 +141,11 @@ export class AppBase extends PIXI.Application {
 	 *
 	 * @param spineName
 	 */
-	public getJson(jsonName: string) {
-		let json = this.loader.resources[jsonName];
+	public getJson(jsonPath: string) {
+		let json = this.loader.resources[jsonPath];
 
 		if (!json.data) {
-			throw new Error(`Can't find json: "${jsonName}"`);
+			throw new Error(`Can't find json: "${jsonPath}"`);
 		}
 
 		return json.data;
@@ -154,17 +154,28 @@ export class AppBase extends PIXI.Application {
 	/**
 	 * Add a spine asset to the loader.
 	 *
-	 * @param spineName
+	 * @param spinePath
 	 * @param scale
 	 */
-	public addSpine(spineName: string, scale: number = this.getAssetDpr()) {
+	public addSpine(spinePath: string, scale: number = this.getAssetDpr()) {
 		let metadata: PIXI.loaders.IMetadata = {
 			spineSkeletonScale: 1 / MAX_DPR,
-			spineAtlasFile: spineName + "@" + scale + "x.atlas"
+			spineAtlasFile: spinePath + "@" + scale + "x.atlas"
 		};
 
 		// Add spine asset with our own compensation scale.
-		this.loader.add(spineName, spineName + ".skel", { metadata });
+		this.loader.add(spinePath, spinePath + ".skel", { metadata });
+	}
+
+	/**
+	 * Add an atlas asset to the loader.
+	 *
+	 * @param atlasPath
+	 * @param scale
+	 */
+	public addAtlas(atlasPath: string, scale: number = this.getAssetDpr()) {
+		// Pixi auto detects and compensates scale based on suffix in form `@nx`.
+		this.loader.add(atlasPath, atlasPath + "@" + scale + "x.json");
 	}
 
 	/**
@@ -173,9 +184,9 @@ export class AppBase extends PIXI.Application {
 	 * @param atlasName
 	 * @param scale
 	 */
-	public addAtlas(atlasName: string, scale: number = this.getAssetDpr()) {
+	public addBitmapFont(assetPath: string, scale: number = this.getAssetDpr()) {
 		// Pixi auto detects and compensates scale based on suffix in form `@nx`.
-		this.loader.add(atlasName, atlasName + "@" + scale + "x.json");
+		this.loader.add(assetPath, assetPath + "@" + scale + "x.fnt");
 	}
 
 	/**

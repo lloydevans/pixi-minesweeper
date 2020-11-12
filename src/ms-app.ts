@@ -7,6 +7,7 @@ import { delay } from "./common/delay";
 import { Ease } from "./common/ease";
 import { Tween } from "./common/tween";
 import { preventContextMenu } from "./common/utils";
+import { MSBg } from "./ms-bg";
 import { MSCell, REF_HEIGHT, REF_WIDTH } from "./ms-cell";
 import { CELL_STATE_DEFAULT } from "./ms-cell-state";
 import type { MSCellState } from "./ms-cell-state";
@@ -40,7 +41,6 @@ export class MSApp extends AppBase {
 	private transitionIdx = 0;
 	private cellPool: MSCell[] = [];
 	private gameConfig: MSGameConfig;
-	private background = new PIXI.Graphics();
 	private board = PIXI.Sprite.from(PIXI.Texture.WHITE);
 	private cellWidth = REF_WIDTH;
 	private cellHeight = REF_HEIGHT;
@@ -49,8 +49,9 @@ export class MSApp extends AppBase {
 	private isFirstClick = true;
 	private touchUi = new MSTouchUi(this);
 	private menu = new MSMenu(this);
-	private ui = new MSUi(this);
 	private gridBack?: PIXI.TilingSprite;
+	private ui = new MSUi(this);
+	private bg = new MSBg(this);
 	private isLoaded = false;
 
 	/**
@@ -64,7 +65,7 @@ export class MSApp extends AppBase {
 		this.config = { ...MS_CONFIG_DEFAULT };
 		this.gameConfig = { ...INITIAL_GAME_CONFIG };
 
-		this.root.addChild(this.background);
+		this.root.addChild(this.bg);
 		this.root.addChild(this.container);
 		this.root.addChild(this.ui);
 		this.root.addChild(this.touchUi);
@@ -72,6 +73,137 @@ export class MSApp extends AppBase {
 		this.events.on("init", this.onInit, this);
 		this.events.on("resize", this.onResize, this);
 		this.events.on("update", this.onUpdate, this);
+	}
+
+	/**
+	 * Init callback.
+	 */
+	private onInit() {
+		this.grid.interactiveChildren = false;
+
+		this.addSpine("grid-square");
+		this.addSpine("timer");
+		this.addAtlas("textures");
+		this.addAtlas("tiles");
+		this.addAtlas("bg", 1);
+		this.addBitmapFont("bmfont");
+		this.addJson("config", "config.json");
+		this.loader.load();
+
+		this.loader.onComplete.once(this.onLoad, this);
+	}
+
+	/**
+	 * Load callback.
+	 */
+	private onLoad() {
+		this.isLoaded = true;
+
+		this.config = this.parseConfig(this.getJson("config"));
+
+		this.gridBack = new PIXI.TilingSprite(this.getFrame("tiles", "back-0"));
+
+		this.board.tint = hexToNum(this.config.colorBoard);
+
+		let tilesAtlas = this.getAtlas("tiles");
+		if (tilesAtlas.spritesheet) {
+			tilesAtlas.spritesheet.baseTexture.mipmap = PIXI.MIPMAP_MODES.OFF;
+			tilesAtlas.spritesheet.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+			tilesAtlas.spritesheet.baseTexture.update();
+		}
+
+		let bgAtlas = this.getAtlas("bg");
+		if (bgAtlas.spritesheet) {
+			bgAtlas.spritesheet.baseTexture.mipmap = PIXI.MIPMAP_MODES.OFF;
+			bgAtlas.spritesheet.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+			bgAtlas.spritesheet.baseTexture.update();
+		}
+
+		this.menu.init();
+		this.touchUi.init();
+
+		this.bg.init();
+		this.ui.init();
+		this.ui.visible = false;
+
+		this.container.addChild(this.board);
+		this.container.addChild(this.gridBack);
+		this.container.addChild(this.grid);
+		this.root.addChild(this.menu);
+
+		this.onResize(this.width, this.height);
+	}
+
+	/**
+	 * Update callback.
+	 *
+	 * @param dt
+	 */
+	private onUpdate(dt: number) {
+		if (this.timeActive) {
+			this.time += this.ticker.elapsedMS / 1000;
+		}
+
+		// Generate cell view instances in the bakground.
+		let maxCells = MAX_GRID_WIDTH * MAX_GRID_HEIGHT;
+		if (this.isLoaded && this.cellPool.length < maxCells) {
+			let length = this.cellPool.length;
+			for (let i = 0; i < 5; i++) {
+				let idx = length + i;
+				if (idx > maxCells - 1) {
+					break;
+				}
+
+				let [x, y] = this.state.coordsOf(idx);
+				this.cellPool[idx] = this.createCellView(x, y);
+			}
+		}
+	}
+
+	/**
+	 * Resize callback.
+	 *
+	 * @param width
+	 * @param height
+	 */
+	private onResize(width: number, height: number) {
+		let marginX = 64;
+		let marginY = 96;
+		let maxWidth = this.width - marginX * 2;
+		let maxHeight = this.height - marginY * 2;
+		let refBoardWidth = REF_WIDTH * this.state.width;
+		let refBoardHeight = REF_HEIGHT * this.state.height;
+		let scale = 1;
+
+		if (refBoardHeight > maxHeight) {
+			scale = clamp(maxHeight / refBoardHeight, 0.1, 1);
+		}
+		if (refBoardWidth * scale > maxWidth) {
+			scale = clamp(maxWidth / refBoardWidth, 0.1, 1);
+		}
+
+		this.cellWidth = REF_WIDTH * scale;
+		this.cellHeight = REF_HEIGHT * scale;
+
+		let dimensionsX = this.state.width * this.cellWidth;
+		let dimensionsY = this.state.height * this.cellHeight;
+		let boardWidth = dimensionsX + this.cellWidth / 2;
+		let boardHeight = dimensionsY + this.cellHeight / 2;
+		this.board.x = -boardWidth / 2;
+		this.board.y = -boardHeight / 2;
+		this.board.width = boardWidth;
+		this.board.height = boardHeight;
+		this.grid.scale.set(this.cellWidth / REF_WIDTH);
+		this.grid.x = -(this.state.width / 2) * this.cellWidth;
+		this.grid.y = -(this.state.height / 2) * this.cellHeight;
+
+		if (this.gridBack) {
+			this.gridBack.tileScale.set(2 * (this.cellWidth / REF_WIDTH));
+			this.gridBack.width = this.state.width * this.cellWidth;
+			this.gridBack.height = this.state.height * this.cellHeight;
+			this.gridBack.x = (-this.state.width * this.cellWidth) / 2;
+			this.gridBack.y = (-this.state.height * this.cellHeight) / 2;
+		}
 	}
 
 	/**
@@ -209,139 +341,6 @@ export class MSApp extends AppBase {
 		}
 
 		this.checkWin();
-	}
-
-	/**
-	 * Init callback.
-	 */
-	private onInit() {
-		this.grid.interactiveChildren = false;
-
-		this.addSpine("grid-square");
-		this.addSpine("timer");
-		this.addAtlas("textures");
-		this.addAtlas("tiles");
-		this.addAtlas("bg", 1);
-		this.addJson("config", "config.json");
-		this.loader.load();
-
-		this.loader.onComplete.once(this.onLoad, this);
-	}
-
-	/**
-	 * Load callback.
-	 */
-	private onLoad() {
-		this.isLoaded = true;
-
-		this.config = this.parseConfig(this.getJson("config"));
-
-		this.gridBack = new PIXI.TilingSprite(this.getFrame("tiles", "back-0"));
-
-		this.board.tint = hexToNum(this.config.colorBoard);
-
-		let tilesAtlas = this.getAtlas("tiles");
-		if (tilesAtlas.spritesheet) {
-			tilesAtlas.spritesheet.baseTexture.mipmap = PIXI.MIPMAP_MODES.OFF;
-			tilesAtlas.spritesheet.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
-			tilesAtlas.spritesheet.baseTexture.update();
-		}
-
-		let bgAtlas = this.getAtlas("bg");
-		if (bgAtlas.spritesheet) {
-			bgAtlas.spritesheet.baseTexture.mipmap = PIXI.MIPMAP_MODES.OFF;
-			bgAtlas.spritesheet.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
-			bgAtlas.spritesheet.baseTexture.update();
-		}
-
-		this.menu.init();
-		this.touchUi.init();
-
-		this.ui.init();
-		this.ui.visible = false;
-
-		this.container.addChild(this.board);
-		this.container.addChild(this.gridBack);
-		this.container.addChild(this.grid);
-		this.container.addChild(this.menu);
-
-		this.onResize(this.width, this.height);
-	}
-
-	/**
-	 * Update callback.
-	 *
-	 * @param dt
-	 */
-	private onUpdate(dt: number) {
-		if (this.timeActive) {
-			this.time += this.ticker.elapsedMS / 1000;
-		}
-
-		// Generate cell view instances in the bakground.
-		let maxCells = MAX_GRID_WIDTH * MAX_GRID_HEIGHT;
-		if (this.isLoaded && this.cellPool.length < maxCells) {
-			let length = this.cellPool.length;
-			for (let i = 0; i < 5; i++) {
-				let idx = length + i;
-				if (idx > maxCells - 1) {
-					break;
-				}
-
-				let [x, y] = this.state.coordsOf(idx);
-				this.cellPool[idx] = this.createCellView(x, y);
-			}
-		}
-	}
-
-	/**
-	 * Resize callback.
-	 *
-	 * @param width
-	 * @param height
-	 */
-	private onResize(width: number, height: number) {
-		this.background.clear();
-		this.background.beginFill(hexToNum(this.config.colorBackground));
-		this.background.drawRect(-width / 2, -height / 2, width, height);
-
-		let marginX = 64;
-		let marginY = 96;
-		let maxWidth = this.width - marginX * 2;
-		let maxHeight = this.height - marginY * 2;
-		let refBoardWidth = REF_WIDTH * this.state.width;
-		let refBoardHeight = REF_HEIGHT * this.state.height;
-		let scale = 1;
-
-		if (refBoardHeight > maxHeight) {
-			scale = clamp(maxHeight / refBoardHeight, 0.1, 1);
-		}
-		if (refBoardWidth * scale > maxWidth) {
-			scale = clamp(maxWidth / refBoardWidth, 0.1, 1);
-		}
-
-		this.cellWidth = REF_WIDTH * scale;
-		this.cellHeight = REF_HEIGHT * scale;
-
-		let dimensionsX = this.state.width * this.cellWidth;
-		let dimensionsY = this.state.height * this.cellHeight;
-		let boardWidth = dimensionsX + this.cellWidth / 2;
-		let boardHeight = dimensionsY + this.cellHeight / 2;
-		this.board.x = -boardWidth / 2;
-		this.board.y = -boardHeight / 2;
-		this.board.width = boardWidth;
-		this.board.height = boardHeight;
-		this.grid.scale.set(this.cellWidth / REF_WIDTH);
-		this.grid.x = -(this.state.width / 2) * this.cellWidth;
-		this.grid.y = -(this.state.height / 2) * this.cellHeight;
-
-		if (this.gridBack) {
-			this.gridBack.tileScale.set(2 * (this.cellWidth / REF_WIDTH));
-			this.gridBack.width = this.state.width * this.cellWidth;
-			this.gridBack.height = this.state.height * this.cellHeight;
-			this.gridBack.x = (-this.state.width * this.cellWidth) / 2;
-			this.gridBack.y = (-this.state.height * this.cellHeight) / 2;
-		}
 	}
 
 	/**

@@ -24,8 +24,9 @@ export class Button extends PIXI.Sprite {
 		this.back.anchor.set(0.5);
 
 		this.buttonMode = true;
-		this.accessible = true;
 		this.interactive = true;
+		// TODO: Accessibility?
+		// this.accessible = true;
 
 		this.addChild(this.back);
 

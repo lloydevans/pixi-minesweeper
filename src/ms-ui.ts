@@ -13,7 +13,6 @@ const MAX_TIME = 999;
  * Class handle UI elements.
  */
 export class MSUi extends Component<MSApp> {
-	// These definitely get set in initilisation.
 	private background!: PIXI.Graphics;
 	private buttonRestart!: Button;
 	private buttonCross!: Button;
@@ -30,8 +29,6 @@ export class MSUi extends Component<MSApp> {
 	init() {
 		this.background = new PIXI.Graphics();
 
-		let textStyle = new PIXI.TextStyle({ fill: 0xffffff, fontWeight: "bold", fontSize: 42 });
-
 		this.flagsContainer = new PIXI.Container();
 		this.flagsContainer.y = -8;
 
@@ -39,8 +36,11 @@ export class MSUi extends Component<MSApp> {
 		this.flagsGraphic.state.setAnimation(0, "flag-idle", false);
 		this.flagsGraphic.y = -24;
 
-		this.flagsCount = new GameText(this.app, "", textStyle);
-		this.flagsCount.anchor.set(0, 0.5);
+		this.flagsCount = new GameText(this.app, "", {
+			fontName: "bmfont",
+			fontSize: 38
+		});
+		this.flagsCount._anchor.set(0, 0.5);
 		this.flagsCount.x = 38;
 		this.flagsCount.y = -24;
 
@@ -51,8 +51,11 @@ export class MSUi extends Component<MSApp> {
 		this.timeGraphic.scale.set(0.75);
 		this.timeGraphic.y = -22;
 
-		this.timeCount = new GameText(this.app, "", textStyle);
-		this.timeCount.anchor.set(0, 0.5);
+		this.timeCount = new GameText(this.app, "", {
+			fontName: "bmfont",
+			fontSize: 38
+		});
+		this.timeCount._anchor.set(0, 0.5);
 		this.timeCount.x = 38;
 		this.timeCount.y = -24;
 
