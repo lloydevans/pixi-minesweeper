@@ -20,6 +20,7 @@ type MidiNote = {
 };
 
 const DURATION = 31.31;
+const MAX_QUEUE = 24;
 const BUFFER = 0.5;
 
 let synth = new Tone.PolySynth(Tone.Synth, {
@@ -65,9 +66,21 @@ export async function playMidi(midi: any) {
 	while (isPlaying && _playIdx === playIdx) {
 		let now = Tone.now();
 
+		let totalQueued = 0;
+
 		while (notes[0].time + start + DURATION * loops < now + BUFFER) {
 			let loopOffset = DURATION * loops;
 			let note = notes.shift()!;
+
+			if (notes.length === 0) {
+				notes = notes.concat(original);
+				loops++;
+			}
+
+			if (totalQueued > MAX_QUEUE) continue;
+
+			totalQueued++;
+
 			try {
 				synth.triggerAttackRelease(
 					//
@@ -78,11 +91,6 @@ export async function playMidi(midi: any) {
 				);
 			} catch (err) {
 				console.log(err);
-			}
-
-			if (notes.length === 0) {
-				notes = notes.concat(original);
-				loops++;
 			}
 		}
 
