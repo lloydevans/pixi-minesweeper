@@ -30,9 +30,10 @@ export class MSBg extends Component<MSApp> {
 
 	protected update(dt: number) {
 		this.scroll += this.speed * dt;
-		for (let i = 0, l = this.layers.length; i < l; i++) {
+		let length = this.layers.length;
+		for (let i = 0; i < length; i++) {
 			let totalWidth = this.layers[i].texture.width * this.layers[i].tileScale.x;
-			this.layers[i].tilePosition.x = (this.scroll * Ease.sineIn(i / l)) % totalWidth;
+			this.layers[i].tilePosition.x = (this.scroll * Ease.sineIn(i / length)) % totalWidth;
 		}
 	}
 
