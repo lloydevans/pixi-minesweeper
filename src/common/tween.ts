@@ -1,4 +1,5 @@
 import { TweenProps } from "./tween-props";
+import { Ease } from "./ease";
 
 /**
  * This serves as an alias to the namespaced Tween class.
@@ -14,7 +15,7 @@ export class Tween<T> extends createjs.Tween {
 		return super.wait(duration, passive);
 	}
 
-	to(props: Partial<T>, duration?: number, ease?: Function): Tween<T> {
+	to(props: Partial<T>, duration?: number, ease = Ease.sineInOut): Tween<T> {
 		return super.to(props, duration, ease);
 	}
 
