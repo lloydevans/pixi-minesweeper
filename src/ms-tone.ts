@@ -37,6 +37,12 @@ let synth = new Tone.PolySynth(Tone.Synth, {
 	volume: -24,
 }).toDestination();
 
+let sampler = new Tone.Sampler({
+	urls: { A2: "rimba.m4a" },
+	baseUrl: "/",
+	volume: -24,
+}).toDestination();
+
 let playIdx = 0;
 
 let isPlaying = false;
@@ -76,15 +82,18 @@ export async function playMidi(midi: any) {
 		while (notes[0].time + start + DURATION * loops < now + BUFFER) {
 			let note = notes.shift()!;
 
+			// Loop note array.
 			if (notes.length === 0) {
 				notes = notes.concat(original);
 				loops++;
 			}
 
+			// Skip past notes.
 			if (notes[0].time + start + DURATION * loops < now) {
 				continue;
 			}
 
+			// Skip too many notes.
 			if (totalQueued > MAX_QUEUE) {
 				continue;
 			}
@@ -94,7 +103,7 @@ export async function playMidi(midi: any) {
 			let loopOffset = DURATION * loops;
 
 			try {
-				synth.triggerAttackRelease(
+				sampler.triggerAttackRelease(
 					//
 					note.name,
 					note.duration,
