@@ -39,7 +39,6 @@ let synth = new Tone.PolySynth(Tone.Synth, {
 
 let sampler = new Tone.Sampler({
 	urls: { A2: "rimba.m4a" },
-	baseUrl: "/",
 	volume: -24,
 }).toDestination();
 
