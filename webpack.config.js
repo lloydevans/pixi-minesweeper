@@ -61,6 +61,10 @@ module.exports = (env = {}) => {
 				{
 					test: require.resolve("tweenjs/lib/tweenjs"),
 					use: "imports-loader?wrapper=window"
+				},
+				{
+					test: require.resolve("./libs/tween-group.js"),
+					use: "imports-loader?wrapper=window"
 				}
 			]
 		},
