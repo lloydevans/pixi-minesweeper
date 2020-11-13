@@ -17,7 +17,7 @@ export class MSBg extends Component<MSApp> {
 	private speed: number = 0.5;
 	private scroll: number = 0;
 	private bgSet: BGSet = "bg-swamp";
-	private tileScale = 1.1;
+	private tileScale = 1.15;
 
 	protected init(bgSet: BGSet = this.bgSet) {
 		this.layers.push(
@@ -43,8 +43,7 @@ export class MSBg extends Component<MSApp> {
 	protected resize(width: number, height: number) {
 		for (let i = 0; i < this.layers.length; i++) {
 			const el = this.layers[i];
-			el.tileScale.y = (height / REF_BG_HEIGHT) * this.tileScale;
-			el.tileScale.x = el.tileScale.y;
+			el.tileScale.x = el.tileScale.y = (height / REF_BG_HEIGHT) * this.tileScale;
 			el.width = width;
 			el.height = height;
 		}
