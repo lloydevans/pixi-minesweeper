@@ -14,7 +14,7 @@ import type { MSConfig, MSGameConfig } from "./ms-config";
 import { MSGrid } from "./ms-grid";
 import { MSMenu } from "./ms-menu";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MSState } from "./ms-state";
-import { playMidi, sounds, stopMidi } from "./ms-tone";
+import { playMidi, sounds } from "./ms-tone";
 import { MSTouchUi } from "./ms-touch-ui";
 import { MSUi } from "./ms-ui";
 
@@ -165,8 +165,8 @@ export class MSApp extends AppBase {
 	private onResize(width: number, height: number) {
 		let marginX = 64;
 		let marginY = 96;
-		let maxWidth = this.width - marginX * 2;
-		let maxHeight = this.height - marginY * 2;
+		let maxWidth = width - marginX * 2;
+		let maxHeight = height - marginY * 2;
 		let refBoardWidth = REF_WIDTH * this.state.width;
 		let refBoardHeight = REF_HEIGHT * this.state.height;
 		let scale = 1;
@@ -226,6 +226,37 @@ export class MSApp extends AppBase {
 	/**
 	 *
 	 */
+	public screenShake(amp = 8, freq = 66, count = 12) {
+		amp = clamp(amp, 0, 16);
+		freq = clamp(freq, 1, 500);
+		count = clamp(count, 1, 16);
+
+		let tween = this.tween(this.container.pivot);
+
+		let angle = Math.PI / 2;
+
+		for (let i = 0; i < count; i++) {
+			let decay = -(i / count) + 1;
+			let coords = {
+				x: Math.sin(angle) * amp * decay,
+				y: Math.cos(angle) * amp * decay,
+			};
+			angle *= -1;
+			angle += Math.random() - 0.5;
+			tween = tween.to(coords, freq, Ease.sineInOut);
+		}
+
+		tween = tween.to({ x: 0, y: 0 }, freq, Ease.sineInOut);
+
+		tween.on("change", () => {
+			this.bg.offset.x = this.container.pivot.x;
+			this.bg.offset.y = this.container.pivot.y;
+		});
+	}
+
+	/**
+	 *
+	 */
 	public showGame() {
 		playMidi(this.getJson("rag"));
 		this.tween(this.container.position).to({ y: 32 }, 300, Ease.sineInOut);
@@ -238,7 +269,6 @@ export class MSApp extends AppBase {
 	 *
 	 */
 	public showMenu() {
-		// stopMidi();
 		this.tween(this.container.position).to({ y: 0 }, 300, Ease.sineInOut);
 		this.menu.visible = true;
 		this.grid.visible = false;
@@ -306,6 +336,8 @@ export class MSApp extends AppBase {
 		if (this.isFirstClick) {
 			this.isFirstClick = false;
 			let result = this.state.selectFirst(x, y);
+			this.screenShake((result.length / this.state.totalCells) * 8);
+
 			if (result.length > 1) {
 				await this.animateUpdateFrom(cellState);
 			} else {
@@ -332,6 +364,8 @@ export class MSApp extends AppBase {
 				this.animateLose(cellState);
 			} //
 			else {
+				this.screenShake((result.length / this.state.totalCells) * 8);
+
 				if (result.length > 1) {
 					await this.animateUpdateFrom(cellState);
 				} else {
@@ -393,6 +427,8 @@ export class MSApp extends AppBase {
 	 *
 	 */
 	private async noiseWipe() {
+		this.screenShake(4);
+
 		let indexes: number[] = [];
 		for (let i = 0; i < this.state.totalCells; i++) {
 			indexes.push(i);

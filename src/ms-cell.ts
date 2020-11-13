@@ -1,14 +1,15 @@
+import clamp from "lodash-es/clamp";
 import isEqual from "lodash-es/isEqual";
 import * as PIXI from "pixi.js-legacy";
+import { hexToNum } from "./common/color";
+import { Component } from "./common/component";
 import { GameText } from "./common/game-text";
 import { Spine } from "./common/spine";
 import { MSApp } from "./ms-app";
-import { Component } from "./common/component";
 import { CELL_STATE_DEFAULT } from "./ms-cell-state";
 import type { MSCellState } from "./ms-cell-state";
 import type { NumberKey } from "./ms-config";
 import { sounds } from "./ms-tone";
-import { hexToNum } from "./common/color";
 
 // Reference size of cell graphics before any scaling.
 export const REF_WIDTH = 64;
@@ -213,6 +214,7 @@ export class MSCell extends Component<MSApp> {
 	 * @param total
 	 */
 	private setText(total: number) {
+		total = Math.floor(clamp(total, 0, 8));
 		let key = total.toString() as NumberKey;
 		this.adjacentText.tint = hexToNum(this.app.config.colorNumbers[key]);
 		this.adjacentText.visible = true;
