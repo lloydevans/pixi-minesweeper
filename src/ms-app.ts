@@ -86,7 +86,7 @@ export class MSApp extends AppBase {
 		this.addAtlas("bg", 1);
 		this.addBitmapFont("bmfont");
 		this.addJson("config", "config.json");
-		this.addJson("jazz", "jazz.json");
+		this.addJson("rag", "rag.json");
 		this.loader.load();
 
 		this.loader.onComplete.once(this.onLoad, this);
@@ -227,7 +227,7 @@ export class MSApp extends AppBase {
 	 *
 	 */
 	public showGame() {
-		playMidi(this.getJson("jazz"));
+		playMidi(this.getJson("rag"));
 		this.tween(this.container.position).to({ y: 32 }, 300, Ease.sineInOut);
 		this.menu.visible = false;
 		this.grid.visible = true;
@@ -238,7 +238,7 @@ export class MSApp extends AppBase {
 	 *
 	 */
 	public showMenu() {
-		stopMidi();
+		// stopMidi();
 		this.tween(this.container.position).to({ y: 0 }, 300, Ease.sineInOut);
 		this.menu.visible = true;
 		this.grid.visible = false;

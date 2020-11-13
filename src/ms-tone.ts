@@ -19,16 +19,17 @@ type MidiNote = {
 	velocity: number;
 };
 
-const DURATION = 31.31;
-const MAX_QUEUE = 24;
-const BUFFER = 0.5;
+const DURATION = 188.952;
+const MAX_QUEUE = 64;
+const OVERLAP = 1;
+const BUFFER = 3;
 
 let synth = new Tone.PolySynth(Tone.Synth, {
 	envelope: {
 		attack: 0.005,
-		decay: 0.3,
+		decay: 0.2,
 		sustain: 0,
-		release: 0.1,
+		release: 0.5,
 	},
 	oscillator: {
 		type: "sine",
@@ -42,6 +43,10 @@ let isPlaying = false;
 
 /**
  * Quick MIDI music player with much help from ToneJS.
+ *
+ * This is very prototypey and randomly all in this async function for fun
+ * but eventually I'll build this into a class which handles some cool midi based
+ * music / sfx.
  *
  * @param midi
  */
@@ -69,7 +74,6 @@ export async function playMidi(midi: any) {
 		let totalQueued = 0;
 
 		while (notes[0].time + start + DURATION * loops < now + BUFFER) {
-			let loopOffset = DURATION * loops;
 			let note = notes.shift()!;
 
 			if (notes.length === 0) {
@@ -77,9 +81,17 @@ export async function playMidi(midi: any) {
 				loops++;
 			}
 
-			if (totalQueued > MAX_QUEUE) continue;
+			if (notes[0].time + start + DURATION * loops < now) {
+				continue;
+			}
+
+			if (totalQueued > MAX_QUEUE) {
+				continue;
+			}
 
 			totalQueued++;
+
+			let loopOffset = DURATION * loops;
 
 			try {
 				synth.triggerAttackRelease(
@@ -98,7 +110,7 @@ export async function playMidi(midi: any) {
 			break;
 		}
 
-		await delay(BUFFER * 1000);
+		await delay(BUFFER * 1000 - OVERLAP * 1000);
 	}
 }
 
