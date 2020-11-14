@@ -233,8 +233,6 @@
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
             <key type="filename">../tiles/back-0.png</key>
-            <key type="filename">../tiles/back-edge-0.png</key>
-            <key type="filename">../tiles/front-edge-0.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0,0</point_f>
