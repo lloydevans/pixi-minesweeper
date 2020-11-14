@@ -431,8 +431,6 @@ export class MSApp extends AppBase {
 	 *
 	 */
 	private async noiseWipe() {
-		this.screenShake(4);
-
 		let indexes: number[] = [];
 		for (let i = 0; i < this.state.totalCells; i++) {
 			indexes.push(i);
