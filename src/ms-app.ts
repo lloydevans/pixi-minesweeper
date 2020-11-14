@@ -2,6 +2,7 @@ import clamp from "lodash-es/clamp";
 import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
 import { AppBase } from "./common/app-base";
+import { ToneAudio } from "./common/tone-audio";
 import { hexToNum } from "./common/color";
 import { Ease } from "./common/ease";
 import { preventContextMenu } from "./common/utils";
@@ -14,7 +15,7 @@ import type { MSConfig, MSGameConfig } from "./ms-config";
 import { MSGrid } from "./ms-grid";
 import { MSMenu } from "./ms-menu";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MSState } from "./ms-state";
-import { playMidi, sounds } from "./ms-tone";
+import { playMidi, MidiMusicConfig } from "./ms-tone";
 import { MSTouchUi } from "./ms-touch-ui";
 import { MSUi } from "./ms-ui";
 
@@ -62,6 +63,35 @@ export class MSApp extends AppBase {
 
 		this.config = { ...MS_CONFIG_DEFAULT };
 		this.gameConfig = { ...INITIAL_GAME_CONFIG };
+		this.audio.init({
+			masterVolume: -6,
+			sources: {
+				["blop"]: { url: "blop.m4a", volume: -6 },
+				["celeste"]: { url: "celeste.m4a" },
+				["chim"]: { url: "chim.m4a" },
+				["chime-rattle-a"]: { url: "chime-rattle-a.m4a" },
+				["chime-rattle-b"]: { url: "chime-rattle-b.m4a" },
+				["chime"]: { url: "chime.m4a" },
+				["chord"]: { url: "chord.m4a" },
+				["clack"]: { url: "clack.m4a" },
+				["click"]: { url: "click.m4a" },
+				["dig"]: { url: "dig.m4a" },
+				["dirt-thud-0"]: { url: "dirt-thud-0.m4a" },
+				["dirt-thud-1"]: { url: "dirt-thud-1.m4a" },
+				["dirt-thud-2"]: { url: "dirt-thud-2.m4a" },
+				["drip"]: { url: "drip.m4a" },
+				["drum-0"]: { url: "drum-0.m4a" },
+				["dull"]: { url: "dull.m4a" },
+				["glug"]: { url: "glug.m4a" },
+				["knock"]: { url: "knock.m4a" },
+				["maraq"]: { url: "maraq.m4a" },
+				["pitchy-drum"]: { url: "pitchy-drum.m4a" },
+				["rimba"]: { url: "rimba.m4a" },
+				["rumble"]: { url: "rumble.m4a" },
+				["shaker"]: { url: "shaker.m4a" },
+				["steel"]: { url: "steel.m4a" },
+			},
+		});
 
 		this.root.addChild(this.bg);
 		this.root.addChild(this.container);
@@ -86,7 +116,7 @@ export class MSApp extends AppBase {
 		this.addAtlas("bg", 1);
 		this.addBitmapFont("bmfont");
 		this.addJson("config", "config.json");
-		this.addJson("rag", "rag.json");
+		this.addJson("theme", "theme.json");
 		this.loader.load();
 
 		this.loader.onComplete.once(this.onLoad, this);
@@ -262,7 +292,64 @@ export class MSApp extends AppBase {
 	 *
 	 */
 	public showGame() {
-		playMidi(this.getJson("rag"));
+		let vol = -19;
+		let conf: MidiMusicConfig = {
+			midi: this.getJson("theme"),
+			tracks: [
+				{
+					trackName: "rimba",
+					sampler: {
+						urls: { A2: "rimba.m4a" },
+						volume: vol,
+					},
+				},
+				{
+					trackName: "drum-0",
+					sampler: {
+						urls: { A2: "drum-0.m4a" },
+						volume: vol,
+					},
+				},
+				{
+					trackName: "pitchy-drum",
+					sampler: {
+						urls: { A2: "pitchy-drum.m4a" },
+						volume: vol,
+					},
+				},
+				{
+					trackName: "shaker",
+					sampler: {
+						urls: { A2: "shaker.m4a" },
+						volume: vol,
+					},
+				},
+				{
+					trackName: "dull",
+					sampler: {
+						urls: { A2: "dull.m4a" },
+						volume: vol,
+					},
+				},
+				{
+					trackName: "steel",
+					sampler: {
+						urls: { A2: "steel.m4a" },
+						volume: vol,
+					},
+				},
+				{
+					trackName: "celeste",
+					sampler: {
+						urls: { A2: "celeste.m4a" },
+						volume: vol,
+					},
+				},
+			],
+		};
+
+		playMidi(conf);
+
 		this.tween(this.container.position).to({ y: 32 }, 300, Ease.sineInOut);
 		this.menu.visible = false;
 		this.grid.visible = true;
@@ -316,12 +403,10 @@ export class MSApp extends AppBase {
 		cellState.flag = !cellState.flag;
 
 		if (cellState.flag) {
-			sounds.blop.playbackRate = 2;
-			sounds.blop.start();
+			this.audio.play("blop", { transpose: 12 });
 		} //
 		else {
-			sounds.blop.playbackRate = 3;
-			sounds.blop.start();
+			this.audio.play("blop", { transpose: 24 });
 		}
 
 		let msCell = this.getCellView(cellState.x, cellState.y);
@@ -352,12 +437,10 @@ export class MSApp extends AppBase {
 			let result = this.state.select(x, y);
 
 			if (cellState.covered) {
-				sounds.blop.playbackRate = 2;
-				sounds.blop.start();
+				this.audio.play("blop", { transpose: 12 });
 			} //
 			else {
-				sounds.blop.playbackRate = 3;
-				sounds.blop.start();
+				this.audio.play("blop", { transpose: 24 });
 			}
 
 			if (cellState.mine) {
@@ -445,8 +528,9 @@ export class MSApp extends AppBase {
 			msCell.setState(cellState);
 
 			if (indexes.length % Math.floor(this.state.totalCells / 12) === 0) {
-				sounds.blop.playbackRate = x / this.state.width + y / this.state.height + 1;
-				sounds.blop.start();
+				this.audio.play("blop", {
+					transpose: x / this.state.width + y / this.state.height,
+				});
 				await this.delay(33);
 			}
 		}
@@ -469,8 +553,7 @@ export class MSApp extends AppBase {
 			msCell.setState(cellState);
 
 			if (indexes.length % (this.state.width * Math.round(this.state.height / 10)) === 0) {
-				sounds.blop.playbackRate = x / this.state.width + y / this.state.height + 1;
-				sounds.blop.start();
+				this.audio.play("blop", { transpose: x / this.state.width + y / this.state.height });
 				await this.delay(33);
 			}
 		}
@@ -505,7 +588,8 @@ export class MSApp extends AppBase {
 			let msCell = this.getCellView(el.x, el.y);
 			msCell.setFlagEnabled(true);
 			msCell.animateCorrect();
-			sounds.chime.start();
+
+			this.audio.play("chime");
 
 			await this.delay(66);
 		}
@@ -517,7 +601,8 @@ export class MSApp extends AppBase {
 			let el = correctFlags.splice(idx, 1)[0];
 			let msCell = this.getCellView(el.x, el.y);
 			msCell.animateCorrect();
-			sounds.chime.start();
+
+			this.audio.play("chime");
 
 			await this.delay(66);
 		}
@@ -544,8 +629,7 @@ export class MSApp extends AppBase {
 
 			msCell.animateResult();
 
-			sounds.click.playbackRate = 0.9 + Math.random() * 0.2;
-			sounds.click.start();
+			this.audio.play("click", { transpose: (Math.random() - 0.5) * 6 });
 
 			if (!cellState.flag) {
 				msCell.animateDigEnd();
@@ -560,8 +644,7 @@ export class MSApp extends AppBase {
 			let msCell = this.getCellView(el.x, el.y);
 			msCell.animateResult();
 
-			sounds.chime.playbackRate = 1;
-			sounds.chime.start();
+			this.audio.play("chime");
 
 			await this.delay(100);
 		}
@@ -620,8 +703,7 @@ export class MSApp extends AppBase {
 				break;
 			}
 
-			sounds.blop.playbackRate = (i / maxSide) * 3 + 1;
-			sounds.blop.start();
+			this.audio.play("blop", { transpose: (i / maxSide) * 24 });
 
 			await this.delay(66);
 		}
@@ -727,8 +809,7 @@ export class MSApp extends AppBase {
 			case "mouse":
 				let isRightClick = e.data.button === 2;
 
-				sounds.blop.playbackRate = 1;
-				sounds.blop.start();
+				this.audio.play("blop");
 
 				if (isRightClick) {
 					msCell.animatePlaceFlagStart();

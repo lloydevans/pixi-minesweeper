@@ -1,50 +1,43 @@
 import * as Tone from "tone";
 import { delay } from "./common/delay";
 
-export const sounds = {
-	blop: new Tone.Player("blop.m4a").toDestination(),
-	click: new Tone.Player("click.m4a").toDestination(),
-	clack: new Tone.Player("clack.m4a").toDestination(),
-	chime: new Tone.Player("chime.m4a").toDestination(),
-	drip: new Tone.Player("drip.m4a").toDestination(),
-};
-
-sounds.blop.volume.value = -12;
-sounds.click.volume.value = -6;
-
-type MidiNote = {
+export interface MidiNote {
 	name: string;
 	duration: number;
 	time: number;
 	velocity: number;
-};
+}
 
-const DURATION = 188.952;
+export interface MidiMusicConfig {
+	midi: MidiData;
+
+	tracks: {
+		trackName: string;
+		sampler: {
+			urls: { [key: string]: string };
+			volume: number;
+		};
+	}[];
+}
+
+export interface MidiTrack {
+	notes: MidiNote[];
+}
+
+export interface MidiData {
+	tracks: MidiTrack[];
+}
+
+const DURATION = 122.879;
 const MAX_QUEUE = 64;
 const OVERLAP = 1;
 const BUFFER = 3;
 
-let synth = new Tone.PolySynth(Tone.Synth, {
-	envelope: {
-		attack: 0.005,
-		decay: 0.2,
-		sustain: 0,
-		release: 0.5,
-	},
-	oscillator: {
-		type: "sine",
-	},
-	volume: -24,
-}).toDestination();
-
-let sampler = new Tone.Sampler({
-	urls: { A2: "rimba.m4a" },
-	volume: -24,
-}).toDestination();
-
 let playIdx = 0;
 
 let isPlaying = false;
+
+let samplers: Tone.Sampler[] = [];
 
 /**
  * Quick MIDI music player with much help from ToneJS.
@@ -53,64 +46,81 @@ let isPlaying = false;
  * but eventually I'll build this into a class which handles some cool midi based
  * music / sfx.
  *
- * @param midi
+ * @param config
  */
-export async function playMidi(midi: any) {
+export async function playMidi(config: MidiMusicConfig) {
 	// Temporary
-	if (isPlaying) return;
+	if (playIdx !== 0) return;
 
-	isPlaying = true;
+	// return;
 
 	playIdx++;
 
-	let _playIdx = playIdx;
+	isPlaying = true;
 
-	let start = Tone.now();
+	while (Tone.context.state !== "running") {
+		await delay(500);
+	}
 
-	let original = midi.tracks[0].notes as MidiNote[];
+	let tracks = config.midi.tracks.map((el) => [...el.notes]);
 
-	let notes = [...original];
+	let loops: number[] = config.midi.tracks.map((el) => 0);
 
-	let loops = 0;
+	for (let i = 0; i < config.tracks.length; i++) {
+		const el = config.tracks[i];
+		let sampler = new Tone.Sampler(el.sampler).toDestination();
+		samplers.push(sampler);
+	}
 
-	while (isPlaying && _playIdx === playIdx) {
+	while (samplers.filter((el) => !el.loaded).length > 0) {
+		await delay(500);
+	}
+
+	let start = Tone.now() + 0.5;
+
+	while (isPlaying) {
 		let now = Tone.now();
 
 		let totalQueued = 0;
 
-		while (notes[0].time + start + DURATION * loops < now + BUFFER) {
-			let note = notes.shift()!;
+		for (let i = 0; i < config.tracks.length; i++) {
+			//
+			let sampler = samplers[i];
 
-			// Loop note array.
-			if (notes.length === 0) {
-				notes = notes.concat(original);
-				loops++;
-			}
+			while (tracks[i][0].time + start + DURATION * loops[i] < now + BUFFER) {
+				let note = tracks[i].shift()!;
 
-			// Skip past notes.
-			if (notes[0].time + start + DURATION * loops < now) {
-				continue;
-			}
+				// Loop note array.
+				if (tracks[i].length === 0) {
+					tracks[i] = tracks[i].concat(config.midi.tracks[i].notes);
+					loops[i]++;
+				}
 
-			// Skip too many notes.
-			if (totalQueued > MAX_QUEUE) {
-				continue;
-			}
+				// Skip past notes.
+				if (note.time + start + DURATION * loops[i] < now) {
+					continue;
+				}
 
-			totalQueued++;
+				// Skip too many notes.
+				if (totalQueued > MAX_QUEUE) {
+					continue;
+				}
 
-			let loopOffset = DURATION * loops;
+				totalQueued++;
 
-			try {
-				sampler.triggerAttackRelease(
-					//
-					note.name,
-					note.duration,
-					note.time + start + loopOffset,
-					note.velocity
-				);
-			} catch (err) {
-				console.log(err);
+				let loopOffset = DURATION * loops[i];
+
+				try {
+					sampler.triggerAttackRelease(
+						//
+						note.name,
+						note.duration,
+						note.time + start + loopOffset,
+						note.velocity
+					);
+				} catch (err) {
+					console.log(err);
+				}
 			}
 		}
 

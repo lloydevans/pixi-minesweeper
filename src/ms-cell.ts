@@ -9,7 +9,6 @@ import { MSApp } from "./ms-app";
 import { CELL_STATE_DEFAULT } from "./ms-cell-state";
 import type { MSCellState } from "./ms-cell-state";
 import type { NumberKey } from "./ms-config";
-import { sounds } from "./ms-tone";
 
 // Reference size of cell graphics before any scaling.
 export const REF_WIDTH = 64;
@@ -345,10 +344,9 @@ export class MSCell extends Component<MSApp> {
 	public animateDigCancel() {
 		if (this.anim.state.getCurrent(AnimTrack.Dig).animation.name === "dig-start") {
 			this.anim.state.setAnimation(AnimTrack.Dig, "dig-cancel", false);
+			this.app.audio.play("blop", { transpose: 24 });
+			this.app.audio.play("drip", { delay: 0.1 });
 			this.animateHoverEnd();
-			sounds.blop.playbackRate = 3;
-			sounds.blop.start();
-			sounds.drip.start();
 		}
 	}
 
@@ -358,10 +356,9 @@ export class MSCell extends Component<MSApp> {
 	public animatePlaceFlagCancel() {
 		if (this.anim.state.getCurrent(AnimTrack.Flag).animation.name === "flag-place-start") {
 			this.anim.state.setAnimation(AnimTrack.Flag, "flag-destroy", false);
+			this.app.audio.play("blop", { transpose: 24 });
+			this.app.audio.play("drip", { delay: 0.1 });
 			this.animateHoverEnd();
-			sounds.blop.playbackRate = 3;
-			sounds.blop.start();
-			sounds.drip.start();
 		}
 	}
 

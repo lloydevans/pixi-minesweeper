@@ -1,9 +1,10 @@
 import clamp from "lodash-es/clamp";
 import * as PIXI from "pixi.js-legacy";
 import * as screenfull from "screenfull";
+import { ToneAudio } from "./tone-audio";
+import { Tween } from "./tween";
 import { TweenGroup } from "./tween-group";
 import { TweenProps } from "./tween-props";
-import { Tween } from "./tween";
 
 export const MAX_DPR = 4;
 export const MIN_DPR = 0.5;
@@ -24,6 +25,11 @@ export class AppBase extends PIXI.Application {
 	 * "resize" (width: number, height: number) => void
 	 */
 	public readonly events = new PIXI.utils.EventEmitter();
+
+	/**
+	 *
+	 */
+	public readonly audio = new ToneAudio();
 
 	/**
 	 * Global app tween group.

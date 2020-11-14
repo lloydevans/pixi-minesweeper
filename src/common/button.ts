@@ -1,6 +1,5 @@
 import * as PIXI from "pixi.js-legacy";
 import * as Tone from "tone";
-import { sounds } from "../ms-tone";
 import { AppBase } from "./app-base";
 
 export interface ButtonConfig {
@@ -83,8 +82,8 @@ export class Button extends PIXI.Sprite {
 		this.alpha = 1;
 
 		if (Tone.context.state === "running") {
-			sounds.blop.playbackRate = 3;
-			sounds.blop.start();
+			// TODO: Configuration.
+			this.app.audio.play("blop", { transpose: 24 });
 		}
 	}
 
@@ -96,8 +95,8 @@ export class Button extends PIXI.Sprite {
 		this.alpha = 0.5;
 
 		if (Tone.context.state === "running") {
-			sounds.blop.playbackRate = 2;
-			sounds.blop.start();
+			// TODO: Configuration.
+			this.app.audio.play("blop", { transpose: 12 });
 		}
 	}
 
