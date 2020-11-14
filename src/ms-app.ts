@@ -226,27 +226,28 @@ export class MSApp extends AppBase {
 	/**
 	 *
 	 */
-	public screenShake(amp = 8, duration = 1.2, hz = 7) {
+	public screenShake(amp = 8, duration = 0.75, hz = 16) {
 		duration = clamp(duration, 0.1, 8);
-		amp = clamp(amp, 0, 16);
+		amp = clamp(amp, 0, 16) * 0.75;
 		hz = clamp(hz, 2, 16);
 
 		let period = 1 / hz;
 		let periodMs = period * 1000;
-		let count = Math.floor(duration / period);
+		let cycles = Math.floor(duration / period);
 		let tween = this.tween(this.container.pivot);
 		let angle = Math.PI / 2;
+		let count = cycles * 2;
 
 		for (let i = 0; i < count; i++) {
-			let pOffset = periodMs * (i / count);
-			let decay = -(i / count) + 1;
+			let s = i / count;
+			let pOffset = periodMs * s;
+			let decay = -s + 1;
 			let coords = {
 				x: Math.sin(angle) * amp * decay,
 				y: Math.cos(angle) * amp * decay,
 			};
-			angle *= -1;
-			angle += Math.random() - 0.5;
-			tween = tween.to(coords, periodMs / 2 + pOffset, Ease.sineInOut);
+			angle += Math.PI + (Math.random() - 0.5);
+			tween = tween.to(coords, periodMs / 2, Ease.sineInOut);
 		}
 
 		tween = tween.to({ x: 0, y: 0 }, periodMs / 2, Ease.sineInOut);
