@@ -4,7 +4,7 @@ import { ButtonText } from "./common/button-text";
 import { Component } from "./common/component";
 import { GameText } from "./common/game-text";
 import { INITIAL_GAME_CONFIG, MSApp } from "./ms-app";
-import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MIN_GRID_HEIGHT, MIN_GRID_WIDTH } from "./ms-state";
+import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MIN_GRID_HEIGHT, MIN_GRID_WIDTH, MIN_EMPTY } from "./ms-state";
 
 export class MSMenu extends Component<MSApp> {
 	private title!: GameText;
@@ -53,7 +53,7 @@ export class MSMenu extends Component<MSApp> {
 			label: "Mines",
 			default: INITIAL_GAME_CONFIG.startMines,
 			min: 1,
-			max: INITIAL_GAME_CONFIG.gridWidth * INITIAL_GAME_CONFIG.gridHeight - 2,
+			max: INITIAL_GAME_CONFIG.gridWidth * INITIAL_GAME_CONFIG.gridHeight - MIN_EMPTY,
 		});
 
 		this.widthScroller.x = 64;
@@ -118,7 +118,7 @@ export class MSMenu extends Component<MSApp> {
 		let gridWidth = this.widthScroller.current;
 		let gridHeight = this.heightScroller.current;
 		let startMines = this.minesScroller.current;
-		this.minesScroller.max = gridWidth * gridHeight - 2;
+		this.minesScroller.max = gridWidth * gridHeight - MIN_EMPTY;
 		this.app.previewGame({ startMines, gridWidth, gridHeight });
 	}
 }
