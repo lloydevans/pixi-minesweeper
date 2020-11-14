@@ -1,5 +1,8 @@
 import * as PIXI from "pixi.js-legacy";
 import { AppBase } from "./app-base";
+import { TweenGroup } from "./tween-group";
+import { TweenProps } from "./tween-props";
+import { Tween } from "./tween";
 
 // These are copied from the Container inline type.
 export type ComponentDestroyOptions = {
@@ -16,6 +19,11 @@ export class Component<T extends AppBase> extends PIXI.Container {
 	 * Pixi application reference.
 	 */
 	public app: T;
+
+	/**
+	 * Component tween group.
+	 */
+	private readonly tweenGroup = new TweenGroup(false, 1);
 
 	/**
 	 * Core app component class helps manage linkages to core systems.
@@ -59,8 +67,24 @@ export class Component<T extends AppBase> extends PIXI.Container {
 		this.update && this.app.events.off("update", this.update, this);
 		this.resize && this.app.events.off("resize", this.resize, this);
 		this.cleanup && this.cleanup();
+		this.tweenGroup.reset();
 		this.emit("destroy");
 		super.destroy(options);
+	}
+
+	/**
+	 *
+	 */
+	protected tween<T>(target: T, options?: TweenProps): Tween<T> {
+		let tween = this.tweenGroup.get(target, options);
+		return tween;
+	}
+
+	/**
+	 *
+	 */
+	protected delay(time: number) {
+		return new Promise((resolve) => this.tween(this).wait(time).call(resolve));
 	}
 
 	/**
