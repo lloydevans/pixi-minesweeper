@@ -83,7 +83,7 @@ export class Button extends PIXI.Sprite {
 
 		if (Tone.context.state === "running") {
 			// TODO: Configuration.
-			this.app.audio.play("blop", { transpose: 24 });
+			this.app.audio.play("blop", { transpose: 24, delay: 0.05 });
 		}
 	}
 
