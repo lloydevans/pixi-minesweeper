@@ -110,7 +110,7 @@ export class ToneAudio {
 	 * @param next - Continue loader.
 	 */
 	public static async configLoader(this: PIXI.Loader, resource: PIXI.LoaderResource, next: () => any) {
-		if (!resource.data || !resource.data.toneAudioConfig) {
+		if (!resource.data?.toneAudioConfig) {
 			return next();
 		}
 
@@ -129,29 +129,10 @@ export class ToneAudio {
 		return Math.exp((semitones * Math.log(2)) / 12);
 	}
 
-	/**
-	 *
-	 */
 	private samplers: Dict<Tone.Sampler> = {};
-
-	/**
-	 *
-	 */
 	private players: Dict<Tone.Player> = {};
-
-	/**
-	 *
-	 */
 	private sources: Dict<SourceEntry> = {};
-
-	/**
-	 *
-	 */
 	private currentMidi?: MidiPlaybackData;
-
-	/**
-	 *
-	 */
 	private config!: ToneAudioConfig;
 
 	/**
@@ -327,7 +308,7 @@ export class ToneAudio {
 						note.name,
 						note.duration,
 						note.time + start + loopOffset,
-						note.velocity
+						note.velocity * 0.25 // TODO: config
 					);
 				} catch (err) {
 					console.log(err);

@@ -345,12 +345,14 @@ export class MSApp extends AppBase {
 		if (this.isFirstClick) {
 			this.isFirstClick = false;
 			let result = this.state.selectFirst(x, y);
-			this.screenShake((result.length / this.state.totalCells) * 8);
-			// this.audio.play("rumble");
 
 			if (result.length > 1) {
+				this.screenShake((result.length / this.state.totalCells) * 8);
+				this.audio.play("rumble", { duration: 0.5 });
+				this.audio.play("dirt-thud-0", { delay: 0.005 });
 				await this.animateUpdateFrom(cellState);
 			} else {
+				this.audio.play("dirt-thud-1", { delay: 0.005 });
 				msCell.updateViewState();
 			}
 		} //
@@ -359,9 +361,11 @@ export class MSApp extends AppBase {
 
 			if (cellState.covered) {
 				this.audio.play("blop", { transpose: 12 });
+				this.audio.play("dirt-thud-2", { delay: 0.005, transpose: 12 });
 			} //
 			else {
 				this.audio.play("blop", { transpose: 24 });
+				this.audio.play("dirt-thud-2", { delay: 0.005, transpose: 12 });
 			}
 
 			if (cellState.mine) {
@@ -372,10 +376,10 @@ export class MSApp extends AppBase {
 				this.animateLose(cellState);
 			} //
 			else {
-				this.screenShake((result.length / this.state.totalCells) * 8);
-				// this.audio.play("rumble");
-
 				if (result.length > 1) {
+					let s = result.length / this.state.totalCells;
+					this.screenShake(s * 8);
+					this.audio.play("rumble", { duration: s * 0.5 });
 					await this.animateUpdateFrom(cellState);
 				} else {
 					msCell.updateViewState();
