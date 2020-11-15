@@ -6,36 +6,36 @@ import { Ease } from "./ease";
  *
  * Experimental - Adding type safety to createjs tweenjs API.
  */
-export class Tween<T> extends createjs.Tween {
+export class Tween<T = any> extends createjs.Tween {
 	constructor(target: T, options?: TweenProps) {
 		super(target, options);
 	}
 
-	wait(duration: number, passive?: boolean): Tween<T> {
+	wait(duration: number, passive?: boolean): this {
 		return super.wait(duration, passive);
 	}
 
-	to(props: Partial<T>, duration?: number, ease = Ease.sineInOut): Tween<T> {
-		return super.to(props, duration, ease);
+	to(props: Partial<T>, duration?: number, ease = Ease.sineInOut): this {
+		return super.to(props, duration, ease) as this;
 	}
 
-	label(name: string): Tween<T> {
+	label(name: string): this {
 		return super.label(name);
 	}
 
-	call(callback: (...params: any[]) => void, params?: Partial<T>[], scope?: unknown): Tween<T> {
+	call(callback: (...params: any[]) => void, params?: Partial<T>[], scope?: unknown): this {
 		return super.call(callback, params, scope);
 	}
 
-	set(props: Partial<T>, target?: T): Tween<T> {
+	set(props: Partial<T>, target?: T): this {
 		return super.set(props, target);
 	}
 
-	play(tween?: Tween<T>): Tween<T> {
+	play(tween?: Tween<T>): this {
 		return super.play(tween);
 	}
 
-	pause(tween?: Tween<T>): Tween<T> {
+	pause(tween?: Tween<T>): this {
 		return super.pause(tween);
 	}
 }
