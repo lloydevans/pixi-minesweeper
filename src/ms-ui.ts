@@ -67,7 +67,10 @@ export class MSUi extends Component<MSApp> {
 		this.buttonRestart = new Button(this.app, {
 			texture: this.app.getFrame("textures", "button-restart"),
 		});
-		this.buttonRestart.on("pointertap", () => this.app.newGame());
+		this.buttonRestart.on("pointertap", () => {
+			this.app.audio.play("dirt-thud-0", { delay: 0.005, transpose: 12 });
+			this.app.newGame();
+		});
 
 		this.timeContainer.addChild(this.timeGraphic);
 		this.timeContainer.addChild(this.timeCount);

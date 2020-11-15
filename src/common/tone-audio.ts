@@ -1,4 +1,5 @@
 import clamp from "lodash-es/clamp";
+import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
 import * as Tone from "tone";
 import { Dict } from "./types";
@@ -35,17 +36,19 @@ export interface MidiData {
 }
 
 export interface PlayOptions {
+	type: "attack-release" | "attack" | "release";
 	delay: number;
-	offset: number;
 	transpose: number;
 	duration: number;
+	volume: number;
 }
 
 export const DEFAULT_PLAY_OPTIONS: PlayOptions = {
+	type: "attack-release",
 	delay: 0,
-	offset: 0,
 	transpose: 0,
 	duration: 0,
+	volume: 1,
 };
 
 export interface SourceConfig {
@@ -221,11 +224,9 @@ export class ToneAudio {
 			throw new Error(`Can't find sound with name "${name}"`);
 		}
 
-		let delay = options.delay ?? 0;
+		options.duration = options.duration ?? source.duration;
 
-		let transpose = options.transpose ?? 0;
-
-		let duration = options.duration ?? source.duration;
+		let { type, delay, transpose, volume, duration } = defaults(options, DEFAULT_PLAY_OPTIONS);
 
 		let sampler = this.samplers[name];
 
@@ -242,7 +243,19 @@ export class ToneAudio {
 			time += delay;
 		}
 
-		sampler.triggerAttackRelease(note, duration, time, 1);
+		switch (type) {
+			case "attack":
+				sampler.triggerAttack(note, time, volume);
+				break;
+
+			case "release":
+				sampler.triggerRelease(note, time);
+				break;
+
+			case "attack-release":
+				sampler.triggerAttackRelease(note, duration, time, volume);
+				break;
+		}
 	}
 
 	/**

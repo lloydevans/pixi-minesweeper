@@ -347,11 +347,21 @@ export class MSApp extends AppBase {
 			let result = this.state.selectFirst(x, y);
 
 			if (result.length > 1) {
-				this.screenShake((result.length / this.state.totalCells) * 8);
-				this.audio.play("rumble", { duration: 0.5 });
-				this.audio.play("dirt-thud-0", { delay: 0.005 });
+				let s = result.length / this.state.totalCells;
+
+				this.screenShake(s * 8);
+
+				// Start sounds
+				this.audio.play("rumble", { type: "attack", volume: s });
+				this.audio.play("dirt-thud-0", { delay: 0.005, volume: s });
+
+				// Wait for update aniation
 				await this.animateUpdateFrom(cellState);
-			} else {
+
+				// Stop rumble noise
+				this.audio.play("rumble", { type: "release" });
+			} //
+			else {
 				this.audio.play("dirt-thud-1", { delay: 0.005 });
 				msCell.updateViewState();
 			}
@@ -379,8 +389,9 @@ export class MSApp extends AppBase {
 				if (result.length > 1) {
 					let s = result.length / this.state.totalCells;
 					this.screenShake(s * 8);
-					this.audio.play("rumble", { duration: s * 0.5 });
+					this.audio.play("rumble", { type: "attack", volume: s });
 					await this.animateUpdateFrom(cellState);
+					this.audio.play("rumble", { type: "release" });
 				} else {
 					msCell.updateViewState();
 				}
@@ -582,7 +593,7 @@ export class MSApp extends AppBase {
 	 * @param cell - Cell to animate outwards from.
 	 * @param cb - Runs once for each cell. One cell per round updated must return true to continue the animation.
 	 */
-	private async animateUpdateFrom(cell: MSCellState, cb = this.cellUpdateCb): Promise<void> {
+	private async animateUpdateFrom(cell: MSCellState, delay = 66, cb = this.cellUpdateCb): Promise<void> {
 		this.grid.interactiveChildren = false;
 
 		let maxSide = Math.max(this.state.width, this.state.height);
@@ -631,7 +642,7 @@ export class MSApp extends AppBase {
 
 			this.audio.play("blop", { transpose: (i / maxSide) * 24 });
 
-			await this.delay(66);
+			await this.delay(delay);
 		}
 
 		this.grid.interactiveChildren = true;
