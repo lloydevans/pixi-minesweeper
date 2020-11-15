@@ -1,0 +1,78 @@
+{
+	"toneAudioConfig": true,
+	"masterVolume": -6,
+	"sources": {
+		"blop": {
+			"url": "blop.m4a"
+		},
+		"celeste": {
+			"url": "celeste.m4a"
+		},
+		"chim": {
+			"url": "chim.m4a"
+		},
+		"chime-rattle-a": {
+			"url": "chime-rattle-a.m4a"
+		},
+		"chime-rattle-b": {
+			"url": "chime-rattle-b.m4a"
+		},
+		"chime": {
+			"url": "chime.m4a"
+		},
+		"chord": {
+			"url": "chord.m4a"
+		},
+		"clack": {
+			"url": "clack.m4a"
+		},
+		"click": {
+			"url": "click.m4a"
+		},
+		"dig": {
+			"url": "dig.m4a"
+		},
+		"dirt-thud-0": {
+			"url": "dirt-thud-0.m4a"
+		},
+		"dirt-thud-1": {
+			"url": "dirt-thud-1.m4a"
+		},
+		"dirt-thud-2": {
+			"url": "dirt-thud-2.m4a"
+		},
+		"drip": {
+			"url": "drip.m4a"
+		},
+		"drum-0": {
+			"url": "drum-0.m4a"
+		},
+		"dull": {
+			"url": "dull.m4a"
+		},
+		"glug": {
+			"url": "glug.m4a"
+		},
+		"knock": {
+			"url": "knock.m4a"
+		},
+		"maraq": {
+			"url": "maraq.m4a"
+		},
+		"pitchy-drum": {
+			"url": "pitchy-drum.m4a"
+		},
+		"rimba": {
+			"url": "rimba.m4a"
+		},
+		"rumble": {
+			"url": "rumble.m4a"
+		},
+		"shaker": {
+			"url": "shaker.m4a"
+		},
+		"steel": {
+			"url": "steel.m4a"
+		}
+	}
+}

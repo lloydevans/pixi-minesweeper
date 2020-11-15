@@ -2,7 +2,6 @@ import clamp from "lodash-es/clamp";
 import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
 import { AppBase } from "./common/app-base";
-import { ToneAudio } from "./common/tone-audio";
 import { hexToNum } from "./common/color";
 import { Ease } from "./common/ease";
 import { preventContextMenu } from "./common/utils";
@@ -15,7 +14,7 @@ import type { MSConfig, MSGameConfig } from "./ms-config";
 import { MSGrid } from "./ms-grid";
 import { MSMenu } from "./ms-menu";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MSState } from "./ms-state";
-import { playMidi, MidiMusicConfig } from "./ms-tone";
+import { MidiMusicConfig, playMidi } from "./ms-tone";
 import { MSTouchUi } from "./ms-touch-ui";
 import { MSUi } from "./ms-ui";
 
@@ -59,39 +58,15 @@ export class MSApp extends AppBase {
 	constructor() {
 		super({});
 
+		//@ts-ignore
+		window.ms = this;
+
 		preventContextMenu();
 
 		this.config = { ...MS_CONFIG_DEFAULT };
 		this.gameConfig = { ...INITIAL_GAME_CONFIG };
-		this.audio.init({
-			masterVolume: -6,
-			sources: {
-				["blop"]: { url: "blop.m4a", volume: -6 },
-				["celeste"]: { url: "celeste.m4a" },
-				["chim"]: { url: "chim.m4a" },
-				["chime-rattle-a"]: { url: "chime-rattle-a.m4a" },
-				["chime-rattle-b"]: { url: "chime-rattle-b.m4a" },
-				["chime"]: { url: "chime.m4a" },
-				["chord"]: { url: "chord.m4a" },
-				["clack"]: { url: "clack.m4a" },
-				["click"]: { url: "click.m4a" },
-				["dig"]: { url: "dig.m4a" },
-				["dirt-thud-0"]: { url: "dirt-thud-0.m4a" },
-				["dirt-thud-1"]: { url: "dirt-thud-1.m4a" },
-				["dirt-thud-2"]: { url: "dirt-thud-2.m4a" },
-				["drip"]: { url: "drip.m4a" },
-				["drum-0"]: { url: "drum-0.m4a" },
-				["dull"]: { url: "dull.m4a" },
-				["glug"]: { url: "glug.m4a" },
-				["knock"]: { url: "knock.m4a" },
-				["maraq"]: { url: "maraq.m4a" },
-				["pitchy-drum"]: { url: "pitchy-drum.m4a" },
-				["rimba"]: { url: "rimba.m4a" },
-				["rumble"]: { url: "rumble.m4a" },
-				["shaker"]: { url: "shaker.m4a" },
-				["steel"]: { url: "steel.m4a" },
-			},
-		});
+
+		// this.audio.init(AUDIO_CONFIG);
 
 		this.root.addChild(this.bg);
 		this.root.addChild(this.container);
@@ -117,6 +92,7 @@ export class MSApp extends AppBase {
 		this.addBitmapFont("bmfont");
 		this.addJson("config", "config.json");
 		this.addJson("theme", "theme.json");
+		this.addJson("audio", "audio.json");
 		this.loader.load();
 
 		this.loader.onComplete.once(this.onLoad, this);
@@ -127,6 +103,8 @@ export class MSApp extends AppBase {
 	 */
 	private onLoad() {
 		this.isLoaded = true;
+
+		this.audio.init(this.getJson("audio"));
 
 		this.config = this.parseConfig(this.getJson("config"));
 
