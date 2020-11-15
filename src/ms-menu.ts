@@ -79,12 +79,7 @@ export class MSMenu extends Component<MSApp> {
 			let gridWidth = this.widthScroller.current;
 			let gridHeight = this.heightScroller.current;
 			let startMines = this.minesScroller.current;
-
-			this.app.newGame({
-				startMines,
-				gridWidth,
-				gridHeight,
-			});
+			this.app.newGame({ startMines, gridWidth, gridHeight });
 			this.app.showGame();
 		});
 	}
