@@ -14,8 +14,8 @@ import type { MSConfig, MSGameConfig } from "./ms-config";
 import { MSGrid } from "./ms-grid";
 import { MSMenu } from "./ms-menu";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MSState } from "./ms-state";
-import { MidiMusicConfig, playMidi } from "./ms-tone";
 import { MSTouchUi } from "./ms-touch-ui";
+import { MIDI_CONFIG_THEME } from "./ms-audio";
 import { MSUi } from "./ms-ui";
 
 export const INITIAL_GAME_CONFIG: MSGameConfig = {
@@ -65,8 +65,6 @@ export class MSApp extends AppBase {
 
 		this.config = { ...MS_CONFIG_DEFAULT };
 		this.gameConfig = { ...INITIAL_GAME_CONFIG };
-
-		// this.audio.init(AUDIO_CONFIG);
 
 		this.root.addChild(this.bg);
 		this.root.addChild(this.container);
@@ -270,63 +268,7 @@ export class MSApp extends AppBase {
 	 *
 	 */
 	public showGame() {
-		let vol = -19;
-		let conf: MidiMusicConfig = {
-			midi: this.getJson("theme"),
-			tracks: [
-				{
-					trackName: "rimba",
-					sampler: {
-						urls: { A2: "rimba.m4a" },
-						volume: vol,
-					},
-				},
-				{
-					trackName: "drum-0",
-					sampler: {
-						urls: { A2: "drum-0.m4a" },
-						volume: vol,
-					},
-				},
-				{
-					trackName: "pitchy-drum",
-					sampler: {
-						urls: { A2: "pitchy-drum.m4a" },
-						volume: vol,
-					},
-				},
-				{
-					trackName: "shaker",
-					sampler: {
-						urls: { A2: "shaker.m4a" },
-						volume: vol,
-					},
-				},
-				{
-					trackName: "dull",
-					sampler: {
-						urls: { A2: "dull.m4a" },
-						volume: vol,
-					},
-				},
-				{
-					trackName: "steel",
-					sampler: {
-						urls: { A2: "steel.m4a" },
-						volume: vol,
-					},
-				},
-				{
-					trackName: "celeste",
-					sampler: {
-						urls: { A2: "celeste.m4a" },
-						volume: vol,
-					},
-				},
-			],
-		};
-
-		playMidi(conf);
+		this.audio.playMidi(MIDI_CONFIG_THEME);
 
 		this.tween(this.container.position).to({ y: 32 }, 300, Ease.sineInOut);
 		this.menu.visible = false;
@@ -404,6 +346,7 @@ export class MSApp extends AppBase {
 			this.isFirstClick = false;
 			let result = this.state.selectFirst(x, y);
 			this.screenShake((result.length / this.state.totalCells) * 8);
+			// this.audio.play("rumble");
 
 			if (result.length > 1) {
 				await this.animateUpdateFrom(cellState);
@@ -430,6 +373,7 @@ export class MSApp extends AppBase {
 			} //
 			else {
 				this.screenShake((result.length / this.state.totalCells) * 8);
+				// this.audio.play("rumble");
 
 				if (result.length > 1) {
 					await this.animateUpdateFrom(cellState);

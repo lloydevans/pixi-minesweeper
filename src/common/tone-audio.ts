@@ -1,10 +1,38 @@
 import clamp from "lodash-es/clamp";
-import * as Tone from "tone";
 import * as PIXI from "pixi.js-legacy";
+import * as Tone from "tone";
 import { Dict } from "./types";
-import { AppBase } from "./app-base";
 
 const CENTER = "A2";
+const MAX_QUEUE = 64;
+const BUFFER = 3;
+
+export interface MidiNote {
+	name: string;
+	duration: number;
+	time: number;
+	velocity: number;
+}
+
+export interface MidiMusicConfig {
+	midi: MidiData;
+	tracks: {
+		trackName: string;
+		sampler: {
+			urls: { [key: string]: string };
+			volume: number;
+		};
+	}[];
+}
+
+export interface MidiTrack {
+	name: string;
+	notes: MidiNote[];
+}
+
+export interface MidiData {
+	tracks: MidiTrack[];
+}
 
 export interface PlayOptions {
 	delay: number;
@@ -33,6 +61,19 @@ export interface SourceEntry extends SourceConfig {
 export interface ToneAudioConfig {
 	masterVolume?: number;
 	sources: Dict<SourceConfig>;
+}
+
+export interface MidiPlaybackData {
+	tracks: ReadonlyArray<MidiPlaybackTrackData>;
+	duration: number;
+	start: number;
+}
+
+export interface MidiPlaybackTrackData {
+	name: string;
+	notes: MidiNote[];
+	original: MidiNote[];
+	loops: number;
 }
 
 /**
@@ -106,6 +147,11 @@ export class ToneAudio {
 	/**
 	 *
 	 */
+	private currentMidi?: MidiPlaybackData;
+
+	/**
+	 *
+	 */
 	private config!: ToneAudioConfig;
 
 	/**
@@ -121,6 +167,19 @@ export class ToneAudio {
 		await ToneAudio.loadBuffers(config);
 
 		this.initInstruments(config);
+	}
+
+	/**
+	 *
+	 */
+	public update() {
+		if (Tone.context.state !== "running") {
+			return;
+		}
+
+		if (this.currentMidi) {
+			this.updateMusic(this.currentMidi);
+		}
 	}
 
 	/**
@@ -204,4 +263,89 @@ export class ToneAudio {
 
 		sampler.triggerAttackRelease(note, duration, time, 1);
 	}
+
+	/**
+	 *
+	 * @param config
+	 */
+	public playMidi(config: MidiMusicConfig) {
+		this.currentMidi = {
+			duration: 122.879, // TODO: duration
+			start: Tone.now() + 0.5,
+			tracks: config.midi.tracks.map((el) => {
+				return {
+					name: el.name,
+					original: [...el.notes],
+					notes: [...el.notes],
+					loops: 0,
+				};
+			}),
+		};
+	}
+
+	/**
+	 *
+	 */
+	private updateMusic(midi: MidiPlaybackData) {
+		let { tracks, start, duration } = midi;
+
+		let now = Tone.now();
+
+		for (let i = 0; i < tracks.length; i++) {
+			let track = tracks[i];
+
+			let totalQueued = 0;
+
+			let sampler = this.samplers[track.name];
+
+			while (track.notes[0].time + start + duration * track.loops < now + BUFFER) {
+				let note = track.notes.shift()!;
+
+				// Loop note array.
+				if (track.notes.length === 0) {
+					track.notes = track.notes.concat(track.original);
+					track.loops++;
+				}
+
+				// Skip past notes.
+				if (note.time + start + duration * track.loops < now) {
+					continue;
+				}
+
+				// Skip too many notes.
+				if (totalQueued > MAX_QUEUE) {
+					continue;
+				}
+
+				totalQueued++;
+
+				let loopOffset = duration * track.loops;
+
+				try {
+					sampler.triggerAttackRelease(
+						//
+						note.name,
+						note.duration,
+						note.time + start + loopOffset,
+						note.velocity
+					);
+				} catch (err) {
+					console.log(err);
+				}
+			}
+		}
+	}
 }
+
+let unlock = async () => {
+	document.body.removeEventListener("click", unlock);
+	document.body.removeEventListener("touchend", unlock);
+
+	try {
+		await Tone.start();
+	} catch (err) {
+		console.log(err);
+	}
+};
+document.body.addEventListener("click", unlock);
+document.body.addEventListener("touchend", unlock);
