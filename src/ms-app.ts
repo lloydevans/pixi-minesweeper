@@ -342,9 +342,30 @@ export class MSApp extends AppBase {
 		let x = msCell.ix;
 		let y = msCell.iy;
 
+		let result;
+
 		if (this.isFirstClick) {
 			this.isFirstClick = false;
-			let result = this.state.selectFirst(x, y);
+			result = this.state.selectFirst(x, y);
+		} //
+		else {
+			result = this.state.select(x, y);
+		}
+
+		if (cellState.mine) {
+			if (cellState.flag) {
+				this.state.clearFlag(x, y);
+			}
+
+			this.audio.play("click", { delay: 0.05 });
+			this.audio.play("dirt-thud-2", { delay: 0.005, transpose: 12 });
+
+			msCell.updateViewState();
+			this.animateLose(cellState);
+		} //
+		else {
+			this.audio.play("blop", { transpose: 12 });
+			this.audio.play("dirt-thud-2", { delay: 0.005, transpose: 12 });
 
 			if (result.length > 1) {
 				let s = result.length / this.state.totalCells;
@@ -355,46 +376,12 @@ export class MSApp extends AppBase {
 				this.audio.play("rumble", { type: "attack", volume: s });
 				this.audio.play("dirt-thud-0", { delay: 0.005, volume: s });
 
-				// Wait for update aniation
 				await this.animateUpdateFrom(cellState);
 
-				// Stop rumble noise
 				this.audio.play("rumble", { type: "release" });
-			} //
-			else {
-				this.audio.play("dirt-thud-1", { delay: 0.005 });
+			} else {
+				this.audio.play("dirt-thud-2", { delay: 0.005, transpose: 6, volume: 0.5 });
 				msCell.updateViewState();
-			}
-		} //
-		else {
-			let result = this.state.select(x, y);
-
-			if (cellState.covered) {
-				this.audio.play("blop", { transpose: 12 });
-				this.audio.play("dirt-thud-2", { delay: 0.005, transpose: 12 });
-			} //
-			else {
-				this.audio.play("blop", { transpose: 24 });
-				this.audio.play("dirt-thud-2", { delay: 0.005, transpose: 12 });
-			}
-
-			if (cellState.mine) {
-				if (cellState.flag) {
-					this.state.clearFlag(x, y);
-				}
-				msCell.updateViewState();
-				this.animateLose(cellState);
-			} //
-			else {
-				if (result.length > 1) {
-					let s = result.length / this.state.totalCells;
-					this.screenShake(s * 8);
-					this.audio.play("rumble", { type: "attack", volume: s });
-					await this.animateUpdateFrom(cellState);
-					this.audio.play("rumble", { type: "release" });
-				} else {
-					msCell.updateViewState();
-				}
 			}
 		}
 
@@ -497,13 +484,6 @@ export class MSApp extends AppBase {
 	}
 
 	/**
-	 *
-	 */
-	private updateCellStates() {
-		this.state.forEach((el) => this.getCellView(el.x, el.y).updateViewState());
-	}
-
-	/**
 	 * End current game.
 	 */
 	private endGame() {
@@ -516,6 +496,9 @@ export class MSApp extends AppBase {
 	 */
 	private async animateWin() {
 		this.endGame();
+
+		this.audio.play("chime-rattle-a");
+		this.audio.play("chord", { transpose: 12 });
 
 		let unplacedFlags = this.state.getUnplacedFlags();
 
@@ -593,7 +576,7 @@ export class MSApp extends AppBase {
 	 * @param cell - Cell to animate outwards from.
 	 * @param cb - Runs once for each cell. One cell per round updated must return true to continue the animation.
 	 */
-	private async animateUpdateFrom(cell: MSCellState, delay = 66, cb = this.cellUpdateCb): Promise<void> {
+	private async animateUpdateFrom(cell: MSCellState, delay = 80, cb = this.cellUpdateCb): Promise<void> {
 		this.grid.interactiveChildren = false;
 
 		let maxSide = Math.max(this.state.width, this.state.height);
@@ -640,7 +623,9 @@ export class MSApp extends AppBase {
 				break;
 			}
 
-			this.audio.play("blop", { transpose: (i / maxSide) * 24 });
+			this.audio.play("blop", { transpose: 12, volume: 0.5 });
+			this.audio.play("blop", { transpose: 24, delay: 0.05, volume: 0.25 });
+			this.audio.play("blop", { transpose: 36, delay: 0.1, volume: 0.125 });
 
 			await this.delay(delay);
 		}
