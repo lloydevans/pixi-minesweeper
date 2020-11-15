@@ -10,7 +10,6 @@ export interface MidiNote {
 
 export interface MidiMusicConfig {
 	midi: MidiData;
-
 	tracks: {
 		trackName: string;
 		sampler: {
