@@ -92,17 +92,21 @@ export class ToneAudio {
 	private static async loadBuffers(config: ToneAudioConfig) {
 		let entries = Object.entries(config.sources);
 
-		for (let i = 0; i < entries.length; i++) {
-			const el = entries[i][1];
+		let requests = [];
 
-			if (!ToneAudio.buffers[el.url]) {
-				ToneAudio.buffers[el.url] = new Tone.Buffer();
-				try {
-					await ToneAudio.buffers[el.url].load(el.url);
-				} catch (err) {
-					console.log("Error loading audio resource: ", err);
+		try {
+			for (let i = 0; i < entries.length; i++) {
+				const el = entries[i][1];
+
+				if (!ToneAudio.buffers[el.url]) {
+					ToneAudio.buffers[el.url] = new Tone.Buffer();
+					requests.push(ToneAudio.buffers[el.url].load(el.url));
 				}
 			}
+
+			await Promise.all(requests);
+		} catch (err) {
+			console.log(err);
 		}
 	}
 
