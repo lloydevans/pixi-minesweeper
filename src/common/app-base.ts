@@ -144,16 +144,21 @@ export class AppBase extends PIXI.Application {
 	/**
 	 *
 	 */
-	private getWindowDpr() {
-		// TODO: device checks and DPR exceptions.
-		return clamp(window.devicePixelRatio, MIN_DPR, MAX_DPR);
+	private getWindowDpr(): number {
+		let dpr = clamp(window.devicePixelRatio, MIN_DPR, MAX_DPR);
+
+		if (PIXI.utils.isMobile.amazon.device) {
+			dpr = 1;
+		}
+
+		return dpr;
 	}
 
 	/**
 	 *
 	 */
-	private getAssetDpr() {
-		return Math.round(clamp(window.devicePixelRatio, 1, MAX_DPR));
+	private getAssetDpr(): number {
+		return this.getWindowDpr() | 0;
 	}
 
 	/**
@@ -230,14 +235,14 @@ export class AppBase extends PIXI.Application {
 	 *
 	 * @param spineName
 	 */
-	public getJson(jsonPath: string) {
-		let json = this.loader.resources[jsonPath];
+	public getJson(name: string) {
+		let resource = this.loader.resources[name];
 
-		if (!json.data) {
-			throw new Error(`Can't find json: "${jsonPath}"`);
+		if (!resource.data) {
+			throw new Error(`Can't find json: "${name}"`);
 		}
 
-		return json.data;
+		return resource.data;
 	}
 
 	/**
