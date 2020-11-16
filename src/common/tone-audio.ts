@@ -3,36 +3,20 @@ import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
 import * as Tone from "tone";
 import { Dict } from "./types";
+import { Midi } from "@tonejs/midi";
 
-const CENTER = "A2";
+const CENTER = "A3";
 const MAX_QUEUE = 64;
 const BUFFER = 3;
 
-export interface MidiNote {
-	name: string;
-	duration: number;
+export interface NoteJSON {
 	time: number;
-	velocity: number;
-}
-
-export interface MidiMusicConfig {
-	midi: MidiData;
-	tracks: {
-		trackName: string;
-		sampler: {
-			urls: { [key: string]: string };
-			volume: number;
-		};
-	}[];
-}
-
-export interface MidiTrack {
+	midi: number;
 	name: string;
-	notes: MidiNote[];
-}
-
-export interface MidiData {
-	tracks: MidiTrack[];
+	velocity: number;
+	duration: number;
+	ticks: number;
+	durationTicks: number;
 }
 
 export interface PlayOptions {
@@ -74,8 +58,8 @@ export interface MidiPlaybackData {
 
 export interface MidiPlaybackTrackData {
 	name: string;
-	notes: MidiNote[];
-	original: MidiNote[];
+	notes: NoteJSON[];
+	original: NoteJSON[];
 	loops: number;
 }
 
@@ -139,7 +123,8 @@ export class ToneAudio {
 	private samplers: Dict<Tone.Sampler> = {};
 	private players: Dict<Tone.Player> = {};
 	private sources: Dict<SourceEntry> = {};
-	private currentMidi?: MidiPlaybackData;
+	private currentMidiPlayback?: MidiPlaybackData;
+	private currentMidiData?: Midi;
 	private config!: ToneAudioConfig;
 
 	/**
@@ -165,8 +150,8 @@ export class ToneAudio {
 			return;
 		}
 
-		if (this.currentMidi) {
-			this.updateMusic(this.currentMidi);
+		if (this.currentMidiPlayback) {
+			this.updateMusic(this.currentMidiPlayback);
 		}
 	}
 
@@ -266,11 +251,15 @@ export class ToneAudio {
 	 *
 	 * @param config
 	 */
-	public playMidi(config: MidiMusicConfig) {
-		this.currentMidi = {
-			duration: 122.879, // TODO: duration
+	public async playMidi(midiUrl: string) {
+		let midi = await Midi.fromUrl(midiUrl);
+
+		this.currentMidiData = midi;
+
+		this.currentMidiPlayback = {
+			duration: midi.duration,
 			start: Tone.now() + 0.5,
-			tracks: config.midi.tracks.map((el) => {
+			tracks: midi.tracks.map((el) => {
 				return {
 					name: el.name,
 					original: [...el.notes],
@@ -295,6 +284,8 @@ export class ToneAudio {
 			let totalQueued = 0;
 
 			let sampler = this.samplers[track.name];
+
+			if (track.notes.length === 0) continue;
 
 			while (track.notes[0].time + start + duration * track.loops < now + BUFFER) {
 				let note = track.notes.shift()!;
@@ -325,7 +316,7 @@ export class ToneAudio {
 						note.name,
 						note.duration,
 						note.time + start + loopOffset,
-						note.velocity * 0.25 // TODO: config
+						note.velocity * 0.5 // TODO: config
 					);
 				} catch (err) {
 					console.log(err);

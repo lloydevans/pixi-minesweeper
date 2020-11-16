@@ -268,7 +268,7 @@ export class MSApp extends AppBase {
 	 *
 	 */
 	public showGame() {
-		this.audio.playMidi(MIDI_CONFIG_THEME);
+		this.audio.playMidi("minesweeper.mid");
 
 		this.tween(this.container.position).to({ y: 32 }, 300, Ease.sineInOut);
 		this.menu.visible = false;
@@ -451,11 +451,11 @@ export class MSApp extends AppBase {
 			let msCell = this.getCellView(x, y);
 			msCell.setState(cellState);
 
-			if (indexes.length % Math.floor(this.state.totalCells / 12) === 0) {
-				this.audio.play("blop", {
-					transpose: x / this.state.width + y / this.state.height,
-				});
-				await this.delay(33);
+			if (indexes.length % Math.floor(this.state.totalCells / 6) === 0) {
+				let t = x / this.state.width + y / this.state.height;
+				this.audio.play("blop", { transpose: t, volume: 0.5 });
+				this.audio.play("blop", { transpose: t + 12, delay: 0.01, volume: 0.5 });
+				await this.delay(66);
 			}
 		}
 	}
@@ -498,7 +498,7 @@ export class MSApp extends AppBase {
 		this.endGame();
 
 		this.audio.play("chime-rattle-a");
-		this.audio.play("chord", { transpose: 12 });
+		this.audio.play("chord", { transpose: 14, volume: 0.5 });
 
 		let unplacedFlags = this.state.getUnplacedFlags();
 
