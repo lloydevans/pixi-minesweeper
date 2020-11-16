@@ -15,4 +15,5 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 firebase.performance();
-firebase.analytics();
+
+export const analytics = firebase.analytics();

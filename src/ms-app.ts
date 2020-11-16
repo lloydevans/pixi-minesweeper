@@ -15,8 +15,8 @@ import { MSGrid } from "./ms-grid";
 import { MSMenu } from "./ms-menu";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MSState } from "./ms-state";
 import { MSTouchUi } from "./ms-touch-ui";
-import { MIDI_CONFIG_THEME } from "./ms-audio";
 import { MSUi } from "./ms-ui";
+import { analytics } from "./firebase";
 
 export const INITIAL_GAME_CONFIG: MSGameConfig = {
 	startMines: 5,
@@ -89,7 +89,6 @@ export class MSApp extends AppBase {
 		this.addAtlas("bg", 1);
 		this.addBitmapFont("bmfont");
 		this.addJson("config", "config.json");
-		this.addJson("theme", "theme.json");
 		this.addJson("audio", "audio.json");
 		this.loader.load();
 
@@ -222,6 +221,8 @@ export class MSApp extends AppBase {
 		this.gameConfig = { ...config };
 		this.isFirstClick = true;
 		this.touchUi.hide();
+
+		analytics.logEvent("new_game", this.state.config);
 
 		await this.initGrid();
 
@@ -495,6 +496,8 @@ export class MSApp extends AppBase {
 	 * Animate win.
 	 */
 	private async animateWin() {
+		analytics.logEvent("win_game", this.state.config);
+
 		this.endGame();
 
 		this.audio.play("chime-rattle-a");
@@ -532,6 +535,8 @@ export class MSApp extends AppBase {
 	 * Animate loss.
 	 */
 	private async animateLose(firstMine: MSCellState) {
+		analytics.logEvent("lose_game", this.state.config);
+
 		this.endGame();
 
 		let result = this.state.getLossData();
