@@ -6,7 +6,7 @@ import { Ease } from "./common/ease";
 const REF_BG_WIDTH = 320;
 const REF_BG_HEIGHT = 180;
 
-type BGSet = "bg-green" | "bg-swamp" | "bg-ice";
+type BGSet = "bg-green" | "bg-swamp";
 
 /**
  * Tiling background graphics with simple paralax effect.
@@ -32,6 +32,7 @@ export class MSBg extends Component<MSApp> {
 
 	protected update(dt: number) {
 		let length = this.layers.length;
+		this.scroll += dt * 0.25;
 		for (let i = 0; i < length; i++) {
 			let totalWidth = this.layers[i].texture.width * this.layers[i].tileScale.x;
 			let totalHeight = this.layers[i].texture.height * this.layers[i].tileScale.y;
