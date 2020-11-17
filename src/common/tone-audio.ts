@@ -1,9 +1,9 @@
+import { Midi } from "@tonejs/midi";
 import clamp from "lodash-es/clamp";
 import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
 import * as Tone from "tone";
-import { Dict } from "./types";
-import { Midi } from "@tonejs/midi";
+import type { Dict } from "./types";
 
 const CENTER = "A3";
 const MAX_QUEUE = 64;
@@ -109,7 +109,7 @@ export class ToneAudio {
 
 		await ToneAudio.loadBuffers(config);
 
-		next();
+		return next();
 	}
 
 	/**
@@ -223,7 +223,7 @@ export class ToneAudio {
 
 		let time = Tone.now();
 
-		if (transpose > 0) {
+		if (transpose !== 0) {
 			options.transpose = clamp(transpose, -48, 48);
 			note = Tone.Midi(note).transpose(options.transpose).toNote();
 		}
