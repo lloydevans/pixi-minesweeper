@@ -501,7 +501,7 @@ export class MSApp extends AppBase {
 		this.endGame();
 
 		this.audio.play("chime-rattle-a");
-		this.audio.play("chord", { transpose: 14, volume: 0.5 });
+		this.audio.play("chord", { transpose: 12, volume: 0.5 });
 
 		let unplacedFlags = this.state.getUnplacedFlags();
 

@@ -252,6 +252,10 @@ export class ToneAudio {
 	 * @param config
 	 */
 	public async playMidi(midiUrl: string) {
+		if (this.currentMidiData) {
+			return;
+		}
+
 		let midi = await Midi.fromUrl(midiUrl);
 
 		this.currentMidiData = midi;
@@ -316,7 +320,7 @@ export class ToneAudio {
 						note.name,
 						note.duration,
 						note.time + start + loopOffset,
-						note.velocity * 0.5 // TODO: config
+						note.velocity * 0.333 // TODO: config
 					);
 				} catch (err) {
 					console.log(err);
