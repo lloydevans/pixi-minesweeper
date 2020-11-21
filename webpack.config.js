@@ -12,9 +12,9 @@ module.exports = (env = {}) => {
 		...{
 			prod: false,
 			modern: false,
-			editor: false
+			editor: false,
 		},
-		...env
+		...env,
 	};
 
 	/**
@@ -26,7 +26,7 @@ module.exports = (env = {}) => {
 		devtool: "source-map",
 
 		stats: {
-			assets: false
+			assets: false,
 		},
 
 		devServer: {
@@ -36,7 +36,7 @@ module.exports = (env = {}) => {
 			hot: false,
 			open: false,
 			inline: false,
-			compress: true
+			compress: true,
 		},
 
 		output: {
@@ -48,30 +48,30 @@ module.exports = (env = {}) => {
 			rules: [
 				{
 					test: /\.css$/i,
-					use: ["style-loader", "css-loader"]
+					use: ["style-loader", "css-loader"],
 				},
 				{
 					test: /\.tsx?$/,
 					loader: "ts-loader",
 					options: {
 						compilerOptions: {
-							target: env.modern ? "ES2019" : "ES5"
-						}
-					}
+							target: env.modern ? "ES2019" : "ES5",
+						},
+					},
 				},
 				{
 					test: require.resolve("tweenjs/lib/tweenjs"),
-					use: "imports-loader?wrapper=window"
+					use: "imports-loader?wrapper=window",
 				},
 				{
 					test: require.resolve("./libs/tween-group.js"),
-					use: "imports-loader?wrapper=window"
-				}
-			]
+					use: "imports-loader?wrapper=window",
+				},
+			],
 		},
 
 		resolve: {
-			extensions: [".tsx", ".ts", ".js", ".css"]
+			extensions: [".tsx", ".ts", ".js", ".css"],
 		},
 
 		plugins: [
@@ -84,7 +84,7 @@ module.exports = (env = {}) => {
 			}),
 		],
 
-		mode: env.prod ? "production" : "development"
+		mode: env.prod ? "production" : "development",
 	};
 
 	return config;
