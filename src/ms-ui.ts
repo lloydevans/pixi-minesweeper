@@ -59,18 +59,11 @@ export class MSUi extends Component<MSApp> {
 		this.timeCount.x = 38;
 		this.timeCount.y = -24;
 
-		this.buttonCross = new Button(this.app, {
-			texture: this.app.getFrame("textures", "button-cross"),
-		});
-		this.buttonCross.on("pointertap", () => this.app.showMenu());
+		this.buttonCross = new Button(this.app, { texture: this.app.getFrame("textures", "button-cross") });
+		this.buttonCross.on("pointertap", () => this.emit("close"));
 
-		this.buttonRestart = new Button(this.app, {
-			texture: this.app.getFrame("textures", "button-restart"),
-		});
-		this.buttonRestart.on("pointertap", () => {
-			this.app.audio.play("dirt-thud-0", { delay: 0.005, transpose: 12 });
-			this.app.newGame();
-		});
+		this.buttonRestart = new Button(this.app, { texture: this.app.getFrame("textures", "button-restart") });
+		this.buttonRestart.on("pointertap", () => this.emit("restart"));
 
 		this.timeContainer.addChild(this.timeGraphic);
 		this.timeContainer.addChild(this.timeCount);
@@ -98,10 +91,10 @@ export class MSUi extends Component<MSApp> {
 			this.flagsCount.text = flagCount;
 		}
 
-		const time = Math.min(MAX_TIME, Math.floor(this.app.currentTime)).toString();
-		if (time !== this.timeCount.text) {
-			this.timeCount.text = time;
-		}
+		// const time = Math.min(MAX_TIME, Math.floor(this.app.currentTime)).toString();
+		// if (time !== this.timeCount.text) {
+		// 	this.timeCount.text = time;
+		// }
 	}
 
 	/**

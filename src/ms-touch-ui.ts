@@ -43,14 +43,14 @@ export class MSTouchUi extends Component<MSApp> {
 
 		this.buttonDig.on("pointertap", () => {
 			if (this.targetCell) {
-				this.app.leftClick(this.targetCell);
+				this.app.scenes.game && this.app.scenes.game.leftClick(this.targetCell);
 				this.visible = false;
 			}
 		});
 
 		this.buttonFlag.on("pointertap", () => {
 			if (this.targetCell) {
-				this.app.rightClick(this.targetCell);
+				this.app.scenes.game && this.app.scenes.game.rightClick(this.targetCell);
 				this.visible = false;
 			}
 		});

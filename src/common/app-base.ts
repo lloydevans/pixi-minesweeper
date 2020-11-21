@@ -82,7 +82,6 @@ export class AppBase extends PIXI.Application {
 		this.ticker.add(this.update, this);
 		this.ticker.add(this.audio.update, this.audio);
 		this.loader.use(ToneAudio.configLoader);
-		this.resizeRoot(window.innerWidth, window.innerHeight, this.getWindowDpr());
 		this.events.emit("init");
 	}
 

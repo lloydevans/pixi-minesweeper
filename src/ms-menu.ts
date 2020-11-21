@@ -79,8 +79,7 @@ export class MSMenu extends Component<MSApp> {
 			const gridWidth = this.widthScroller.current;
 			const gridHeight = this.heightScroller.current;
 			const startMines = this.minesScroller.current;
-			this.app.newGame({ startMines, gridWidth, gridHeight });
-			this.app.showGame();
+			this.emit("start", { startMines, gridWidth, gridHeight });
 		});
 	}
 
@@ -114,6 +113,6 @@ export class MSMenu extends Component<MSApp> {
 		const gridHeight = this.heightScroller.current;
 		const startMines = this.minesScroller.current;
 		this.minesScroller.max = gridWidth * gridHeight - MIN_EMPTY;
-		this.app.previewGame({ startMines, gridWidth, gridHeight });
+		this.emit("preview", { startMines, gridWidth, gridHeight });
 	}
 }

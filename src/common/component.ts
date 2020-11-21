@@ -21,9 +21,16 @@ export class Component<T extends AppBase> extends PIXI.Container {
 	public app: T;
 
 	/**
+	 * Reference to audio manager instance.
+	 */
+	public get audio() {
+		return this.app.audio;
+	}
+
+	/**
 	 * Component tween group.
 	 */
-	private readonly tweenGroup = new TweenGroup(false, 1);
+	protected readonly tweenGroup = new TweenGroup(false, 1);
 
 	/**
 	 * Core app component class helps manage linkages to core systems.
@@ -36,12 +43,18 @@ export class Component<T extends AppBase> extends PIXI.Container {
 		this.app = app;
 
 		if (this.app.ready) {
-			this.ready();
+			// Defer this until next update.
+			this.app.ticker.addOnce(this.ready, this);
 		} //
 		else {
 			this.app.events.once("ready", this.ready, this);
 		}
 	}
+
+	/**
+	 *
+	 */
+	protected run() {}
 
 	/**
 	 * Do stuff once ready.
