@@ -5,7 +5,7 @@
        <pages>
             <page id='0' file='bmfont@4x.png'/>
        </pages>
-        <chars count='73'>
+        <chars count='74'>
             <char xadvance='64' x='174' chnl='0' yoffset='243' y='426' xoffset='0' id='32' page='0' height='0' width='0'/>
             <char xadvance='153' x='656' chnl='0' yoffset='57' y='362' xoffset='12' id='48' page='0' height='198' width='138'/>
             <char xadvance='153' x='1048' chnl='0' yoffset='58' y='362' xoffset='17' id='49' page='0' height='198' width='102'/>
@@ -47,8 +47,8 @@
             <char xadvance='72' x='650' chnl='0' yoffset='56' y='1318' xoffset='4' id='92' page='0' height='200' width='76'/>
             <char xadvance='91' x='650' chnl='0' yoffset='55' y='818' xoffset='3' id='93' page='0' height='246' width='80'/>
             <char xadvance='150' x='1262' chnl='0' yoffset='56' y='362' xoffset='15' id='94' page='0' height='110' width='132'/>
-            <char xadvance='128' x='208' chnl='0' yoffset='261' y='1986' xoffset='-1' id='95' page='0' height='24' width='142'/>
-            <char xadvance='86' x='368' chnl='0' yoffset='57' y='1976' xoffset='11' id='96' page='0' height='46' width='62'/>
+            <char xadvance='128' x='368' chnl='0' yoffset='261' y='1976' xoffset='-1' id='95' page='0' height='24' width='142'/>
+            <char xadvance='86' x='300' chnl='0' yoffset='57' y='1986' xoffset='11' id='96' page='0' height='46' width='62'/>
             <char xadvance='153' x='780' chnl='0' yoffset='106' y='208' xoffset='11' id='97' page='0' height='150' width='142'/>
             <char xadvance='160' x='208' chnl='0' yoffset='56' y='1782' xoffset='17' id='98' page='0' height='200' width='144'/>
             <char xadvance='153' x='1070' chnl='0' yoffset='105' y='208' xoffset='11' id='99' page='0' height='150' width='140'/>
@@ -79,6 +79,7 @@
             <char xadvance='72' x='650' chnl='0' yoffset='54' y='1726' xoffset='22' id='124' page='0' height='252' width='38'/>
             <char xadvance='99' x='514' chnl='0' yoffset='54' y='1176' xoffset='6' id='125' page='0' height='252' width='96'/>
             <char xadvance='150' x='1448' chnl='0' yoffset='126' y='362' xoffset='9' id='126' page='0' height='62' width='144'/>
+            <char xadvance='86' x='208' chnl='0' yoffset='159' y='1986' xoffset='5' id='45' page='0' height='42' width='88'/>
        </chars>
        <kernings count="244">
             <kerning first="65" second="118" amount="-6"/>
