@@ -247,7 +247,6 @@ export class MSApp extends AppBase {
 
 		for (let i = 0; i < count; i++) {
 			const s = i / count;
-			const pOffset = periodMs * s;
 			const decay = -s + 1;
 			const coords = {
 				x: Math.sin(angle) * amp * decay,
@@ -657,9 +656,7 @@ export class MSApp extends AppBase {
 	 * @param y
 	 */
 	private createCellView(x: number, y: number): MSCell {
-		const idx = this.state.indexOf(x, y);
 		const msCell = new MSCell(this);
-		this.cellPool[idx] = msCell;
 		msCell.on("pointertap", this.onPointerTap, this);
 		msCell.on("pointerdown", this.onPointerDown, this);
 		msCell.on("pointerout", this.onPointerOut, this);
