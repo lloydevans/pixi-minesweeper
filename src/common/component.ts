@@ -88,7 +88,7 @@ export class Component<T extends AppBase> extends PIXI.Container {
 	}
 
 	/**
-	 * Init method is called after ap ready event. If app is already ready, it
+	 * Init method is called after app ready event. If app is already ready, it
 	 * runs during the constructor.
 	 */
 	protected init?(): void;
