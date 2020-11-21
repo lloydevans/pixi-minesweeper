@@ -5,9 +5,9 @@ import * as PIXI from "pixi.js-legacy";
 import * as Tone from "tone";
 import type { Dict } from "./types";
 
-const CENTER = "A3";
+const CENTER_NOTE = "A3";
 const MAX_QUEUE = 64;
-const BUFFER = 3;
+const BUFFER_TIME = 3;
 
 export interface NoteJSON {
 	time: number;
@@ -83,8 +83,9 @@ export class ToneAudio {
 				const el = entries[i][1];
 
 				if (!ToneAudio.buffers[el.url]) {
-					ToneAudio.buffers[el.url] = new Tone.Buffer();
-					requests.push(ToneAudio.buffers[el.url].load(el.url));
+					const buffer = new Tone.Buffer();
+					requests.push(buffer.load(el.url));
+					ToneAudio.buffers[el.url] = buffer;
 				}
 			}
 
@@ -194,7 +195,7 @@ export class ToneAudio {
 			this.sources[key] = { ...el, ...{ duration } };
 
 			const sampler = new Tone.Sampler({
-				urls: { [CENTER]: buffer },
+				urls: { [CENTER_NOTE]: buffer },
 				volume: el.volume ?? 0,
 			}).toDestination();
 
@@ -219,7 +220,7 @@ export class ToneAudio {
 
 		const sampler = this.samplers[name];
 
-		let note = CENTER;
+		let note = CENTER_NOTE;
 
 		let time = Tone.now();
 
@@ -291,7 +292,7 @@ export class ToneAudio {
 
 			if (track.notes.length === 0) continue;
 
-			while (track.notes[0].time + start + duration * track.loops < now + BUFFER) {
+			while (track.notes[0].time + start + duration * track.loops < now + BUFFER_TIME) {
 				const note = track.notes.shift()!;
 
 				// Loop note array.
