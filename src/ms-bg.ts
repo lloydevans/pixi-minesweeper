@@ -31,11 +31,11 @@ export class MSBg extends Component<MSApp> {
 	}
 
 	protected update(dt: number) {
-		let length = this.layers.length;
+		const length = this.layers.length;
 		this.scroll += dt * 0.25;
 		for (let i = 0; i < length; i++) {
-			let totalWidth = this.layers[i].texture.width * this.layers[i].tileScale.x;
-			let totalHeight = this.layers[i].texture.height * this.layers[i].tileScale.y;
+			const totalWidth = this.layers[i].texture.width * this.layers[i].tileScale.x;
+			const totalHeight = this.layers[i].texture.height * this.layers[i].tileScale.y;
 			this.layers[i].tilePosition.x = ((this.scroll + this.offset.x) * Ease.sineIn(i / length)) % totalWidth;
 			this.layers[i].tilePosition.y = (this.offset.y * Ease.sineIn(i / length)) % totalHeight;
 		}
@@ -51,7 +51,7 @@ export class MSBg extends Component<MSApp> {
 	}
 
 	private createBgLayer(frameName: string) {
-		let sprite = new PIXI.TilingSprite(this.app.getFrame("bg", frameName));
+		const sprite = new PIXI.TilingSprite(this.app.getFrame("bg", frameName));
 		sprite.width = this.app.width;
 		sprite.height = this.app.height;
 		sprite.anchor.set(0.5);

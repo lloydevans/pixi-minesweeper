@@ -76,9 +76,9 @@ export class MSMenu extends Component<MSApp> {
 		this.updatePreview();
 
 		this.buttonStart.on("pointertap", () => {
-			let gridWidth = this.widthScroller.current;
-			let gridHeight = this.heightScroller.current;
-			let startMines = this.minesScroller.current;
+			const gridWidth = this.widthScroller.current;
+			const gridHeight = this.heightScroller.current;
+			const startMines = this.minesScroller.current;
 			this.app.newGame({ startMines, gridWidth, gridHeight });
 			this.app.showGame();
 		});
@@ -110,9 +110,9 @@ export class MSMenu extends Component<MSApp> {
 	 *
 	 */
 	protected updatePreview() {
-		let gridWidth = this.widthScroller.current;
-		let gridHeight = this.heightScroller.current;
-		let startMines = this.minesScroller.current;
+		const gridWidth = this.widthScroller.current;
+		const gridHeight = this.heightScroller.current;
+		const startMines = this.minesScroller.current;
 		this.minesScroller.max = gridWidth * gridHeight - MIN_EMPTY;
 		this.app.previewGame({ startMines, gridWidth, gridHeight });
 	}

@@ -82,7 +82,7 @@ export class MSState {
 	public reset() {
 		for (let x = 0; x < this.width; x++) {
 			for (let y = 0; y < this.height; y++) {
-				let cell = this.cells[this.indexOf(x, y)];
+				const cell = this.cells[this.indexOf(x, y)];
 				cell.x = x;
 				cell.y = y;
 				cell.adjacent = 0;
@@ -148,7 +148,7 @@ export class MSState {
 	 * @param y
 	 */
 	public placeFlag(x: number, y: number) {
-		let cell = this.cellAt(x, y);
+		const cell = this.cellAt(x, y);
 
 		if (!cell) {
 			throw new Error(`Can't find cell at ${x},${y}`);
@@ -164,7 +164,7 @@ export class MSState {
 	 * @param y
 	 */
 	public clearFlag(x: number, y: number) {
-		let cell = this.cellAt(x, y);
+		const cell = this.cellAt(x, y);
 
 		if (!cell) {
 			throw new Error(`Can't find cell at ${x},${y}`);
@@ -179,7 +179,7 @@ export class MSState {
 	 * @param index
 	 */
 	public placeMine(x: number, y: number) {
-		let cell = this.cellAt(x, y);
+		const cell = this.cellAt(x, y);
 
 		if (!cell) {
 			throw new Error(`Can't find cell at ${x},${y}`);
@@ -195,7 +195,7 @@ export class MSState {
 	 * @param y
 	 */
 	public clearMine(x: number, y: number) {
-		let cell = this.cellAt(x, y);
+		const cell = this.cellAt(x, y);
 
 		if (!cell) {
 			throw new Error(`Can't find cell at ${x},${y}`);
@@ -221,7 +221,7 @@ export class MSState {
 	 * Check and get losing cell states.
 	 */
 	public getLossData() {
-		let lossData: LossData = {
+		const lossData: LossData = {
 			correct: [],
 			incorrect: [],
 		};
@@ -262,11 +262,8 @@ export class MSState {
 	 *
 	 */
 	public isWin() {
-		return !this.cells
-			// get covered cells.
-			.filter((el) => el.covered)
-			// Can we find one without a mine?
-			.find((el) => !el.mine);
+		// Can we find a covered cell without a mine?
+		return !this.cells.find((el) => el.covered && !el.mine);
 	}
 
 	/**
@@ -315,13 +312,13 @@ export class MSState {
 	 * @param y
 	 */
 	public select(x: number, y: number): MSCellState[] {
-		let cell = this.cellAt(x, y);
+		const cell = this.cellAt(x, y);
 
 		if (!cell) {
 			throw new Error(`Can't find cell at ${x},${y}`);
 		}
 
-		let result: MSCellState[] = [];
+		const result: MSCellState[] = [];
 
 		if (cell.adjacent === 0 && !cell.mine) {
 			this.fill(x, y, result);
@@ -345,7 +342,7 @@ export class MSState {
 	 * @param y
 	 */
 	public selectFirst(x: number, y: number): MSCellState[] {
-		let cell = this.cellAt(x, y);
+		const cell = this.cellAt(x, y);
 
 		if (!cell) {
 			throw new Error(`Can't find cell at ${x},${y}`);
@@ -375,7 +372,7 @@ export class MSState {
 	 * @param cell
 	 */
 	public uncover(x: number, y: number) {
-		let cell = this.cellAt(x, y);
+		const cell = this.cellAt(x, y);
 
 		if (!cell) {
 			throw new Error(`Can't find cell at ${x},${y}`);
@@ -395,7 +392,7 @@ export class MSState {
 	 * @param y
 	 */
 	private fill(x: number, y: number, result: MSCellState[]) {
-		let cell = this.cellAt(x, y);
+		const cell = this.cellAt(x, y);
 
 		if (!cell) {
 			throw new Error(`Can't find cell at ${x},${y}`);
@@ -447,8 +444,8 @@ export class MSState {
 	 * Calculate number of adjacent mines for all cells.
 	 */
 	public calculateAdjacent() {
-		let width = this.width;
-		let height = this.height;
+		const width = this.width;
+		const height = this.height;
 
 		for (let i = 0; i < this.cells.length; i++) {
 			const el = this.cells[i];
@@ -500,7 +497,7 @@ export class MSState {
 	public shuffleMines(total: number) {
 		this.clearAllMines();
 
-		let sequence: number[] = [];
+		const sequence: number[] = [];
 
 		while (sequence.length < total) {
 			const idx = Math.floor(Math.random() * this.cells.length);

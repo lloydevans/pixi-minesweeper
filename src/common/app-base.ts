@@ -91,7 +91,7 @@ export class AppBase extends PIXI.Application {
 	 * @param dt
 	 */
 	private update(dt: number) {
-		let currentDpr = this.getWindowDpr();
+		const currentDpr = this.getWindowDpr();
 
 		if (
 			window.innerWidth !== this.width || //
@@ -108,7 +108,7 @@ export class AppBase extends PIXI.Application {
 	 *
 	 */
 	public tween<T>(target: T, options?: TweenProps): Tween<T> {
-		let tween = this.tweenGroup.get(target, options);
+		const tween = this.tweenGroup.get(target, options);
 		return tween;
 	}
 
@@ -187,7 +187,7 @@ export class AppBase extends PIXI.Application {
 	 * @param atlasPath
 	 */
 	public getAtlas(atlasPath: string): PIXI.LoaderResource {
-		let atlas = this.loader.resources[atlasPath];
+		const atlas = this.loader.resources[atlasPath];
 
 		if (!atlas) {
 			throw new Error(`Can't find atlas: "${atlasPath}"`);
@@ -205,7 +205,7 @@ export class AppBase extends PIXI.Application {
 	 * @param frameName
 	 */
 	public getFrame(atlasPath: string, frameName: string): PIXI.Texture {
-		let atlas = this.getAtlas(atlasPath);
+		const atlas = this.getAtlas(atlasPath);
 
 		if (!atlas.textures || !(atlas.textures[frameName] instanceof PIXI.Texture)) {
 			throw new Error(`Can't find frame "${frameName}" in atlas "${atlasPath}"`);
@@ -219,7 +219,7 @@ export class AppBase extends PIXI.Application {
 	 * @param spinePath
 	 */
 	public getSpine(spinePath: string) {
-		let spine = this.loader.resources[spinePath];
+		const spine = this.loader.resources[spinePath];
 
 		if (!spine) {
 			throw new Error(`Can't find spine: "${spinePath}"`);
@@ -236,7 +236,7 @@ export class AppBase extends PIXI.Application {
 	 * @param spineName
 	 */
 	public getJson(name: string) {
-		let resource = this.loader.resources[name];
+		const resource = this.loader.resources[name];
 
 		if (!resource.data) {
 			throw new Error(`Can't find json: "${name}"`);
@@ -252,7 +252,7 @@ export class AppBase extends PIXI.Application {
 	 * @param scale
 	 */
 	public addSpine(spinePath: string, scale: number = this.getAssetDpr()) {
-		let metadata: PIXI.loaders.IMetadata = {
+		const metadata: PIXI.loaders.IMetadata = {
 			spineSkeletonScale: 1 / MAX_DPR,
 			spineAtlasFile: spinePath + "@" + scale + "x.atlas",
 		};

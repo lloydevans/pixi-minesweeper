@@ -19,7 +19,7 @@ export class MSTouchUi extends Component<MSApp> {
 	protected init() {
 		this.visible = false;
 
-		let cursor = new PIXI.Graphics();
+		const cursor = new PIXI.Graphics();
 		cursor.beginFill(0x00ff00);
 		cursor.drawCircle(0, 0, 8);
 

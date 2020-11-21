@@ -93,12 +93,12 @@ export class MSUi extends Component<MSApp> {
 	 * @param dt
 	 */
 	protected update(dt: number) {
-		let flagCount = this.app.state.flagCount.toString();
+		const flagCount = this.app.state.flagCount.toString();
 		if (flagCount !== this.flagsCount.text) {
 			this.flagsCount.text = flagCount;
 		}
 
-		let time = Math.min(MAX_TIME, Math.floor(this.app.currentTime)).toString();
+		const time = Math.min(MAX_TIME, Math.floor(this.app.currentTime)).toString();
 		if (time !== this.timeCount.text) {
 			this.timeCount.text = time;
 		}

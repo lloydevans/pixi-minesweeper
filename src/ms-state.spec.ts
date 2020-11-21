@@ -8,7 +8,7 @@ const MOCK_CONFIG = {
 };
 
 function getState() {
-	let state = new MSState();
+	const state = new MSState();
 	state.init(MOCK_CONFIG);
 	return state;
 }
@@ -19,13 +19,13 @@ function getRandomCoords(): [number, number] {
 
 describe("MSState tests", () => {
 	it("should parse config", () => {
-		let state = getState();
+		const state = getState();
 		expect(state.width).toBe(MOCK_CONFIG.gridWidth);
 		expect(state.height).toBe(MOCK_CONFIG.gridHeight);
 	});
 
 	it("should calculate indexes correctly", () => {
-		let state = getState();
+		const state = getState();
 		let index = state.indexOf(0, 0);
 		expect(index).toBe(0);
 
@@ -40,7 +40,7 @@ describe("MSState tests", () => {
 	});
 
 	it("should check coord bounds correctly", () => {
-		let state = getState();
+		const state = getState();
 		expect(state.coordsInBounds(0, 0)).toBe(true);
 		expect(state.coordsInBounds(1, 0)).toBe(true);
 		expect(state.coordsInBounds(-1, 0)).toBe(false);
@@ -48,7 +48,7 @@ describe("MSState tests", () => {
 	});
 
 	it("should check index bounds correctly", () => {
-		let state = getState();
+		const state = getState();
 		expect(state.indexInBounds(0)).toBe(true);
 		expect(state.indexInBounds(state.totalCells - 1)).toBe(true);
 
@@ -57,10 +57,10 @@ describe("MSState tests", () => {
 	});
 
 	it("should claculate correct total flags", () => {
-		let state = getState();
+		const state = getState();
 		expect(state.totalFlags).toBe(0);
 
-		let coords = getRandomCoords();
+		const coords = getRandomCoords();
 
 		state.placeFlag(...coords);
 
@@ -72,27 +72,27 @@ describe("MSState tests", () => {
 	});
 
 	it("should have " + MOCK_CONFIG.startMines + " mines", () => {
-		let state = getState();
+		const state = getState();
 		expect(state.totalMines).toBe(MOCK_CONFIG.startMines);
 	});
 
 	it("should error finding cell at -1,0", () => {
-		let state = getState();
+		const state = getState();
 		expect(() => state.cellAt(-1, 0)).toThrowError();
 	});
 
 	it("should error placing flag at -1,0", () => {
-		let state = getState();
+		const state = getState();
 		expect(() => state.placeFlag(-1, 0)).toThrowError();
 	});
 
 	it("should error clearing flag at -1,0", () => {
-		let state = getState();
+		const state = getState();
 		expect(() => state.clearFlag(-1, 0)).toThrowError();
 	});
 
 	it("should remove all mines", () => {
-		let state = getState();
+		const state = getState();
 		expect(state.totalMines).toBe(MOCK_CONFIG.startMines);
 		state.clearAllMines();
 
@@ -100,59 +100,59 @@ describe("MSState tests", () => {
 	});
 
 	it("should place mine at 0,0", () => {
-		let state = getState();
-		let coords: [number, number] = [0, 0];
-		let oob: [number, number] = [-1, 0];
+		const state = getState();
+		const coords: [number, number] = [0, 0];
+		const oob: [number, number] = [-1, 0];
 
 		state.placeMine(...coords);
 		expect(() => state.placeMine(...oob)).toThrowError();
 
-		let cell = state.cellAt(...coords);
+		const cell = state.cellAt(...coords);
 		expect(cell.mine).toBe(true);
 	});
 
 	it("should clear mine at 0,0", () => {
-		let state = getState();
-		let coords: [number, number] = [0, 0];
+		const state = getState();
+		const coords: [number, number] = [0, 0];
 		state.clearMine(...coords);
 
-		let oob: [number, number] = [-1, 0];
+		const oob: [number, number] = [-1, 0];
 		expect(() => state.clearMine(...oob)).toThrowError();
 
-		let cell = state.cellAt(...coords);
+		const cell = state.cellAt(...coords);
 		expect(cell.mine).toBe(false);
 	});
 
 	it("should place flag at 0,0", () => {
-		let state = getState();
-		let coords: [number, number] = [0, 0];
+		const state = getState();
+		const coords: [number, number] = [0, 0];
 		state.placeFlag(...coords);
 
-		let cell = state.cellAt(...coords);
+		const cell = state.cellAt(...coords);
 		expect(cell.flag).toBe(true);
 	});
 
 	it("should clear flag at 0,0", () => {
-		let state = getState();
-		let coords: [number, number] = [0, 0];
+		const state = getState();
+		const coords: [number, number] = [0, 0];
 		state.clearFlag(...coords);
 
-		let cell = state.cellAt(...coords);
+		const cell = state.cellAt(...coords);
 		expect(cell.flag).toBe(false);
 	});
 
 	it("should uncover cell at 0,0", () => {
-		let state = getState();
-		let coords: [number, number] = [0, 0];
-		let cell = state.cellAt(...coords);
+		const state = getState();
+		const coords: [number, number] = [0, 0];
+		const cell = state.cellAt(...coords);
 
 		state.uncover(...coords);
 		expect(cell.covered).toBe(false);
 	});
 
 	it("should find by predicate", () => {
-		let state = getState();
-		let cell = state.find((el) => el.mine);
+		const state = getState();
+		const cell = state.find((el) => el.mine);
 		expect(cell).toBeTruthy();
 
 		if (cell) {
@@ -161,9 +161,9 @@ describe("MSState tests", () => {
 	});
 
 	it("should uncover cell and remove flag if needed at 0,0", () => {
-		let state = getState();
-		let coords: [number, number] = [0, 0];
-		let cell = state.cellAt(...coords);
+		const state = getState();
+		const coords: [number, number] = [0, 0];
+		const cell = state.cellAt(...coords);
 
 		if (!cell) {
 			throw new Error("Cell not found");
@@ -177,14 +177,14 @@ describe("MSState tests", () => {
 	});
 
 	it("should reveal first move", () => {
-		let state = getState();
-		let mine = state.find((el) => el.mine);
+		const state = getState();
+		const mine = state.find((el) => el.mine);
 
 		expect(mine).toBeTruthy();
 
 		if (mine) {
 			state.selectFirst(mine.x, mine.y);
-			let cell = state.cellAt(mine.x, mine.y);
+			const cell = state.cellAt(mine.x, mine.y);
 			expect(cell.mine).toBe(false);
 			expect(cell.flag).toBe(false);
 			expect(cell.covered).toBe(false);
@@ -192,15 +192,15 @@ describe("MSState tests", () => {
 	});
 
 	it("should reveal second move", () => {
-		let state = getState();
+		const state = getState();
 
-		let nextCell = state.find((el) => !el.mine && !el.flag && el.adjacent === 0 && el.covered);
+		const nextCell = state.find((el) => !el.mine && !el.flag && el.adjacent === 0 && el.covered);
 
 		if (!nextCell) {
 			throw new Error();
 		}
 
-		let cell = state.cellAt(nextCell.x, nextCell.y);
+		const cell = state.cellAt(nextCell.x, nextCell.y);
 		expect(cell.mine).toBe(false);
 		expect(cell.flag).toBe(false);
 		expect(cell.covered).toBe(true);

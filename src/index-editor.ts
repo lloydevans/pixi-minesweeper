@@ -19,7 +19,7 @@ createjs.Ticker.maxDelta = 100;
 
 // Import dat.gui for quick debug UI.
 import * as dat from "dat.gui";
-let gui = new dat.GUI();
+const gui = new dat.GUI();
 gui.open();
 
 import { MSApp } from "./ms-app";
@@ -39,7 +39,7 @@ function start() {
 	window.document.body.style.border = "0px";
 	window.document.body.appendChild(app.view);
 
-	let guiParams = {
+	const guiParams = {
 		startMines: 64,
 		gridWidth: 16,
 		gridHeight: 16,

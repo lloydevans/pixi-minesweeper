@@ -74,9 +74,9 @@ export class ToneAudio {
 	 * @param config
 	 */
 	private static async loadBuffers(config: ToneAudioConfig) {
-		let entries = Object.entries(config.sources);
+		const entries = Object.entries(config.sources);
 
-		let requests = [];
+		const requests = [];
 
 		try {
 			for (let i = 0; i < entries.length; i++) {
@@ -105,7 +105,7 @@ export class ToneAudio {
 			return next();
 		}
 
-		let config = resource.data as ToneAudioConfig;
+		const config = resource.data as ToneAudioConfig;
 
 		await ToneAudio.loadBuffers(config);
 
@@ -159,16 +159,16 @@ export class ToneAudio {
 	 *
 	 */
 	private initPlayers(options: ToneAudioConfig) {
-		let sources = Object.entries(options.sources);
+		const sources = Object.entries(options.sources);
 
 		for (let i = 0; i < sources.length; i++) {
 			const entry = sources[i];
-			let key = entry[0];
-			let el = entry[1];
-			let buffer = ToneAudio.buffers[el.url];
-			let player = new Tone.Player(buffer).toDestination();
+			const key = entry[0];
+			const el = entry[1];
+			const buffer = ToneAudio.buffers[el.url];
+			const player = new Tone.Player(buffer).toDestination();
 
-			let duration = player.buffer.duration;
+			const duration = player.buffer.duration;
 
 			this.sources[key] = { ...el, ...{ duration } };
 
@@ -180,20 +180,20 @@ export class ToneAudio {
 	 *
 	 */
 	private initInstruments(options: ToneAudioConfig) {
-		let sources = Object.entries(options.sources);
+		const sources = Object.entries(options.sources);
 
 		for (let i = 0; i < sources.length; i++) {
 			const entry = sources[i];
-			let key = entry[0];
-			let el = entry[1];
+			const key = entry[0];
+			const el = entry[1];
 
-			let buffer = ToneAudio.buffers[el.url];
+			const buffer = ToneAudio.buffers[el.url];
 
-			let duration = buffer.duration;
+			const duration = buffer.duration;
 
 			this.sources[key] = { ...el, ...{ duration } };
 
-			let sampler = new Tone.Sampler({
+			const sampler = new Tone.Sampler({
 				urls: { [CENTER]: buffer },
 				volume: el.volume ?? 0,
 			}).toDestination();
@@ -207,7 +207,7 @@ export class ToneAudio {
 	 * @param name
 	 */
 	public play(name: string, options: Partial<PlayOptions> = {}) {
-		let source = this.sources[name];
+		const source = this.sources[name];
 
 		if (!source) {
 			throw new Error(`Can't find sound with name "${name}"`);
@@ -215,9 +215,9 @@ export class ToneAudio {
 
 		options.duration = options.duration ?? source.duration;
 
-		let { type, delay, transpose, volume, duration } = defaults(options, DEFAULT_PLAY_OPTIONS);
+		const { type, delay, transpose, volume, duration } = defaults(options, DEFAULT_PLAY_OPTIONS);
 
-		let sampler = this.samplers[name];
+		const sampler = this.samplers[name];
 
 		let note = CENTER;
 
@@ -256,7 +256,7 @@ export class ToneAudio {
 			return;
 		}
 
-		let midi = await Midi.fromUrl(midiUrl);
+		const midi = await Midi.fromUrl(midiUrl);
 
 		this.currentMidiData = midi;
 
@@ -278,21 +278,21 @@ export class ToneAudio {
 	 *
 	 */
 	private updateMusic(midi: MidiPlaybackData) {
-		let { tracks, start, duration } = midi;
+		const { tracks, start, duration } = midi;
 
-		let now = Tone.now();
+		const now = Tone.now();
 
 		for (let i = 0; i < tracks.length; i++) {
-			let track = tracks[i];
+			const track = tracks[i];
 
 			let totalQueued = 0;
 
-			let sampler = this.samplers[track.name];
+			const sampler = this.samplers[track.name];
 
 			if (track.notes.length === 0) continue;
 
 			while (track.notes[0].time + start + duration * track.loops < now + BUFFER) {
-				let note = track.notes.shift()!;
+				const note = track.notes.shift()!;
 
 				// Loop note array.
 				if (track.notes.length === 0) {
@@ -312,7 +312,7 @@ export class ToneAudio {
 
 				totalQueued++;
 
-				let loopOffset = duration * track.loops;
+				const loopOffset = duration * track.loops;
 
 				try {
 					sampler.triggerAttackRelease(
@@ -330,7 +330,7 @@ export class ToneAudio {
 	}
 }
 
-let unlock = async () => {
+const unlock = async () => {
 	document.body.removeEventListener("click", unlock);
 	document.body.removeEventListener("touchend", unlock);
 

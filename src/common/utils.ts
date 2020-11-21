@@ -12,10 +12,10 @@ export function preventContextMenu() {
  * @param cb - Callback function.
  */
 export async function forEachRandom<T>(target: ReadonlyArray<T>, cb: (el: T) => Promise<void>) {
-	let _target = [...target];
+	const _target = [...target];
 	while (_target.length > 0) {
-		let idx = Math.floor(Math.random() * _target.length);
-		let el = _target.splice(idx, 1)[0];
+		const idx = Math.floor(Math.random() * _target.length);
+		const el = _target.splice(idx, 1)[0];
 		await cb(el);
 	}
 }

@@ -109,14 +109,14 @@ export class MSApp extends AppBase {
 
 		this.board.tint = hexToNum(this.config.colorBoard);
 
-		let tilesAtlas = this.getAtlas("tiles");
+		const tilesAtlas = this.getAtlas("tiles");
 		if (tilesAtlas.spritesheet) {
 			tilesAtlas.spritesheet.baseTexture.mipmap = PIXI.MIPMAP_MODES.OFF;
 			tilesAtlas.spritesheet.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
 			tilesAtlas.spritesheet.baseTexture.update();
 		}
 
-		let bgAtlas = this.getAtlas("bg");
+		const bgAtlas = this.getAtlas("bg");
 		if (bgAtlas.spritesheet) {
 			bgAtlas.spritesheet.baseTexture.mipmap = PIXI.MIPMAP_MODES.OFF;
 			bgAtlas.spritesheet.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
@@ -146,16 +146,16 @@ export class MSApp extends AppBase {
 		}
 
 		// Generate cell view instances in the bakground.
-		let maxCells = MAX_GRID_WIDTH * MAX_GRID_HEIGHT;
-		let length = this.cellPool.length;
+		const maxCells = MAX_GRID_WIDTH * MAX_GRID_HEIGHT;
+		const length = this.cellPool.length;
 		if (this.isLoaded && length < maxCells) {
 			for (let i = 0; i < 5; i++) {
-				let idx = length + i;
+				const idx = length + i;
 				if (idx > maxCells - 1) {
 					break;
 				}
 
-				let [x, y] = this.state.coordsOf(idx);
+				const [x, y] = this.state.coordsOf(idx);
 				this.cellPool[idx] = this.createCellView(x, y);
 			}
 		}
@@ -168,12 +168,12 @@ export class MSApp extends AppBase {
 	 * @param height
 	 */
 	private onResize(width: number, height: number) {
-		let marginX = 64;
-		let marginY = 96;
-		let maxWidth = width - marginX * 2;
-		let maxHeight = height - marginY * 2;
-		let refBoardWidth = REF_WIDTH * this.state.width;
-		let refBoardHeight = REF_HEIGHT * this.state.height;
+		const marginX = 64;
+		const marginY = 96;
+		const maxWidth = width - marginX * 2;
+		const maxHeight = height - marginY * 2;
+		const refBoardWidth = REF_WIDTH * this.state.width;
+		const refBoardHeight = REF_HEIGHT * this.state.height;
 		let scale = 1;
 
 		if (refBoardHeight > maxHeight) {
@@ -186,10 +186,10 @@ export class MSApp extends AppBase {
 		this.cellWidth = REF_WIDTH * scale;
 		this.cellHeight = REF_HEIGHT * scale;
 
-		let dimensionsX = this.state.width * this.cellWidth;
-		let dimensionsY = this.state.height * this.cellHeight;
-		let boardWidth = dimensionsX + this.cellWidth / 2;
-		let boardHeight = dimensionsY + this.cellHeight / 2;
+		const dimensionsX = this.state.width * this.cellWidth;
+		const dimensionsY = this.state.height * this.cellHeight;
+		const boardWidth = dimensionsX + this.cellWidth / 2;
+		const boardHeight = dimensionsY + this.cellHeight / 2;
 		this.board.x = -boardWidth / 2;
 		this.board.y = -boardHeight / 2;
 		this.board.width = boardWidth;
@@ -238,18 +238,18 @@ export class MSApp extends AppBase {
 		amp = clamp(amp, 0, 16) * 0.75;
 		hz = clamp(hz, 2, 16);
 
-		let period = 1 / hz;
-		let periodMs = period * 1000;
-		let cycles = Math.floor(duration / period);
+		const period = 1 / hz;
+		const periodMs = period * 1000;
+		const cycles = Math.floor(duration / period);
+		const count = cycles * 2;
 		let tween = this.tween(this.container.pivot);
 		let angle = Math.PI / 2;
-		let count = cycles * 2;
 
 		for (let i = 0; i < count; i++) {
-			let s = i / count;
-			let pOffset = periodMs * s;
-			let decay = -s + 1;
-			let coords = {
+			const s = i / count;
+			const pOffset = periodMs * s;
+			const decay = -s + 1;
+			const coords = {
 				x: Math.sin(angle) * amp * decay,
 				y: Math.cos(angle) * amp * decay,
 			};
@@ -306,8 +306,8 @@ export class MSApp extends AppBase {
 	 * @param y
 	 */
 	public getCellView(x: number, y: number): MSCell {
-		let idx = this.state.indexOf(x, y);
-		let cell = this.cellPool[idx];
+		const idx = this.state.indexOf(x, y);
+		const cell = this.cellPool[idx];
 
 		if (!cell) {
 			throw new Error(`Can't find cell view at ${x},${y}`);
@@ -330,7 +330,7 @@ export class MSApp extends AppBase {
 			this.audio.play("blop", { transpose: 24 });
 		}
 
-		let msCell = this.getCellView(cellState.x, cellState.y);
+		const msCell = this.getCellView(cellState.x, cellState.y);
 
 		msCell.updateViewState();
 	}
@@ -339,9 +339,9 @@ export class MSApp extends AppBase {
 	 *
 	 */
 	public async leftClick(cellState: MSCellState) {
-		let msCell = this.getCellView(cellState.x, cellState.y);
-		let x = msCell.ix;
-		let y = msCell.iy;
+		const msCell = this.getCellView(cellState.x, cellState.y);
+		const x = msCell.ix;
+		const y = msCell.iy;
 
 		let result;
 
@@ -369,7 +369,7 @@ export class MSApp extends AppBase {
 			this.audio.play("dirt-thud-2", { delay: 0.005, transpose: 12 });
 
 			if (result.length > 1) {
-				let s = result.length / this.state.totalCells;
+				const s = result.length / this.state.totalCells;
 
 				this.screenShake(s * 8);
 
@@ -410,8 +410,8 @@ export class MSApp extends AppBase {
 		}
 
 		for (let i = 0; i < this.state.totalCells; i++) {
-			let [x, y] = this.state.coordsOf(i);
-			let msCell = this.getCellView(x, y);
+			const [x, y] = this.state.coordsOf(i);
+			const msCell = this.getCellView(x, y);
 			this.grid.addChild(msCell);
 			this.cellPool[i].setState({
 				...CELL_STATE_DEFAULT,
@@ -439,21 +439,21 @@ export class MSApp extends AppBase {
 	 *
 	 */
 	private async noiseWipe() {
-		let indexes: number[] = [];
+		const indexes: number[] = [];
 		for (let i = 0; i < this.state.totalCells; i++) {
 			indexes.push(i);
 		}
 
 		while (indexes.length > 0) {
-			let idx = (Math.random() * indexes.length) | 0;
-			let cellIdx = indexes.splice(idx, 1)[0];
-			let [x, y] = this.state.coordsOf(cellIdx);
-			let cellState = this.state.cellAt(x, y)!;
-			let msCell = this.getCellView(x, y);
+			const idx = (Math.random() * indexes.length) | 0;
+			const cellIdx = indexes.splice(idx, 1)[0];
+			const [x, y] = this.state.coordsOf(cellIdx);
+			const cellState = this.state.cellAt(x, y)!;
+			const msCell = this.getCellView(x, y);
 			msCell.setState(cellState);
 
 			if (indexes.length % Math.floor(this.state.totalCells / 6) === 0) {
-				let t = x / this.state.width + y / this.state.height;
+				const t = x / this.state.width + y / this.state.height;
 				this.audio.play("blop", { transpose: t, volume: 0.5 });
 				this.audio.play("blop", { transpose: t + 12, delay: 0.01, volume: 0.5 });
 				await this.delay(66);
@@ -465,16 +465,16 @@ export class MSApp extends AppBase {
 	 *
 	 */
 	private async swipeWipe(direction: "up" | "down") {
-		let indexes: number[] = [];
+		const indexes: number[] = [];
 		for (let i = 0; i < this.state.totalCells; i++) {
 			indexes.push(i);
 		}
 
 		while (indexes.length > 0) {
-			let cellIdx = direction === "down" ? indexes.shift()! : indexes.pop()!;
-			let [x, y] = this.state.coordsOf(cellIdx);
-			let cellState = this.state.cellAt(x, y)!;
-			let msCell = this.getCellView(x, y);
+			const cellIdx = direction === "down" ? indexes.shift()! : indexes.pop()!;
+			const [x, y] = this.state.coordsOf(cellIdx);
+			const cellState = this.state.cellAt(x, y)!;
+			const msCell = this.getCellView(x, y);
 			msCell.setState(cellState);
 
 			if (indexes.length % (this.state.width * Math.round(this.state.height / 10)) === 0) {
@@ -503,12 +503,12 @@ export class MSApp extends AppBase {
 		this.audio.play("chime-rattle-a");
 		this.audio.play("chord", { transpose: 12, volume: 0.5 });
 
-		let unplacedFlags = this.state.getUnplacedFlags();
+		const unplacedFlags = this.state.getUnplacedFlags();
 
 		while (unplacedFlags.length > 0) {
-			let idx = Math.floor(Math.random() * unplacedFlags.length);
-			let el = unplacedFlags.splice(idx, 1)[0];
-			let msCell = this.getCellView(el.x, el.y);
+			const idx = Math.floor(Math.random() * unplacedFlags.length);
+			const el = unplacedFlags.splice(idx, 1)[0];
+			const msCell = this.getCellView(el.x, el.y);
 			msCell.setFlagEnabled(true);
 			msCell.animateCorrect();
 
@@ -517,12 +517,12 @@ export class MSApp extends AppBase {
 			await this.delay(66);
 		}
 
-		let correctFlags = this.state.getCorrectFlags();
+		const correctFlags = this.state.getCorrectFlags();
 
 		while (correctFlags.length > 0) {
-			let idx = Math.floor(Math.random() * correctFlags.length);
-			let el = correctFlags.splice(idx, 1)[0];
-			let msCell = this.getCellView(el.x, el.y);
+			const idx = Math.floor(Math.random() * correctFlags.length);
+			const el = correctFlags.splice(idx, 1)[0];
+			const msCell = this.getCellView(el.x, el.y);
 			msCell.animateCorrect();
 
 			this.audio.play("chime");
@@ -539,7 +539,7 @@ export class MSApp extends AppBase {
 
 		this.endGame();
 
-		let result = this.state.getLossData();
+		const result = this.state.getLossData();
 
 		result.incorrect.splice(result.incorrect.indexOf(firstMine), 1);
 		this.getCellView(firstMine.x, firstMine.y).animateResult();
@@ -547,10 +547,10 @@ export class MSApp extends AppBase {
 		await this.delay(500);
 
 		while (result.incorrect.length > 0) {
-			let idx = Math.floor(Math.random() * result.incorrect.length);
-			let el = result.incorrect.splice(idx, 1)[0];
-			let msCell = this.getCellView(el.x, el.y);
-			let cellState = this.state.cellAt(el.x, el.y)!;
+			const idx = Math.floor(Math.random() * result.incorrect.length);
+			const el = result.incorrect.splice(idx, 1)[0];
+			const msCell = this.getCellView(el.x, el.y);
+			const cellState = this.state.cellAt(el.x, el.y)!;
 
 			msCell.animateResult();
 
@@ -564,9 +564,9 @@ export class MSApp extends AppBase {
 		}
 
 		while (result.correct.length > 0) {
-			let idx = Math.floor(Math.random() * result.correct.length);
-			let el = result.correct.splice(idx, 1)[0];
-			let msCell = this.getCellView(el.x, el.y);
+			const idx = Math.floor(Math.random() * result.correct.length);
+			const el = result.correct.splice(idx, 1)[0];
+			const msCell = this.getCellView(el.x, el.y);
 			msCell.animateResult();
 
 			this.audio.play("chime");
@@ -584,40 +584,40 @@ export class MSApp extends AppBase {
 	private async animateUpdateFrom(cell: MSCellState, delay = 80, cb = this.cellUpdateCb): Promise<void> {
 		this.grid.interactiveChildren = false;
 
-		let maxSide = Math.max(this.state.width, this.state.height);
+		const maxSide = Math.max(this.state.width, this.state.height);
 
 		for (let i = 0; i < maxSide; i++) {
-			let t = i * 2 + 1;
+			const t = i * 2 + 1;
 
 			let _break = true;
 
 			for (let c = 0; c < t; c++) {
-				let x = cell.x - i + c;
-				let y = cell.y - i;
+				const x = cell.x - i + c;
+				const y = cell.y - i;
 
 				if (this.state.coordsInBounds(x, y)) {
 					cb(this.getCellView(x, y)) && _break && (_break = false);
 				}
 			}
 			for (let c = 0; c < t; c++) {
-				let x = cell.x + i;
-				let y = cell.y - i + c;
+				const x = cell.x + i;
+				const y = cell.y - i + c;
 
 				if (this.state.coordsInBounds(x, y)) {
 					cb(this.getCellView(x, y)) && _break && (_break = false);
 				}
 			}
 			for (let c = 0; c < t; c++) {
-				let x = cell.x + i - c;
-				let y = cell.y + i;
+				const x = cell.x + i - c;
+				const y = cell.y + i;
 
 				if (this.state.coordsInBounds(x, y)) {
 					cb(this.getCellView(x, y)) && _break && (_break = false);
 				}
 			}
 			for (let c = 0; c < t; c++) {
-				let x = cell.x - i;
-				let y = cell.y - i + c;
+				const x = cell.x - i;
+				const y = cell.y - i + c;
 
 				if (this.state.coordsInBounds(x, y)) {
 					cb(this.getCellView(x, y)) && _break && (_break = false);
@@ -644,7 +644,7 @@ export class MSApp extends AppBase {
 	 * @param cell - Current MSCell instance.
 	 */
 	private cellUpdateCb(cell: MSCell): boolean {
-		let needsUpdate = cell.needsUpdate();
+		const needsUpdate = cell.needsUpdate();
 		if (needsUpdate) {
 			cell.updateViewState();
 		}
@@ -657,8 +657,8 @@ export class MSApp extends AppBase {
 	 * @param y
 	 */
 	private createCellView(x: number, y: number): MSCell {
-		let idx = this.state.indexOf(x, y);
-		let msCell = new MSCell(this);
+		const idx = this.state.indexOf(x, y);
+		const msCell = new MSCell(this);
 		this.cellPool[idx] = msCell;
 		msCell.on("pointertap", this.onPointerTap, this);
 		msCell.on("pointerdown", this.onPointerDown, this);
@@ -680,9 +680,9 @@ export class MSApp extends AppBase {
 	 * @param e
 	 */
 	private onPointerTap(e: PIXI.InteractionEvent) {
-		let msCell = e.currentTarget as MSCell;
+		const msCell = e.currentTarget as MSCell;
 
-		let cellState = this.state.cellAt(msCell.ix, msCell.iy);
+		const cellState = this.state.cellAt(msCell.ix, msCell.iy);
 
 		if (!cellState) {
 			throw new Error(`Can't find cell at ${msCell.ix},${msCell.iy}`);
@@ -690,7 +690,7 @@ export class MSApp extends AppBase {
 
 		switch (e.data.pointerType) {
 			case "mouse":
-				let isRightClick = e.data.button === 2;
+				const isRightClick = e.data.button === 2;
 
 				if (!isRightClick) {
 					this.leftClick(cellState);
@@ -710,7 +710,7 @@ export class MSApp extends AppBase {
 				else {
 					this.touchUi.show();
 					this.touchUi.setTargetCell(cellState);
-					let local = this.root.toLocal(msCell.getGlobalPosition());
+					const local = this.root.toLocal(msCell.getGlobalPosition());
 					this.touchUi.x = local.x;
 					this.touchUi.y = local.y;
 				}
@@ -724,9 +724,9 @@ export class MSApp extends AppBase {
 	 * @param e
 	 */
 	private onPointerDown(e: PIXI.InteractionEvent) {
-		let msCell = e.currentTarget as MSCell;
+		const msCell = e.currentTarget as MSCell;
 
-		let cellState = this.state.cellAt(msCell.ix, msCell.iy);
+		const cellState = this.state.cellAt(msCell.ix, msCell.iy);
 
 		if (!cellState) {
 			throw new Error(`Can't find cell at ${msCell.ix},${msCell.iy}`);
@@ -734,7 +734,7 @@ export class MSApp extends AppBase {
 
 		switch (e.data.pointerType) {
 			case "mouse":
-				let isRightClick = e.data.button === 2;
+				const isRightClick = e.data.button === 2;
 
 				this.audio.play("blop");
 
@@ -754,9 +754,9 @@ export class MSApp extends AppBase {
 	 * @param e
 	 */
 	private onPointerOut(e: PIXI.InteractionEvent) {
-		let msCell = e.currentTarget as MSCell;
+		const msCell = e.currentTarget as MSCell;
 
-		let cellState = this.state.cellAt(msCell.ix, msCell.iy);
+		const cellState = this.state.cellAt(msCell.ix, msCell.iy);
 
 		if (!cellState) {
 			throw new Error(`Can't find cell at ${msCell.ix},${msCell.iy}`);

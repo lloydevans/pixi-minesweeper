@@ -96,7 +96,7 @@ export class MSCell extends Component<MSApp> {
 	 */
 	public reset() {
 		// TODO: Clear tracks instead of hidden states?
-		let coverType = (this.state.x + this.state.y) % 2 === 0 ? "even" : "odd";
+		const coverType = (this.state.x + this.state.y) % 2 === 0 ? "even" : "odd";
 		this.anim.state.setAnimation(AnimTrack.FillColor, "fill-" + coverType, false);
 		this.anim.state.setAnimation(AnimTrack.Flag, "flag-hidden", false);
 		this.anim.state.setAnimation(AnimTrack.Mine, "mine-hidden", false);
@@ -114,8 +114,8 @@ export class MSCell extends Component<MSApp> {
 	 * @param edge
 	 */
 	public setEdgeVisible(edge: "l" | "r" | "u" | "d", visible: boolean) {
-		let stateName = "edge-" + edge + "-" + (visible ? "visible" : "hidden");
-		let animTrackKey = ("Edge" + edge.toUpperCase()) as keyof typeof AnimTrack;
+		const stateName = "edge-" + edge + "-" + (visible ? "visible" : "hidden");
+		const animTrackKey = ("Edge" + edge.toUpperCase()) as keyof typeof AnimTrack;
 		this.anim.state.setAnimation(AnimTrack[animTrackKey], stateName, false);
 	}
 
@@ -141,32 +141,32 @@ export class MSCell extends Component<MSApp> {
 		this.anim.setSkinByName(this.viewState.covered ? "front" : "back");
 
 		if (this.ix - 1 > -1) {
-			let l = this.app.getCellView(this.ix - 1, this.iy);
-			let visible = l.viewState.covered !== this.viewState.covered;
+			const l = this.app.getCellView(this.ix - 1, this.iy);
+			const visible = l.viewState.covered !== this.viewState.covered;
 			this.setEdgeVisible("l", visible);
 			l.setEdgeVisible("r", visible);
 		} else {
 			this.setEdgeVisible("l", true);
 		}
 		if (this.ix + 1 < this.app.state.width) {
-			let r = this.app.getCellView(this.ix + 1, this.iy);
-			let visible = r.viewState.covered !== this.viewState.covered;
+			const r = this.app.getCellView(this.ix + 1, this.iy);
+			const visible = r.viewState.covered !== this.viewState.covered;
 			this.setEdgeVisible("r", visible);
 			r.setEdgeVisible("l", visible);
 		} else {
 			this.setEdgeVisible("r", true);
 		}
 		if (this.iy - 1 > -1) {
-			let u = this.app.getCellView(this.ix, this.iy - 1);
-			let visible = u.viewState.covered !== this.viewState.covered;
+			const u = this.app.getCellView(this.ix, this.iy - 1);
+			const visible = u.viewState.covered !== this.viewState.covered;
 			this.setEdgeVisible("u", visible);
 			u.setEdgeVisible("d", visible);
 		} else {
 			this.setEdgeVisible("u", true);
 		}
 		if (this.iy + 1 < this.app.state.height) {
-			let d = this.app.getCellView(this.ix, this.iy + 1);
-			let visible = d.viewState.covered !== this.viewState.covered;
+			const d = this.app.getCellView(this.ix, this.iy + 1);
+			const visible = d.viewState.covered !== this.viewState.covered;
 			this.setEdgeVisible("d", visible);
 			d.setEdgeVisible("u", visible);
 		} else {
@@ -214,7 +214,7 @@ export class MSCell extends Component<MSApp> {
 	 */
 	private setText(total: number) {
 		total = Math.floor(clamp(total, 0, 8));
-		let key = total.toString() as NumberKey;
+		const key = total.toString() as NumberKey;
 		this.adjacentText.tint = hexToNum(this.app.config.colorNumbers[key]);
 		this.adjacentText.visible = true;
 		this.adjacentText.text = key;
@@ -227,7 +227,7 @@ export class MSCell extends Component<MSApp> {
 	public setCoveredEnabled(enabled = true) {
 		this.viewState.covered = enabled;
 		if (enabled) {
-			let stateName = this.app.state.config.cheatMode ? "covered-cheat" : "covered";
+			const stateName = this.app.state.config.cheatMode ? "covered-cheat" : "covered";
 			this.anim.state.setAnimation(AnimTrack.Cover, stateName, false);
 			this.setInteractiveEnabled(true);
 		} else {
