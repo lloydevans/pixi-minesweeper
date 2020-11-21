@@ -56,7 +56,7 @@ export class MSApp extends AppBase {
 	 *
 	 */
 	constructor() {
-		super({});
+		super({ forceCanvas: false });
 
 		//@ts-ignore
 		window.ms = this;
