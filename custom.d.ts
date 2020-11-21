@@ -1,3 +1,6 @@
+declare const ENV_VERSION: string;
+declare const ENV_PROD: boolean;
+
 declare namespace createjs {
 	class TweenGroup {
 		_tweens: [];

@@ -13,7 +13,13 @@ const firebaseConfig = {
 	measurementId: "G-5SBBB77D8V",
 };
 
-firebase.initializeApp(firebaseConfig);
-firebase.performance();
+export let performance = {};
+export let analytics = {
+	logEvent: (name: string, params: any) => {},
+};
 
-export const analytics = firebase.analytics();
+if (ENV_PROD) {
+	firebase.initializeApp(firebaseConfig);
+	performance = firebase.performance();
+	analytics = firebase.analytics();
+}

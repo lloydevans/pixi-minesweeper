@@ -1,3 +1,4 @@
+const pkg = require("./package.json");
 const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
@@ -76,7 +77,11 @@ module.exports = (env = {}) => {
 		plugins: [
 			new HtmlWebpackPlugin({ template: "src/index.html", hash: true }),
 			new CopyWebpackPlugin({ patterns: [{ from: "static" }] }),
-			new webpack.ProvidePlugin({ PIXI: "pixi.js-legacy" })
+			new webpack.ProvidePlugin({ PIXI: "pixi.js-legacy" }),
+			new webpack.DefinePlugin({
+				ENV_VERSION: JSON.stringify(pkg.version),
+				ENV_PROD: JSON.stringify(!!env.prod),
+			}),
 		],
 
 		mode: env.prod ? "production" : "development"
