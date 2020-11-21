@@ -14,7 +14,7 @@ type BGSet = "bg-green" | "bg-swamp";
 export class MSBg extends Component<MSApp> {
 	public offset = new PIXI.Point();
 	private layers: PIXI.TilingSprite[] = [];
-	private speed: number = 0.5;
+	private speed: number = 0.25;
 	private scroll: number = 0;
 	private bgSet: BGSet = "bg-swamp";
 	private tileScale = 1.15;
@@ -32,7 +32,7 @@ export class MSBg extends Component<MSApp> {
 
 	protected update(dt: number) {
 		const length = this.layers.length;
-		this.scroll += dt * 0.25;
+		this.scroll += dt * this.speed;
 		for (let i = 0; i < length; i++) {
 			const totalWidth = this.layers[i].texture.width * this.layers[i].tileScale.x;
 			const totalHeight = this.layers[i].texture.height * this.layers[i].tileScale.y;
@@ -44,7 +44,7 @@ export class MSBg extends Component<MSApp> {
 	protected resize(width: number, height: number) {
 		for (let i = 0; i < this.layers.length; i++) {
 			const el = this.layers[i];
-			el.tileScale.x = el.tileScale.y = (height / REF_BG_HEIGHT) * this.tileScale;
+			el.tileScale.set((height / REF_BG_HEIGHT) * this.tileScale);
 			el.width = width;
 			el.height = height;
 		}
