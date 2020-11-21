@@ -18,8 +18,8 @@ export interface MSGameConfig {
 export interface MSConfig {
 	colorBackground: string;
 	colorBoard: string;
-	colorNumberFont: string;
-	colorNumberWeight: "regular" | "bold";
+	numberFont: string;
+	numberWeight: "regular" | "bold";
 	colorNumbers: {
 		"1": string;
 		"2": string;
@@ -38,8 +38,8 @@ export interface MSConfig {
 export const MS_CONFIG_DEFAULT: MSConfig = {
 	colorBackground: "#303030",
 	colorBoard: "#bda355",
-	colorNumberFont: "Arial",
-	colorNumberWeight: "bold",
+	numberFont: "Arial",
+	numberWeight: "bold",
 	colorNumbers: {
 		"1": "#4b6f9c",
 		"2": "#5c9c49",

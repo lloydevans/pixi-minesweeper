@@ -1,8 +1,8 @@
 {
 	"colorBackground": "#303030",
 	"colorBoard": "#bda355",
-	"colorNumberFont": "Arial",
-	"colorNumberSize": 21,
+	"numberFont": "Arial",
+	"numberSize": 21,
 	"colorNumberWeight": "bold",
 	"colorNumbers": {
 		"1": "#4b6f9c",
