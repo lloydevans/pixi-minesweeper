@@ -1,10 +1,10 @@
 import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
 import { AppBase } from "./common/app-base";
+import { ToneAudioConfig } from "./common/tone-audio";
 import { preventContextMenu } from "./common/utils";
 import { MSCell } from "./ms-cell";
-import { MS_STYLE_DEFAULT } from "./ms-config";
-import type { MSStyleConfig } from "./ms-config";
+import { MSStyleConfig, MS_STYLE_DEFAULT } from "./ms-config";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MSState } from "./ms-state";
 import { SceneGame } from "./scene-game";
 import { SceneMenu } from "./scene-menu";
@@ -56,9 +56,9 @@ export class MSApp extends AppBase {
 	 * Load callback.
 	 */
 	private onLoad() {
-		this.audio.init(this.getJson("audio"));
+		this.audio.init(this.getJson("audio") as ToneAudioConfig);
 
-		this.style = this.parseConfig(this.getJson("config"));
+		this.style = this.parseConfig(this.getJson("config") as Partial<MSStyleConfig>);
 
 		const tilesAtlas = this.getAtlas("tiles");
 		if (tilesAtlas.spritesheet) {
