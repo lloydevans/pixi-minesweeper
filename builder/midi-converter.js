@@ -1,11 +1,11 @@
-var fs = require("fs").promises;
+const fs = require("fs").promises;
 
 const { Midi } = require("@tonejs/midi");
 
 (async function () {
-	let buffer = await fs.readFile("./assets/audio/minesweeper.mid");
+	const buffer = await fs.readFile("./assets/audio/minesweeper.mid");
 
-	let tm = new Midi(buffer);
+	const midi = new Midi(buffer);
 
-	await fs.writeFile("./static/minesweeper.json", JSON.stringify(tm, undefined, 2));
+	await fs.writeFile("./static/minesweeper.json", JSON.stringify(midi, undefined, 2));
 })();
