@@ -27,8 +27,6 @@ export class MSApp extends AppBase {
 		menu?: SceneMenu;
 	} = {};
 
-	private isLoaded = false;
-
 	/**
 	 *
 	 */
@@ -64,8 +62,6 @@ export class MSApp extends AppBase {
 	 * Load callback.
 	 */
 	private onLoad() {
-		this.isLoaded = true;
-
 		this.audio.init(this.getJson("audio"));
 
 		this.config = this.parseConfig(this.getJson("config"));
@@ -99,7 +95,7 @@ export class MSApp extends AppBase {
 		// Generate cell view instances in the bakground.
 		const maxCells = MAX_GRID_WIDTH * MAX_GRID_HEIGHT;
 		const length = this.cellPool.length;
-		if (this.isLoaded && length < maxCells) {
+		if (this.ready && length < maxCells) {
 			for (let i = 0; i < 5; i++) {
 				const idx = length + i;
 				if (idx > maxCells - 1) {
