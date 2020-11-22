@@ -10,7 +10,7 @@ export interface ButtonConfig {
 /**
  * Very quick button class.
  */
-export class UiButton extends UiElement<AppBase> {
+export class UiButton extends UiElement {
 	protected back: PIXI.Sprite;
 	protected config: ButtonConfig;
 
