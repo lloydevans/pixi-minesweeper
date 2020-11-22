@@ -3,12 +3,12 @@
  */
 export interface MSCellState {
 	/**
-	 * X index of the cell.
+	 * X grid position of the cell.
 	 */
 	x: number;
 
 	/**
-	 * Y index of the cell.
+	 * Y grid position of the cell.
 	 */
 	y: number;
 
@@ -36,7 +36,7 @@ export interface MSCellState {
 /**
  *
  */
-export const CELL_STATE_DEFAULT = {
+export const CELL_STATE_DEFAULT: MSCellState = {
 	x: -1,
 	y: -1,
 	adjacent: 0,
