@@ -3,7 +3,7 @@ import * as PIXI from "pixi.js-legacy";
 import { AppBase } from "./common/app-base";
 import { preventContextMenu } from "./common/utils";
 import { MSCell } from "./ms-cell";
-import { MS_CONFIG_DEFAULT } from "./ms-config";
+import { MS_STYLE_DEFAULT } from "./ms-config";
 import type { MSStyleConfig, MSGameConfig } from "./ms-config";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MSState } from "./ms-state";
 import { SceneGame } from "./scene-game";
@@ -35,7 +35,7 @@ export class MSApp extends AppBase {
 
 		preventContextMenu();
 
-		this.config = { ...MS_CONFIG_DEFAULT };
+		this.config = { ...MS_STYLE_DEFAULT };
 
 		this.events.on("init", this.onInit, this);
 		this.events.on("update", this.onUpdate, this);
@@ -129,7 +129,7 @@ export class MSApp extends AppBase {
 	 * @param config
 	 */
 	private parseConfig(config: Partial<MSStyleConfig> = {}): MSStyleConfig {
-		return defaults(config, MS_CONFIG_DEFAULT);
+		return defaults(config, MS_STYLE_DEFAULT);
 	}
 
 	/**

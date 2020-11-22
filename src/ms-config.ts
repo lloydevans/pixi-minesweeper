@@ -35,7 +35,7 @@ export interface MSStyleConfig {
 /**
  *
  */
-export const MS_CONFIG_DEFAULT: MSStyleConfig = {
+export const MS_STYLE_DEFAULT: MSStyleConfig = {
 	colorBackground: "#303030",
 	colorBoard: "#bda355",
 	numberFont: "Arial",
