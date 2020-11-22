@@ -1,6 +1,7 @@
 import * as PIXI from "pixi.js-legacy";
 import * as Tone from "tone";
 import { AppBase } from "./app-base";
+import { UiElement } from "./ui-element";
 
 export interface ButtonConfig {
 	texture: PIXI.Texture;
@@ -9,13 +10,12 @@ export interface ButtonConfig {
 /**
  * Very quick button class.
  */
-export class UiButton extends PIXI.Sprite {
-	protected app: AppBase;
+export class UiButton extends UiElement<AppBase> {
 	protected back: PIXI.Sprite;
 	protected config: ButtonConfig;
 
 	constructor(app: AppBase, config: ButtonConfig) {
-		super();
+		super(app);
 
 		this.app = app;
 		this.config = { ...config };
