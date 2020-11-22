@@ -190,8 +190,6 @@ export class UiTextInput extends UiElement<AppBase> {
 	}
 
 	protected update() {
-		this.amp();
-
 		if (this.textCursorStart !== this.input.selectionStart || this.textCursorEnd !== this.input.selectionEnd) {
 			this.textCursorStart = this.input.selectionStart || 0;
 			this.textCursorEnd = this.input.selectionEnd || 0;
