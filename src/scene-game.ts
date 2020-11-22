@@ -43,7 +43,7 @@ export class SceneGame extends Scene<MSApp> {
 
 		this.gridBack = new PIXI.TilingSprite(this.app.getFrame("tiles", "back-0"));
 
-		this.board.tint = hexToNum(this.app.config.colorBoard);
+		this.board.tint = hexToNum(this.app.style.colorBoard);
 
 		this.menu.on("start", (config: MSGameConfig) => {
 			this.newGame(config);

@@ -212,7 +212,7 @@ export class MSCell extends Component<MSApp> {
 	private setText(total: number) {
 		total = Math.floor(clamp(total, 0, 8));
 		const key = total.toString() as NumberKey;
-		this.adjacentText.tint = hexToNum(this.app.config.colorNumbers[key]);
+		this.adjacentText.tint = hexToNum(this.app.style.colorNumbers[key]);
 		this.adjacentText.visible = true;
 		this.adjacentText.text = key;
 	}
