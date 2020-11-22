@@ -71,7 +71,6 @@ export class UiTextInputDom extends UiElement<AppBase> {
 		this.buttonMode = true;
 
 		this.addChild(this.label);
-		// this.addChild(this.debugHitarea);
 
 		this.on("focus", () => {
 			this.input.focus();
