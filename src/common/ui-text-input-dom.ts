@@ -48,6 +48,10 @@ export class UiTextInputDom extends UiElement<AppBase> {
 
 		this.options = defaults(options || {}, UITextInputOptionDefaults);
 
+		this.label = new GameText(this.app, { text: this.options.label, fontName: "bmfont", fontSize: 18 });
+		this.label._anchor.set(1, 0.5);
+		this.label.tint = hexToNum(this.options.labelColor);
+
 		this.input.type = this.options.type;
 		this.input.style.position = "absolute";
 		this.input.style.padding = "0";
@@ -55,11 +59,6 @@ export class UiTextInputDom extends UiElement<AppBase> {
 		this.input.style.margin = "0";
 
 		window.document.body.appendChild(this.input);
-
-		this.label = new GameText(this.app, { text: this.options.label, fontName: "bmfont", fontSize: 18 });
-		this.label._anchor.set(1, 0.5);
-		this.label.tint = hexToNum(this.options.labelColor);
-
 		this.once("destroy", () => {
 			this.input.parentElement?.removeChild(this.input);
 		});
