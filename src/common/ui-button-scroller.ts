@@ -1,7 +1,7 @@
 import clamp from "lodash-es/clamp";
 import { Container, Texture } from "pixi.js-legacy";
 import { AppBase } from "./app-base";
-import { Button } from "./button";
+import { UiButton } from "./ui-button";
 import { GameText } from "./game-text";
 
 export interface ButtonScrollerOptions {
@@ -12,7 +12,7 @@ export interface ButtonScrollerOptions {
 	max: number;
 }
 
-export class ButtonScroller extends Container {
+export class UiButtonScroller extends Container {
 	app: AppBase;
 
 	private _min: number;
@@ -48,8 +48,8 @@ export class ButtonScroller extends Container {
 	}
 
 	private number: GameText;
-	private buttonLeft: Button;
-	private buttonRight: Button;
+	private buttonLeft: UiButton;
+	private buttonRight: UiButton;
 	private label: GameText;
 
 	constructor(app: AppBase, options: ButtonScrollerOptions) {
@@ -62,25 +62,19 @@ export class ButtonScroller extends Container {
 		this._default = options.default;
 		this._current = this.default;
 
-		this.buttonLeft = new Button(this.app, { texture: options.arrowTexture });
+		this.buttonLeft = new UiButton(this.app, { texture: options.arrowTexture });
 		this.buttonLeft.rotation = Math.PI;
 		this.buttonLeft.anchor.set(0.5);
 		this.buttonLeft.x = -64;
 
-		this.buttonRight = new Button(this.app, { texture: options.arrowTexture });
+		this.buttonRight = new UiButton(this.app, { texture: options.arrowTexture });
 		this.buttonRight.anchor.set(0.5);
 		this.buttonRight.x = 64;
 
-		this.number = new GameText(this.app, this.default.toString(), {
-			fontName: "bmfont",
-			fontSize: 38,
-		});
+		this.number = new GameText(this.app, { text: this.default.toString(), fontName: "bmfont", fontSize: 38 });
 		this.number._anchor.set(0.5);
 
-		this.label = new GameText(this.app, options.label, {
-			fontName: "bmfont",
-			fontSize: 38,
-		});
+		this.label = new GameText(this.app, { text: options.label, fontName: "bmfont", fontSize: 38 });
 		this.label._anchor.set(1, 0.5);
 		this.label.position.set(-106, 0);
 

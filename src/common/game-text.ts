@@ -12,19 +12,21 @@ export class GameText extends PIXI.BitmapText {
 
 	constructor(
 		app: AppBase,
-		text: string,
 		// Style type only exists inline for Bitmap text
 		// so this is a copy/paste.
-		style: {
+		options: {
+			text?: string;
 			fontName: string;
 			fontSize?: number;
 			align?: string;
 			tint?: number;
 			letterSpacing?: number;
 			maxWidth?: number;
+		} = {
+			fontName: "bmfont",
 		}
 	) {
-		super(text, style);
+		super(options.text || "", options);
 
 		this.app = app;
 

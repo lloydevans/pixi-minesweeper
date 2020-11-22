@@ -5,6 +5,7 @@ import { ToneAudio } from "./tone-audio";
 import { Tween } from "./tween";
 import { TweenGroup } from "./tween-group";
 import { TweenProps } from "./tween-props";
+import { UiElement } from "./ui-element";
 
 export const MAX_DPR = 4;
 export const MIN_DPR = 0.5;
@@ -40,6 +41,11 @@ export class AppBase extends PIXI.Application {
 	 * Root container.
 	 */
 	protected readonly root = new PIXI.Container();
+
+	/**
+	 *
+	 */
+	protected readonly uiElements: UiElement[] = [];
 
 	/**
 	 * Current app ready state. Modified via setReady,
@@ -179,6 +185,40 @@ export class AppBase extends PIXI.Application {
 		this.root.y = this.renderer.height / this.dpr / 2;
 
 		this.events.emit("resize", this.width, this.height);
+	}
+
+	/**
+	 *
+	 * @param element
+	 */
+	public registerUiElement(element: UiElement) {
+		if (this.uiElements.indexOf(element) === -1) {
+			this.uiElements.push(element);
+		}
+	}
+
+	/**
+	 *
+	 * @param element
+	 */
+	public unregisterUiElement(element: UiElement) {
+		const idx = this.uiElements.indexOf(element);
+		if (idx !== -1) {
+			this.uiElements.splice(idx, 1);
+		}
+	}
+
+	/**
+	 *
+	 * @param element
+	 */
+	public blurAllUiElements() {
+		for (let i = 0; i < this.uiElements.length; i++) {
+			const el = this.uiElements[i];
+			if (el.focused) {
+				el.blur();
+			}
+		}
 	}
 
 	/**
