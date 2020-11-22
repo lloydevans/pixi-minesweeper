@@ -21,7 +21,7 @@ export const INITIAL_GAME_CONFIG: MSGameConfig = {
 export class MSApp extends AppBase {
 	public state: MSState = new MSState();
 	public cellPool: MSCell[] = [];
-	public config: MSStyleConfig;
+	public style: MSStyleConfig;
 	public scenes: {
 		game?: SceneGame;
 		menu?: SceneMenu;
@@ -35,7 +35,7 @@ export class MSApp extends AppBase {
 
 		preventContextMenu();
 
-		this.config = { ...MS_STYLE_DEFAULT };
+		this.style = { ...MS_STYLE_DEFAULT };
 
 		this.events.on("init", this.onInit, this);
 		this.events.on("update", this.onUpdate, this);
@@ -64,7 +64,7 @@ export class MSApp extends AppBase {
 	private onLoad() {
 		this.audio.init(this.getJson("audio"));
 
-		this.config = this.parseConfig(this.getJson("config"));
+		this.style = this.parseConfig(this.getJson("config"));
 
 		const tilesAtlas = this.getAtlas("tiles");
 		if (tilesAtlas.spritesheet) {
