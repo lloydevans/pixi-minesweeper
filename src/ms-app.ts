@@ -4,7 +4,7 @@ import { AppBase } from "./common/app-base";
 import { preventContextMenu } from "./common/utils";
 import { MSCell } from "./ms-cell";
 import { MS_CONFIG_DEFAULT } from "./ms-config";
-import type { MSConfig, MSGameConfig } from "./ms-config";
+import type { MSStyleConfig, MSGameConfig } from "./ms-config";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MSState } from "./ms-state";
 import { SceneGame } from "./scene-game";
 import { SceneMenu } from "./scene-menu";
@@ -21,7 +21,7 @@ export const INITIAL_GAME_CONFIG: MSGameConfig = {
 export class MSApp extends AppBase {
 	public state: MSState = new MSState();
 	public cellPool: MSCell[] = [];
-	public config: MSConfig;
+	public config: MSStyleConfig;
 	public scenes: {
 		game?: SceneGame;
 		menu?: SceneMenu;
@@ -128,7 +128,7 @@ export class MSApp extends AppBase {
 	 *
 	 * @param config
 	 */
-	private parseConfig(config: Partial<MSConfig> = {}): MSConfig {
+	private parseConfig(config: Partial<MSStyleConfig> = {}): MSStyleConfig {
 		return defaults(config, MS_CONFIG_DEFAULT);
 	}
 

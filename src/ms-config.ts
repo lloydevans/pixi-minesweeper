@@ -15,7 +15,7 @@ export interface MSGameConfig {
 /**
  *
  */
-export interface MSConfig {
+export interface MSStyleConfig {
 	colorBackground: string;
 	colorBoard: string;
 	numberFont: string;
@@ -35,7 +35,7 @@ export interface MSConfig {
 /**
  *
  */
-export const MS_CONFIG_DEFAULT: MSConfig = {
+export const MS_CONFIG_DEFAULT: MSStyleConfig = {
 	colorBackground: "#303030",
 	colorBoard: "#bda355",
 	numberFont: "Arial",
