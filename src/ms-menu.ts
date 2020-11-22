@@ -3,8 +3,9 @@ import { UiButtonScroller } from "./common/ui-button-scroller";
 import { UiButtonText } from "./common/ui-button-text";
 import { Component } from "./common/component";
 import { GameText } from "./common/game-text";
-import { INITIAL_GAME_CONFIG, MSApp } from "./ms-app";
+import { MSApp } from "./ms-app";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MIN_GRID_HEIGHT, MIN_GRID_WIDTH, MIN_EMPTY } from "./ms-state";
+import { MS_GAME_CONFIG_DEFAULT } from "./ms-config";
 
 export class MSMenu extends Component<MSApp> {
 	private title!: GameText;
@@ -27,12 +28,12 @@ export class MSMenu extends Component<MSApp> {
 			label: "START",
 		});
 		this.buttonStart.position.set(0, 180);
-		this.buttonStart.anchor.set(0.5);
+		// this.buttonStart.anchor.set(0.5);
 
 		this.widthScroller = new UiButtonScroller(this.app, {
 			arrowTexture: this.app.getFrame("textures", "button-arrow"),
 			label: "Width",
-			default: INITIAL_GAME_CONFIG.gridWidth,
+			default: MS_GAME_CONFIG_DEFAULT.gridWidth,
 			min: MIN_GRID_WIDTH,
 			max: MAX_GRID_WIDTH,
 		});
@@ -40,7 +41,7 @@ export class MSMenu extends Component<MSApp> {
 		this.heightScroller = new UiButtonScroller(this.app, {
 			arrowTexture: this.app.getFrame("textures", "button-arrow"),
 			label: "Height",
-			default: INITIAL_GAME_CONFIG.gridHeight,
+			default: MS_GAME_CONFIG_DEFAULT.gridHeight,
 			min: MIN_GRID_HEIGHT,
 			max: MAX_GRID_HEIGHT,
 		});
@@ -48,9 +49,9 @@ export class MSMenu extends Component<MSApp> {
 		this.minesScroller = new UiButtonScroller(this.app, {
 			arrowTexture: this.app.getFrame("textures", "button-arrow"),
 			label: "Mines",
-			default: INITIAL_GAME_CONFIG.startMines,
+			default: MS_GAME_CONFIG_DEFAULT.startMines,
 			min: 1,
-			max: INITIAL_GAME_CONFIG.gridWidth * INITIAL_GAME_CONFIG.gridHeight - MIN_EMPTY,
+			max: MS_GAME_CONFIG_DEFAULT.gridWidth * MS_GAME_CONFIG_DEFAULT.gridHeight - MIN_EMPTY,
 		});
 
 		this.widthScroller.x = 64;
