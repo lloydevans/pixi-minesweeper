@@ -7,6 +7,7 @@ import { MS_CONFIG_DEFAULT } from "./ms-config";
 import type { MSConfig, MSGameConfig } from "./ms-config";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MSState } from "./ms-state";
 import { SceneGame } from "./scene-game";
+import { SceneMenu } from "./scene-menu";
 
 export const INITIAL_GAME_CONFIG: MSGameConfig = {
 	startMines: 5,
@@ -23,6 +24,7 @@ export class MSApp extends AppBase {
 	public config: MSConfig;
 	public scenes: {
 		game?: SceneGame;
+		menu?: SceneMenu;
 	} = {};
 
 	private isLoaded = false;

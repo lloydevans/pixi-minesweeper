@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js-legacy";
-import { Button } from "./common/button";
+import { UiButton } from "./common/ui-button";
 import { GameText } from "./common/game-text";
 import { Spine } from "./common/spine";
 import { MSApp } from "./ms-app";
@@ -14,8 +14,8 @@ const MAX_TIME = 999;
  */
 export class MSUi extends Component<MSApp> {
 	private background!: PIXI.Graphics;
-	private buttonRestart!: Button;
-	private buttonCross!: Button;
+	private buttonRestart!: UiButton;
+	private buttonCross!: UiButton;
 	private flagsContainer!: PIXI.Container;
 	private flagsGraphic!: Spine;
 	private flagsCount!: GameText;
@@ -36,10 +36,7 @@ export class MSUi extends Component<MSApp> {
 		this.flagsGraphic.state.setAnimation(0, "flag-idle", false);
 		this.flagsGraphic.y = -24;
 
-		this.flagsCount = new GameText(this.app, "", {
-			fontName: "bmfont",
-			fontSize: 38,
-		});
+		this.flagsCount = new GameText(this.app, { fontName: "bmfont", fontSize: 38 });
 		this.flagsCount._anchor.set(0, 0.5);
 		this.flagsCount.x = 38;
 		this.flagsCount.y = -24;
@@ -51,18 +48,15 @@ export class MSUi extends Component<MSApp> {
 		this.timeGraphic.scale.set(0.75);
 		this.timeGraphic.y = -22;
 
-		this.timeCount = new GameText(this.app, "", {
-			fontName: "bmfont",
-			fontSize: 38,
-		});
+		this.timeCount = new GameText(this.app, { fontName: "bmfont", fontSize: 38 });
 		this.timeCount._anchor.set(0, 0.5);
 		this.timeCount.x = 38;
 		this.timeCount.y = -24;
 
-		this.buttonCross = new Button(this.app, { texture: this.app.getFrame("textures", "button-cross") });
+		this.buttonCross = new UiButton(this.app, { texture: this.app.getFrame("textures", "button-cross") });
 		this.buttonCross.on("pointertap", () => this.emit("close"));
 
-		this.buttonRestart = new Button(this.app, { texture: this.app.getFrame("textures", "button-restart") });
+		this.buttonRestart = new UiButton(this.app, { texture: this.app.getFrame("textures", "button-restart") });
 		this.buttonRestart.on("pointertap", () => this.emit("restart"));
 
 		this.timeContainer.addChild(this.timeGraphic);

@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js-legacy";
-import { Button } from "./common/button";
+import { UiButton } from "./common/ui-button";
 import { Component } from "./common/component";
 import { MSApp } from "./ms-app";
 import { MSCellState } from "./ms-cell-state";
@@ -10,8 +10,8 @@ import { MSCellState } from "./ms-cell-state";
 export class MSTouchUi extends Component<MSApp> {
 	public targetCell?: MSCellState;
 
-	private buttonFlag!: Button;
-	private buttonDig!: Button;
+	private buttonFlag!: UiButton;
+	private buttonDig!: UiButton;
 
 	/**
 	 *
@@ -23,14 +23,14 @@ export class MSTouchUi extends Component<MSApp> {
 		cursor.beginFill(0x00ff00);
 		cursor.drawCircle(0, 0, 8);
 
-		this.buttonFlag = new Button(this.app, {
+		this.buttonFlag = new UiButton(this.app, {
 			texture: this.app.getFrame("textures", "button-flag"),
 		});
 		this.buttonFlag.tint = 0x444444;
 		this.buttonFlag.x = -64;
 		this.buttonFlag.y = 0;
 
-		this.buttonDig = new Button(this.app, {
+		this.buttonDig = new UiButton(this.app, {
 			texture: this.app.getFrame("textures", "button-dig"),
 		});
 		this.buttonDig.tint = 0x444444;
