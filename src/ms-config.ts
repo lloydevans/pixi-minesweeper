@@ -15,6 +15,15 @@ export interface MSGameConfig {
 /**
  *
  */
+export const MS_GAME_CONFIG_DEFAULT: MSGameConfig = {
+	startMines: 5,
+	gridWidth: 9,
+	gridHeight: 7,
+};
+
+/**
+ *
+ */
 export interface MSStyleConfig {
 	colorBackground: string;
 	colorBoard: string;

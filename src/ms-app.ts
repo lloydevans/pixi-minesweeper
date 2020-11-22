@@ -4,16 +4,10 @@ import { AppBase } from "./common/app-base";
 import { preventContextMenu } from "./common/utils";
 import { MSCell } from "./ms-cell";
 import { MS_STYLE_DEFAULT } from "./ms-config";
-import type { MSGameConfig, MSStyleConfig } from "./ms-config";
+import type { MSStyleConfig } from "./ms-config";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MSState } from "./ms-state";
 import { SceneGame } from "./scene-game";
 import { SceneMenu } from "./scene-menu";
-
-export const INITIAL_GAME_CONFIG: MSGameConfig = {
-	startMines: 5,
-	gridWidth: 9,
-	gridHeight: 7,
-};
 
 /**
  * Core App class.
