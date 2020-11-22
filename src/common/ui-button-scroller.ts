@@ -64,11 +64,9 @@ export class UiButtonScroller extends Container {
 
 		this.buttonLeft = new UiButton(this.app, { texture: options.arrowTexture });
 		this.buttonLeft.rotation = Math.PI;
-		// this.buttonLeft.anchor.set(0.5);
 		this.buttonLeft.x = -64;
 
 		this.buttonRight = new UiButton(this.app, { texture: options.arrowTexture });
-		// this.buttonRight.anchor.set(0.5);
 		this.buttonRight.x = 64;
 
 		this.number = new GameText(this.app, { text: this.default.toString(), fontName: "bmfont", fontSize: 38 });
