@@ -162,7 +162,7 @@ export class AppBase extends PIXI.Application {
 	/**
 	 *
 	 */
-	private getAssetDpr(): number {
+	private getTextureDpr(): number {
 		return this.getWindowDpr() | 0;
 	}
 
@@ -261,7 +261,7 @@ export class AppBase extends PIXI.Application {
 	 *
 	 * @param spinePath
 	 */
-	public getSpine(spinePath: string) {
+	public getSpine(spinePath: string): PIXI.spine.core.SkeletonData {
 		const spine = this.loader.resources[spinePath];
 
 		if (!spine) {
@@ -278,7 +278,7 @@ export class AppBase extends PIXI.Application {
 	 *
 	 * @param spineName
 	 */
-	public getJson(name: string) {
+	public getJson(name: string): unknown {
 		const resource = this.loader.resources[name];
 
 		if (!resource.data) {
@@ -294,7 +294,7 @@ export class AppBase extends PIXI.Application {
 	 * @param spinePath
 	 * @param scale
 	 */
-	public addSpine(spinePath: string, scale: number = this.getAssetDpr()) {
+	public addSpine(spinePath: string, scale: number = this.getTextureDpr()) {
 		const metadata: PIXI.loaders.IMetadata = {
 			spineSkeletonScale: 1 / MAX_DPR,
 			spineAtlasFile: spinePath + "@" + scale + "x.atlas",
@@ -310,7 +310,7 @@ export class AppBase extends PIXI.Application {
 	 * @param atlasPath
 	 * @param scale
 	 */
-	public addAtlas(atlasPath: string, scale: number = this.getAssetDpr()) {
+	public addAtlas(atlasPath: string, scale: number = this.getTextureDpr()) {
 		// Pixi auto detects and compensates scale based on suffix in form `@nx`.
 		this.loader.add(atlasPath, atlasPath + "@" + scale + "x.json");
 	}
@@ -321,7 +321,7 @@ export class AppBase extends PIXI.Application {
 	 * @param atlasName
 	 * @param scale
 	 */
-	public addBitmapFont(assetPath: string, scale: number = this.getAssetDpr()) {
+	public addBitmapFont(assetPath: string, scale: number = this.getTextureDpr()) {
 		this.loader.add(assetPath, assetPath + "@" + scale + "x.fnt");
 	}
 
