@@ -192,9 +192,11 @@ export class AppBase extends PIXI.Application {
 	 * @param element
 	 */
 	public registerUiElement(element: UiElement) {
-		if (this.uiElements.indexOf(element) === -1) {
-			this.uiElements.push(element);
+		if (this.uiElements.indexOf(element) !== -1) {
+			throw new Error("Element already registered");
 		}
+
+		this.uiElements.push(element);
 	}
 
 	/**
@@ -203,9 +205,11 @@ export class AppBase extends PIXI.Application {
 	 */
 	public unregisterUiElement(element: UiElement) {
 		const idx = this.uiElements.indexOf(element);
-		if (idx !== -1) {
-			this.uiElements.splice(idx, 1);
+		if (idx === -1) {
+			throw new Error("Element doesn't exist");
 		}
+
+		this.uiElements.splice(idx, 1);
 	}
 
 	/**
