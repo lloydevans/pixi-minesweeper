@@ -3,7 +3,7 @@ import isEqual from "lodash-es/isEqual";
 import * as PIXI from "pixi.js-legacy";
 import { hexToNum } from "./common/color";
 import { Component } from "./common/component";
-import { GameText } from "./common/game-text";
+import { BmText } from "./common/bm-text";
 import { Spine } from "./common/spine";
 import { MSApp } from "./ms-app";
 import { CELL_STATE_DEFAULT } from "./ms-cell-state";
@@ -42,7 +42,7 @@ export class MSCell extends Component<MSApp> {
 	private anim: Spine;
 	private state: MSCellState;
 	private viewState: MSCellState;
-	private adjacentText: GameText;
+	private adjacentText: BmText;
 
 	/**
 	 *
@@ -55,11 +55,9 @@ export class MSCell extends Component<MSApp> {
 		this.viewState = { ...CELL_STATE_DEFAULT };
 
 		this.anim = new Spine(this.app.getSpine("grid-square"));
-		this.anim.stateData.setMix("flag-hidden", "flag-place-start", 0);
-		this.anim.stateData.setMix("flag-destroy", "flag-place-start", 0);
 		this.anim.stateData.defaultMix = 0;
 
-		this.adjacentText = new GameText(this.app, { fontName: "bmfont", fontSize: 38 });
+		this.adjacentText = new BmText(this.app, { fontName: "bmfont", fontSize: 38 });
 		this.adjacentText._anchor.set(0.5);
 
 		this.addChild(this.adjacentText);

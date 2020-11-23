@@ -2,18 +2,15 @@ import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
 import { AppBase } from "./app-base";
 import { hexToNum } from "./color";
-import { GameText } from "./game-text";
+import { BmText } from "./bm-text";
 import { MSApp } from "../ms-app";
 import { UiElement } from "./ui-element";
-
-const PADDING = 4;
 
 export interface UITextInputOptions {
 	type: "text" | "email" | "password";
 	label: string;
 	labelColor: string;
 	placeholder: string;
-	maxCharacters: number;
 	textColor: string;
 	backColor: string;
 	radius: number;
@@ -25,8 +22,7 @@ export const UITextInputOptionDefaults: UITextInputOptions = {
 	type: "text",
 	label: "Input",
 	labelColor: "#ffffff",
-	placeholder: "Placeholder",
-	maxCharacters: 32,
+	placeholder: "",
 	textColor: "#000000",
 	backColor: "#ffffff",
 	radius: 4,
@@ -38,27 +34,27 @@ export class UiTextInputDom extends UiElement<AppBase> {
 	public get value() {
 		return this.input.value;
 	}
-	private input: HTMLInputElement = window.document.createElement("input");
-	private label: GameText;
+	private input = window.document.createElement("input");
+	private domVisible = false;
+	private label: BmText;
 	private options: UITextInputOptions;
-	private debugHitarea: PIXI.Graphics = new PIXI.Graphics();
+	private debugHitarea = new PIXI.Graphics();
 
 	constructor(app: MSApp, options?: Partial<UITextInputOptions>) {
 		super(app);
 
 		this.options = defaults(options || {}, UITextInputOptionDefaults);
 
-		this.label = new GameText(this.app, { text: this.options.label, fontName: "bmfont", fontSize: 18 });
+		this.label = new BmText(this.app, { text: this.options.label, fontName: "bmfont", fontSize: 18 });
 		this.label._anchor.set(1, 0.5);
 		this.label.tint = hexToNum(this.options.labelColor);
 
 		this.input.type = this.options.type;
 		this.input.style.position = "absolute";
-		this.input.style.padding = "0";
+		this.input.style.paddingLeft = "8px";
 		this.input.style.border = "0";
 		this.input.style.margin = "0";
 
-		window.document.body.appendChild(this.input);
 		this.once("destroy", () => {
 			this.input.parentElement?.removeChild(this.input);
 		});
@@ -82,33 +78,41 @@ export class UiTextInputDom extends UiElement<AppBase> {
 	}
 
 	protected update(dt: number) {
+		if ((!this.parent || !this.worldVisible) && this.domVisible) {
+			this.input.parentElement?.removeChild(this.input);
+			this.domVisible = false;
+		}
+		if (this.parent && this.worldVisible && !this.domVisible) {
+			document.body.appendChild(this.input);
+			this.domVisible = true;
+		}
+
 		const rect = this.app.renderer.view.getBoundingClientRect();
 		const resolution = this.app.renderer.resolution;
 		const sx = (rect.width / this.app.renderer.width) * resolution;
 		const sy = (rect.height / this.app.renderer.height) * resolution;
-		const input = this.input;
-		const target = this;
+		const element = this.input;
 
-		input.style.left = rect.left + "px";
-		input.style.top = rect.top + "px";
-		input.style.width = this.app.renderer.width + "px";
-		input.style.height = this.app.renderer.height + "px";
+		element.style.left = rect.left + "px";
+		element.style.top = rect.top + "px";
+		element.style.width = this.app.renderer.width + "px";
+		element.style.height = this.app.renderer.height + "px";
 
-		const wt = target.worldTransform;
+		const wt = this.worldTransform;
 
-		let hitArea = target.hitArea as PIXI.Rectangle;
+		let hitArea = this.hitArea as PIXI.Rectangle;
 
 		if (hitArea) {
-			input.style.left = (wt.tx + hitArea.x * wt.a) * sx + "px";
-			input.style.top = (wt.ty + hitArea.y * wt.d) * sy + "px";
-			input.style.width = hitArea.width * wt.a * sx + "px";
-			input.style.height = hitArea.height * wt.d * sy + "px";
+			element.style.left = (wt.tx + hitArea.x * wt.a) * sx + "px";
+			element.style.top = (wt.ty + hitArea.y * wt.d) * sy + "px";
+			element.style.width = hitArea.width * wt.a * sx + "px";
+			element.style.height = hitArea.height * wt.d * sy + "px";
 		} else {
-			hitArea = target.getBounds();
-			input.style.left = hitArea.x * sx + "px";
-			input.style.top = hitArea.y * sy + "px";
-			input.style.width = hitArea.width * sx + "px";
-			input.style.height = hitArea.height * sy + "px";
+			hitArea = this.getBounds();
+			element.style.left = hitArea.x * sx + "px";
+			element.style.top = hitArea.y * sy + "px";
+			element.style.width = hitArea.width * sx + "px";
+			element.style.height = hitArea.height * sy + "px";
 		}
 	}
 
@@ -117,10 +121,10 @@ export class UiTextInputDom extends UiElement<AppBase> {
 
 		this.label.x = -width / 2 - 16;
 
-		let x = PADDING;
-		let y = PADDING;
-		let w = width - PADDING;
-		let h = height - PADDING;
+		const x = 0;
+		const y = 0;
+		const w = width;
+		const h = height;
 
 		this.hitArea = new PIXI.Rectangle(x + -w / 2, y + -h / 2, w, h);
 

@@ -1,6 +1,18 @@
 /**
  *
  */
+export type MSCellStateSerialized = [
+	// Covered
+	boolean,
+	// Mine
+	boolean,
+	// Flag
+	boolean
+];
+
+/**
+ *
+ */
 export interface MSCellState {
 	/**
 	 * X grid position of the cell.

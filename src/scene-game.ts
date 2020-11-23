@@ -10,7 +10,7 @@ import { REF_HEIGHT, REF_WIDTH, MSCell } from "./ms-cell";
 import { CELL_STATE_DEFAULT, MSCellState } from "./ms-cell-state";
 import type { MSGameConfig } from "./ms-config";
 import { MSGrid } from "./ms-grid";
-import { MSMenu } from "./ms-menu";
+import { PanelGameOptions } from "./ui/panel-game-options";
 import { MSTouchUi } from "./ms-touch-ui";
 import { MSUi } from "./ms-ui";
 
@@ -31,14 +31,14 @@ export class SceneGame extends Scene<MSApp> {
 	private gridBack?: PIXI.TilingSprite;
 	private grid = new MSGrid(this.app);
 	private touchUi = new MSTouchUi(this.app);
-	private menu = new MSMenu(this.app);
+	private menu = new PanelGameOptions(this.app);
 	private ui = new MSUi(this.app);
 	private bg = new MSBg(this.app);
 
 	/**
 	 *
 	 */
-	init() {
+	protected init() {
 		this.grid.interactiveChildren = false;
 
 		this.gridBack = new PIXI.TilingSprite(this.app.getFrame("tiles", "back-0"));
@@ -79,7 +79,7 @@ export class SceneGame extends Scene<MSApp> {
 	 *
 	 * @param dt
 	 */
-	update(dt: number) {
+	protected update(dt: number) {
 		if (this.timeActive) {
 			this.time += this.app.ticker.elapsedMS / 1000;
 		}
@@ -90,7 +90,7 @@ export class SceneGame extends Scene<MSApp> {
 	 * @param width
 	 * @param height
 	 */
-	resize(width: number, height: number) {
+	protected resize(width: number, height: number) {
 		const marginX = 64;
 		const marginY = 96;
 		const maxWidth = width - marginX * 2;
@@ -109,10 +109,10 @@ export class SceneGame extends Scene<MSApp> {
 		this.cellWidth = REF_WIDTH * scale;
 		this.cellHeight = REF_HEIGHT * scale;
 
-		const dimensionsX = this.app.state.width * this.cellWidth;
-		const dimensionsY = this.app.state.height * this.cellHeight;
-		const boardWidth = dimensionsX + this.cellWidth / 2;
-		const boardHeight = dimensionsY + this.cellHeight / 2;
+		const widthPx = this.app.state.width * this.cellWidth;
+		const heightPx = this.app.state.height * this.cellHeight;
+		const boardWidth = widthPx + this.cellWidth / 2;
+		const boardHeight = heightPx + this.cellHeight / 2;
 		this.board.x = -boardWidth / 2;
 		this.board.y = -boardHeight / 2;
 		this.board.width = boardWidth;
@@ -128,6 +128,14 @@ export class SceneGame extends Scene<MSApp> {
 			this.gridBack.x = (-this.app.state.width * this.cellWidth) / 2;
 			this.gridBack.y = (-this.app.state.height * this.cellHeight) / 2;
 		}
+	}
+
+	/**
+	 *
+	 */
+	protected cleanup() {
+		// Prevent static cell view instances being recursivley destroyed.
+		this.grid.removeChildren();
 	}
 
 	/**

@@ -15,9 +15,9 @@ const firebaseConfig = {
 	measurementId: "G-5SBBB77D8V",
 };
 
-export let auth: firebase.auth.Auth;
+firebase.initializeApp(firebaseConfig);
 
-export let performance = {};
+export const auth = firebase.auth();
 
 export let analytics = {
 	logEvent: (name: string, params: any) => {
@@ -25,20 +25,16 @@ export let analytics = {
 	},
 };
 
-if (ENV_PROD) {
-	(async function () {
-		firebase.initializeApp(firebaseConfig);
-		performance = firebase.performance();
-		analytics = firebase.analytics();
-		auth = firebase.auth();
-
-		auth.onAuthStateChanged(onAuth);
-
-		await init();
-	})();
+if (window.location.hostname !== "localhost") {
+	analytics = firebase.analytics();
+	firebase.performance();
+} else {
+	auth.useEmulator("http://localhost:9099/");
 }
 
-async function init() {
+auth.onAuthStateChanged(onAuth);
+
+export async function setPersistence() {
 	try {
 		await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 	} catch (error) {
@@ -51,17 +47,7 @@ async function init() {
 async function onAuth(user: firebase.User | null) {
 	if (user) {
 		console.log("Current user", auth.currentUser);
+	} else {
+		console.log("User logged out");
 	}
-}
-
-function signIn(email: string, password: string) {
-	return auth.signInWithEmailAndPassword(email, password);
-}
-
-function signInAnonymously() {
-	return auth.signInAnonymously();
-}
-
-function createAccount(email: string, password: string) {
-	return auth.createUserWithEmailAndPassword(email, password);
 }

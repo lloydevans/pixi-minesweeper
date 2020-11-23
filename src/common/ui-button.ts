@@ -1,31 +1,49 @@
+import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
 import * as Tone from "tone";
 import { AppBase } from "./app-base";
 import { UiElement } from "./ui-element";
 
-export interface ButtonConfig {
+export interface ButtonOptions {
 	texture: PIXI.Texture;
 }
+
+export const ButtonOptionDefaults = {
+	texture: PIXI.Texture.WHITE,
+};
 
 /**
  * Very quick button class.
  */
 export class UiButton extends UiElement {
 	protected back: PIXI.Sprite;
-	protected config: ButtonConfig;
+	private config: ButtonOptions;
 
-	constructor(app: AppBase, config: ButtonConfig) {
+	private _active = true;
+	public get active() {
+		return this._active;
+	}
+	public set active(value: boolean) {
+		if (value !== this._active) {
+			this._active = value;
+			if (this._active) {
+				this.back.alpha = 1;
+			} else {
+				this.back.alpha = 0.5;
+			}
+			this.interactive = this._active;
+			this.buttonMode = this._active;
+		}
+	}
+
+	constructor(app: AppBase, config: Partial<ButtonOptions> = {}) {
 		super(app);
 
 		this.app = app;
-		this.config = { ...config };
-		this.back = PIXI.Sprite.from(config.texture);
-		this.back.anchor.set(0.5);
+		this.config = defaults(config, ButtonOptionDefaults);
 
-		this.buttonMode = true;
-		this.interactive = true;
-		// TODO: Accessibility?
-		// this.accessible = true;
+		this.back = PIXI.Sprite.from(this.config.texture);
+		this.back.anchor.set(0.5);
 
 		this.addChild(this.back);
 
@@ -41,6 +59,17 @@ export class UiButton extends UiElement {
 			this.on("pointerdown", this.toneStart, this);
 			this.on("pointerup", this.toneStart, this);
 		}
+
+		this.setInteractive(true);
+	}
+
+	/**
+	 *
+	 * @param value
+	 */
+	public setInteractive(value: boolean) {
+		this.buttonMode = value;
+		this.interactive = value;
 	}
 
 	/**

@@ -1,3 +1,4 @@
+import clone from "lodash-es/clone";
 import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
 import { AppBase } from "./common/app-base";
@@ -29,7 +30,7 @@ export class MSApp extends AppBase {
 
 		preventContextMenu();
 
-		this.style = { ...MS_STYLE_DEFAULT };
+		this.style = clone(MS_STYLE_DEFAULT);
 
 		this.events.on("init", this.onInit, this);
 		this.events.on("update", this.onUpdate, this);
@@ -58,7 +59,7 @@ export class MSApp extends AppBase {
 	private onLoad() {
 		this.audio.init(this.getJson("audio") as ToneAudioConfig);
 
-		this.style = this.parseConfig(this.getJson("config") as Partial<MSStyleConfig>);
+		this.style = this.parseConfig(this.getJson("config") as MSStyleConfig);
 
 		const tilesAtlas = this.getAtlas("tiles");
 		if (tilesAtlas.spritesheet) {
@@ -75,7 +76,10 @@ export class MSApp extends AppBase {
 		}
 
 		this.setReady();
+		this.startup();
+	}
 
+	private startup() {
 		// this.scenes.game = new SceneGame(this);
 		// this.root.addChild(this.scenes.game);
 

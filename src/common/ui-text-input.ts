@@ -4,7 +4,7 @@ import * as PIXI from "pixi.js-legacy";
 import { MSApp } from "../ms-app";
 import { hexToNum } from "./color";
 import { UiElement } from "./ui-element";
-import { GameText } from "./game-text";
+import { BmText } from "./bm-text";
 import { isEventKey } from "keycode";
 import { AppBase } from "./app-base";
 
@@ -33,7 +33,7 @@ export const UITextInputOptionDefaults: UITextInputOptions = {
 	type: "text",
 	label: "Input",
 	labelColor: "#ffffff",
-	placeholder: "Placeholder",
+	placeholder: "",
 	maxCharacters: 32,
 	textColor: "#000000",
 	backColor: "#ffffff",
@@ -66,8 +66,8 @@ export class UiTextInput extends UiElement<AppBase> {
 	private textCursorStart = 0;
 	private textCursorEnd = 0;
 	private charPositions: number[] = [0];
-	private text: GameText;
-	private label: GameText;
+	private text: BmText;
+	private label: BmText;
 	private input: HTMLInputElement = window.document.createElement("input");
 	private options: UITextInputOptions;
 
@@ -81,11 +81,11 @@ export class UiTextInput extends UiElement<AppBase> {
 		this.input.style.zIndex = "-1000";
 		window.document.body.appendChild(this.input);
 
-		this.text = new GameText(this.app, { fontName: "bmfont", fontSize: 18 });
+		this.text = new BmText(this.app, { fontName: "bmfont", fontSize: 18 });
 		this.text._anchor.set(0, 0.5);
 		this.text.tint = hexToNum(this.options.textColor);
 
-		this.label = new GameText(this.app, { text: this.options.label, fontName: "bmfont", fontSize: 18 });
+		this.label = new BmText(this.app, { text: this.options.label, fontName: "bmfont", fontSize: 18 });
 		this.label._anchor.set(1, 0.5);
 		this.label.tint = hexToNum(this.options.labelColor);
 
@@ -243,7 +243,7 @@ export class UiTextInput extends UiElement<AppBase> {
 		this.textMask.beginFill(0xffffff);
 		this.textMask.drawRoundedRect(-width / 2, -height / 2, width, height, this.options.radius);
 		this.textMask.endFill();
-		this.textMask.tint = hexToNum(this.options.borderColor);
+		this.textMask.tint = 0;
 
 		let outlineW = width + this.options.borderThickness * 2;
 		let outlineH = height + this.options.borderThickness * 2;

@@ -1,14 +1,14 @@
 import * as PIXI from "pixi.js-legacy";
-import { UiButtonScroller } from "./common/ui-button-scroller";
-import { UiButtonText } from "./common/ui-button-text";
-import { Component } from "./common/component";
-import { GameText } from "./common/game-text";
-import { MSApp } from "./ms-app";
-import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MIN_GRID_HEIGHT, MIN_GRID_WIDTH, MIN_EMPTY } from "./ms-state";
-import { MS_GAME_CONFIG_DEFAULT } from "./ms-config";
+import { UiButtonScroller } from "../common/ui-button-scroller";
+import { UiButtonText } from "../common/ui-button-text";
+import { Component } from "../common/component";
+import { BmText } from "../common/bm-text";
+import { MSApp } from "../ms-app";
+import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MIN_GRID_HEIGHT, MIN_GRID_WIDTH, MIN_EMPTY } from "../ms-state";
+import { MS_GAME_CONFIG_DEFAULT } from "../ms-config";
 
-export class MSMenu extends Component<MSApp> {
-	private title!: GameText;
+export class PanelGameOptions extends Component<MSApp> {
+	private title!: BmText;
 	private background!: PIXI.Graphics;
 	private buttonStart!: UiButtonText;
 	private widthScroller!: UiButtonScroller;
@@ -19,13 +19,13 @@ export class MSMenu extends Component<MSApp> {
 	protected init() {
 		this.background = new PIXI.Graphics();
 
-		this.title = new GameText(this.app, { text: "MINESWEEPER", fontName: "bmfont", fontSize: 72 });
+		this.title = new BmText(this.app, { text: "MINESWEEPER", fontName: "bmfont", fontSize: 72 });
 		this.title.y = -190;
 		this.title._anchor.set(0.5);
 
 		this.buttonStart = new UiButtonText(this.app, {
 			backTexture: this.app.getFrame("textures", "button-long"),
-			label: "START",
+			text: "START",
 		});
 		this.buttonStart.position.set(0, 180);
 		// this.buttonStart.anchor.set(0.5);

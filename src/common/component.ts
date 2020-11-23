@@ -11,13 +11,6 @@ export type ComponentDestroyOptions = {
 	baseTexture?: boolean;
 };
 
-export interface ComponentOptions {}
-
-export const ComponentOptionDefaults: ComponentOptions = {};
-
-/**
- * The start of a core component class.
- */
 export class Component<T extends AppBase = AppBase> extends PIXI.Container {
 	/**
 	 * Pixi application reference.
@@ -97,6 +90,13 @@ export class Component<T extends AppBase = AppBase> extends PIXI.Container {
 	 */
 	protected delay(time: number) {
 		return new Promise((resolve) => this.tween(this).wait(time).call(resolve));
+	}
+
+	/**
+	 *
+	 */
+	protected defer() {
+		return new Promise((resolve) => this.app.ticker.addOnce(resolve));
 	}
 
 	/**

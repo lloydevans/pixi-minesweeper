@@ -1,6 +1,6 @@
 import * as PIXI from "pixi.js-legacy";
 import { UiButton } from "./common/ui-button";
-import { GameText } from "./common/game-text";
+import { BmText } from "./common/bm-text";
 import { Spine } from "./common/spine";
 import { MSApp } from "./ms-app";
 import { Component } from "./common/component";
@@ -18,10 +18,10 @@ export class MSUi extends Component<MSApp> {
 	private buttonCross!: UiButton;
 	private flagsContainer!: PIXI.Container;
 	private flagsGraphic!: Spine;
-	private flagsCount!: GameText;
+	private flagsCount!: BmText;
 	private timeContainer!: PIXI.Container;
 	private timeGraphic!: Spine;
-	private timeCount!: GameText;
+	private timeCount!: BmText;
 
 	/**
 	 * Initialisation must be called after assets are loaded.
@@ -36,7 +36,7 @@ export class MSUi extends Component<MSApp> {
 		this.flagsGraphic.state.setAnimation(0, "flag-idle", false);
 		this.flagsGraphic.y = -24;
 
-		this.flagsCount = new GameText(this.app, { fontName: "bmfont", fontSize: 38 });
+		this.flagsCount = new BmText(this.app, { fontName: "bmfont", fontSize: 38 });
 		this.flagsCount._anchor.set(0, 0.5);
 		this.flagsCount.x = 38;
 		this.flagsCount.y = -24;
@@ -48,7 +48,7 @@ export class MSUi extends Component<MSApp> {
 		this.timeGraphic.scale.set(0.75);
 		this.timeGraphic.y = -22;
 
-		this.timeCount = new GameText(this.app, { fontName: "bmfont", fontSize: 38 });
+		this.timeCount = new BmText(this.app, { fontName: "bmfont", fontSize: 38 });
 		this.timeCount._anchor.set(0, 0.5);
 		this.timeCount.x = 38;
 		this.timeCount.y = -24;

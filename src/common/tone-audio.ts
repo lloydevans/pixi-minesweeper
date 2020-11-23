@@ -234,16 +234,17 @@ export class ToneAudio {
 		}
 
 		switch (type) {
+			default:
+			case "attack-release":
+				sampler.triggerAttackRelease(note, duration, time, volume);
+				break;
+
 			case "attack":
 				sampler.triggerAttack(note, time, volume);
 				break;
 
 			case "release":
 				sampler.triggerRelease(note, time);
-				break;
-
-			case "attack-release":
-				sampler.triggerAttackRelease(note, duration, time, volume);
 				break;
 		}
 	}
@@ -252,12 +253,12 @@ export class ToneAudio {
 	 *
 	 * @param config
 	 */
-	public async playMidi(midiUrl: string) {
+	public async playMidi(url: string) {
 		if (this.currentMidiData) {
 			return;
 		}
 
-		const midi = await Midi.fromUrl(midiUrl);
+		const midi = await Midi.fromUrl(url);
 
 		this.currentMidiData = midi;
 

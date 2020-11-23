@@ -12,7 +12,7 @@ export class MSGrid extends Component<MSApp> {
 	 * @param cell - Cell to animate outwards from.
 	 * @param cb - Runs once for each cell. One cell per round updated must return true to continue the animation.
 	 */
-	public async animateUpdateFrom(cell: MSCellState, delay = 80, cb = this.cellUpdateCb): Promise<void> {
+	public async animateUpdateFrom(cell: MSCellState, delay = 66, cb = this.cellUpdateCb): Promise<void> {
 		this.interactiveChildren = false;
 
 		const maxSide = Math.max(this.app.state.width, this.app.state.height);

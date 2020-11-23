@@ -2,7 +2,7 @@ import clamp from "lodash-es/clamp";
 import { Container, Texture } from "pixi.js-legacy";
 import { AppBase } from "./app-base";
 import { UiButton } from "./ui-button";
-import { GameText } from "./game-text";
+import { BmText } from "./bm-text";
 
 export interface ButtonScrollerOptions {
 	arrowTexture: Texture;
@@ -47,10 +47,10 @@ export class UiButtonScroller extends Container {
 		return this._default;
 	}
 
-	private number: GameText;
+	private number: BmText;
 	private buttonLeft: UiButton;
 	private buttonRight: UiButton;
-	private label: GameText;
+	private label: BmText;
 
 	constructor(app: AppBase, options: ButtonScrollerOptions) {
 		super();
@@ -69,10 +69,10 @@ export class UiButtonScroller extends Container {
 		this.buttonRight = new UiButton(this.app, { texture: options.arrowTexture });
 		this.buttonRight.x = 64;
 
-		this.number = new GameText(this.app, { text: this.default.toString(), fontName: "bmfont", fontSize: 38 });
+		this.number = new BmText(this.app, { text: this.default.toString(), fontName: "bmfont", fontSize: 38 });
 		this.number._anchor.set(0.5);
 
-		this.label = new GameText(this.app, { text: options.label, fontName: "bmfont", fontSize: 38 });
+		this.label = new BmText(this.app, { text: options.label, fontName: "bmfont", fontSize: 38 });
 		this.label._anchor.set(1, 0.5);
 		this.label.position.set(-106, 0);
 

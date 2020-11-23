@@ -9,11 +9,17 @@ export class UiElement<T extends AppBase = AppBase> extends Component<T> {
 	constructor(app: T) {
 		super(app);
 
-		this.app.registerUiElement(this);
+		this.on("pointertap", () => {
+			this.focus();
+		});
 
-		this.on("pointertap", () => this.focus());
+		this.once("init", () => {
+			this.app.registerUiElement(this);
+		});
 
-		this.once("destroy", () => this.app.unregisterUiElement(this));
+		this.once("destroy", () => {
+			this.app.unregisterUiElement(this);
+		});
 	}
 
 	public focus() {
