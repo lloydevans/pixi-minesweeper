@@ -392,6 +392,22 @@ export class MSState {
 	}
 
 	/**
+	 * Toggle flag existence at given coords.
+	 *
+	 * @param x - X coord
+	 * @param y - Y coord
+	 */
+	public toggleFlag(x: number, y: number) {
+		const cell = this.cellAt(x, y);
+
+		if (!cell) {
+			throw new Error(`Can't find cell at ${x},${y}`);
+		}
+
+		cell.flag = !cell.flag;
+	}
+
+	/**
 	 * Clear flag at given coords.
 	 *
 	 * @param x - X coord
