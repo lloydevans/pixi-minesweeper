@@ -9,6 +9,7 @@ import { MSStyleConfig, MS_STYLE_DEFAULT, MSGameConfig } from "./ms-config";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MSState } from "./ms-state";
 import { SceneGame } from "./scene-game";
 import { SceneMenu } from "./scene-menu";
+import { functions, db } from "./firebase";
 
 /**
  * Core App class.
@@ -83,16 +84,17 @@ export class MSApp extends AppBase {
 	 *
 	 * @param config
 	 */
-	public showGame(config: MSGameConfig) {
+	public async showGame(config: MSGameConfig) {
+		const gameId = (await functions.httpsCallable("newGame")(config)).data;
 		Object.values(this.scenes).forEach((el) => el?.destroy());
-		this.scenes.game = new SceneGame(this, config);
+		this.scenes.game = new SceneGame(this, config, gameId);
 		this.root.addChild(this.scenes.game);
 	}
 
 	/**
 	 *
 	 */
-	public showMenu() {
+	public async showMenu() {
 		Object.values(this.scenes).forEach((el) => el?.destroy());
 		this.scenes.menu = new SceneMenu(this);
 		this.root.addChild(this.scenes.menu);

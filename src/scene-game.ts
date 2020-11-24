@@ -3,18 +3,16 @@ import * as PIXI from "pixi.js-legacy";
 import { hexToNum } from "./common/color";
 import { Ease } from "./common/ease";
 import { Scene } from "./common/scene";
-import { analytics, db, auth } from "./firebase";
+import { auth, db, functions } from "./firebase";
 import { MSApp } from "./ms-app";
 import { MSBg } from "./ms-bg";
-import { REF_HEIGHT, REF_WIDTH, MSCell } from "./ms-cell";
+import { MSCell, REF_HEIGHT, REF_WIDTH } from "./ms-cell";
 import { CELL_STATE_DEFAULT, MSCellState } from "./ms-cell-state";
 import type { MSGameConfig } from "./ms-config";
 import { MSGrid } from "./ms-grid";
+import { MSStateClientJson } from "./ms-state";
 import { MSTouchUi } from "./ms-touch-ui";
 import { MSUi } from "./ms-ui";
-import { MSStateClientJson } from "./ms-state";
-
-export const GAME_ID = "87uwff7" + ((Math.random() * 100000) | 0);
 
 export class SceneGame extends Scene<MSApp> {
 	public get currentTime() {
@@ -34,11 +32,14 @@ export class SceneGame extends Scene<MSApp> {
 	private touchUi = new MSTouchUi(this.app);
 	private ui = new MSUi(this.app);
 	private bg = new MSBg(this.app);
+	private gameId: string;
 
-	constructor(app: MSApp, config: MSGameConfig) {
+	constructor(app: MSApp, config: MSGameConfig, gameId: string) {
 		super(app);
 
 		this.config = config;
+
+		this.gameId = gameId;
 
 		this.app.state.initGame(config);
 	}
@@ -68,7 +69,43 @@ export class SceneGame extends Scene<MSApp> {
 
 		await this.delay(100);
 
+		db.collection("accounts")
+			.doc(auth.currentUser!.uid)
+			.collection("games_client")
+			.doc(this.gameId)
+			.onSnapshot((doc) => {
+				const data = doc.data() as MSStateClientJson;
+				if (data?.cells) {
+					this.app.state.parseClientJsonObject(data);
+				}
+
+				this.emit("boardstate", data);
+			});
+
 		this.newGame(this.config);
+	}
+
+	/**
+	 * Start a new game with given config.
+	 *
+	 * @param config
+	 */
+	public async newGame(config: MSGameConfig) {
+		// analytics.logEvent("new_game", this.app.state.config);
+
+		this.grid.setInteractionEnabled(false);
+
+		this.time = 0;
+		this.tweenGroup.reset();
+		this.config = { ...config };
+		this.isFirstClick = true;
+		this.touchUi.hide();
+
+		await this.initGrid();
+
+		this.timeActive = true;
+
+		this.grid.setInteractionEnabled(true);
 	}
 
 	/**
@@ -269,56 +306,6 @@ export class SceneGame extends Scene<MSApp> {
 	}
 
 	/**
-	 * Start a new game with given config.
-	 *
-	 * @param config
-	 */
-	public async newGame(config: MSGameConfig) {
-		analytics.logEvent("new_game", this.app.state.config);
-		this.grid.setInteractionEnabled(false);
-
-		this.time = 0;
-		this.tweenGroup.reset();
-		this.config = { ...config };
-		this.isFirstClick = true;
-		this.touchUi.hide();
-		let res;
-
-		try {
-			res = await db //
-				.collection("accounts")
-				.doc(auth.currentUser!.uid)
-				.collection("games_client")
-				.doc(GAME_ID)
-				.set({ config });
-		} catch (error) {
-			var errorCode = error.code;
-			var errorMessage = error.message;
-			console.log(errorCode, errorMessage);
-		}
-
-		await this.initGrid();
-
-		db.collection("accounts")
-			.doc(auth.currentUser!.uid)
-			.collection("games_client")
-			.doc(GAME_ID)
-			.onSnapshot((doc) => {
-				const data = doc.data() as MSStateClientJson;
-
-				if (data?.cells) {
-					this.app.state.parseClientJsonObject(data);
-				}
-
-				this.emit("boardstate", data);
-			});
-
-		this.timeActive = true;
-
-		this.grid.setInteractionEnabled(true);
-	}
-
-	/**
 	 *
 	 */
 	public screenShake(amp = 8, duration = 0.75, hz = 16) {
@@ -378,12 +365,11 @@ export class SceneGame extends Scene<MSApp> {
 		// TODO: Offline mode
 		// result = this.app.state.select(x, y);
 
-		return db //
-			.collection("accounts")
-			.doc(auth.currentUser!.uid)
-			.collection("games_moves")
-			.doc(GAME_ID)
-			.set({ x, y, flag });
+		return functions.httpsCallable("newMove")({ x, y, flag });
+	}
+
+	private log(...args: any[]) {
+		console.log(...args);
 	}
 
 	/**
@@ -397,19 +383,23 @@ export class SceneGame extends Scene<MSApp> {
 		const y = msCell.iy;
 
 		if (this.isFirstClick) {
+			this.log("First click");
 			this.isFirstClick = false;
 		}
 
 		// Set move.
 		try {
+			this.log("Set move", x, y);
 			await this.setMove(x, y);
 		} catch (error) {
 			console.log(error.code, error.message);
 		}
 
 		// Wait for board state.
+		this.log("Wait for board update");
 		await this.waitForBoardStateUpdate();
 
+		this.log("Board updated");
 		// Get an array of cell coords which were uncovered by the last move.
 		const result = this.app.state.lastMove!.uncovered;
 
@@ -434,6 +424,7 @@ export class SceneGame extends Scene<MSApp> {
 
 		// Lose state
 		if (this.app.state.isLose()) {
+			this.log("Lose state");
 			if (cellState.flag) {
 				this.app.state.clearFlag(x, y);
 			}
@@ -447,11 +438,13 @@ export class SceneGame extends Scene<MSApp> {
 
 		// Win state
 		else if (this.app.state.isWin()) {
+			this.log("Win state");
 			this.animateWin();
 		}
 
 		// Continue state
 		else {
+			this.log("Continue state");
 			this.grid.setInteractionEnabled(true);
 		}
 	}
@@ -460,7 +453,7 @@ export class SceneGame extends Scene<MSApp> {
 	 * Animate win.
 	 */
 	private async animateWin() {
-		analytics.logEvent("win_game", this.app.state.config);
+		// analytics.logEvent("win_game", this.app.state.config);
 
 		this.endGame();
 
@@ -499,7 +492,7 @@ export class SceneGame extends Scene<MSApp> {
 	 * Animate loss.
 	 */
 	private async animateLose(firstMine: MSCellState) {
-		analytics.logEvent("lose_game", this.app.state.config);
+		// analytics.logEvent("lose_game", this.app.state.config);
 
 		this.endGame();
 
