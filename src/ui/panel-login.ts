@@ -4,6 +4,7 @@ import { MSApp } from "../ms-app";
 import { UiButtonText } from "../common/ui-button-text";
 import { UiTextInputDom } from "../common/ui-text-input-dom";
 import { auth } from "../firebase";
+import { ColorSchemes, hexToNum } from "../common/color";
 
 export class PanelLogin extends Component<MSApp> {
 	inputUsername!: UiTextInputDom;
@@ -42,36 +43,37 @@ export class PanelLogin extends Component<MSApp> {
 		});
 
 		this.buttonPrimary = new UiButtonText(this.app, {
-			backTexture: this.app.getFrame("textures", "button-long"),
+			textureDown: this.app.getFrame("textures", "button-down"),
+			textureUp: this.app.getFrame("textures", "button-up"),
 			text: "LOGIN",
 		});
-		this.buttonPrimary.scale.set(0.75);
+		this.buttonPrimary.tint = hexToNum(ColorSchemes.beachRainbow.red);
 		this.buttonPrimary.accessible = true;
 
 		this.buttonSecondary = new UiButtonText(this.app, {
-			backTexture: PIXI.Texture.EMPTY,
+			textureUp: PIXI.Texture.EMPTY,
+			textureDown: PIXI.Texture.EMPTY,
 			text: "Create account",
 			fontSize: 24,
 		});
-		this.buttonSecondary.scale.set(0.75);
 		this.buttonSecondary.accessible = true;
 		this.buttonSecondary.hitArea = new PIXI.Rectangle(-128, -24, 256, 48);
 
 		this.buttonPlayAsGuest = new UiButtonText(this.app, {
-			backTexture: PIXI.Texture.EMPTY,
+			textureUp: PIXI.Texture.EMPTY,
+			textureDown: PIXI.Texture.EMPTY,
 			text: "Play as guest",
 			fontSize: 24,
 		});
-		this.buttonPlayAsGuest.scale.set(0.75);
 		this.buttonPlayAsGuest.accessible = true;
 		this.buttonPlayAsGuest.hitArea = new PIXI.Rectangle(-128, -24, 256, 48);
 
 		this.buttonForgotPword = new UiButtonText(this.app, {
-			backTexture: PIXI.Texture.EMPTY,
+			textureUp: PIXI.Texture.EMPTY,
+			textureDown: PIXI.Texture.EMPTY,
 			text: "Forgot password?",
 			fontSize: 24,
 		});
-		this.buttonForgotPword.scale.set(0.75);
 		this.buttonForgotPword.accessible = true;
 
 		this.error.y = 60;
@@ -95,36 +97,32 @@ export class PanelLogin extends Component<MSApp> {
 		this.addChild(this.error);
 
 		this.buttonPrimary.on("pointertap", async () => {
-			this.interactiveChildren = false;
+			this.app.setAllUiElementsActive(false);
 
 			let email = this.inputEmail.value;
 			let username = this.inputUsername.value;
 			let password = this.inputPassword.value;
 
-			if (this.menuState === "create") {
-				try {
+			try {
+				if (this.menuState === "create") {
 					const result = await auth.createUserWithEmailAndPassword(email, password);
-					await result?.user?.updateProfile({ displayName: username });
-					// await auth.sendSignInLinkToEmail(email, {
-					// 	url: "http://localhost:8080",
-					// 	handleCodeInApp: true,
-					// });
-				} catch (error) {
-					this.error.text = error.message;
-				}
-			} else {
-				try {
+					await result!.user!.updateProfile({ displayName: username });
+				} else {
 					await auth.signInWithEmailAndPassword(this.inputEmail.value, this.inputPassword.value);
-				} catch (error) {
-					this.error.text = error.message;
 				}
+				this.visible = false;
+			} catch (error) {
+				this.error.text = error.message;
+				this.app.setAllUiElementsActive(true);
 			}
 
-			this.interactiveChildren = true;
+			this.emit("login");
 		});
 
+		this.inputEmail.on("input", this.onInput, this);
+		this.inputUsername.on("input", this.onInput, this);
+		this.inputPassword.on("input", this.onInput, this);
 		this.buttonForgotPword.on("pointertap", () => {
-			// this.showForgotPword();
 			auth.signOut();
 		});
 
@@ -143,7 +141,7 @@ export class PanelLogin extends Component<MSApp> {
 		this.showLogin();
 	}
 
-	update(dt: number) {
+	onInput() {
 		switch (this.menuState) {
 			case "create":
 				this.buttonPrimary.active = !!(this.inputUsername.value && this.inputEmail.value && this.inputPassword.value);

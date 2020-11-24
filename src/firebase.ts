@@ -45,9 +45,7 @@ export async function setPersistence() {
 	try {
 		await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 	} catch (error) {
-		var errorCode = error.code;
-		var errorMessage = error.message;
-		console.log(errorCode, errorMessage);
+		console.log(error.cove, error.message);
 	}
 }
 

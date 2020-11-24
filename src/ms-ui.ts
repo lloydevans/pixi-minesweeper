@@ -53,10 +53,16 @@ export class MSUi extends Component<MSApp> {
 		this.timeCount.x = 38;
 		this.timeCount.y = -24;
 
-		this.buttonCross = new UiButton(this.app, { texture: this.app.getFrame("textures", "button-cross") });
+		this.buttonCross = new UiButton(this.app, {
+			textureUp: this.app.getFrame("textures", "button-cross"),
+			textureDown: this.app.getFrame("textures", "button-cross"),
+		});
 		this.buttonCross.on("pointertap", () => this.emit("close"));
 
-		this.buttonRestart = new UiButton(this.app, { texture: this.app.getFrame("textures", "button-restart") });
+		this.buttonRestart = new UiButton(this.app, {
+			textureUp: this.app.getFrame("textures", "button-restart"),
+			textureDown: this.app.getFrame("textures", "button-restart"),
+		});
 		this.buttonRestart.on("pointertap", () => this.emit("restart"));
 
 		this.timeContainer.addChild(this.timeGraphic);

@@ -5,11 +5,13 @@ import { AppBase } from "./app-base";
 import { UiElement } from "./ui-element";
 
 export interface ButtonOptions {
-	texture: PIXI.Texture;
+	textureDown: PIXI.Texture;
+	textureUp: PIXI.Texture;
 }
 
 export const ButtonOptionDefaults = {
-	texture: PIXI.Texture.WHITE,
+	textureDown: PIXI.Texture.WHITE,
+	textureUp: PIXI.Texture.WHITE,
 };
 
 /**
@@ -19,30 +21,20 @@ export class UiButton extends UiElement {
 	protected back: PIXI.Sprite;
 	private config: ButtonOptions;
 
-	private _active = true;
-	public get active() {
-		return this._active;
+	public get tint() {
+		return this.back.tint;
 	}
-	public set active(value: boolean) {
-		if (value !== this._active) {
-			this._active = value;
-			if (this._active) {
-				this.back.alpha = 1;
-			} else {
-				this.back.alpha = 0.5;
-			}
-			this.interactive = this._active;
-			this.buttonMode = this._active;
-		}
+	public set tint(value: number) {
+		this.back.tint = value;
 	}
 
-	constructor(app: AppBase, config: Partial<ButtonOptions> = {}) {
+	constructor(app: AppBase, config: ButtonOptions) {
 		super(app);
 
 		this.app = app;
 		this.config = defaults(config, ButtonOptionDefaults);
 
-		this.back = PIXI.Sprite.from(this.config.texture);
+		this.back = PIXI.Sprite.from(this.config.textureUp);
 		this.back.anchor.set(0.5);
 
 		this.addChild(this.back);
@@ -92,7 +84,7 @@ export class UiButton extends UiElement {
 	 * @param e
 	 */
 	protected onPointerOut(e: PIXI.InteractionEvent) {
-		this.alpha = 1;
+		this.back.texture = this.config.textureUp;
 	}
 
 	/**
@@ -100,7 +92,7 @@ export class UiButton extends UiElement {
 	 * @param e
 	 */
 	protected onPointerOver(e: PIXI.InteractionEvent) {
-		this.alpha = 0.5;
+		this.back.texture = this.config.textureUp;
 	}
 
 	/**
@@ -108,11 +100,11 @@ export class UiButton extends UiElement {
 	 * @param e
 	 */
 	protected async onPointerUp(e: PIXI.InteractionEvent) {
-		this.alpha = 1;
+		this.back.texture = this.config.textureUp;
 
 		if (Tone.context.state === "running") {
 			// TODO: Configuration.
-			this.app.audio.play("blop", { transpose: 24, delay: 0.05 });
+			this.app.audio.play("blop", { transpose: 24, delay: 0.01 });
 		}
 	}
 
@@ -121,7 +113,7 @@ export class UiButton extends UiElement {
 	 * @param e
 	 */
 	protected async onPointerDown(e: PIXI.InteractionEvent) {
-		this.alpha = 0.5;
+		this.back.texture = this.config.textureDown;
 
 		if (Tone.context.state === "running") {
 			// TODO: Configuration.

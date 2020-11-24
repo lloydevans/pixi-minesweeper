@@ -55,9 +55,24 @@ export class UiTextInputDom extends UiElement<AppBase> {
 		this.input.style.border = "0";
 		this.input.style.margin = "0";
 
+		const onInputCb = this.onInput.bind(this);
+		this.input.addEventListener("input", onInputCb);
 		this.once("destroy", () => {
+			this.input.removeEventListener("input", onInputCb);
 			this.input.parentElement?.removeChild(this.input);
 		});
+
+		this.on("active", (active: boolean) => {
+			if (active) {
+				this.input.disabled = false;
+			} else {
+				this.input.disabled = true;
+			}
+		});
+	}
+
+	private onInput(e: Event) {
+		this.emit("input", e);
 	}
 
 	protected init() {

@@ -6,6 +6,7 @@ import { Tween } from "./tween";
 import { TweenGroup } from "./tween-group";
 import { TweenProps } from "./tween-props";
 import { UiElement } from "./ui-element";
+import { UiButton } from "./ui-button";
 
 export const MAX_DPR = 4;
 export const MIN_DPR = 0.5;
@@ -31,21 +32,6 @@ export class AppBase extends PIXI.Application {
 	 *
 	 */
 	public readonly audio = new ToneAudio();
-
-	/**
-	 * Global app tween group.
-	 */
-	protected readonly tweenGroup = new TweenGroup(false, 1);
-
-	/**
-	 * Root container.
-	 */
-	protected readonly root = new PIXI.Container();
-
-	/**
-	 *
-	 */
-	protected readonly uiElements: UiElement[] = [];
 
 	/**
 	 * Current app ready state. Modified via setReady,
@@ -74,6 +60,21 @@ export class AppBase extends PIXI.Application {
 	public get height() {
 		return this._height;
 	}
+
+	/**
+	 * Global app tween group.
+	 */
+	protected readonly tweenGroup = new TweenGroup(false, 1);
+
+	/**
+	 * Root container.
+	 */
+	protected readonly root = new PIXI.Container();
+
+	/**
+	 *
+	 */
+	protected readonly uiElements: UiElement[] = [];
 
 	private _dpr = 1;
 	private _width = 0;
@@ -220,8 +221,19 @@ export class AppBase extends PIXI.Application {
 		for (let i = 0; i < this.uiElements.length; i++) {
 			const el = this.uiElements[i];
 			if (el.focused) {
-				el.blur();
+				el.focused = false;
 			}
+		}
+	}
+
+	/**
+	 *
+	 * @param element
+	 */
+	public setAllUiElementsActive(active: boolean) {
+		for (let i = 0; i < this.uiElements.length; i++) {
+			const el = this.uiElements[i];
+			el.active = active;
 		}
 	}
 

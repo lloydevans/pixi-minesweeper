@@ -1,14 +1,20 @@
 /**
  *
  */
-export type MSCellStateSerialized = [
-	// Covered
-	boolean,
-	// Mine
-	boolean,
-	// Flag
-	boolean
-];
+export enum MSCellType {
+	Covered,
+	Flag,
+	Empty,
+	Mine,
+	Adjacent1,
+	Adjacent2,
+	Adjacent3,
+	Adjacent4,
+	Adjacent5,
+	Adjacent6,
+	Adjacent7,
+	Adjacent8,
+}
 
 /**
  *

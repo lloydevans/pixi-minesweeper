@@ -1,10 +1,10 @@
 import clamp from "lodash-es/clamp";
-import isEqual from "lodash-es/isEqual";
 import * as PIXI from "pixi.js-legacy";
+import { BmText } from "./common/bm-text";
 import { hexToNum } from "./common/color";
 import { Component } from "./common/component";
-import { BmText } from "./common/bm-text";
 import { Spine } from "./common/spine";
+import { shallowObjectEquals } from "./common/utils";
 import { MSApp } from "./ms-app";
 import { CELL_STATE_DEFAULT } from "./ms-cell-state";
 import type { MSCellState } from "./ms-cell-state";
@@ -40,7 +40,7 @@ export class MSCell extends Component<MSApp> {
 	}
 
 	private anim: Spine;
-	private state: MSCellState;
+	private state!: MSCellState;
 	private viewState: MSCellState;
 	private adjacentText: BmText;
 
@@ -51,7 +51,6 @@ export class MSCell extends Component<MSApp> {
 	constructor(app: MSApp) {
 		super(app);
 
-		this.state = { ...CELL_STATE_DEFAULT };
 		this.viewState = { ...CELL_STATE_DEFAULT };
 
 		this.anim = new Spine(this.app.getSpine("grid-square"));
@@ -75,11 +74,7 @@ export class MSCell extends Component<MSApp> {
 	 */
 	public setState(state: MSCellState) {
 		this.state = state;
-
-		// @ts-ignore // Missing type.
-		this.tabIndex = this.app.state.indexOf(this.ix, this.iy);
-		this.accessibleHint = `cell:${this.ix},${this.iy}`;
-		this.reset();
+		this.reset(this.state);
 		this.updateViewState();
 		this.updateGridPosition();
 		this.updateEdgeSprites();
@@ -89,9 +84,9 @@ export class MSCell extends Component<MSApp> {
 	/**
 	 *
 	 */
-	public reset() {
+	public reset(state: MSCellState) {
 		// TODO: Clear tracks instead of hidden states?
-		const coverType = (this.state.x + this.state.y) % 2 === 0 ? "even" : "odd";
+		const coverType = (state.x + state.y) % 2 === 0 ? "even" : "odd";
 		this.anim.state.setAnimation(AnimTrack.FillColor, "fill-" + coverType, false);
 		this.anim.state.setAnimation(AnimTrack.Flag, "flag-hidden", false);
 		this.anim.state.setAnimation(AnimTrack.Mine, "mine-hidden", false);
@@ -118,7 +113,7 @@ export class MSCell extends Component<MSApp> {
 	 * Check if the cell needs its viewstate updated.
 	 */
 	public needsUpdate(): boolean {
-		return !isEqual(this.state, this.viewState);
+		return !shallowObjectEquals(this.state, this.viewState);
 	}
 
 	/**
@@ -173,7 +168,9 @@ export class MSCell extends Component<MSApp> {
 	 *
 	 * @param state
 	 */
-	public updateViewState(state: MSCellState = this.state) {
+	public updateViewState() {
+		const state: MSCellState = this.state;
+
 		if (state.flag !== this.viewState.flag) {
 			this.setFlagEnabled(state.flag);
 		}
@@ -251,6 +248,7 @@ export class MSCell extends Component<MSApp> {
 	 */
 	public setMineEnabled(enabled = true) {
 		this.viewState.mine = enabled;
+
 		if (enabled) {
 			this.anim.state.setAnimation(AnimTrack.Mine, "mine-explode", false);
 		} else {

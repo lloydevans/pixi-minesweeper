@@ -4,13 +4,44 @@ import { Component } from "./component";
 /**
  */
 export class UiElement<T extends AppBase = AppBase> extends Component<T> {
-	public focused = false;
+	public get focused() {
+		return this._active;
+	}
+	public set focused(value: boolean) {
+		if (value !== this._focused) {
+			this._focused = value;
+			if (this._focused) {
+				this.app.blurAllUiElements();
+			}
+			this.emit("focus", this._focused);
+		}
+	}
+
+	public get active() {
+		return this._active;
+	}
+	public set active(value: boolean) {
+		if (value !== this._active) {
+			this._active = value;
+			if (this._active) {
+				this.alpha = 1;
+			} else {
+				this.alpha = 0.5;
+			}
+			this.emit("active", this._active);
+			this.interactive = this._active;
+			this.buttonMode = this._active;
+		}
+	}
+
+	private _active = true;
+	private _focused = true;
 
 	constructor(app: T) {
 		super(app);
 
 		this.on("pointertap", () => {
-			this.focus();
+			this.focused = true;
 		});
 
 		this.once("init", () => {
@@ -20,16 +51,5 @@ export class UiElement<T extends AppBase = AppBase> extends Component<T> {
 		this.once("destroy", () => {
 			this.app.unregisterUiElement(this);
 		});
-	}
-
-	public focus() {
-		this.app.blurAllUiElements();
-		this.focused = true;
-		this.emit("focus");
-	}
-
-	public blur() {
-		this.focused = false;
-		this.emit("blur");
 	}
 }

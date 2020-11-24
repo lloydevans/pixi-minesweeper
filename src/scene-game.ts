@@ -3,16 +3,18 @@ import * as PIXI from "pixi.js-legacy";
 import { hexToNum } from "./common/color";
 import { Ease } from "./common/ease";
 import { Scene } from "./common/scene";
-import { analytics } from "./firebase";
+import { analytics, db, auth } from "./firebase";
 import { MSApp } from "./ms-app";
 import { MSBg } from "./ms-bg";
 import { REF_HEIGHT, REF_WIDTH, MSCell } from "./ms-cell";
 import { CELL_STATE_DEFAULT, MSCellState } from "./ms-cell-state";
 import type { MSGameConfig } from "./ms-config";
 import { MSGrid } from "./ms-grid";
-import { PanelGameOptions } from "./ui/panel-game-options";
 import { MSTouchUi } from "./ms-touch-ui";
 import { MSUi } from "./ms-ui";
+import { MSStateClientJson } from "./ms-state";
+
+export const GAME_ID = "87uwff7" + ((Math.random() * 100000) | 0);
 
 export class SceneGame extends Scene<MSApp> {
 	public get currentTime() {
@@ -21,8 +23,7 @@ export class SceneGame extends Scene<MSApp> {
 
 	private time = 0;
 	private timeActive = false;
-	private transitionIdx = 0;
-	private gameConfig!: MSGameConfig;
+	private config: MSGameConfig;
 	private board = PIXI.Sprite.from(PIXI.Texture.WHITE);
 	private cellWidth = REF_WIDTH;
 	private cellHeight = REF_HEIGHT;
@@ -31,37 +32,29 @@ export class SceneGame extends Scene<MSApp> {
 	private gridBack?: PIXI.TilingSprite;
 	private grid = new MSGrid(this.app);
 	private touchUi = new MSTouchUi(this.app);
-	private menu = new PanelGameOptions(this.app);
 	private ui = new MSUi(this.app);
 	private bg = new MSBg(this.app);
+
+	constructor(app: MSApp, config: MSGameConfig) {
+		super(app);
+
+		this.config = config;
+
+		this.app.state.initGame(config);
+	}
 
 	/**
 	 *
 	 */
-	protected init() {
-		this.grid.interactiveChildren = false;
+	protected async init() {
+		// @ts-ignore
+		window.game = this;
+
+		this.grid.setInteractionEnabled(false);
 
 		this.gridBack = new PIXI.TilingSprite(this.app.getFrame("tiles", "back-0"));
 
 		this.board.tint = hexToNum(this.app.style.colorBoard);
-
-		this.menu.on("start", (config: MSGameConfig) => {
-			this.newGame(config);
-			this.showGame();
-		});
-
-		this.menu.on("preview", (config: MSGameConfig) => {
-			this.previewGame(config);
-		});
-
-		this.ui.on("close", () => {
-			this.showMenu();
-		});
-
-		this.ui.on("restart", () => {
-			this.app.audio.play("dirt-thud-0", { delay: 0.005, transpose: 12 });
-			this.newGame(this.gameConfig);
-		});
 
 		this.ui.visible = false;
 
@@ -72,7 +65,17 @@ export class SceneGame extends Scene<MSApp> {
 		this.addChild(this.container);
 		this.addChild(this.ui);
 		this.addChild(this.touchUi);
-		this.addChild(this.menu);
+
+		await this.delay(100);
+
+		this.newGame(this.config);
+	}
+
+	/**
+	 *
+	 */
+	private waitForBoardStateUpdate(): Promise<MSStateClientJson> {
+		return new Promise((resolve) => this.once("boardstate", resolve));
 	}
 
 	/**
@@ -142,8 +145,6 @@ export class SceneGame extends Scene<MSApp> {
 	 *
 	 */
 	private async initGrid() {
-		this.transitionIdx = (this.transitionIdx + 1) % 3;
-
 		this.grid.removeChildren().forEach((el) => {
 			el.off("pointertap", this.onPointerTap, this);
 			el.off("pointerdown", this.onPointerDown, this);
@@ -158,10 +159,10 @@ export class SceneGame extends Scene<MSApp> {
 			const [x, y] = this.app.state.coordsOf(i);
 			const msCell = this.app.getCellView(x, y);
 			this.grid.addChild(msCell);
-			this.app.cellPool[i].setState({
-				...CELL_STATE_DEFAULT,
-				...{ x, y, covered: false },
-			});
+
+			// Temporarily give the cell this state for animation purposes.
+			msCell.setState({ ...CELL_STATE_DEFAULT, ...{ x, y, covered: false } });
+
 			msCell.on("pointertap", this.onPointerTap, this);
 			msCell.on("pointerdown", this.onPointerDown, this);
 			msCell.on("pointerout", this.onPointerOut, this);
@@ -169,7 +170,7 @@ export class SceneGame extends Scene<MSApp> {
 
 		await this.delay(250);
 
-		await this.transitionCells();
+		await this.grid.noiseWipe();
 	}
 
 	/**
@@ -263,19 +264,7 @@ export class SceneGame extends Scene<MSApp> {
 			case "mouse":
 				msCell.animatePlaceFlagCancel();
 				msCell.animateDigCancel();
-
 				break;
-		}
-	}
-
-	/**
-	 *
-	 */
-	private transitionCells() {
-		switch (this.transitionIdx) {
-			default:
-			case 0:
-				return this.grid.noiseWipe();
 		}
 	}
 
@@ -284,22 +273,49 @@ export class SceneGame extends Scene<MSApp> {
 	 *
 	 * @param config
 	 */
-	public async newGame(config: MSGameConfig = this.gameConfig) {
-		this.tweenGroup.reset();
+	public async newGame(config: MSGameConfig) {
+		analytics.logEvent("new_game", this.app.state.config);
+		this.grid.setInteractionEnabled(false);
 
 		this.time = 0;
-		this.app.state.init(config);
-		this.grid.interactiveChildren = false;
-		this.gameConfig = { ...config };
+		this.tweenGroup.reset();
+		this.config = { ...config };
 		this.isFirstClick = true;
 		this.touchUi.hide();
+		let res;
 
-		analytics.logEvent("new_game", this.app.state.config);
+		try {
+			res = await db //
+				.collection("accounts")
+				.doc(auth.currentUser!.uid)
+				.collection("games_client")
+				.doc(GAME_ID)
+				.set({ config });
+		} catch (error) {
+			var errorCode = error.code;
+			var errorMessage = error.message;
+			console.log(errorCode, errorMessage);
+		}
 
 		await this.initGrid();
 
+		db.collection("accounts")
+			.doc(auth.currentUser!.uid)
+			.collection("games_client")
+			.doc(GAME_ID)
+			.onSnapshot((doc) => {
+				const data = doc.data() as MSStateClientJson;
+
+				if (data?.cells) {
+					this.app.state.parseClientJsonObject(data);
+				}
+
+				this.emit("boardstate", data);
+			});
+
 		this.timeActive = true;
-		this.grid.interactiveChildren = true;
+
+		this.grid.setInteractionEnabled(true);
 	}
 
 	/**
@@ -338,41 +354,6 @@ export class SceneGame extends Scene<MSApp> {
 
 	/**
 	 *
-	 */
-	public showGame() {
-		this.app.audio.playMidi("minesweeper.mid");
-
-		this.tween(this.container.position).to({ y: 32 }, 300, Ease.sineInOut);
-		this.menu.visible = false;
-		this.grid.visible = true;
-		this.ui.visible = true;
-	}
-
-	/**
-	 *
-	 */
-	public showMenu() {
-		this.tween(this.container.position).to({ y: 0 }, 300, Ease.sineInOut);
-		this.menu.visible = true;
-		this.grid.visible = false;
-		this.ui.visible = false;
-	}
-
-	/**
-	 * Start a new game with given config.
-	 *
-	 * @param config
-	 */
-	public previewGame(config: MSGameConfig = this.gameConfig) {
-		this.app.state.init(config);
-		this.resize(this.app.width, this.app.height);
-		if (this.gridBack) {
-			this.gridBack.visible = true;
-		}
-	}
-
-	/**
-	 *
 	 * @param cellState
 	 */
 	public rightClick(cellState: MSCellState) {
@@ -393,22 +374,67 @@ export class SceneGame extends Scene<MSApp> {
 	/**
 	 *
 	 */
+	private setMove(x: number, y: number) {
+		// TODO: Offline mode
+		// result = this.app.state.select(x, y);
+
+		return db //
+			.collection("accounts")
+			.doc(auth.currentUser!.uid)
+			.collection("games_moves")
+			.doc(GAME_ID)
+			.set({ move: { x, y } });
+	}
+
+	/**
+	 *
+	 */
 	public async leftClick(cellState: MSCellState) {
+		this.grid.setInteractionEnabled(false);
+
 		const msCell = this.app.getCellView(cellState.x, cellState.y);
 		const x = msCell.ix;
 		const y = msCell.iy;
 
-		let result;
-
 		if (this.isFirstClick) {
 			this.isFirstClick = false;
-			result = this.app.state.selectFirst(x, y);
-		} //
-		else {
-			result = this.app.state.select(x, y);
 		}
 
-		if (cellState.mine) {
+		// Set move.
+		try {
+			await this.setMove(x, y);
+		} catch (error) {
+			console.log(error.code, error.message);
+		}
+
+		// Wait for board state.
+		await this.waitForBoardStateUpdate();
+
+		// Get an array of cell coords which were uncovered by the last move.
+		const result = this.app.state.lastMove!.uncovered;
+
+		this.audio.play("blop", { transpose: 12 });
+		this.audio.play("dirt-thud-2", { delay: 0.005, transpose: 12 });
+
+		if (result.length > 1) {
+			const s = result.length / this.app.state.totalCells;
+
+			this.screenShake(s * 8);
+
+			// Start sounds
+			this.audio.play("rumble", { type: "attack", volume: s });
+			this.audio.play("dirt-thud-0", { delay: 0.005, volume: s });
+
+			await this.grid.animateUpdateFrom(cellState);
+
+			this.audio.play("rumble", { type: "release" });
+		} else {
+			this.audio.play("dirt-thud-2", { delay: 0.005, transpose: 6, volume: 0.5 });
+			msCell.updateViewState();
+		}
+
+		// Lose state
+		if (this.app.state.isLose()) {
 			if (cellState.flag) {
 				this.app.state.clearFlag(x, y);
 			}
@@ -418,30 +444,17 @@ export class SceneGame extends Scene<MSApp> {
 
 			msCell.updateViewState();
 			this.animateLose(cellState);
-		} //
-		else {
-			this.audio.play("blop", { transpose: 12 });
-			this.audio.play("dirt-thud-2", { delay: 0.005, transpose: 12 });
-
-			if (result.length > 1) {
-				const s = result.length / this.app.state.totalCells;
-
-				this.screenShake(s * 8);
-
-				// Start sounds
-				this.audio.play("rumble", { type: "attack", volume: s });
-				this.audio.play("dirt-thud-0", { delay: 0.005, volume: s });
-
-				await this.grid.animateUpdateFrom(cellState);
-
-				this.audio.play("rumble", { type: "release" });
-			} else {
-				this.audio.play("dirt-thud-2", { delay: 0.005, transpose: 6, volume: 0.5 });
-				msCell.updateViewState();
-			}
 		}
 
-		this.checkWin();
+		// Win state
+		else if (this.app.state.isWin()) {
+			this.animateWin();
+		}
+
+		// Continue state
+		else {
+			this.grid.setInteractionEnabled(true);
+		}
 	}
 
 	/**
@@ -491,7 +504,7 @@ export class SceneGame extends Scene<MSApp> {
 
 		this.endGame();
 
-		const result = this.app.state.getLossData();
+		const result = this.app.state.getResultData();
 
 		result.incorrect.splice(result.incorrect.indexOf(firstMine), 1);
 		this.app.getCellView(firstMine.x, firstMine.y).animateResult();
@@ -532,15 +545,6 @@ export class SceneGame extends Scene<MSApp> {
 	 */
 	private endGame() {
 		this.timeActive = false;
-		this.grid.interactiveChildren = false;
-	}
-
-	/**
-	 *
-	 */
-	private checkWin() {
-		if (this.app.state.isWin()) {
-			this.animateWin();
-		}
+		this.grid.setInteractionEnabled(false);
 	}
 }

@@ -7,6 +7,15 @@ export class MSGrid extends Component<MSApp> {
 	children: MSCell[] = [];
 
 	/**
+	 * Enable and disable interactions on the game grid.
+	 *
+	 * @param enabled - Enabled state
+	 */
+	public setInteractionEnabled(enabled = true) {
+		this.interactiveChildren = enabled;
+	}
+
+	/**
 	 * Animate cell updates outwards from a target position.
 	 *
 	 * @param cell - Cell to animate outwards from.

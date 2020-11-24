@@ -24,13 +24,15 @@ export class MSTouchUi extends Component<MSApp> {
 		cursor.drawCircle(0, 0, 8);
 
 		this.buttonFlag = new UiButton(this.app, {
-			texture: this.app.getFrame("textures", "button-flag"),
+			textureUp: this.app.getFrame("textures", "button-flag"),
+			textureDown: this.app.getFrame("textures", "button-flag"),
 		});
 		this.buttonFlag.x = -64;
 		this.buttonFlag.y = 0;
 
 		this.buttonDig = new UiButton(this.app, {
-			texture: this.app.getFrame("textures", "button-dig"),
+			textureUp: this.app.getFrame("textures", "button-dig"),
+			textureDown: this.app.getFrame("textures", "button-dig"),
 		});
 		this.buttonDig.x = 0;
 		this.buttonDig.y = 64;

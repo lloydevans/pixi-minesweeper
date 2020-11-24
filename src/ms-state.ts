@@ -1,19 +1,41 @@
-import type { MSCellState } from "./ms-cell-state";
-import type { MSGameConfig } from "./ms-config";
-import * as PIXI from "pixi.js-legacy";
+import { shallowObjectEquals } from "./common/utils";
+import { MSCellState, MSCellType } from "./ms-cell-state";
+import { MSGameConfig } from "./ms-config";
 
 export const MIN_GRID_WIDTH = 4;
 export const MIN_GRID_HEIGHT = 4;
-export const MAX_GRID_WIDTH = PIXI.utils.isMobile.any ? 24 : 32;
-export const MAX_GRID_HEIGHT = PIXI.utils.isMobile.any ? 24 : 32;
+export const MAX_GRID_WIDTH = 24;
+export const MAX_GRID_HEIGHT = 24;
 export const MIN_EMPTY = 2;
 
 /**
  *
  */
-export interface LossData {
+export interface ResultData {
 	incorrect: MSCellState[];
 	correct: MSCellState[];
+}
+
+export interface MSStateJson {
+	config: MSGameConfig;
+	firstMove: boolean;
+	history: MoveData[];
+	cells: MSCellState[];
+}
+
+export interface MSStateClientJson {
+	config: MSGameConfig;
+	history: MoveData[];
+	firstMove: boolean;
+	cells: MSCellType[];
+	result?: MSCellState[];
+}
+
+export interface MoveData {
+	uncovered: { x: number; y: number }[];
+	flag: boolean;
+	x: number;
+	y: number;
 }
 
 /**
@@ -40,13 +62,33 @@ export class MSState {
 		return this.totalMines - this.totalFlags;
 	}
 
-	private cells: MSCellState[] = [];
+	private firstMove = false;
+
+	private readonly cells: MSCellState[] = [];
+
+	private readonly history: MoveData[] = [];
+
+	public get lastMove(): MoveData | undefined {
+		return this.history[0];
+	}
 
 	/**
+	 * Initialize a game from a game config object.
 	 *
-	 * @param config
+	 * @param config - Game config object.
 	 */
-	public init(config: MSGameConfig) {
+	public initGame(config: MSGameConfig) {
+		this.setConfig(config);
+		this.initCells();
+		this.firstMove = true;
+	}
+
+	/**
+	 * Set current game config object.
+	 *
+	 * @param config - Game config object.
+	 */
+	private setConfig(config: MSGameConfig) {
 		if (config.gridWidth < MIN_GRID_WIDTH) {
 			throw new Error("Grid width below " + MIN_GRID_WIDTH);
 		}
@@ -67,38 +109,17 @@ export class MSState {
 				`Too many mines (${config.startMines}) for grid size: ${config.gridWidth} x ${config.gridHeight}`
 			);
 		}
-
 		this.config = { ...config };
 		this.width = config.gridWidth;
 		this.height = config.gridHeight;
-
-		this.initCells();
-		this.shuffleMines(config.startMines);
-	}
-
-	/**
-	 *
-	 */
-	public reset() {
-		for (let x = 0; x < this.width; x++) {
-			for (let y = 0; y < this.height; y++) {
-				const cell = this.cells[this.indexOf(x, y)];
-				cell.x = x;
-				cell.y = y;
-				cell.adjacent = 0;
-				cell.mine = false;
-				cell.flag = false;
-				cell.covered = true;
-			}
-		}
-		this.shuffleMines(this.config.startMines);
 	}
 
 	/**
 	 * Initialize all cells.
 	 */
 	private initCells() {
-		this.cells = [];
+		this.cells.length = 0;
+
 		for (let x = 0; x < this.width; x++) {
 			for (let y = 0; y < this.height; y++) {
 				this.cells[this.indexOf(x, y)] = {
@@ -114,8 +135,222 @@ export class MSState {
 	}
 
 	/**
+	 * Clear and set the moves history.
 	 *
-	 * @param cb
+	 * @param moves - Array of MoveData onbjects.
+	 */
+	private setHistory(moves: MoveData[]) {
+		this.history.length = 0;
+		this.history.push(...moves);
+	}
+
+	/**
+	 * Add a move to the history list.
+	 *
+	 * @param moves - Array of MoveData onbjects.
+	 */
+	private addHistory(move: MoveData) {
+		this.history.unshift(move);
+	}
+
+	/**
+	 * Convert the current game state to server-side data.
+	 */
+	public toServerJsonObject(): MSStateJson {
+		return {
+			firstMove: this.firstMove,
+			history: this.history,
+			config: this.config,
+			cells: this.cells,
+		};
+	}
+
+	/**
+	 * Parse the current game state from server-side data.
+	 *
+	 * @param object - Server game state object revealing all info about the game.
+	 */
+	public parseServerJsonObject(object: MSStateJson) {
+		this.initGame(object.config);
+		this.firstMove = object.firstMove;
+		this.setHistory(object.history);
+		for (let i = 0; i < object.cells.length; i++) {
+			Object.assign(this.cells[i], object.cells[i]);
+		}
+	}
+
+	/**
+	 * Convert the current game state to client-safe data. When no more moves can be
+	 * done, the results can be included.
+	 *
+	 * @param includeResult - Include results?
+	 */
+	public toClientJsonObject(includeResult = false): MSStateClientJson {
+		const cells: MSCellType[] = [];
+
+		for (let i = 0; i < this.cells.length; i++) {
+			const el = this.cells[i];
+
+			if (el.covered && el.flag) {
+				cells.push(MSCellType.Flag);
+			} else if (el.covered) {
+				cells.push(MSCellType.Covered);
+			} else if (el.adjacent > 0) {
+				cells.push(MSCellType[("Adjacent" + el.adjacent) as keyof typeof MSCellType]);
+			} else if (!el.mine) {
+				cells.push(MSCellType.Empty);
+			} else {
+				cells.push(MSCellType.Mine);
+			}
+		}
+
+		let result;
+
+		if (includeResult) {
+			result = [...this.cells];
+		}
+
+		return {
+			firstMove: this.firstMove,
+			history: this.history,
+			config: this.config,
+			result,
+			cells,
+		};
+	}
+
+	/**
+	 * Parse the current game state from client-safe data.
+	 *
+	 * @param object - Client state object.
+	 */
+	public parseClientJsonObject(object: MSStateClientJson) {
+		if (object.cells.length !== this.cells.length) {
+			throw new Error("Cell type array must match length.");
+		}
+
+		if (!shallowObjectEquals(object.config, this.config)) {
+			throw new Error("Trying to parse config for different format game.");
+		}
+
+		this.setConfig(object.config);
+		this.firstMove = object.firstMove;
+		this.setHistory(object.history);
+
+		if (object.result) {
+			this.readCellStates(object.result);
+		} else {
+			this.readCellTypes(object.cells);
+		}
+	}
+
+	/**
+	 * Assign cells state list directly.
+	 *
+	 * @param cells - Cell state object.
+	 */
+	private readCellStates(cells: MSCellState[]) {
+		if (cells.length !== this.cells.length) {
+			throw new Error("Cell type array must match length.");
+		}
+
+		for (let i = 0; i < cells.length; i++) {
+			Object.assign(this.cells[i], cells[i]);
+		}
+	}
+
+	/**
+	 * Set cell properties from cell type list.
+	 *
+	 * @param cells - Cell state object.
+	 */
+	private readCellTypes(cells: MSCellType[]) {
+		if (cells.length !== this.cells.length) {
+			throw new Error("Cell type array must match length.");
+		}
+
+		for (let i = 0; i < cells.length; i++) {
+			const cell = this.cells[i];
+
+			cell.adjacent = 0;
+			cell.covered = false;
+			cell.flag = false;
+			cell.mine = false;
+
+			switch (cells[i]) {
+				default:
+				case MSCellType.Empty:
+					break;
+
+				case MSCellType.Covered:
+					cell.covered = true;
+					break;
+
+				case MSCellType.Flag:
+					cell.covered = true;
+					cell.flag = true;
+					break;
+
+				case MSCellType.Mine:
+					cell.mine = true;
+					break;
+
+				case MSCellType.Adjacent1:
+					cell.adjacent = 1;
+					break;
+
+				case MSCellType.Adjacent2:
+					cell.adjacent = 2;
+					break;
+
+				case MSCellType.Adjacent3:
+					cell.adjacent = 3;
+					break;
+
+				case MSCellType.Adjacent4:
+					cell.adjacent = 4;
+					break;
+
+				case MSCellType.Adjacent5:
+					cell.adjacent = 5;
+					break;
+
+				case MSCellType.Adjacent6:
+					cell.adjacent = 6;
+					break;
+
+				case MSCellType.Adjacent7:
+					cell.adjacent = 7;
+					break;
+
+				case MSCellType.Adjacent8:
+					cell.adjacent = 8;
+					break;
+			}
+		}
+	}
+
+	/**
+	 * Reset the state.
+	 */
+	public reset() {
+		for (let x = 0; x < this.width; x++) {
+			for (let y = 0; y < this.height; y++) {
+				const cell = this.cells[this.indexOf(x, y)];
+				cell.x = x;
+				cell.y = y;
+				cell.adjacent = 0;
+				cell.mine = false;
+				cell.flag = false;
+				cell.covered = true;
+			}
+		}
+	}
+
+	/**
+	 * Performs the specified action for each element in an array.
+	 *
+	 * @param cb - Callback function
 	 */
 	public forEach(cb: (cell: MSCellState, i: number) => void) {
 		this.cells.forEach(cb);
@@ -124,8 +359,8 @@ export class MSState {
 	/**
 	 * Get cell at coords.
 	 *
-	 * @param x
-	 * @param y
+	 * @param x - X coord
+	 * @param y - Y coord
 	 */
 	public cellAt(x: number, y: number): MSCellState | undefined {
 		return this.cells[x + y * this.width];
@@ -134,8 +369,8 @@ export class MSState {
 	/**
 	 * Returns the value of the first cell where predicate is true, and undefined otherwise.
 	 *
-	 * @param x
-	 * @param y
+	 * @param x - X coord
+	 * @param y - Y coord
 	 */
 	public find(predicate: (value: MSCellState, index: number) => boolean): MSCellState | undefined {
 		return this.cells.find(predicate);
@@ -144,8 +379,8 @@ export class MSState {
 	/**
 	 * Place a flag at given coords.
 	 *
-	 * @param x
-	 * @param y
+	 * @param x - X coord
+	 * @param y - Y coord
 	 */
 	public placeFlag(x: number, y: number) {
 		const cell = this.cellAt(x, y);
@@ -160,8 +395,8 @@ export class MSState {
 	/**
 	 * Clear flag at given coords.
 	 *
-	 * @param x
-	 * @param y
+	 * @param x - X coord
+	 * @param y - Y coord
 	 */
 	public clearFlag(x: number, y: number) {
 		const cell = this.cellAt(x, y);
@@ -176,7 +411,8 @@ export class MSState {
 	/**
 	 * Place a mine at given coords.
 	 *
-	 * @param index
+	 * @param x - X coord
+	 * @param y - Y coord
 	 */
 	public placeMine(x: number, y: number) {
 		const cell = this.cellAt(x, y);
@@ -191,8 +427,8 @@ export class MSState {
 	/**
 	 * Clear a mine at given coords.
 	 *
-	 * @param x
-	 * @param y
+	 * @param x - X coord
+	 * @param y - Y coord
 	 */
 	public clearMine(x: number, y: number) {
 		const cell = this.cellAt(x, y);
@@ -220,8 +456,8 @@ export class MSState {
 	/**
 	 * Check and get losing cell states.
 	 */
-	public getLossData() {
-		const lossData: LossData = {
+	public getResultData() {
+		const lossData: ResultData = {
 			correct: [],
 			incorrect: [],
 		};
@@ -251,7 +487,7 @@ export class MSState {
 	}
 
 	/**
-	 * Return array of unplaced flags.
+	 * Return array of correctly placed flags.
 	 */
 	public getCorrectFlags() {
 		return this.cells.filter((el) => el.covered && el.mine && el.flag);
@@ -261,16 +497,33 @@ export class MSState {
 	 * Check if the current game is in win state.
 	 *
 	 */
-	public isWin() {
+	public isWin(): boolean {
 		// Can we find a covered cell without a mine?
 		return !this.cells.find((el) => el.covered && !el.mine);
 	}
 
 	/**
+	 * Check if the current game is in lose state.
+	 *
+	 */
+	public isLose(): boolean {
+		// Check if there is an uncovered cell containing a mine.
+		return !!this.cells.find((el) => !el.covered && el.mine);
+	}
+
+	/**
+	 * Is the game win/lose state determined?
+	 *
+	 */
+	public canAcceptNewMove() {
+		return !this.isWin() && !this.isLose();
+	}
+
+	/**
 	 * Get array index of some coords.
 	 *
-	 * @param x
-	 * @param y
+	 * @param x - X coord
+	 * @param y - Y coord
 	 */
 	public indexOf(x: number, y: number): number {
 		return (x % this.width) + y * this.width;
@@ -279,8 +532,8 @@ export class MSState {
 	/**
 	 * Check array index in bounds.
 	 *
-	 * @param x
-	 * @param y
+	 * @param x - X coord
+	 * @param y - Y coord
 	 */
 	public indexInBounds(index: number) {
 		return index > -1 && index < this.cells.length;
@@ -298,8 +551,8 @@ export class MSState {
 	/**
 	 * Check if coords are in bounds.
 	 *
-	 * @param x
-	 * @param y
+	 * @param x - X coord
+	 * @param y - Y coord
 	 */
 	public coordsInBounds(x: number, y: number) {
 		return x > -1 && x < this.width && y > -1 && y < this.height;
@@ -308,14 +561,19 @@ export class MSState {
 	/**
 	 * User action on a cell. Uncovered cells are returned in an array.
 	 *
-	 * @param x
-	 * @param y
+	 * @param x - X coord
+	 * @param y - Y coord
 	 */
-	public select(x: number, y: number): MSCellState[] {
+	public select(x: number, y: number, flag: boolean = false): MSCellState[] {
 		const cell = this.cellAt(x, y);
 
 		if (!cell) {
 			throw new Error(`Can't find cell at ${x},${y}`);
+		}
+
+		if (this.firstMove) {
+			this.firstMove = false;
+			this.findGoodFirstMove(x, y);
 		}
 
 		const result: MSCellState[] = [];
@@ -332,16 +590,22 @@ export class MSState {
 			this.uncover(x, y);
 		}
 
+		const uncovered = result.map((el) => {
+			return { x: el.x, y: el.y };
+		});
+
+		this.addHistory({ x, y, flag, uncovered });
+
 		return result;
 	}
 
 	/**
 	 * Special logic for ensuring no mine is hit on first click.
 	 *
-	 * @param x
-	 * @param y
+	 * @param x - X coord
+	 * @param y - Y coord
 	 */
-	public selectFirst(x: number, y: number): MSCellState[] {
+	private findGoodFirstMove(x: number, y: number) {
 		const cell = this.cellAt(x, y);
 
 		if (!cell) {
@@ -362,14 +626,12 @@ export class MSState {
 
 			i++;
 		}
-
-		return this.select(x, y);
 	}
 
 	/**
 	 * Uncover a given cell.
 	 *
-	 * @param cell
+	 * @param cell - Cell state object.
 	 */
 	public uncover(x: number, y: number) {
 		const cell = this.cellAt(x, y);
@@ -491,8 +753,10 @@ export class MSState {
 	}
 
 	/**
+	 * Randomly shuffle some mines into the current game. Any existing
+	 * mines are cleared before shuffling.
 	 *
-	 * @param total
+	 * @param total - Total mines to shuffle.
 	 */
 	public shuffleMines(total: number) {
 		this.clearAllMines();
