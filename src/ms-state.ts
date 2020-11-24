@@ -61,16 +61,15 @@ export class MSState {
 	public get flagCount() {
 		return this.totalMines - this.totalFlags;
 	}
+	public get lastMove(): MoveData | undefined {
+		return this.history[0];
+	}
 
 	private firstMove = false;
 
 	private readonly cells: MSCellState[] = [];
 
 	private readonly history: MoveData[] = [];
-
-	public get lastMove(): MoveData | undefined {
-		return this.history[0];
-	}
 
 	/**
 	 * Initialize a game from a game config object.
@@ -172,8 +171,8 @@ export class MSState {
 	 */
 	public parseServerJsonObject(object: MSStateJson) {
 		this.initGame(object.config);
-		this.firstMove = object.firstMove;
 		this.setHistory(object.history);
+		this.firstMove = object.firstMove;
 		for (let i = 0; i < object.cells.length; i++) {
 			Object.assign(this.cells[i], object.cells[i]);
 		}
@@ -234,8 +233,8 @@ export class MSState {
 		}
 
 		this.setConfig(object.config);
-		this.firstMove = object.firstMove;
 		this.setHistory(object.history);
+		this.firstMove = object.firstMove;
 
 		if (object.result) {
 			this.readCellStates(object.result);
