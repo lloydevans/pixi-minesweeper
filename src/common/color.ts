@@ -27,3 +27,22 @@ export function rgbToNum(rgba: RgbaObject): number {
 export function hexToNum(hex: string): number {
 	return parseInt(hex.replace("#", "0x"));
 }
+
+export class ColorSchemes {
+	public static beachRainbow = {
+		green: "#C8F69B",
+		yellow: "#FFEEA5",
+		orange: "#FFCBA5",
+		red: "#FFB1AF",
+		purple: "#D6D4FF",
+		blue: "#B3EEFF",
+	};
+	public static beachRainbowDark = {
+		green: "#92B471",
+		yellow: "#D0C286",
+		orange: "#D2A788",
+		red: "#D0908F",
+		purple: "#A6A4C6",
+		blue: "#8EBDCB",
+	};
+}
