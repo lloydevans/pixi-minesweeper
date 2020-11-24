@@ -2,6 +2,7 @@ import firebase from "firebase/app";
 import "firebase/performance";
 import "firebase/analytics";
 import "firebase/firestore";
+import "firebase/functions";
 import "firebase/auth";
 
 const firebaseConfig = {
@@ -21,6 +22,8 @@ export const auth = firebase.auth();
 
 export const db = firebase.firestore();
 
+export const functions = firebase.functions();
+
 export let analytics = {
 	logEvent: (name: string, params: any) => {
 		console.log(`Log event "${name}", ${JSON.stringify(params)}`);
@@ -36,6 +39,7 @@ if (window.location.hostname !== "localhost") {
 	firebase.performance();
 } else {
 	db.useEmulator("localhost", 8080);
+	functions.useEmulator("localhost", 5001);
 	auth.useEmulator("http://localhost:9099/");
 }
 
