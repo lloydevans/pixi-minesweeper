@@ -19,16 +19,23 @@ firebase.initializeApp(firebaseConfig);
 
 export const auth = firebase.auth();
 
+export const db = firebase.firestore();
+
 export let analytics = {
 	logEvent: (name: string, params: any) => {
 		console.log(`Log event "${name}", ${JSON.stringify(params)}`);
 	},
 };
 
+firebase.firestore().settings({
+	ignoreUndefinedProperties: true,
+});
+
 if (window.location.hostname !== "localhost") {
 	analytics = firebase.analytics();
 	firebase.performance();
 } else {
+	db.useEmulator("localhost", 8080);
 	auth.useEmulator("http://localhost:9099/");
 }
 
