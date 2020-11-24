@@ -1,5 +1,5 @@
 /**
- *
+ * Prevent contetx menu on right click anywhere on the page.
  */
 export function preventContextMenu() {
 	window.addEventListener("contextmenu", (e) => e.preventDefault(), false);
@@ -18,4 +18,21 @@ export async function forEachRandom<T>(target: ReadonlyArray<T>, cb: (el: T) => 
 		const el = _target.splice(idx, 1)[0];
 		await cb(el);
 	}
+}
+
+/**
+ * Replacment for isEqual until lodash is imported for cloud functions.
+ */
+export function shallowObjectEquals(a: any, b: any) {
+	for (let key in a) {
+		if (!(key in b) || a[key] !== b[key]) {
+			return false;
+		}
+	}
+	for (let key in b) {
+		if (!(key in a) || a[key] !== b[key]) {
+			return false;
+		}
+	}
+	return true;
 }
