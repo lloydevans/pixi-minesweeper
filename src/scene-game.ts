@@ -374,7 +374,7 @@ export class SceneGame extends Scene<MSApp> {
 	/**
 	 *
 	 */
-	private setMove(x: number, y: number) {
+	private setMove(x: number, y: number, flag = false) {
 		// TODO: Offline mode
 		// result = this.app.state.select(x, y);
 
@@ -383,7 +383,7 @@ export class SceneGame extends Scene<MSApp> {
 			.doc(auth.currentUser!.uid)
 			.collection("games_moves")
 			.doc(GAME_ID)
-			.set({ move: { x, y } });
+			.set({ x, y, flag });
 	}
 
 	/**
@@ -421,13 +421,12 @@ export class SceneGame extends Scene<MSApp> {
 
 			this.screenShake(s * 8);
 
-			// Start sounds
-			this.audio.play("rumble", { type: "attack", volume: s });
+			this.audio.play("rumble", { type: "attack", volume: s }); // Rumble start
 			this.audio.play("dirt-thud-0", { delay: 0.005, volume: s });
 
 			await this.grid.animateUpdateFrom(cellState);
 
-			this.audio.play("rumble", { type: "release" });
+			this.audio.play("rumble", { type: "release" }); // Rumble end
 		} else {
 			this.audio.play("dirt-thud-2", { delay: 0.005, transpose: 6, volume: 0.5 });
 			msCell.updateViewState();
