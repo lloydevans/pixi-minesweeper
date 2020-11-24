@@ -43,6 +43,7 @@ export class MSCell extends Component<MSApp> {
 	private state!: MSCellState;
 	private viewState: MSCellState;
 	private adjacentText: BmText;
+	private pointerDown = false;
 
 	/**
 	 *
@@ -66,6 +67,16 @@ export class MSCell extends Component<MSApp> {
 
 		this.on("mouseover", this.animateHoverStart, this);
 		this.on("mouseout", this.animateHoverEnd, this);
+		this.on("pointerdown", () => {
+			this.pointerDown = true;
+		});
+		this.on("pointerout", () => {
+			if (this.pointerDown) {
+				this.pointerDown = false;
+				this.animatePlaceFlagCancel();
+				this.animateDigCancel();
+			}
+		});
 	}
 
 	/**
@@ -198,6 +209,14 @@ export class MSCell extends Component<MSApp> {
 		}
 
 		Object.assign(this.viewState, state);
+	}
+
+	/**
+	 * Used to prevent pointer out animations conflicting with animations
+	 * waiting to start from async callbacks.
+	 */
+	public cancelPointer() {
+		this.pointerDown = false;
 	}
 
 	/**
@@ -335,7 +354,8 @@ export class MSCell extends Component<MSApp> {
 	 *
 	 */
 	public animateDigCancel() {
-		if (this.anim.state.getCurrent(AnimTrack.Dig).animation.name === "dig-start") {
+		const anim = this.anim.state.getCurrent(AnimTrack.Dig);
+		if (anim.animation.name === "dig-start") {
 			this.anim.state.setAnimation(AnimTrack.Dig, "dig-cancel", false);
 			this.app.audio.play("blop", { transpose: 24 });
 			this.app.audio.play("drip", { delay: 0.1 });
@@ -347,7 +367,8 @@ export class MSCell extends Component<MSApp> {
 	 *
 	 */
 	public animatePlaceFlagCancel() {
-		if (this.anim.state.getCurrent(AnimTrack.Flag).animation.name === "flag-place-start") {
+		const anim = this.anim.state.getCurrent(AnimTrack.Flag);
+		if (anim.animation.name === "flag-place-start") {
 			this.anim.state.setAnimation(AnimTrack.Flag, "flag-destroy", false);
 			this.app.audio.play("blop", { transpose: 24 });
 			this.app.audio.play("drip", { delay: 0.1 });

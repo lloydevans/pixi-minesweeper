@@ -185,7 +185,6 @@ export class SceneGame extends Scene<MSApp> {
 		this.grid.removeChildren().forEach((el) => {
 			el.off("pointertap", this.onPointerTap, this);
 			el.off("pointerdown", this.onPointerDown, this);
-			el.off("pointerout", this.onPointerOut, this);
 		});
 
 		while (this.app.cellPool.length < this.app.state.totalCells) {
@@ -202,7 +201,6 @@ export class SceneGame extends Scene<MSApp> {
 
 			msCell.on("pointertap", this.onPointerTap, this);
 			msCell.on("pointerdown", this.onPointerDown, this);
-			msCell.on("pointerout", this.onPointerOut, this);
 		}
 
 		await this.delay(250);
@@ -286,27 +284,6 @@ export class SceneGame extends Scene<MSApp> {
 
 	/**
 	 *
-	 * @param e
-	 */
-	private onPointerOut(e: PIXI.InteractionEvent) {
-		const msCell = e.currentTarget as MSCell;
-
-		const cellState = this.app.state.cellAt(msCell.ix, msCell.iy);
-
-		if (!cellState) {
-			throw new Error(`Can't find cell at ${msCell.ix},${msCell.iy}`);
-		}
-
-		switch (e.data.pointerType) {
-			case "mouse":
-				msCell.animatePlaceFlagCancel();
-				msCell.animateDigCancel();
-				break;
-		}
-	}
-
-	/**
-	 *
 	 */
 	public screenShake(amp = 8, duration = 0.75, hz = 16) {
 		duration = clamp(duration, 0.1, 8);
@@ -341,25 +318,6 @@ export class SceneGame extends Scene<MSApp> {
 
 	/**
 	 *
-	 * @param cellState
-	 */
-	public rightClick(cellState: MSCellState) {
-		cellState.flag = !cellState.flag;
-
-		if (cellState.flag) {
-			this.audio.play("blop", { transpose: 12 });
-		} //
-		else {
-			this.audio.play("blop", { transpose: 24 });
-		}
-
-		const msCell = this.app.getCellView(cellState.x, cellState.y);
-
-		msCell.updateViewState();
-	}
-
-	/**
-	 *
 	 */
 	private setMove(x: number, y: number, flag = false) {
 		// TODO: Offline mode
@@ -370,6 +328,42 @@ export class SceneGame extends Scene<MSApp> {
 
 	private log(...args: any[]) {
 		console.log(...args);
+	}
+
+	/**
+	 *
+	 * @param cellState
+	 */
+	public async rightClick(cellState: MSCellState) {
+		cellState.flag = !cellState.flag;
+
+		const msCell = this.app.getCellView(cellState.x, cellState.y);
+		const x = msCell.ix;
+		const y = msCell.iy;
+
+		msCell.cancelPointer();
+
+		// Set move.
+		try {
+			this.log("Place flag", x, y);
+			await this.setMove(x, y, true);
+		} catch (error) {
+			console.log(error.code, error.message);
+		}
+
+		// Wait for board state.
+		this.log("Wait for board update");
+		await this.waitForBoardStateUpdate();
+		this.log("Board updated");
+
+		if (cellState.flag) {
+			this.audio.play("blop", { transpose: 12 });
+		} //
+		else {
+			this.audio.play("blop", { transpose: 24 });
+		}
+
+		msCell.updateViewState();
 	}
 
 	/**
@@ -398,8 +392,8 @@ export class SceneGame extends Scene<MSApp> {
 		// Wait for board state.
 		this.log("Wait for board update");
 		await this.waitForBoardStateUpdate();
-
 		this.log("Board updated");
+
 		// Get an array of cell coords which were uncovered by the last move.
 		const result = this.app.state.lastMove!.uncovered;
 
