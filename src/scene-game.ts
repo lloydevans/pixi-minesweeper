@@ -321,8 +321,6 @@ export class SceneGame extends Scene<MSApp> {
 	 */
 	private setMove(x: number, y: number, flag = false) {
 		// TODO: Offline mode
-		// result = this.app.state.select(x, y);
-
 		return functions.httpsCallable("newMove")({ x, y, flag });
 	}
 
@@ -335,6 +333,8 @@ export class SceneGame extends Scene<MSApp> {
 	 * @param cellState
 	 */
 	public async rightClick(cellState: MSCellState) {
+		this.grid.setInteractionEnabled(false);
+
 		cellState.flag = !cellState.flag;
 
 		const msCell = this.app.getCellView(cellState.x, cellState.y);
@@ -343,17 +343,17 @@ export class SceneGame extends Scene<MSApp> {
 
 		msCell.cancelPointer();
 
+		let data;
+
 		// Set move.
 		try {
 			this.log("Place flag", x, y);
-			await this.setMove(x, y, true);
+			this.setMove(x, y, true);
+			await this.waitForBoardStateUpdate();
 		} catch (error) {
 			console.log(error.code, error.message);
 		}
 
-		// Wait for board state.
-		this.log("Wait for board update");
-		await this.waitForBoardStateUpdate();
 		this.log("Board updated");
 
 		if (cellState.flag) {
@@ -364,6 +364,8 @@ export class SceneGame extends Scene<MSApp> {
 		}
 
 		msCell.updateViewState();
+
+		this.grid.setInteractionEnabled(true);
 	}
 
 	/**
@@ -384,15 +386,12 @@ export class SceneGame extends Scene<MSApp> {
 		// Set move.
 		try {
 			this.log("Set move", x, y);
-			await this.setMove(x, y);
+			this.setMove(x, y);
+			await this.waitForBoardStateUpdate();
+			this.log("Board updated");
 		} catch (error) {
 			console.log(error.code, error.message);
 		}
-
-		// Wait for board state.
-		this.log("Wait for board update");
-		await this.waitForBoardStateUpdate();
-		this.log("Board updated");
 
 		// Get an array of cell coords which were uncovered by the last move.
 		const result = this.app.state.lastMove!.uncovered;
