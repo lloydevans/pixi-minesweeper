@@ -49,9 +49,6 @@ export class MSState {
 		gridWidth: 4,
 		gridHeight: 4,
 	};
-	public get totalMines() {
-		return this.cells.filter((el) => el.mine).length;
-	}
 	public get totalFlags() {
 		return this.cells.filter((el) => el.flag).length;
 	}
@@ -59,7 +56,7 @@ export class MSState {
 		return this.cells.length;
 	}
 	public get flagCount() {
-		return this.totalMines - this.totalFlags;
+		return this.config.startMines - this.totalFlags;
 	}
 	public get lastMove(): MoveData | undefined {
 		return this.history[0];
