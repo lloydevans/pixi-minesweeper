@@ -283,7 +283,7 @@ export class MSState {
 
 	/**
 	 */
-	public cellFromType(type: MSCellType, target: MSCellState): MSCellType {
+	public cellFromType(type: MSCellType, target: MSCellState) {
 		target.adjacent = 0;
 		target.covered = false;
 		target.flag = false;
@@ -339,7 +339,6 @@ export class MSState {
 				target.adjacent = 8;
 				break;
 		}
-		return type;
 	}
 
 	/**
