@@ -1,10 +1,10 @@
-import { Component } from "../common/component";
 import { BmText } from "../common/bm-text";
-import { MSApp } from "../ms-app";
+import { ColorSchemes, hexToNum } from "../common/color";
+import { Component } from "../common/component";
 import { UiButtonText } from "../common/ui-button-text";
 import { UiTextInputDom } from "../common/ui-text-input-dom";
 import { auth } from "../firebase";
-import { ColorSchemes, hexToNum } from "../common/color";
+import { MSApp } from "../ms-app";
 
 export class PanelLogin extends Component<MSApp> {
 	private inputUsername!: UiTextInputDom;
