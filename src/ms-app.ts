@@ -9,7 +9,7 @@ import { MSStyleConfig, MS_STYLE_DEFAULT, MSGameConfig } from "./ms-config";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MSState } from "./ms-state";
 import { SceneGame } from "./scene-game";
 import { SceneMenu } from "./scene-menu";
-import { functions, db } from "./firebase";
+import { functions } from "./firebase";
 
 /**
  * Core App class.
@@ -28,6 +28,12 @@ export class MSApp extends AppBase {
 	 */
 	constructor() {
 		super({ forceCanvas: false });
+
+		this.referenceSize = {
+			width: 1280,
+			height: 720,
+			blend: 1,
+		};
 
 		preventContextMenu();
 

@@ -1,6 +1,7 @@
 import clamp from "lodash-es/clamp";
 import * as PIXI from "pixi.js-legacy";
 import * as screenfull from "screenfull";
+import { lerp } from "../maths/lerp";
 import { ToneAudio } from "./tone-audio";
 import { Tween } from "./tween";
 import { TweenGroup } from "./tween-group";
@@ -31,6 +32,15 @@ export class AppBase extends PIXI.Application {
 	 *
 	 */
 	public readonly audio = new ToneAudio();
+
+	/**
+	 *
+	 */
+	public referenceSize?: {
+		width: number;
+		height: number;
+		blend: number;
+	};
 
 	/**
 	 * Current app ready state. Modified via setReady,
@@ -183,6 +193,15 @@ export class AppBase extends PIXI.Application {
 		// Center root container but this could be made optional.
 		this.root.x = this.renderer.width / this.dpr / 2;
 		this.root.y = this.renderer.height / this.dpr / 2;
+
+		if (this.referenceSize) {
+			let refSize = lerp(this.referenceSize.width, this.referenceSize.height, this.referenceSize.blend);
+			let refWindow = lerp(width, height, this.referenceSize.blend);
+			let r = refSize / refWindow;
+			this.root.scale.set(1 / r);
+			this._width *= r;
+			this._height *= r;
+		}
 
 		this.events.emit("resize", this.width, this.height);
 	}
