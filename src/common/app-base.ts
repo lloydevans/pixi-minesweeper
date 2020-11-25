@@ -6,7 +6,6 @@ import { Tween } from "./tween";
 import { TweenGroup } from "./tween-group";
 import { TweenProps } from "./tween-props";
 import { UiElement } from "./ui-element";
-import { UiButton } from "./ui-button";
 
 export const MAX_DPR = 4;
 export const MIN_DPR = 0.5;
