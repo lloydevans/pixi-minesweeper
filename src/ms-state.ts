@@ -213,10 +213,6 @@ export class MSState {
 			throw new Error("Cell type array must match length.");
 		}
 
-		if (!shallowObjectEquals(object.config, this.config)) {
-			throw new Error("Trying to parse config for different format game.");
-		}
-
 		this.setConfig(object.config);
 		this.setHistory(object.history);
 		this.firstMove = object.firstMove;
