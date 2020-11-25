@@ -77,9 +77,8 @@ export class SceneGame extends Scene<MSApp> {
 				const data = doc.data() as MSStateClientJson;
 				if (data?.cells) {
 					this.app.state.parseClientJsonObject(data);
+					this.emit("boardstate", data);
 				}
-
-				this.emit("boardstate", data);
 			});
 
 		this.newGame(this.config);

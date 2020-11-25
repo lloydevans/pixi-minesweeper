@@ -1,4 +1,3 @@
-import { shallowObjectEquals } from "./common/utils";
 import { MSCellState, MSCellType } from "./ms-cell-state";
 import { MSGameConfig } from "./ms-config";
 
@@ -19,23 +18,26 @@ export interface ResultData {
 export interface MSStateJson {
 	config: MSGameConfig;
 	firstMove: boolean;
-	history: MoveData[];
+	history: MoveDataHistory[];
 	cells: MSCellState[];
 }
 
 export interface MSStateClientJson {
 	config: MSGameConfig;
-	history: MoveData[];
+	history: MoveDataHistory[];
 	firstMove: boolean;
 	cells: MSCellType[];
 	result?: MSCellState[];
 }
 
 export interface MoveData {
-	uncovered: { x: number; y: number }[];
 	flag: boolean;
 	x: number;
 	y: number;
+}
+
+export interface MoveDataHistory extends MoveData {
+	uncovered: { x: number; y: number }[];
 }
 
 /**
@@ -58,7 +60,7 @@ export class MSState {
 	public get flagCount() {
 		return this.config.startMines - this.totalFlags;
 	}
-	public get lastMove(): MoveData | undefined {
+	public get lastMove(): MoveDataHistory | undefined {
 		return this.history[0];
 	}
 
@@ -66,7 +68,7 @@ export class MSState {
 
 	private readonly cells: MSCellState[] = [];
 
-	private readonly history: MoveData[] = [];
+	private readonly history: MoveDataHistory[] = [];
 
 	/**
 	 * Initialize a game from a game config object.
@@ -100,7 +102,7 @@ export class MSState {
 		if (config.startMines < 1) {
 			throw new Error("Must have at least 1 mine");
 		}
-		if (config.startMines > config.gridWidth * config.gridHeight - 2) {
+		if (config.startMines > config.gridWidth * config.gridHeight - MIN_EMPTY) {
 			throw new Error(
 				`Too many mines (${config.startMines}) for grid size: ${config.gridWidth} x ${config.gridHeight}`
 			);
@@ -135,7 +137,7 @@ export class MSState {
 	 *
 	 * @param moves - Array of MoveData onbjects.
 	 */
-	private setHistory(moves: MoveData[]) {
+	private setHistory(moves: MoveDataHistory[]) {
 		this.history.length = 0;
 		this.history.push(...moves);
 	}
@@ -145,7 +147,7 @@ export class MSState {
 	 *
 	 * @param moves - Array of MoveData onbjects.
 	 */
-	private addHistory(move: MoveData) {
+	private addHistory(move: MoveDataHistory) {
 		this.history.unshift(move);
 	}
 
@@ -257,7 +259,7 @@ export class MSState {
 	/**
 	 */
 	public cellToType(cell: MSCellState): MSCellType {
-		let type: MSCellType = MSCellType.Empty;
+		let type = MSCellType.Empty;
 
 		if (cell.covered && cell.flag) {
 			type = MSCellType.Flag;
@@ -265,9 +267,7 @@ export class MSState {
 			type = MSCellType.Covered;
 		} else if (cell.adjacent > 0) {
 			type = MSCellType[("Adjacent" + cell.adjacent) as keyof typeof MSCellType];
-		} else if (!cell.mine) {
-			type = MSCellType.Empty;
-		} else {
+		} else if (cell.mine) {
 			type = MSCellType.Mine;
 		}
 

@@ -8,20 +8,20 @@ import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MIN_EMPTY, MIN_GRID_HEIGHT, MIN_GRID_W
 import { ColorSchemes, hexToNum } from "../common/color";
 
 export class PanelGameOptions extends Component<MSApp> {
-	private buttonStart!: UiButtonText;
+	private buttonPrimary!: UiButtonText;
 	private widthScroller!: UiButtonScroller;
 	private heightScroller!: UiButtonScroller;
 	private minesScroller!: UiButtonScroller;
 	private container = new PIXI.Container();
 
 	protected init() {
-		this.buttonStart = new UiButtonText(this.app, {
+		this.buttonPrimary = new UiButtonText(this.app, {
 			textureDown: this.app.getFrame("textures", "button-down"),
 			textureUp: this.app.getFrame("textures", "button-up"),
 			text: "START",
 		});
-		this.buttonStart.position.set(0, 180);
-		this.buttonStart.tint = hexToNum(ColorSchemes.beachRainbow.purple);
+		this.buttonPrimary.position.set(0, 180);
+		this.buttonPrimary.tint = hexToNum(ColorSchemes.beachRainbow.red);
 
 		this.widthScroller = new UiButtonScroller(this.app, {
 			arrowTexture: this.app.getFrame("textures", "button-arrow"),
@@ -55,7 +55,7 @@ export class PanelGameOptions extends Component<MSApp> {
 		this.minesScroller.y = 80;
 
 		this.addChild(this.container);
-		this.container.addChild(this.buttonStart);
+		this.container.addChild(this.buttonPrimary);
 		this.container.addChild(this.widthScroller);
 		this.container.addChild(this.heightScroller);
 		this.container.addChild(this.minesScroller);
@@ -64,7 +64,7 @@ export class PanelGameOptions extends Component<MSApp> {
 		this.heightScroller.on("set", this.updatePreview, this);
 		this.updatePreview();
 
-		this.buttonStart.on("pointertap", () => {
+		this.buttonPrimary.on("pointertap", () => {
 			const gridWidth = this.widthScroller.current;
 			const gridHeight = this.heightScroller.current;
 			const startMines = this.minesScroller.current;

@@ -22,7 +22,7 @@ export class PanelLogin extends Component<MSApp> {
 		this.error = new BmText(this.app, { fontName: "bmfont", fontSize: 16 });
 		this.error.maxWidth = 256;
 		this.error._anchor.set(0.5);
-		this.error.tint = 0xff0000;
+		this.error.tint = hexToNum(ColorSchemes.beachRainbowDark.red);
 
 		this.inputUsername = new UiTextInputDom(this.app, {
 			label: "Username",
