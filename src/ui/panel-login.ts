@@ -76,19 +76,19 @@ export class PanelLogin extends Component<MSApp> {
 		});
 		this.buttonForgotPword.accessible = true;
 
+		this.buttonSecondary.y = 0;
+		this.buttonGuest.y = 40;
+		this.buttonForgotPword.y = 80;
+		this.secondaryButtons.addChild(this.buttonSecondary);
+		this.secondaryButtons.addChild(this.buttonGuest);
+		this.secondaryButtons.addChild(this.buttonForgotPword);
+
 		this.error.y = 60;
 		this.inputUsername.y = -100;
 		this.inputEmail.y = -50;
 		this.inputPassword.y = 0;
 		this.buttonPrimary.y = 128;
 		this.secondaryButtons.y = 180;
-		this.buttonSecondary.y = 0;
-		this.buttonGuest.y = 40;
-		this.buttonForgotPword.y = 80;
-
-		this.secondaryButtons.addChild(this.buttonSecondary);
-		this.secondaryButtons.addChild(this.buttonGuest);
-		this.secondaryButtons.addChild(this.buttonForgotPword);
 		this.addChild(this.inputUsername);
 		this.addChild(this.inputEmail);
 		this.addChild(this.inputPassword);
