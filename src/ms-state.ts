@@ -188,19 +188,7 @@ export class MSState {
 		const cells: MSCellType[] = [];
 
 		for (let i = 0; i < this.cells.length; i++) {
-			const el = this.cells[i];
-
-			if (el.covered && el.flag) {
-				cells.push(MSCellType.Flag);
-			} else if (el.covered) {
-				cells.push(MSCellType.Covered);
-			} else if (el.adjacent > 0) {
-				cells.push(MSCellType[("Adjacent" + el.adjacent) as keyof typeof MSCellType]);
-			} else if (!el.mine) {
-				cells.push(MSCellType.Empty);
-			} else {
-				cells.push(MSCellType.Mine);
-			}
+			cells.push(this.cellToType(this.cells[i]));
 		}
 
 		let result;
@@ -269,64 +257,89 @@ export class MSState {
 		}
 
 		for (let i = 0; i < cells.length; i++) {
-			const cell = this.cells[i];
-
-			cell.adjacent = 0;
-			cell.covered = false;
-			cell.flag = false;
-			cell.mine = false;
-
-			switch (cells[i]) {
-				default:
-				case MSCellType.Empty:
-					break;
-
-				case MSCellType.Covered:
-					cell.covered = true;
-					break;
-
-				case MSCellType.Flag:
-					cell.covered = true;
-					cell.flag = true;
-					break;
-
-				case MSCellType.Mine:
-					cell.mine = true;
-					break;
-
-				case MSCellType.Adjacent1:
-					cell.adjacent = 1;
-					break;
-
-				case MSCellType.Adjacent2:
-					cell.adjacent = 2;
-					break;
-
-				case MSCellType.Adjacent3:
-					cell.adjacent = 3;
-					break;
-
-				case MSCellType.Adjacent4:
-					cell.adjacent = 4;
-					break;
-
-				case MSCellType.Adjacent5:
-					cell.adjacent = 5;
-					break;
-
-				case MSCellType.Adjacent6:
-					cell.adjacent = 6;
-					break;
-
-				case MSCellType.Adjacent7:
-					cell.adjacent = 7;
-					break;
-
-				case MSCellType.Adjacent8:
-					cell.adjacent = 8;
-					break;
-			}
+			this.cellFromType(cells[i], this.cells[i]);
 		}
+	}
+
+	/**
+	 */
+	public cellToType(cell: MSCellState): MSCellType {
+		let type: MSCellType = MSCellType.Empty;
+
+		if (cell.covered && cell.flag) {
+			type = MSCellType.Flag;
+		} else if (cell.covered) {
+			type = MSCellType.Covered;
+		} else if (cell.adjacent > 0) {
+			type = MSCellType[("Adjacent" + cell.adjacent) as keyof typeof MSCellType];
+		} else if (!cell.mine) {
+			type = MSCellType.Empty;
+		} else {
+			type = MSCellType.Mine;
+		}
+
+		return type;
+	}
+
+	/**
+	 */
+	public cellFromType(type: MSCellType, target: MSCellState): MSCellType {
+		target.adjacent = 0;
+		target.covered = false;
+		target.flag = false;
+		target.mine = false;
+
+		switch (type) {
+			default:
+			case MSCellType.Empty:
+				break;
+
+			case MSCellType.Covered:
+				target.covered = true;
+				break;
+
+			case MSCellType.Flag:
+				target.covered = true;
+				target.flag = true;
+				break;
+
+			case MSCellType.Mine:
+				target.mine = true;
+				break;
+
+			case MSCellType.Adjacent1:
+				target.adjacent = 1;
+				break;
+
+			case MSCellType.Adjacent2:
+				target.adjacent = 2;
+				break;
+
+			case MSCellType.Adjacent3:
+				target.adjacent = 3;
+				break;
+
+			case MSCellType.Adjacent4:
+				target.adjacent = 4;
+				break;
+
+			case MSCellType.Adjacent5:
+				target.adjacent = 5;
+				break;
+
+			case MSCellType.Adjacent6:
+				target.adjacent = 6;
+				break;
+
+			case MSCellType.Adjacent7:
+				target.adjacent = 7;
+				break;
+
+			case MSCellType.Adjacent8:
+				target.adjacent = 8;
+				break;
+		}
+		return type;
 	}
 
 	/**
