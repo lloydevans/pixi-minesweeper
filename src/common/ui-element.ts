@@ -5,7 +5,7 @@ import { Component } from "./component";
  */
 export class UiElement<T extends AppBase = AppBase> extends Component<T> {
 	public get focused() {
-		return this._active;
+		return this._focused;
 	}
 	public set focused(value: boolean) {
 		if (value !== this._focused) {
@@ -34,8 +34,8 @@ export class UiElement<T extends AppBase = AppBase> extends Component<T> {
 		}
 	}
 
-	private _active = true;
 	private _focused = true;
+	private _active = true;
 
 	constructor(app: T) {
 		super(app);
