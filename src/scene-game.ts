@@ -471,13 +471,14 @@ export class SceneGame extends Scene<MSApp> {
 			this.app.log("Board updated");
 		} catch (error) {
 			console.log(error.code, error.message);
+			throw new Error("Move request failed.");
 		}
 
 		// Get an array of cell coords which were uncovered by the last move.
 		if (!this.app.state.lastMove) {
 			throw new Error("Last move not present.");
 		}
-		const result = this.app.state.lastMove?.uncovered;
+		const result = this.app.state.lastMove.uncovered;
 
 		this.audio.play("blop", { transpose: 12 });
 		this.audio.play("dirt-thud-2", { delay: 0.005, transpose: 12 });
