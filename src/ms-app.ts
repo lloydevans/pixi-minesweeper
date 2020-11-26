@@ -91,7 +91,12 @@ export class MSApp extends AppBase {
 		this.background = new MSBgFlat(this);
 		this.root.addChildAt(this.background, 0);
 
-		await setPersistence();
+		try {
+			await setPersistence();
+		} catch (err) {
+			// TODO: Handle offline
+			console.log(err);
+		}
 
 		this.setReady();
 
