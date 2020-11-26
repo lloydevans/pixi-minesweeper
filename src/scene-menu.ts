@@ -1,9 +1,8 @@
-import * as PIXI from "pixi.js-legacy";
 import { BmText } from "./common/bm-text";
-import { ColorSchemes, hexToNum } from "./common/color";
 import { Component } from "./common/component";
-import { auth, setPersistence } from "./firebase";
+import { auth, functions } from "./firebase";
 import { MSApp } from "./ms-app";
+import { MSGameConfig } from "./ms-config";
 import { PanelGameOptions } from "./ui/panel-game-options";
 import { PanelLogin } from "./ui/panel-login";
 
@@ -12,7 +11,6 @@ import { PanelLogin } from "./ui/panel-login";
  */
 export class SceneMenu extends Component<MSApp> {
 	title!: BmText;
-	background!: PIXI.TilingSprite;
 	panelLogin?: PanelLogin;
 	panelGameOptions?: PanelGameOptions;
 
@@ -25,18 +23,9 @@ export class SceneMenu extends Component<MSApp> {
 		this.title.y = -190;
 		this.title._anchor.set(0.5);
 
-		const bgTexture = this.app.getFrame("tiles", "bg-tile");
-		this.background = new PIXI.TilingSprite(bgTexture);
-		this.background.tint = hexToNum(Object.values(ColorSchemes.beachRainbowDark)[1]);
-
-		this.addChild(this.background);
 		this.addChild(this.title);
 
-		await setPersistence();
-
-		let user = auth.currentUser;
-
-		if (!user) {
+		if (!auth.currentUser) {
 			this.showLogin();
 		} //
 		else {
@@ -44,34 +33,90 @@ export class SceneMenu extends Component<MSApp> {
 		}
 	}
 
-	showLogin() {
+	private showLogin() {
 		this.panelGameOptions && this.panelGameOptions.destroy();
 		this.panelLogin = new PanelLogin(this.app);
-		this.addChild(this.panelLogin);
 
-		this.panelLogin.off("login");
-		this.panelLogin.once("login", () => {
-			this.panelGameOptions = new PanelGameOptions(this.app);
-			this.addChild(this.panelGameOptions);
+		this.panelLogin.on("create", async (email: string, password: string, username: string) => {
+			this.app.setAllUiElementsActive(false);
+
+			this.panelLogin?.clearError();
+
+			try {
+				const result = await auth.createUserWithEmailAndPassword(email, password);
+				// await result!.user!.updateProfile({ displayName: username });
+				this.showGameOptions();
+			} catch (err) {
+				this.panelLogin?.showError(err.message);
+			}
+
+			this.app.setAllUiElementsActive(true);
 		});
+
+		this.panelLogin.on("login", async (email: string, password: string) => {
+			this.app.setAllUiElementsActive(false);
+
+			this.panelLogin?.clearError();
+
+			try {
+				await auth.signInWithEmailAndPassword(email, password);
+				this.showGameOptions();
+			} catch (err) {
+				this.panelLogin?.showError(err.message);
+			}
+
+			this.app.setAllUiElementsActive(true);
+		});
+
+		this.panelLogin.on("guest", async () => {
+			this.app.setAllUiElementsActive(false);
+
+			this.panelLogin?.clearError();
+
+			try {
+				await auth.signInAnonymously();
+				this.showGameOptions();
+			} catch (err) {
+				this.panelLogin?.showError(err.message);
+			}
+
+			this.app.setAllUiElementsActive(true);
+		});
+
+		this.addChild(this.panelLogin);
 	}
 
-	showGameOptions() {
+	private showGameOptions() {
 		this.panelLogin && this.panelLogin.destroy();
 		this.panelGameOptions = new PanelGameOptions(this.app);
+
+		this.panelGameOptions.on("start", async (config: MSGameConfig) => {
+			this.app.setAllUiElementsActive(false);
+
+			let gameId;
+			try {
+				gameId = (await functions.httpsCallable("newGame")(config))?.data;
+				this.app.showGame(gameId);
+			} catch (err) {
+				console.log(err);
+				this.app.setAllUiElementsActive(true);
+			}
+		});
+
+		this.panelGameOptions.on("logout", async () => {
+			this.app.setAllUiElementsActive(false);
+			try {
+				await auth.signOut();
+			} catch (err) {
+				console.log(err);
+				this.app.setAllUiElementsActive(true);
+			}
+
+			if (!auth.currentUser) {
+				this.showLogin();
+			}
+		});
+
 		this.addChild(this.panelGameOptions);
-	}
-
-	update(dt: number) {
-		this.background.tilePosition.x += dt / 8;
-		this.background.tilePosition.y += dt / 8;
-		this.background.tileScale.set(0.5);
-	}
-
-	resize(width: number, height: number) {
-		this.background.x = -width / 2;
-		this.background.y = -height / 2;
-		this.background.width = width;
-		this.background.height = height;
 	}
 }

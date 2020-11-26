@@ -13,7 +13,6 @@ const MAX_TIME = 999;
  * Class handle UI elements.
  */
 export class MSUi extends Component<MSApp> {
-	private background!: PIXI.Graphics;
 	private buttonRestart!: UiButton;
 	private buttonCross!: UiButton;
 	private flagsContainer!: PIXI.Container;
@@ -27,8 +26,6 @@ export class MSUi extends Component<MSApp> {
 	 * Initialisation must be called after assets are loaded.
 	 */
 	protected init() {
-		this.background = new PIXI.Graphics();
-
 		this.flagsContainer = new PIXI.Container();
 		this.flagsContainer.y = -8;
 
@@ -57,13 +54,11 @@ export class MSUi extends Component<MSApp> {
 			textureUp: this.app.getFrame("textures", "button-cross"),
 			textureDown: this.app.getFrame("textures", "button-cross"),
 		});
-		this.buttonCross.on("pointertap", () => this.emit("close"));
 
 		this.buttonRestart = new UiButton(this.app, {
 			textureUp: this.app.getFrame("textures", "button-restart"),
 			textureDown: this.app.getFrame("textures", "button-restart"),
 		});
-		this.buttonRestart.on("pointertap", () => this.emit("restart"));
 
 		this.timeContainer.addChild(this.timeGraphic);
 		this.timeContainer.addChild(this.timeCount);
@@ -71,11 +66,13 @@ export class MSUi extends Component<MSApp> {
 		this.flagsContainer.addChild(this.flagsGraphic);
 		this.flagsContainer.addChild(this.flagsCount);
 
-		this.addChild(this.background);
 		this.addChild(this.timeContainer);
 		this.addChild(this.flagsContainer);
 		this.addChild(this.buttonRestart);
 		this.addChild(this.buttonCross);
+
+		this.buttonCross.on("pointertap", () => this.emit("close"));
+		this.buttonRestart.on("pointertap", () => this.emit("restart"));
 	}
 
 	/**
@@ -101,10 +98,10 @@ export class MSUi extends Component<MSApp> {
 	 * Resize callback.
 	 */
 	protected resize(width: number, height: number) {
-		this.buttonRestart.x = width / 2 - 64;
-		this.buttonRestart.y = -height / 2 + 42;
-		this.buttonCross.x = width / 2 - 148;
+		this.buttonCross.x = width / 2 - 48;
 		this.buttonCross.y = -height / 2 + 42;
+		this.buttonRestart.x = width / 2 - 128;
+		this.buttonRestart.y = -height / 2 + 42;
 		this.flagsContainer.x = -width / 2 + 32;
 		this.flagsContainer.y = -height / 2 + 64;
 		this.timeContainer.x = -width / 2 + 170;

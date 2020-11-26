@@ -85,7 +85,7 @@ export class MSCell extends Component<MSApp> {
 	 */
 	public setState(state: MSCellState) {
 		this.state = state;
-		this.reset(this.state);
+		this.reset();
 		this.updateViewState();
 		this.updateGridPosition();
 		this.updateEdgeSprites();
@@ -95,9 +95,9 @@ export class MSCell extends Component<MSApp> {
 	/**
 	 *
 	 */
-	public reset(state: MSCellState) {
+	public reset() {
 		// TODO: Clear tracks instead of hidden states?
-		const coverType = (state.x + state.y) % 2 === 0 ? "even" : "odd";
+		const coverType = (this.state.x + this.state.y) % 2 === 0 ? "even" : "odd";
 		this.anim.state.setAnimation(AnimTrack.FillColor, "fill-" + coverType, false);
 		this.anim.state.setAnimation(AnimTrack.Flag, "flag-hidden", false);
 		this.anim.state.setAnimation(AnimTrack.Mine, "mine-hidden", false);

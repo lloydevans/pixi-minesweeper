@@ -1,5 +1,6 @@
 import { MSCellState, MSCellType } from "./ms-cell-state";
 import { MSGameConfig } from "./ms-config";
+import { shallowObjectEquals, jsonClone } from "./common/utils";
 
 export const MIN_GRID_WIDTH = 4;
 export const MIN_GRID_HEIGHT = 4;
@@ -10,22 +11,30 @@ export const MIN_EMPTY = 2;
 /**
  *
  */
+export enum GameResolution {
+	Incomplete,
+	Quit,
+	Lost,
+	Won,
+}
+
 export interface ResultData {
 	incorrect: MSCellState[];
 	correct: MSCellState[];
 }
 
-export interface MSStateJson {
+export interface MSStateServer {
+	resolution: GameResolution;
+	startTime?: number;
+	resolveTime?: number;
 	config: MSGameConfig;
-	firstMove: boolean;
 	history: MoveDataHistory[];
 	cells: MSCellState[];
 }
 
-export interface MSStateClientJson {
+export interface MSStateClient {
 	config: MSGameConfig;
 	history: MoveDataHistory[];
-	firstMove: boolean;
 	cells: MSCellType[];
 	result?: MSCellState[];
 }
@@ -44,6 +53,18 @@ export interface MoveDataHistory extends MoveData {
  * Class handles Minesweeper game state and logic.
  */
 export class MSState {
+	public static fromServerObject(data: MSStateServer): MSState {
+		const state = new MSState(data.config);
+		state.parseServerState(data);
+		return state;
+	}
+
+	public static fromClientObject(data: MSStateClient): MSState {
+		const state = new MSState(data.config);
+		state.parseClientState(data);
+		return state;
+	}
+
 	public width: number = 0;
 	public height: number = 0;
 	public config: MSGameConfig = {
@@ -63,22 +84,20 @@ export class MSState {
 	public get lastMove(): MoveDataHistory | undefined {
 		return this.history[0];
 	}
-
-	private firstMove = false;
+	public get firstMove(): boolean {
+		return !this.cells.find((el) => !el.covered);
+	}
 
 	private readonly cells: MSCellState[] = [];
 
 	private readonly history: MoveDataHistory[] = [];
 
 	/**
-	 * Initialize a game from a game config object.
 	 *
-	 * @param config - Game config object.
 	 */
-	public initGame(config: MSGameConfig) {
+	constructor(config: MSGameConfig) {
+		this.config = config;
 		this.setConfig(config);
-		this.initCells();
-		this.firstMove = true;
 	}
 
 	/**
@@ -86,7 +105,16 @@ export class MSState {
 	 *
 	 * @param config - Game config object.
 	 */
-	private setConfig(config: MSGameConfig) {
+	public setConfig(config: MSGameConfig) {
+		if (
+			!config ||
+			typeof config.gridWidth !== "number" ||
+			typeof config.gridHeight !== "number" ||
+			typeof config.startMines !== "number"
+		) {
+			throw new Error("Invalid config");
+		}
+
 		if (config.gridWidth < MIN_GRID_WIDTH) {
 			throw new Error("Grid width below " + MIN_GRID_WIDTH);
 		}
@@ -110,6 +138,7 @@ export class MSState {
 		this.config = { ...config };
 		this.width = config.gridWidth;
 		this.height = config.gridHeight;
+		this.initCells();
 	}
 
 	/**
@@ -154,27 +183,13 @@ export class MSState {
 	/**
 	 * Convert the current game state to server-side data.
 	 */
-	public toServerJsonObject(): MSStateJson {
-		return {
-			firstMove: this.firstMove,
+	public toServerState(): MSStateServer {
+		return jsonClone({
+			resolution: GameResolution.Incomplete,
 			history: this.history,
 			config: this.config,
 			cells: this.cells,
-		};
-	}
-
-	/**
-	 * Parse the current game state from server-side data.
-	 *
-	 * @param object - Server game state object revealing all info about the game.
-	 */
-	public parseServerJsonObject(object: MSStateJson) {
-		this.initGame(object.config);
-		this.setHistory(object.history);
-		this.firstMove = object.firstMove;
-		for (let i = 0; i < object.cells.length; i++) {
-			Object.assign(this.cells[i], object.cells[i]);
-		}
+		});
 	}
 
 	/**
@@ -183,7 +198,7 @@ export class MSState {
 	 *
 	 * @param includeResult - Include results?
 	 */
-	public toClientJsonObject(includeResult = false): MSStateClientJson {
+	public toClientState(includeResult = false): MSStateClient {
 		const cells: MSCellType[] = [];
 
 		for (let i = 0; i < this.cells.length; i++) {
@@ -196,13 +211,28 @@ export class MSState {
 			result = [...this.cells];
 		}
 
-		return {
-			firstMove: this.firstMove,
+		return jsonClone({
 			history: this.history,
 			config: this.config,
 			result,
 			cells,
-		};
+		});
+	}
+
+	/**
+	 * Parse the current game state from server-side data.
+	 *
+	 * @param object - Server game state object revealing all info about the game.
+	 */
+	public parseServerState(object: MSStateServer) {
+		if (!shallowObjectEquals(object.config, this.config)) {
+			this.setConfig(object.config);
+		}
+
+		this.setHistory(object.history);
+		for (let i = 0; i < object.cells.length; i++) {
+			Object.assign(this.cells[i], object.cells[i]);
+		}
 	}
 
 	/**
@@ -210,14 +240,12 @@ export class MSState {
 	 *
 	 * @param object - Client state object.
 	 */
-	public parseClientJsonObject(object: MSStateClientJson) {
-		if (object.cells.length !== this.cells.length) {
-			throw new Error("Cell type array must match length.");
+	public parseClientState(object: MSStateClient) {
+		if (!shallowObjectEquals(object.config, this.config)) {
+			this.setConfig(object.config);
 		}
 
-		this.setConfig(object.config);
 		this.setHistory(object.history);
-		this.firstMove = object.firstMove;
 
 		if (object.result) {
 			this.readCellStates(object.result);
@@ -592,7 +620,6 @@ export class MSState {
 		}
 
 		if (this.firstMove) {
-			this.firstMove = false;
 			this.findGoodFirstMove(x, y);
 		}
 

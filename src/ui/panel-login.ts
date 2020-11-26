@@ -3,7 +3,6 @@ import { ColorSchemes, hexToNum } from "../common/color";
 import { Component } from "../common/component";
 import { UiButtonText } from "../common/ui-button-text";
 import { UiTextInputDom } from "../common/ui-text-input-dom";
-import { auth } from "../firebase";
 import { MSApp } from "../ms-app";
 
 export class PanelLogin extends Component<MSApp> {
@@ -22,7 +21,7 @@ export class PanelLogin extends Component<MSApp> {
 		this.error = new BmText(this.app, { fontName: "bmfont", fontSize: 16 });
 		this.error.maxWidth = 256;
 		this.error._anchor.set(0.5);
-		this.error.tint = hexToNum(ColorSchemes.beachRainbowDark.red);
+		this.error.tint = hexToNum("#aa3333");
 
 		this.inputUsername = new UiTextInputDom(this.app, {
 			label: "Username",
@@ -89,7 +88,7 @@ export class PanelLogin extends Component<MSApp> {
 		this.inputPassword.y = 0;
 		this.buttonPrimary.y = 128;
 		this.secondaryButtons.y = 180;
-		this.addChild(this.inputUsername);
+		// this.addChild(this.inputUsername);
 		this.addChild(this.inputEmail);
 		this.addChild(this.inputPassword);
 		this.addChild(this.buttonPrimary);
@@ -99,13 +98,12 @@ export class PanelLogin extends Component<MSApp> {
 		this.buttonPrimary.on("pointertap", this.buttonPrimaryCb, this);
 		this.buttonSecondary.on("pointertap", this.buttonSecondaryCb, this);
 		this.buttonGuest.on("pointertap", this.buttonGuestCb, this);
-		this.buttonForgotPword.on("pointertap", () => {
-			auth.signOut();
-		});
+		this.buttonForgotPword.on("pointertap", () => {});
 
 		this.inputEmail.on("input", this.inputCB, this);
 		this.inputUsername.on("input", this.inputCB, this);
 		this.inputPassword.on("input", this.inputCB, this);
+		this.inputCB();
 
 		this.showLogin();
 	}
@@ -114,23 +112,18 @@ export class PanelLogin extends Component<MSApp> {
 		this.app.setAllUiElementsActive(false);
 
 		let email = this.inputEmail.value;
-		let username = this.inputUsername.value;
 		let password = this.inputPassword.value;
+		let username = this.inputUsername.value;
 
-		try {
-			if (this.menuState === "create") {
-				const result = await auth.createUserWithEmailAndPassword(email, password);
-				await result!.user!.updateProfile({ displayName: username });
-			} else {
-				await auth.signInWithEmailAndPassword(this.inputEmail.value, this.inputPassword.value);
-			}
-			this.visible = false;
-		} catch (error) {
-			this.error.text = error.message;
-			this.app.setAllUiElementsActive(true);
+		switch (this.menuState) {
+			case "create":
+				this.emit("create", email, password, username);
+				break;
+
+			case "login":
+				this.emit("login", email, password);
+				break;
 		}
-
-		this.emit("login");
 	}
 
 	private async buttonSecondaryCb() {
@@ -142,19 +135,27 @@ export class PanelLogin extends Component<MSApp> {
 	}
 
 	private async buttonGuestCb() {
-		auth.signInAnonymously();
+		this.emit("guest");
 	}
 
 	private inputCB() {
 		switch (this.menuState) {
 			case "create":
-				this.buttonPrimary.active = !!(this.inputUsername.value && this.inputEmail.value && this.inputPassword.value);
+				// this.buttonPrimary.active = !!(this.inputUsername.value && this.inputEmail.value && this.inputPassword.value);
 				break;
 
 			case "login":
-				this.buttonPrimary.active = !!(this.inputEmail.value && this.inputPassword.value);
+				// this.buttonPrimary.active = !!(this.inputEmail.value && this.inputPassword.value);
 				break;
 		}
+	}
+
+	public showError(message: string) {
+		this.error.text = message;
+	}
+
+	public clearError() {
+		this.error.text = "";
 	}
 
 	private showLogin() {

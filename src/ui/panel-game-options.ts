@@ -1,14 +1,16 @@
 import * as PIXI from "pixi.js-legacy";
+import { ColorSchemes, hexToNum } from "../common/color";
 import { Component } from "../common/component";
 import { UiButtonScroller } from "../common/ui-button-scroller";
 import { UiButtonText } from "../common/ui-button-text";
 import { MSApp } from "../ms-app";
 import { MS_GAME_CONFIG_DEFAULT } from "../ms-config";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MIN_EMPTY, MIN_GRID_HEIGHT, MIN_GRID_WIDTH } from "../ms-state";
-import { ColorSchemes, hexToNum } from "../common/color";
+import { auth } from "../firebase";
 
 export class PanelGameOptions extends Component<MSApp> {
 	private buttonPrimary!: UiButtonText;
+	private buttonSecondary!: UiButtonText;
 	private widthScroller!: UiButtonScroller;
 	private heightScroller!: UiButtonScroller;
 	private minesScroller!: UiButtonScroller;
@@ -20,8 +22,14 @@ export class PanelGameOptions extends Component<MSApp> {
 			textureUp: this.app.getFrame("textures", "button-up"),
 			text: "START",
 		});
-		this.buttonPrimary.position.set(0, 180);
 		this.buttonPrimary.tint = hexToNum(ColorSchemes.beachRainbow.red);
+
+		this.buttonSecondary = new UiButtonText(this.app, {
+			textureDown: this.app.getFrame("textures", "button-down"),
+			textureUp: this.app.getFrame("textures", "button-up"),
+			text: "LOGOUT",
+		});
+		this.buttonSecondary.tint = hexToNum(ColorSchemes.beachRainbow.purple);
 
 		this.widthScroller = new UiButtonScroller(this.app, {
 			arrowTexture: this.app.getFrame("textures", "button-arrow"),
@@ -47,6 +55,8 @@ export class PanelGameOptions extends Component<MSApp> {
 			max: MS_GAME_CONFIG_DEFAULT.gridWidth * MS_GAME_CONFIG_DEFAULT.gridHeight - MIN_EMPTY,
 		});
 
+		this.buttonPrimary.position.set(0, 180);
+		this.buttonSecondary.position.set(0, 260);
 		this.widthScroller.x = 64;
 		this.widthScroller.y = -80;
 		this.heightScroller.x = 64;
@@ -56,6 +66,7 @@ export class PanelGameOptions extends Component<MSApp> {
 
 		this.addChild(this.container);
 		this.container.addChild(this.buttonPrimary);
+		this.container.addChild(this.buttonSecondary);
 		this.container.addChild(this.widthScroller);
 		this.container.addChild(this.heightScroller);
 		this.container.addChild(this.minesScroller);
@@ -68,8 +79,12 @@ export class PanelGameOptions extends Component<MSApp> {
 			const gridWidth = this.widthScroller.current;
 			const gridHeight = this.heightScroller.current;
 			const startMines = this.minesScroller.current;
-			this.emit("start", { startMines, gridWidth, gridHeight });
-			this.app.showGame({ startMines, gridWidth, gridHeight });
+			const config = { startMines, gridWidth, gridHeight };
+			this.emit("start", config);
+		});
+
+		this.buttonSecondary.on("pointertap", () => {
+			this.emit("logout");
 		});
 	}
 

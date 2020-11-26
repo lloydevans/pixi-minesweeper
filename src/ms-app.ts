@@ -2,20 +2,24 @@ import clone from "lodash-es/clone";
 import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
 import { AppBase } from "./common/app-base";
+import { ColorSchemes } from "./common/color";
 import { ToneAudioConfig } from "./common/tone-audio";
 import { preventContextMenu } from "./common/utils";
+import { auth, db, setPersistence } from "./firebase";
+import { MSBgFlat } from "./ms-bg-flat";
 import { MSCell } from "./ms-cell";
-import { MSStyleConfig, MS_STYLE_DEFAULT, MSGameConfig } from "./ms-config";
+import { MSStyleConfig, MS_GAME_CONFIG_DEFAULT, MS_STYLE_DEFAULT, UserData } from "./ms-config";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MSState } from "./ms-state";
 import { SceneGame } from "./scene-game";
 import { SceneMenu } from "./scene-menu";
-import { functions } from "./firebase";
 
 /**
  * Core App class.
  */
 export class MSApp extends AppBase {
-	public state: MSState = new MSState();
+	public background?: MSBgFlat;
+	public container = new PIXI.Container();
+	public state: MSState = new MSState(MS_GAME_CONFIG_DEFAULT);
 	public cellPool: MSCell[] = [];
 	public style: MSStyleConfig;
 	public scenes: {
@@ -37,16 +41,18 @@ export class MSApp extends AppBase {
 
 		preventContextMenu();
 
+		this.root.addChild(this.container);
+
 		this.style = clone(MS_STYLE_DEFAULT);
 
 		this.events.on("init", this.onInit, this);
-		this.events.on("update", this.onUpdate, this);
+		this.events.on("update", this.updateCb, this);
 	}
 
 	/**
 	 * Init callback.
 	 */
-	private onInit() {
+	private async onInit() {
 		this.addSpine("grid-square");
 		this.addSpine("timer");
 		this.addAtlas("textures");
@@ -57,13 +63,13 @@ export class MSApp extends AppBase {
 		this.addJson("audio", "audio.json");
 		this.loader.load();
 
-		this.loader.onComplete.once(this.onLoad, this);
+		this.loader.onComplete.once(this.loadCb, this);
 	}
 
 	/**
 	 * Load callback.
 	 */
-	private onLoad() {
+	private async loadCb() {
 		this.audio.init(this.getJson("audio") as ToneAudioConfig);
 
 		this.style = this.parseConfig(this.getJson("config") as MSStyleConfig);
@@ -82,25 +88,59 @@ export class MSApp extends AppBase {
 			bgAtlas.spritesheet.baseTexture.update();
 		}
 
+		this.background = new MSBgFlat(this);
+		this.root.addChildAt(this.background, 0);
+
+		await setPersistence();
+
 		this.setReady();
-		this.showMenu();
+
+		this.handleFirstVisit();
+	}
+
+	async handleFirstVisit() {
+		let user = auth.currentUser;
+
+		if (!user) {
+			this.showMenu();
+		} //
+		else {
+			const userdata = (
+				await db
+					.collection("accounts") //
+					.doc(auth.currentUser!.uid)
+					.get()
+			).data() as UserData;
+
+			if (userdata?.activeGame) {
+				this.showGame(userdata.activeGame);
+			} //
+			else {
+				this.showMenu();
+			}
+		}
 	}
 
 	/**
 	 *
 	 * @param config
 	 */
-	public async showGame(config: MSGameConfig) {
-		const gameId = (await functions.httpsCallable("newGame")(config)).data;
+	public async showGame(gameId: string) {
+		this.tweenGroup.reset();
+		this.background?.animateColor(ColorSchemes.beachRainbowDark.purple);
 		Object.values(this.scenes).forEach((el) => el?.destroy());
-		this.scenes.game = new SceneGame(this, config, gameId);
+		this.scenes.game = new SceneGame(this);
 		this.root.addChild(this.scenes.game);
+		await this.scenes.game.setGameId(gameId);
+		await this.scenes.game.initGame();
 	}
 
 	/**
 	 *
 	 */
 	public async showMenu() {
+		this.tweenGroup.reset();
+		this.background?.animateColor(ColorSchemes.beachRainbowDark.yellow);
 		Object.values(this.scenes).forEach((el) => el?.destroy());
 		this.scenes.menu = new SceneMenu(this);
 		this.root.addChild(this.scenes.menu);
@@ -111,7 +151,7 @@ export class MSApp extends AppBase {
 	 *
 	 * @param dt
 	 */
-	private onUpdate(dt: number) {
+	private updateCb(dt: number) {
 		// Generate cell view instances in the bakground.
 		const maxCells = MAX_GRID_WIDTH * MAX_GRID_HEIGHT;
 		const length = this.cellPool.length;

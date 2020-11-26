@@ -120,6 +120,15 @@ export class MSGrid extends Component<MSApp> {
 	/**
 	 *
 	 */
+	public updateCellStateReferences() {
+		this.children.forEach((el, i) => {
+			el.setState(this.app.state.cellAt(el.ix, el.iy)!);
+		});
+	}
+
+	/**
+	 *
+	 */
 	public async swipeWipe(direction: "up" | "down") {
 		const indexes: number[] = [];
 		for (let i = 0; i < this.app.state.totalCells; i++) {
