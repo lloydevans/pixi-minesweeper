@@ -12,7 +12,7 @@ export class MSBgFlat extends Component<MSApp> {
 	private speed: number = 0.1;
 	private scroll: number = 0;
 	private sprite!: PIXI.TilingSprite;
-	private rgba?: RgbaObject;
+	private rgba: RgbaObject = { r: 0, g: 0, b: 0, a: 1 };
 
 	protected init() {
 		this.sprite = this.createSprite("tiles", "bg-tile");
@@ -35,14 +35,14 @@ export class MSBgFlat extends Component<MSApp> {
 	}
 
 	public animateColor(hex: string, ms = 333, ease = Ease.sineInOut) {
-		this.rgba && Tween.removeTweens(this.rgba);
-		this.rgba = numToRgba(this.sprite.tint);
+		Tween.removeTweens(this.rgba);
+
+		Object.assign(this.rgba, numToRgba(this.sprite.tint));
 
 		const tween = this.tween(this.rgba) //
 			.to(hexToRgba(hex), ms, ease);
 
-		tween.on("change", () => (this.sprite.tint = rgbToNum(this.rgba!)));
-		tween.on("complete", () => delete this.rgba);
+		tween.on("change", () => (this.sprite.tint = rgbToNum(this.rgba)));
 	}
 
 	private createSprite(atlasName: string, frameName: string) {
