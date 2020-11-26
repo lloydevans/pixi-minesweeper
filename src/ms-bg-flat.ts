@@ -1,9 +1,9 @@
 import * as PIXI from "pixi.js-legacy";
-import { ColorSchemes, hexToNum, hexToRgba, numToRgba, rgbToNum, RgbaObject } from "./common/color";
+import { ColorSchemes, hexToNum, hexToRgba, numToRgba, RgbaObject, rgbToNum } from "./common/color";
 import { Component } from "./common/component";
 import { Ease } from "./common/ease";
-import { MSApp } from "./ms-app";
 import { Tween } from "./common/tween";
+import { MSApp } from "./ms-app";
 
 /**
  */
