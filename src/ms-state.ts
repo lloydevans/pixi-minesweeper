@@ -53,13 +53,13 @@ export interface MoveDataHistory extends MoveData {
  * Class handles Minesweeper game state and logic.
  */
 export class MSState {
-	public static fromServerObject(data: MSStateServer): MSState {
+	public static fromServerState(data: MSStateServer): MSState {
 		const state = new MSState(data.config);
 		state.parseServerState(data);
 		return state;
 	}
 
-	public static fromClientObject(data: MSStateClient): MSState {
+	public static fromClientState(data: MSStateClient): MSState {
 		const state = new MSState(data.config);
 		state.parseClientState(data);
 		return state;
@@ -548,7 +548,6 @@ export class MSState {
 
 	/**
 	 * Check if the current game is in win state.
-	 *
 	 */
 	public isWin(): boolean {
 		// Can we find a covered cell without a mine?
@@ -557,7 +556,6 @@ export class MSState {
 
 	/**
 	 * Check if the current game is in lose state.
-	 *
 	 */
 	public isLose(): boolean {
 		// Check if there is an uncovered cell containing a mine.
@@ -566,7 +564,6 @@ export class MSState {
 
 	/**
 	 * Is the game win/lose state determined?
-	 *
 	 */
 	public canAcceptNewMove() {
 		return !this.isWin() && !this.isLose();
