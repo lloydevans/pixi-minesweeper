@@ -30,10 +30,6 @@ export let analytics = {
 	},
 };
 
-db.settings({
-	ignoreUndefinedProperties: true,
-});
-
 if (window.location.hostname !== "localhost") {
 	analytics = firebase.analytics();
 	firebase.performance();
@@ -44,6 +40,7 @@ if (window.location.hostname !== "localhost") {
 }
 
 auth.onAuthStateChanged(onAuth);
+db.settings({ ignoreUndefinedProperties: true });
 
 export async function setPersistence() {
 	try {
@@ -53,7 +50,7 @@ export async function setPersistence() {
 	}
 }
 
-async function onAuth(user: firebase.User | null) {
+function onAuth(user: firebase.User | null) {
 	if (user) {
 		console.log("Current user", auth.currentUser);
 	} else {
