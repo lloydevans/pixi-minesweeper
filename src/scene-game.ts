@@ -66,7 +66,7 @@ export class SceneGame extends Scene<MSApp> {
 				const gameId = (await functions.httpsCallable("newGame")(this.app.state.config)).data;
 
 				if (!gameId) {
-					throw new Error("Missing game ID");
+					throw new Error("New game request failed to return game ID");
 				}
 
 				await this.setGameId(gameId);
@@ -489,6 +489,7 @@ export class SceneGame extends Scene<MSApp> {
 			this.screenShake(s * 8);
 
 			this.audio.play("rumble", { type: "attack", volume: s }); // Rumble start
+
 			this.audio.play("dirt-thud-0", { delay: 0.005, volume: s });
 
 			await this.grid.animateUpdateFrom(cellState);
@@ -502,11 +503,13 @@ export class SceneGame extends Scene<MSApp> {
 		// Lose state
 		if (this.app.state.isLose()) {
 			this.app.log("Lose state");
+
 			if (cellState.flag) {
 				this.app.state.clearFlag(x, y);
 			}
 
 			this.audio.play("click", { delay: 0.05 });
+
 			this.audio.play("dirt-thud-2", { delay: 0.005, transpose: 12 });
 
 			msCell.updateViewState();
@@ -516,12 +519,14 @@ export class SceneGame extends Scene<MSApp> {
 		// Win state
 		else if (this.app.state.isWin()) {
 			this.app.log("Win state");
+
 			this.animateWin();
 		}
 
 		// Continue state
 		else {
 			this.app.log("Continue state");
+
 			this.grid.setInteractionEnabled(true);
 		}
 	}
