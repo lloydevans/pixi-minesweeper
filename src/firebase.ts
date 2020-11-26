@@ -30,7 +30,7 @@ export let analytics = {
 	},
 };
 
-firebase.firestore().settings({
+db.settings({
 	ignoreUndefinedProperties: true,
 });
 
@@ -48,8 +48,8 @@ auth.onAuthStateChanged(onAuth);
 export async function setPersistence() {
 	try {
 		await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-	} catch (error) {
-		console.log(error.cove, error.message);
+	} catch (err) {
+		console.log(err.code, err.message);
 	}
 }
 
