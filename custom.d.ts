@@ -10,7 +10,7 @@ declare namespace createjs {
 		_getPaused(): void;
 		_setTimeScale(value: number): void;
 		_getTimeScale(): void;
-		get(target: any, props?: any): Tween;
+		get<T>(target: T, props?: any): Tween<T>;
 		add(tween: Tween): Tween;
 		remove(tween: Tween): void;
 		reset(keepGroups?: boolean): void;
