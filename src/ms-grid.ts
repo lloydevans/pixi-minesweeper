@@ -112,7 +112,7 @@ export class MSGrid extends Component<MSApp> {
 				const t = x / this.app.state.width + y / this.app.state.height;
 				this.audio.play("blop", { transpose: t, volume: 0.5 });
 				this.audio.play("blop", { transpose: t + 12, delay: 0.01, volume: 0.5 });
-				await this.delay(66);
+				await this.delay(33);
 			}
 		}
 	}
