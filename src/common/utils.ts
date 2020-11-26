@@ -20,6 +20,11 @@ export async function forEachRandom<T>(target: ReadonlyArray<T>, cb: (el: T) => 
 	}
 }
 
+/**
+ * Clone JSON-friendly JS objects.
+ *
+ * @param obj - Target object.
+ */
 export function jsonClone<T>(obj: T): T {
 	return JSON.parse(JSON.stringify(obj));
 }
