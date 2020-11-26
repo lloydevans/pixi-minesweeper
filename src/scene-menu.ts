@@ -93,9 +93,8 @@ export class SceneMenu extends Component<MSApp> {
 		this.panelGameOptions.on("start", async (config: MSGameConfig) => {
 			this.app.setAllUiElementsActive(false);
 
-			let gameId;
 			try {
-				gameId = (await functions.httpsCallable("newGame")(config))?.data;
+				const gameId = (await functions.httpsCallable("newGame")(config))?.data;
 				this.app.showGame(gameId);
 			} catch (err) {
 				console.log(err);
@@ -105,6 +104,7 @@ export class SceneMenu extends Component<MSApp> {
 
 		this.panelGameOptions.on("logout", async () => {
 			this.app.setAllUiElementsActive(false);
+
 			try {
 				await auth.signOut();
 			} catch (err) {
