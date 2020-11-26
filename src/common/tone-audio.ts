@@ -89,6 +89,7 @@ export class ToneAudio {
 				}
 			}
 
+			// TODO: Concurrent request limit.
 			await Promise.all(requests);
 		} catch (err) {
 			console.log(err);
