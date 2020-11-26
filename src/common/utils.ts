@@ -20,6 +20,10 @@ export async function forEachRandom<T>(target: ReadonlyArray<T>, cb: (el: T) => 
 	}
 }
 
+export function jsonClone<T>(obj: T): T {
+	return JSON.parse(JSON.stringify(obj));
+}
+
 /**
  * Replacment for isEqual until lodash is imported for cloud functions.
  */
