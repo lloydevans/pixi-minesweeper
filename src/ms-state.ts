@@ -1,6 +1,6 @@
+import { jsonClone, shallowObjectEquals } from "./common/utils";
 import { MSCellState, MSCellType } from "./ms-cell-state";
 import { MSGameConfig } from "./ms-config";
-import { shallowObjectEquals, jsonClone } from "./common/utils";
 
 export const MIN_GRID_WIDTH = 4;
 export const MIN_GRID_HEIGHT = 4;
