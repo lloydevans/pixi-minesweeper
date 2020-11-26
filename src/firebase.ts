@@ -30,6 +30,10 @@ export let analytics = {
 	},
 };
 
+auth.onAuthStateChanged(onAuth);
+
+db.settings({ ignoreUndefinedProperties: true });
+
 if (window.location.hostname !== "localhost") {
 	analytics = firebase.analytics();
 	firebase.performance();
@@ -38,9 +42,6 @@ if (window.location.hostname !== "localhost") {
 	functions.useEmulator("localhost", 5001);
 	auth.useEmulator("http://localhost:9099/");
 }
-
-auth.onAuthStateChanged(onAuth);
-db.settings({ ignoreUndefinedProperties: true });
 
 export async function setPersistence() {
 	try {
