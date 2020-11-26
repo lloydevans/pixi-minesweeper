@@ -39,8 +39,7 @@ export class MSBgFlat extends Component<MSApp> {
 
 		Object.assign(this.rgba, numToRgba(this.sprite.tint));
 
-		const tween = this.tween(this.rgba) //
-			.to(hexToRgba(hex), ms, ease);
+		const tween = this.tween(this.rgba).to(hexToRgba(hex), ms, ease);
 
 		tween.on("change", () => (this.sprite.tint = rgbToNum(this.rgba)));
 	}
