@@ -92,6 +92,8 @@ export class MSState {
 
 	private readonly history: MoveDataHistory[] = [];
 
+	private resolution: GameResolution = GameResolution.Incomplete;
+
 	/**
 	 *
 	 */
@@ -185,7 +187,7 @@ export class MSState {
 	 */
 	public toServerState(): MSStateServer {
 		return jsonClone({
-			resolution: GameResolution.Incomplete,
+			resolution: this.resolution,
 			history: this.history,
 			config: this.config,
 			cells: this.cells,
@@ -229,7 +231,10 @@ export class MSState {
 			this.setConfig(object.config);
 		}
 
+		this.resolution = object.resolution;
+
 		this.setHistory(object.history);
+
 		for (let i = 0; i < object.cells.length; i++) {
 			Object.assign(this.cells[i], object.cells[i]);
 		}
