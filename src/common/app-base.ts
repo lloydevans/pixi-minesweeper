@@ -121,6 +121,14 @@ export class AppBase extends PIXI.Application {
 
 	/**
 	 *
+	 * @param args
+	 */
+	public log(...args: any[]) {
+		console.log(...args);
+	}
+
+	/**
+	 *
 	 */
 	public tween<T>(target: T, options?: TweenProps): Tween<T> {
 		const tween = this.tweenGroup.get(target, options);
