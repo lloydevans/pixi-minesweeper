@@ -15,31 +15,31 @@ export class Tween<T = any> extends createjs.Tween {
 		super(target, options);
 	}
 
-	wait(duration: number, passive?: boolean): this {
+	wait(duration: number, passive?: boolean) {
 		return super.wait(duration, passive);
 	}
 
-	to(props: Partial<T>, duration?: number, ease = Ease.sineInOut): this {
-		return super.to(props, duration, ease) as this;
+	to(props: Partial<T>, duration?: number, ease = Ease.sineInOut) {
+		return super.to(props, duration, ease);
 	}
 
-	label(name: string): this {
+	label(name: string) {
 		return super.label(name);
 	}
 
-	call(callback: (...params: any[]) => void, params?: Partial<T>[], scope?: unknown): this {
+	call(callback: (...params: any[]) => void, params?: Partial<T>[], scope?: unknown) {
 		return super.call(callback, params, scope);
 	}
 
-	set(props: Partial<T>, target?: T): this {
+	set(props: Partial<T>, target?: T) {
 		return super.set(props, target);
 	}
 
-	play(tween?: Tween<T>): this {
+	play(tween?: Tween<T>) {
 		return super.play(tween);
 	}
 
-	pause(tween?: Tween<T>): this {
+	pause(tween?: Tween<T>) {
 		return super.pause(tween);
 	}
 }
