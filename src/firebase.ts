@@ -5,6 +5,7 @@ import "firebase/firestore";
 import "firebase/functions";
 import "firebase/auth";
 
+// Public project config.
 const firebaseConfig = {
 	apiKey: "AIzaSyB1PSNZ1sZ7Esdwh_zKYhO7ody7Bo2YDhw",
 	authDomain: "minesweeper-fe661.firebaseapp.com",
