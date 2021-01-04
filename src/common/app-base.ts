@@ -104,8 +104,9 @@ export class AppBase extends PIXI.Application {
 	}
 
 	/**
+   * Update function callback for app ticker.
 	 *
-	 * @param dt
+	 * @param dt - Delta time.
 	 */
 	private update(dt: number) {
 		const currentDpr = this.getWindowDpr();
