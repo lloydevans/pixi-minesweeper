@@ -7,7 +7,6 @@
 		"test-watch": "npm run test -- --watch",
 		"serve": "npx --no-install webpack-dev-server",
 		"serve-modern": "npm run serve -- --env.modern",
-		"serve-editor": "npm run serve -- --env.editor",
 		"serve-prod": "npm run serve -- --env.prod",
 		"build-dev": "npx --no-install webpack",
 		"build": "npm run build-dev -- --env.prod",
