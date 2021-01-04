@@ -220,11 +220,7 @@ export class MSState {
 			cells.push(this.cellToType(this.cells[i]));
 		}
 
-		let result;
-
-		if (includeResult) {
-			result = [...this.cells];
-		}
+		const result = includeResult ? this.cells : void 0;
 
 		return jsonClone({
 			history: this.history,
