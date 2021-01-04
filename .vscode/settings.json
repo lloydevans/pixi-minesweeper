@@ -1,9 +1,14 @@
 {
 	"cSpell.words": [
+		"arial",
 		"blop",
 		"bmfont",
 		"createjs",
+		"lerp",
 		"pixi",
+		"skel",
+		"tonejs",
+		"tslib",
 		"tweenjs",
 		"tweens"
 	],
