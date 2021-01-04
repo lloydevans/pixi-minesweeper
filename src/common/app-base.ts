@@ -35,12 +35,12 @@ export class AppBase extends PIXI.Application {
 	public readonly events = new PIXI.utils.EventEmitter();
 
 	/**
-	 *
+	 * App audio manager reference
 	 */
 	public readonly audio = new ToneAudio();
 
 	/**
-	 *
+	 * Reference size of the app. If this is not defined, no root scaling is applied.
 	 */
 	public referenceSize?: AppReferenceSize;
 
