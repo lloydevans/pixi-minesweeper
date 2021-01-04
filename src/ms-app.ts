@@ -45,14 +45,14 @@ export class MSApp extends AppBase {
 
 		this.style = clone(MS_STYLE_DEFAULT);
 
-		this.events.on("init", this.onInit, this);
+		this.events.on("init", this.initCb, this);
 		this.events.on("update", this.updateCb, this);
 	}
 
 	/**
 	 * Init callback.
 	 */
-	private async onInit() {
+	private async initCb() {
 		this.addSpine("grid-square");
 		this.addSpine("timer");
 		this.addAtlas("textures");
