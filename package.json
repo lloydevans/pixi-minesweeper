@@ -58,10 +58,10 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/<ORG>/<REPO>.git"
+		"url": "https://github.com/lloydevans/pixi-minesweeper.git"
 	},
 	"bugs": {
-		"url": "https://github.com/<ORG>/<REPO>/issues"
+		"url": "https://github.com/lloydevans/pixi-minesweeper/issues"
 	},
-	"homepage": "https://github.com/<ORG>/<REPO>#readme"
+	"homepage": "https://github.com/lloydevans/pixi-minesweeper#readme"
 }
