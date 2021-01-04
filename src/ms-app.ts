@@ -8,7 +8,7 @@ import { preventContextMenu } from "./common/utils";
 import { auth, db, setPersistence } from "./firebase";
 import { MSBgFlat } from "./ms-bg-flat";
 import { MSCell } from "./ms-cell";
-import { MSStyleConfig, MS_GAME_CONFIG_DEFAULT, MS_STYLE_DEFAULT, UserData } from "./ms-config";
+import { MSStyleConfig, MS_STYLE_DEFAULT, UserData } from "./ms-config";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MSState } from "./ms-state";
 import { SceneGame } from "./scene-game";
 import { SceneMenu } from "./scene-menu";
@@ -19,7 +19,7 @@ import { SceneMenu } from "./scene-menu";
 export class MSApp extends AppBase {
 	public background?: MSBgFlat;
 	public container = new PIXI.Container();
-	public state: MSState = new MSState(MS_GAME_CONFIG_DEFAULT);
+	public state: MSState = new MSState();
 	public cellPool: MSCell[] = [];
 	public style: MSStyleConfig;
 	public scenes: {
