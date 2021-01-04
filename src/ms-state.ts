@@ -1,6 +1,5 @@
 import { jsonClone, shallowObjectEquals } from "./common/utils";
 import { MSCellState, MSCellType } from "./ms-cell-state";
-import { MSGameConfig } from "./ms-config";
 
 export const MIN_GRID_WIDTH = 4;
 export const MIN_GRID_HEIGHT = 4;
@@ -48,6 +47,18 @@ export interface MoveData {
 export interface MoveDataHistory extends MoveData {
 	uncovered: { x: number; y: number }[];
 }
+export interface MSGameConfig {
+	startMines: number;
+	gridWidth: number;
+	gridHeight: number;
+	cheatMode?: boolean;
+}
+
+export const MS_STATE_CONFIG_DEFAULT: MSGameConfig = {
+	startMines: 5,
+	gridWidth: 9,
+	gridHeight: 7,
+};
 
 /**
  * Class handles Minesweeper game state and logic.
