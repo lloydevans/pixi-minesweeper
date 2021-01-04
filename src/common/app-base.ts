@@ -11,6 +11,12 @@ import { UiElement } from "./ui-element";
 export const MAX_DPR = 4;
 export const MIN_DPR = 0.5;
 
+export interface AppReferenceSize {
+	width: number;
+	height: number;
+	blend: number;
+}
+
 /**
  * General purpose app functionality.
  */
@@ -36,11 +42,7 @@ export class AppBase extends PIXI.Application {
 	/**
 	 *
 	 */
-	public referenceSize?: {
-		width: number;
-		height: number;
-		blend: number;
-	};
+	public referenceSize?: AppReferenceSize;
 
 	/**
 	 * Current app ready state. Modified via setReady,
