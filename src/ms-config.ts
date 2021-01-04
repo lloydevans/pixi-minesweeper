@@ -6,9 +6,6 @@ export interface UserData {
 	activeGame?: string;
 }
 
-/**
- *
- */
 export interface MSGameConfig {
 	startMines: number;
 	gridWidth: number;
@@ -16,18 +13,12 @@ export interface MSGameConfig {
 	cheatMode?: boolean;
 }
 
-/**
- *
- */
 export const MS_GAME_CONFIG_DEFAULT: MSGameConfig = {
 	startMines: 5,
 	gridWidth: 9,
 	gridHeight: 7,
 };
 
-/**
- *
- */
 export interface MSStyleConfig {
 	colorBackground: string;
 	colorBoard: string;
@@ -45,9 +36,6 @@ export interface MSStyleConfig {
 	};
 }
 
-/**
- *
- */
 export const MS_STYLE_DEFAULT: MSStyleConfig = {
 	colorBackground: "#303030",
 	colorBoard: "#bda355",
