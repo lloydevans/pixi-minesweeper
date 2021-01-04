@@ -50,6 +50,7 @@ export class AppBase extends PIXI.Application {
 	public get ready() {
 		return this._ready;
 	}
+	private _ready = false;
 
 	/**
 	 * Renderer pixel ratio. Use resizeRoot to modify.
@@ -57,6 +58,7 @@ export class AppBase extends PIXI.Application {
 	public get dpr() {
 		return this._dpr;
 	}
+	private _dpr = 1;
 
 	/**
 	 * Renderer virtual width. Use resizeRoot to modify.
@@ -64,6 +66,7 @@ export class AppBase extends PIXI.Application {
 	public get width() {
 		return this._width;
 	}
+	private _width = 0;
 
 	/**
 	 * Renderer virtual height. Use resizeRoot to modify.
@@ -71,6 +74,7 @@ export class AppBase extends PIXI.Application {
 	public get height() {
 		return this._height;
 	}
+	private _height = 0;
 
 	/**
 	 * Global app tween group.
@@ -87,20 +91,22 @@ export class AppBase extends PIXI.Application {
 	 */
 	protected readonly uiElements: UiElement[] = [];
 
-	private _dpr = 1;
-	private _width = 0;
-	private _height = 0;
-	private _ready = false;
+	private initialized = false;
 
 	/**
-	 *
+	 * Initialize the app
 	 */
 	public init() {
-		this.stage.addChild(this.root);
-		this.ticker.add(this.update, this);
-		this.ticker.add(this.audio.update, this.audio);
-		this.loader.use(ToneAudio.configLoader);
-		this.events.emit("init");
+		if (!this.initialized) {
+			this.initialized = true;
+			this.stage.addChild(this.root);
+			this.ticker.add(this.update, this);
+			this.ticker.add(this.audio.update, this.audio);
+			this.loader.use(ToneAudio.configLoader);
+			this.events.emit("init");
+		} else {
+			throw new Error("App already initialized!");
+		}
 	}
 
 	/**
