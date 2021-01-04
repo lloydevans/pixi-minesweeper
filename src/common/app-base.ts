@@ -356,7 +356,7 @@ export class AppBase extends PIXI.Application {
 	/**
 	 * Add an atlas asset to the loader.
 	 *
-	 * @param atlasName
+	 * @param assetPath
 	 * @param scale
 	 */
 	public addBitmapFont(assetPath: string, scale: number = this.getTextureDpr()) {
@@ -366,7 +366,7 @@ export class AppBase extends PIXI.Application {
 	/**
 	 * Add an JSON asset to the loader.
 	 *
-	 * @param atlasName
+	 * @param jsonName
 	 * @param scale
 	 */
 	public addJson(jsonName: string, url: string) {
