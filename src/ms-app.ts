@@ -100,24 +100,27 @@ export class MSApp extends AppBase {
 
 		this.setReady();
 
-		this.handleFirstVisit();
+		this.firstStart();
 	}
 
-	async handleFirstVisit() {
-		let user = auth.currentUser;
+	async firstStart() {
+		const user = auth.currentUser;
+		let userdata;
 
-		if (!user) {
+		if (user) {
+			try {
+				const account = await db.collection("accounts").doc(user.uid).get();
+				userdata = account.data() as UserData;
+			} catch (err) {
+				console.log(err);
+			}
+		}
+
+		if (!userdata) {
 			this.showMenu();
 		} //
 		else {
-			const userdata = (
-				await db
-					.collection("accounts") //
-					.doc(auth.currentUser!.uid)
-					.get()
-			).data() as UserData;
-
-			if (userdata?.activeGame) {
+			if (userdata.activeGame) {
 				this.showGame(userdata.activeGame);
 			} //
 			else {
