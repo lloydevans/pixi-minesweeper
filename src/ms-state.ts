@@ -105,12 +105,14 @@ export class MSState {
 
 	private resolution: GameResolution = GameResolution.Incomplete;
 
-	/**
-	 *
-	 */
-	constructor(config: MSGameConfig) {
-		this.config = config;
-		this.setConfig(config);
+	constructor(config: Partial<MSGameConfig> = {}) {
+		Object.entries(MS_STATE_CONFIG_DEFAULT).forEach((entry) => {
+			const key = entry[0] as keyof MSGameConfig;
+			const el = entry[1];
+			config[key] = config[key] ?? el;
+		});
+
+		this.setConfig(this.config);
 	}
 
 	/**
