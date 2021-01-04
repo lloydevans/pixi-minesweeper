@@ -26,13 +26,13 @@ export interface MSStateServer {
 	resolution: GameResolution;
 	startTime?: number;
 	resolveTime?: number;
-	config: MSGameConfig;
+	config: MSStateConfig;
 	history: MoveDataHistory[];
 	cells: MSCellState[];
 }
 
 export interface MSStateClient {
-	config: MSGameConfig;
+	config: MSStateConfig;
 	history: MoveDataHistory[];
 	cells: MSCellType[];
 	result?: MSCellState[];
@@ -47,14 +47,14 @@ export interface MoveData {
 export interface MoveDataHistory extends MoveData {
 	uncovered: { x: number; y: number }[];
 }
-export interface MSGameConfig {
+export interface MSStateConfig {
 	startMines: number;
 	gridWidth: number;
 	gridHeight: number;
 	cheatMode?: boolean;
 }
 
-export const MS_STATE_CONFIG_DEFAULT: MSGameConfig = {
+export const MS_STATE_CONFIG_DEFAULT: MSStateConfig = {
 	startMines: 5,
 	gridWidth: 9,
 	gridHeight: 7,
@@ -78,7 +78,7 @@ export class MSState {
 
 	public width: number = 0;
 	public height: number = 0;
-	public config: MSGameConfig = {
+	public config: MSStateConfig = {
 		startMines: 1,
 		gridWidth: 4,
 		gridHeight: 4,
@@ -105,14 +105,14 @@ export class MSState {
 
 	private resolution: GameResolution = GameResolution.Incomplete;
 
-	constructor(config: Partial<MSGameConfig> = {}) {
+	constructor(config: Partial<MSStateConfig> = {}) {
 		Object.entries(MS_STATE_CONFIG_DEFAULT).forEach((entry) => {
-			const key = entry[0] as keyof MSGameConfig;
+			const key = entry[0] as keyof MSStateConfig;
 			const el = entry[1];
 			config[key] = config[key] ?? el;
 		});
 
-		this.setConfig(config as MSGameConfig);
+		this.setConfig(config as MSStateConfig);
 	}
 
 	/**
@@ -120,7 +120,7 @@ export class MSState {
 	 *
 	 * @param config - Game config object.
 	 */
-	public setConfig(config: MSGameConfig) {
+	public setConfig(config: MSStateConfig) {
 		if (
 			!config ||
 			typeof config.gridWidth !== "number" ||
