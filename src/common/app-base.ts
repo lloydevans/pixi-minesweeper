@@ -153,7 +153,7 @@ export class AppBase extends PIXI.Application {
 
 	/**
 	 * This is a rough way for components to be able to wait until required resources
-	 * are loaded before running initiailisation logic.
+	 * are loaded before running initialization logic.
 	 */
 	public setReady() {
 		if (!this.ready) {
