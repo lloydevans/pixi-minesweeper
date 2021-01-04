@@ -94,7 +94,6 @@ export class MSApp extends AppBase {
 		try {
 			await setPersistence();
 		} catch (err) {
-			// TODO: Handle offline
 			console.log(err);
 		}
 
