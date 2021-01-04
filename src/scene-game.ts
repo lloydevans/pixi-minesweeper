@@ -134,7 +134,7 @@ export class SceneGame extends Scene<MSApp> {
 
 		if (data?.cells) {
 			this.app.state.parseClientState(data);
-			this.emit("boardstate", data);
+			this.emit("snapshot", data);
 		}
 	}
 
@@ -174,7 +174,7 @@ export class SceneGame extends Scene<MSApp> {
 	 *
 	 */
 	private waitForBoardStateUpdate(): Promise<MSStateClient> {
-		return new Promise((resolve) => this.once("boardstate", resolve));
+		return new Promise((resolve) => this.once("snapshot", resolve));
 	}
 
 	/**
