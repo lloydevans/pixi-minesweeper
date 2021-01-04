@@ -157,7 +157,7 @@ export class MSApp extends AppBase {
 	/**
 	 * Update callback.
 	 *
-	 * @param dt
+	 * @param dt - Delta time.
 	 */
 	private updateCb(dt: number) {
 		// Generate cell view instances in the bakground.
