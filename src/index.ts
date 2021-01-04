@@ -19,9 +19,6 @@ createjs.Ticker.maxDelta = 100;
 
 import { MSApp } from "./ms-app";
 
-/**
- *
- */
 function start() {
 	window.document.body.style.background = "black";
 	window.document.body.style.overflow = "hidden";

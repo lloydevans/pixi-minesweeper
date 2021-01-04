@@ -160,7 +160,7 @@ export class MSApp extends AppBase {
 	 * @param dt - Delta time.
 	 */
 	private updateCb(dt: number) {
-		// Generate cell view instances in the bakground.
+		// Generate cell view instances in the background.
 		const maxCells = MAX_GRID_WIDTH * MAX_GRID_HEIGHT;
 		const length = this.cellPool.length;
 		if (this.ready && length < maxCells) {

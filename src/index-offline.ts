@@ -19,9 +19,6 @@ createjs.Ticker.maxDelta = 100;
 
 import { MSApp } from "./ms-app";
 
-/**
- *
- */
 function start() {
 	const app = new MSApp();
 
