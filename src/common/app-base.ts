@@ -224,6 +224,37 @@ export class AppBase extends PIXI.Application {
 	}
 
 	/**
+	 * Make a request. If it fails, wait for an amount of delayed retries.
+	 *
+	 * @param action - Action to perform.
+	 * @param delay - Delay in seconds between retries.
+	 * @param maxTries - Max tries before giving up.
+	 */
+	public async persistentRequest<T>(action: () => Promise<T>, delay = 1, maxTries = 10): Promise<T> {
+		let tries = 0;
+		let result;
+
+		while (!result) {
+			let error;
+
+			try {
+				result = await action();
+			} catch (err) {
+				error = err;
+				await this.delay(delay * 1000);
+			}
+
+			tries++;
+
+			if (error && tries > maxTries) {
+				throw error;
+			}
+		}
+
+		return result;
+	}
+
+	/**
 	 *
 	 * @param element
 	 */
