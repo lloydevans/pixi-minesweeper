@@ -110,7 +110,7 @@ export class AppBase extends PIXI.Application {
 	}
 
 	/**
-   * Update function callback for app ticker.
+	 * Update function callback for app ticker.
 	 *
 	 * @param dt - Delta time.
 	 */
