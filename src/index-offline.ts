@@ -1,5 +1,5 @@
 /**
- * Entry file for a basic editor mode, used for development.
+ * Offline version of the game.
  */
 
 // Polyfills
