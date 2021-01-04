@@ -6,7 +6,6 @@ import { UiButtonText } from "../common/ui-button-text";
 import { MSApp } from "../ms-app";
 import { MS_GAME_CONFIG_DEFAULT } from "../ms-config";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MIN_EMPTY, MIN_GRID_HEIGHT, MIN_GRID_WIDTH } from "../ms-state";
-import { auth } from "../firebase";
 
 export class PanelGameOptions extends Component<MSApp> {
 	private buttonPrimary!: UiButtonText;
