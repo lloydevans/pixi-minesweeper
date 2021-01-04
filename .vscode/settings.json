@@ -1,8 +1,11 @@
 {
 	"cSpell.words": [
+		"blop",
+		"bmfont",
 		"createjs",
 		"pixi",
-		"tweenjs"
+		"tweenjs",
+		"tweens"
 	],
 	"cSpell.allowCompoundWords": true
 }
