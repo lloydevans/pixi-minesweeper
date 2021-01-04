@@ -130,8 +130,6 @@ export class SceneGame extends Scene<MSApp> {
 	 * @param data
 	 */
 	private updateSnapshot(data: MSStateClient) {
-		console.log(data);
-
 		this.gameData = data;
 
 		if (data?.cells) {
