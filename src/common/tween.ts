@@ -39,7 +39,7 @@ export class Tween<T = any> extends createjs.Tween {
 		return super.play(tween) as this;
 	}
 
-	pause(tween?: Tween<T>) {
-		return super.pause(tween);
+	pause(tween?: Tween<T>): this {
+		return super.pause(tween) as this;
 	}
 }
