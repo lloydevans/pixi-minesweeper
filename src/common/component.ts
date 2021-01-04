@@ -1,7 +1,7 @@
 import * as PIXI from "pixi.js-legacy";
 import { AppBase } from "./app-base";
 import { TweenGroup } from "./tween-group";
-import { TweenProps } from "./tween-props";
+import { TweenOptions } from "./tween-props";
 import { Tween } from "./tween";
 
 // These are copied from the Container inline type.
@@ -82,7 +82,7 @@ export class Component<T extends AppBase = AppBase> extends PIXI.Container {
 	/**
 	 *
 	 */
-	protected tween<T>(target: T, options?: TweenProps): Tween<T> {
+	protected tween<T>(target: T, options?: TweenOptions): Tween<T> {
 		let tween = this.tweenGroup.get(target, options);
 		return tween;
 	}

@@ -5,7 +5,7 @@ import { lerp } from "../maths/lerp";
 import { ToneAudio } from "./tone-audio";
 import { Tween } from "./tween";
 import { TweenGroup } from "./tween-group";
-import { TweenProps } from "./tween-props";
+import { TweenOptions } from "./tween-props";
 import { UiElement } from "./ui-element";
 
 export const MAX_DPR = 4;
@@ -130,7 +130,7 @@ export class AppBase extends PIXI.Application {
 	/**
 	 *
 	 */
-	public tween<T>(target: T, options?: TweenProps): Tween<T> {
+	public tween<T>(target: T, options?: TweenOptions): Tween<T> {
 		const tween = this.tweenGroup.get(target, options);
 		return tween;
 	}

@@ -1,4 +1,4 @@
-import { TweenProps } from "./tween-props";
+import { TweenOptions } from "./tween-props";
 import { Ease } from "./ease";
 
 /**
@@ -7,11 +7,11 @@ import { Ease } from "./ease";
  * Experimental - Adding type safety to createjs tweenjs API.
  */
 export class Tween<T = any> extends createjs.Tween {
-	public static get<T>(target: T, props?: any): Tween<T> {
-		return new Tween(target, props);
+	public static get<T>(target: T, options?: TweenOptions): Tween<T> {
+		return new Tween(target, options);
 	}
 
-	constructor(target: T, options?: TweenProps) {
+	constructor(target: T, options?: TweenOptions) {
 		super(target, options);
 	}
 
@@ -35,8 +35,8 @@ export class Tween<T = any> extends createjs.Tween {
 		return super.set(props, target);
 	}
 
-	play(tween?: Tween<T>) {
-		return super.play(tween);
+	play(tween?: Tween<T>): this {
+		return super.play(tween) as this;
 	}
 
 	pause(tween?: Tween<T>) {

@@ -1,4 +1,4 @@
-export interface TweenProps {
+export interface TweenOptions {
 	useTicks?: boolean;
 	ignoreGlobalPause?: boolean;
 	loop?: number;
