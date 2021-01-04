@@ -83,7 +83,7 @@ export class AppBase extends PIXI.Application {
 	protected readonly root = new PIXI.Container();
 
 	/**
-	 *
+	 * List of all UI elements currently added to app instance.
 	 */
 	protected readonly uiElements: UiElement[] = [];
 
