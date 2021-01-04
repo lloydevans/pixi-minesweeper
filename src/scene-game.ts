@@ -394,16 +394,18 @@ export class SceneGame extends Scene<MSApp> {
 		let gameData;
 
 		try {
-			gameData = (
-				await db //
-					.collection("accounts")
-					.doc(auth.currentUser!.uid)
-					.collection("games_client")
-					.doc(this.gameId)
-					.get()
-			).data() as MSStateClient;
+			gameData = this.app.persistentRequest(async () => {
+				return (
+					await db //
+						.collection("accounts")
+						.doc(auth.currentUser!.uid)
+						.collection("games_client")
+						.doc(this.gameId)
+						.get()
+				).data() as MSStateClient;
+			});
 		} catch (err) {
-			throw err;
+			throw new Error("Failed to retreive game data.");
 		}
 
 		return gameData;
