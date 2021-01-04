@@ -112,7 +112,7 @@ export class MSState {
 			config[key] = config[key] ?? el;
 		});
 
-		this.setConfig(this.config);
+		this.setConfig(config as MSGameConfig);
 	}
 
 	/**
@@ -409,7 +409,13 @@ export class MSState {
 	 * @param y - Y coord
 	 */
 	public cellAt(x: number, y: number): MSCellState | undefined {
-		return this.cells[x + y * this.width];
+		const cell = this.cells[x + y * this.width];
+
+		if (!cell) {
+			throw new Error(`Can't find cell at ${x},${y}`);
+		}
+
+		return cell;
 	}
 
 	/**
