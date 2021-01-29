@@ -12,7 +12,7 @@ type BGSet = "bg-green" | "bg-swamp";
  * Tiling background graphics with simple paralax effect.
  */
 export class MSBg extends Component<MSApp> {
-	public offset = new PIXI.Point();
+	public readonly offset = new PIXI.Point();
 	private layers: PIXI.TilingSprite[] = [];
 	private speed: number = 0.25;
 	private scroll: number = 0;
