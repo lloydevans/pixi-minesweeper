@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js-legacy";
-import { AppBase } from "./app-base";
+import { App } from "./app";
 import { TweenGroup } from "./tween-group";
 import { TweenOptions } from "./tween-props";
 import { Tween } from "./tween";
@@ -11,7 +11,7 @@ export type ComponentDestroyOptions = {
 	baseTexture?: boolean;
 };
 
-export class Entity<T extends AppBase = AppBase> extends PIXI.Container {
+export class Entity<T extends App = App> extends PIXI.Container {
 	/**
 	 * Pixi application reference.
 	 */

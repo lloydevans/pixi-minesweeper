@@ -1,6 +1,6 @@
 import clamp from "lodash-es/clamp";
 import { Container, Texture } from "pixi.js-legacy";
-import { AppBase } from "./app-base";
+import { App } from "./app";
 import { UiButton } from "./ui-button";
 import { BmText } from "./bm-text";
 
@@ -13,7 +13,7 @@ export interface ButtonScrollerOptions {
 }
 
 export class UiButtonScroller extends Container {
-	app: AppBase;
+	app: App;
 
 	private _min: number;
 	get min(): number {
@@ -52,7 +52,7 @@ export class UiButtonScroller extends Container {
 	private buttonRight: UiButton;
 	private label: BmText;
 
-	constructor(app: AppBase, options: ButtonScrollerOptions) {
+	constructor(app: App, options: ButtonScrollerOptions) {
 		super();
 
 		this.app = app;

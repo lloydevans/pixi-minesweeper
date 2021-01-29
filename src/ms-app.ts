@@ -1,7 +1,7 @@
 import clone from "lodash-es/clone";
 import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
-import { AppBase } from "./common/app-base";
+import { App } from "./common/app";
 import { ColorSchemes } from "./common/color";
 import { ToneAudioConfig } from "./common/tone-audio";
 import { preventContextMenu } from "./common/utils";
@@ -16,7 +16,7 @@ import { SceneMenu } from "./scene-menu";
 /**
  * Core App class.
  */
-export class MSApp extends AppBase {
+export class MSApp extends App {
 	public background?: MSBgFlat;
 	public container = new PIXI.Container();
 	public state: MSState = new MSState();

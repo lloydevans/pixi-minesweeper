@@ -23,7 +23,7 @@ interface AppEventChannels {
 /**
  * General purpose app functionality.
  */
-export class AppBase extends PIXI.Application {
+export class App extends PIXI.Application {
 	/**
 	 * Global event channels.
 	 */

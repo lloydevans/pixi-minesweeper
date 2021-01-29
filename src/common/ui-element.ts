@@ -1,9 +1,9 @@
-import { AppBase } from "./app-base";
+import { App } from "./app";
 import { Entity } from "./entity";
 
 /**
  */
-export class UiElement<T extends AppBase = AppBase> extends Entity<T> {
+export class UiElement<T extends App = App> extends Entity<T> {
 	public get focused() {
 		return this._focused;
 	}

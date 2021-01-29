@@ -1,7 +1,7 @@
 import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
 import * as Tone from "tone";
-import { AppBase } from "./app-base";
+import { App } from "./app";
 import { UiElement } from "./ui-element";
 
 export interface ButtonOptions {
@@ -28,7 +28,7 @@ export class UiButton extends UiElement {
 		this.back.tint = value;
 	}
 
-	constructor(app: AppBase, config: ButtonOptions) {
+	constructor(app: App, config: ButtonOptions) {
 		super(app);
 
 		this.app = app;

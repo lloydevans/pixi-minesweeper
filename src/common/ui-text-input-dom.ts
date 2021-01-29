@@ -1,6 +1,6 @@
 import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
-import { AppBase } from "./app-base";
+import { App } from "./app";
 import { hexToNum } from "./color";
 import { BmText } from "./bm-text";
 import { MSApp } from "../ms-app";
@@ -30,7 +30,7 @@ export const UITextInputOptionDefaults: UITextInputOptions = {
 	height: 32,
 };
 
-export class UiTextInputDom extends UiElement<AppBase> {
+export class UiTextInputDom extends UiElement<App> {
 	public get value() {
 		return this.input.value;
 	}

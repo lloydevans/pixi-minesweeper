@@ -1,6 +1,6 @@
 import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
-import { AppBase } from "./app-base";
+import { App } from "./app";
 
 export interface BmTextOptions {
 	fontName?: string;
@@ -23,7 +23,7 @@ export const BmTextOptionDefaults: BmTextOptions = {
 };
 
 export class BmText extends PIXI.BitmapText {
-	private app: AppBase;
+	private app: App;
 
 	protected options: BmTextOptions;
 
@@ -40,7 +40,7 @@ export class BmText extends PIXI.BitmapText {
 		(this.anchor as PIXI.Point).y = this._anchor.y;
 	}, this);
 
-	constructor(app: AppBase, options: BmTextOptions = {}) {
+	constructor(app: App, options: BmTextOptions = {}) {
 		super(options.text || "", options as any);
 
 		this.app = app;

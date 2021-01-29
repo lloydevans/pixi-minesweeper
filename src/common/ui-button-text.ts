@@ -1,6 +1,6 @@
 import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
-import { AppBase } from "./app-base";
+import { App } from "./app";
 import { BmText, BmTextOptions } from "./bm-text";
 import { UiButton, ButtonOptions } from "./ui-button";
 
@@ -29,7 +29,7 @@ export class UiButtonText extends UiButton {
 	private options: ButtonTextOptions;
 	private label: BmText;
 
-	constructor(app: AppBase, options: ButtonTextOptions) {
+	constructor(app: App, options: ButtonTextOptions) {
 		super(app, options);
 
 		this.options = defaults(options, ButtonTextOptionDefaults);
