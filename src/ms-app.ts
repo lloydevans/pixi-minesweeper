@@ -31,7 +31,7 @@ export class MSApp extends AppBase {
 	 *
 	 */
 	constructor() {
-		super({ forceCanvas: false });
+		super();
 
 		this.referenceSize = {
 			width: 1280,
@@ -45,8 +45,9 @@ export class MSApp extends AppBase {
 
 		this.style = clone(MS_STYLE_DEFAULT);
 
-		this.events.on("init", this.initCb, this);
-		this.events.on("update", this.updateCb, this);
+		this.events.init.on(this.initCb, this);
+
+		this.events.update.on(this.updateCb, this);
 	}
 
 	/**

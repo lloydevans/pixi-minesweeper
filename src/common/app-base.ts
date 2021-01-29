@@ -7,6 +7,7 @@ import { Tween } from "./tween";
 import { TweenGroup } from "./tween-group";
 import { TweenOptions } from "./tween-props";
 import { UiElement } from "./ui-element";
+import { EventChannel } from "./event-channel";
 
 export const MAX_DPR = 4;
 export const MIN_DPR = 0.5;
@@ -17,22 +18,21 @@ export interface AppReferenceSize {
 	blend: number;
 }
 
+interface AppEventChannels {
+	init: EventChannel<() => void>;
+	ready: EventChannel<() => void>;
+	update: EventChannel<(dt: number) => void>;
+	resize: EventChannel<(width: number, height: number) => void>;
+}
+
 /**
  * General purpose app functionality.
  */
 export class AppBase extends PIXI.Application {
 	/**
-	 * Global event emitter.
-	 *
-	 * "init" () => void
-	 *
-	 * "ready" () => void
-	 *
-	 * "update" (dt: number) => void
-	 *
-	 * "resize" (width: number, height: number) => void
+	 * Global event channels.
 	 */
-	public readonly events = new PIXI.utils.EventEmitter();
+	public events: AppEventChannels;
 
 	/**
 	 * App audio manager reference
@@ -91,7 +91,26 @@ export class AppBase extends PIXI.Application {
 	 */
 	protected readonly uiElements: UiElement[] = [];
 
+	/**
+	 *
+	 */
+	private readonly emitter = new PIXI.utils.EventEmitter();
+
+	/**
+	 *
+	 */
 	private initialized = false;
+
+	constructor() {
+		super();
+
+		this.events = {
+			init: new EventChannel<() => void>(this.emitter, "init"),
+			ready: new EventChannel<() => void>(this.emitter, "ready"),
+			update: new EventChannel<(dt: number) => void>(this.emitter, "update"),
+			resize: new EventChannel<(width: number, height: number) => void>(this.emitter, "resize"),
+		};
+	}
 
 	/**
 	 * Initialize the app
@@ -103,7 +122,7 @@ export class AppBase extends PIXI.Application {
 			this.ticker.add(this.update, this);
 			this.ticker.add(this.audio.update, this.audio);
 			this.loader.use(ToneAudio.configLoader);
-			this.events.emit("init");
+			this.emitter.emit("init");
 		} else {
 			throw new Error("App already initialized!");
 		}
@@ -125,7 +144,7 @@ export class AppBase extends PIXI.Application {
 			this.resizeRoot(window.innerWidth, window.innerHeight, currentDpr);
 		}
 
-		this.events.emit("update", dt);
+		this.emitter.emit("update", dt);
 	}
 
 	/**
@@ -152,13 +171,12 @@ export class AppBase extends PIXI.Application {
 	}
 
 	/**
-	 * This is a rough way for components to be able to wait until required resources
-	 * are loaded before running initialization logic.
+	 * TODO: Remove
 	 */
 	public setReady() {
 		if (!this.ready) {
 			this._ready = true;
-			this.events.emit("ready");
+			this.emitter.emit("ready");
 		}
 	}
 
@@ -216,7 +234,7 @@ export class AppBase extends PIXI.Application {
 			this._height *= r;
 		}
 
-		this.events.emit("resize", this.width, this.height);
+		this.emitter.emit("resize", this.width, this.height);
 	}
 
 	/**

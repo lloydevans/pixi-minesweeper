@@ -44,7 +44,7 @@ export class Component<T extends AppBase = AppBase> extends PIXI.Container {
 			this.app.ticker.addOnce(this.ready, this);
 		} //
 		else {
-			this.app.events.once("ready", this.ready, this);
+			this.app.events.ready.once(this.ready, this);
 		}
 	}
 
@@ -61,8 +61,8 @@ export class Component<T extends AppBase = AppBase> extends PIXI.Container {
 		this.emit("resize", this.app.width, this.app.height);
 
 		// Add listeners
-		this.update && this.app.events.on("update", this.update, this);
-		this.resize && this.app.events.on("resize", this.resize, this);
+		this.update && this.app.events.update.on(this.update, this);
+		this.resize && this.app.events.resize.on(this.resize, this);
 	}
 
 	/**
@@ -71,8 +71,8 @@ export class Component<T extends AppBase = AppBase> extends PIXI.Container {
 	 * @param options - Destroy options.
 	 */
 	public destroy(options?: ComponentDestroyOptions) {
-		this.update && this.app.events.off("update", this.update, this);
-		this.resize && this.app.events.off("resize", this.resize, this);
+		this.update && this.app.events.update.off(this.update, this);
+		this.resize && this.app.events.resize.off(this.resize, this);
 		this.cleanup && this.cleanup();
 		this.tweenGroup.reset();
 		this.emit("destroy");
