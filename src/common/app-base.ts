@@ -8,15 +8,10 @@ import { TweenGroup } from "./tween-group";
 import { TweenOptions } from "./tween-props";
 import { UiElement } from "./ui-element";
 import { EventChannel } from "./event-channel";
+import { AppReferenceSize } from "./core/app/app-reference-size";
 
 export const MAX_DPR = 4;
 export const MIN_DPR = 0.5;
-
-export interface AppReferenceSize {
-	width: number;
-	height: number;
-	blend: number;
-}
 
 interface AppEventChannels {
 	init: EventChannel<() => void>;
