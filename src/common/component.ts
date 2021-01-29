@@ -30,7 +30,7 @@ export class Component<T extends AppBase = AppBase> extends PIXI.Container {
 	protected readonly tweenGroup = new TweenGroup(false, 1);
 
 	/**
-	 * Core app component class helps manage linkages to core systems.
+	 *
 	 *
 	 * @param app - Pixi application reference.
 	 */
