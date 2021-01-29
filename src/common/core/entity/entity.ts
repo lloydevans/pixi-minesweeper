@@ -1,8 +1,8 @@
 import * as PIXI from "pixi.js-legacy";
-import { App } from "./app";
-import { TweenGroup } from "./tween-group";
-import { TweenOptions } from "./tween-props";
-import { Tween } from "./tween";
+import { App } from "../app/app";
+import { TweenGroup } from "../tweens/tween-group";
+import { TweenOptions } from "../tweens/tween-props";
+import { Tween } from "../tweens/tween";
 
 // These are copied from the Container inline type.
 export type ComponentDestroyOptions = {

@@ -1,8 +1,8 @@
-import { BmText } from "../common/bm-text";
+import { BmText } from "../common/core/components/bm-text";
 import { ColorSchemes, hexToNum } from "../common/color";
-import { Entity } from "../common/entity";
-import { UiButtonText } from "../common/ui-button-text";
-import { UiTextInputDom } from "../common/ui-text-input-dom";
+import { Entity } from "../common/core/entity/entity";
+import { UiButtonText } from "../common/core/components/ui-button-text";
+import { UiTextInputDom } from "../common/core/components/ui-text-input-dom";
 import { MSApp } from "../ms-app";
 
 export class PanelLogin extends Entity<MSApp> {

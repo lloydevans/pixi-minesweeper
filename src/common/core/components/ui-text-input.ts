@@ -1,12 +1,12 @@
 import clamp from "lodash-es/clamp";
 import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
-import { MSApp } from "../ms-app";
-import { hexToNum } from "./color";
+import { MSApp } from "../../../ms-app";
+import { hexToNum } from "../../color";
 import { UiElement } from "./ui-element";
 import { BmText } from "./bm-text";
 import { isEventKey } from "keycode";
-import { AppBase } from "./app-base";
+import { App } from "../app/app";
 
 export interface UITextInputOptions {
 	type: "text" | "email" | "password";
@@ -53,7 +53,7 @@ export const UITextInputOptionDefaults: UITextInputOptions = {
 /**
  * This is a quick recreation of the dom single line text input as PixiJS graphics.
  */
-export class UiTextInput extends UiElement<AppBase> {
+export class UiTextInput extends UiElement<App> {
 	public get value() {
 		return this.input.value;
 	}

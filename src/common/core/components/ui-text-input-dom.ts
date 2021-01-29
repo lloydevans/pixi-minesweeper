@@ -1,9 +1,9 @@
 import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
-import { App } from "./app";
-import { hexToNum } from "./color";
+import { App } from "../../core/app/app";
+import { hexToNum } from "../../color";
 import { BmText } from "./bm-text";
-import { MSApp } from "../ms-app";
+import { MSApp } from "../../../ms-app";
 import { UiElement } from "./ui-element";
 
 export interface UITextInputOptions {

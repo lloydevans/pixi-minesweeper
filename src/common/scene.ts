@@ -1,4 +1,4 @@
-import { Entity } from "./entity";
-import { App } from "./app";
+import { Entity } from "./core/entity/entity";
+import { App } from "./core/app/app";
 
 export class Scene<T extends App> extends Entity<T> {}

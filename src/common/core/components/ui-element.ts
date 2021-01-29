@@ -1,5 +1,5 @@
-import { App } from "./app";
-import { Entity } from "./entity";
+import { App } from "../../core/app/app";
+import { Entity } from "../../core/entity/entity";
 
 /**
  */

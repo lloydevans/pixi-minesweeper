@@ -1,9 +1,9 @@
 import * as PIXI from "pixi.js-legacy";
-import { UiButton } from "./common/ui-button";
-import { BmText } from "./common/bm-text";
+import { UiButton } from "./common/core/components/ui-button";
+import { BmText } from "./common/core/components/bm-text";
 import { Spine } from "./common/spine";
 import { MSApp } from "./ms-app";
-import { Entity } from "./common/entity";
+import { Entity } from "./common/core/entity/entity";
 
 /**
  */

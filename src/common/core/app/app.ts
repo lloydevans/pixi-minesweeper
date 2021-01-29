@@ -1,14 +1,14 @@
 import clamp from "lodash-es/clamp";
 import * as PIXI from "pixi.js-legacy";
 import * as screenfull from "screenfull";
-import { lerp } from "../maths/lerp";
-import { ToneAudio } from "./tone-audio";
-import { Tween } from "./tween";
-import { TweenGroup } from "./tween-group";
-import { TweenOptions } from "./tween-props";
-import { UiElement } from "./ui-element";
-import { EventChannel } from "./event-channel";
-import { AppReferenceSize } from "./core/app/app-reference-size";
+import { lerp } from "../../../maths/lerp";
+import { ToneAudio } from "../../tone-audio";
+import { Tween } from "../tweens/tween";
+import { TweenGroup } from "../tweens/tween-group";
+import { TweenOptions } from "../tweens/tween-props";
+import { UiElement } from "../components/ui-element"
+import { EventChannel } from "../events/event-channel";
+import { AppReferenceSize } from "./app-reference-size";
 
 export const MAX_DPR = 4;
 export const MIN_DPR = 0.5;
@@ -96,6 +96,9 @@ export class App extends PIXI.Application {
 	 */
 	private initialized = false;
 
+	/**
+	 *
+	 */
 	constructor() {
 		super();
 

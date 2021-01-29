@@ -1,6 +1,6 @@
 import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
-import { App } from "./app";
+import { App } from "../app/app";
 import { BmText, BmTextOptions } from "./bm-text";
 import { UiButton, ButtonOptions } from "./ui-button";
 

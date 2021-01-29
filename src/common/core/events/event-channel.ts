@@ -1,4 +1,4 @@
-import { AppEventName } from "./core/events/app-event-name";
+import { AppEventName } from "./app-event-name";
 
 export class EventChannel<T extends Function> {
 	private emitter: PIXI.utils.EventEmitter;

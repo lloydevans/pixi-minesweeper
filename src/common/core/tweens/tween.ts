@@ -1,5 +1,5 @@
 import { TweenOptions } from "./tween-props";
-import { Ease } from "./ease";
+import { Ease } from "../../ease";
 
 /**
  * This serves as an alias to the namespaced Tween class.

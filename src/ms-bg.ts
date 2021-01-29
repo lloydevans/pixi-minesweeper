@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js-legacy";
-import { Entity } from "./common/entity";
+import { Entity } from "./common/core/entity/entity";
 import { MSApp } from "./ms-app";
 import { Ease } from "./common/ease";
 

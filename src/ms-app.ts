@@ -1,7 +1,7 @@
 import clone from "lodash-es/clone";
 import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
-import { App } from "./common/app";
+import { App } from "./common/core/app/app";
 import { ColorSchemes } from "./common/color";
 import { ToneAudioConfig } from "./common/tone-audio";
 import { preventContextMenu } from "./common/utils";

@@ -1,5 +1,5 @@
-import { BmText } from "./common/bm-text";
-import { Entity } from "./common/entity";
+import { BmText } from "./common/core/components/bm-text";
+import { Entity } from "./common/core/entity/entity";
 import { auth, functions } from "./firebase";
 import { MSApp } from "./ms-app";
 import { MSGameConfig } from "./ms-config";
