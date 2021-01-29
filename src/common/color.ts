@@ -29,20 +29,20 @@ export function hexToNum(hex: string): number {
 }
 
 export class ColorSchemes {
-	public static beachRainbow = {
+	public static readonly beachRainbow = Object.freeze({
 		green: "#C8F69B",
 		yellow: "#FFEEA5",
 		orange: "#FFCBA5",
 		red: "#FFB1AF",
 		purple: "#D6D4FF",
 		blue: "#B3EEFF",
-	};
-	public static beachRainbowDark = {
+	});
+	public static readonly beachRainbowDark = Object.freeze({
 		green: "#92B471",
 		yellow: "#D0C286",
 		orange: "#D2A788",
 		red: "#D0908F",
 		purple: "#A6A4C6",
 		blue: "#8EBDCB",
-	};
+	});
 }
