@@ -38,9 +38,7 @@ export class MSBgFlat extends Component<MSApp> {
 		Tween.removeTweens(this.rgba);
 
 		Object.assign(this.rgba, numToRgba(this.sprite.tint));
-
 		const tween = this.tween(this.rgba).to(hexToRgba(hex), ms, ease);
-
 		tween.on("change", () => (this.sprite.tint = rgbToNum(this.rgba)));
 	}
 
