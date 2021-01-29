@@ -5,7 +5,7 @@ import { MSApp } from "./ms-app";
 import { MSCellState } from "./ms-cell-state";
 
 /**
- * UI overlay for touch and accesible controls.
+ * UI overlay for touch and accessible controls.
  */
 export class MSTouchUi extends Entity<MSApp> {
 	public targetCell?: MSCellState;
