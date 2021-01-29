@@ -3,7 +3,7 @@ import clamp from "lodash-es/clamp";
 import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
 import * as Tone from "tone";
-import type { Dict } from "./types";
+import type { Dict } from "../../types";
 
 const CENTER_NOTE = "A3";
 const MAX_QUEUE = 64;

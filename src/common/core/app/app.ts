@@ -2,7 +2,7 @@ import clamp from "lodash-es/clamp";
 import * as PIXI from "pixi.js-legacy";
 import * as screenfull from "screenfull";
 import { lerp } from "../../../maths/lerp";
-import { ToneAudio } from "../../tone-audio";
+import { ToneAudio } from "../audio/tone-audio";
 import { Tween } from "../tweens/tween";
 import { TweenGroup } from "../tweens/tween-group";
 import { TweenOptions } from "../tweens/tween-props";
