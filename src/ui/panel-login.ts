@@ -1,11 +1,11 @@
 import { BmText } from "../common/bm-text";
 import { ColorSchemes, hexToNum } from "../common/color";
-import { Component } from "../common/component";
+import { Entity } from "../common/entity";
 import { UiButtonText } from "../common/ui-button-text";
 import { UiTextInputDom } from "../common/ui-text-input-dom";
 import { MSApp } from "../ms-app";
 
-export class PanelLogin extends Component<MSApp> {
+export class PanelLogin extends Entity<MSApp> {
 	private inputUsername!: UiTextInputDom;
 	private inputEmail!: UiTextInputDom;
 	private inputPassword!: UiTextInputDom;

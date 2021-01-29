@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js-legacy";
-import { Component } from "./common/component";
+import { Entity } from "./common/entity";
 import { MSApp } from "./ms-app";
 import { Ease } from "./common/ease";
 
@@ -11,7 +11,7 @@ type BGSet = "bg-green" | "bg-swamp";
 /**
  * Tiling background graphics with simple paralax effect.
  */
-export class MSBg extends Component<MSApp> {
+export class MSBg extends Entity<MSApp> {
 	public readonly offset = new PIXI.Point();
 	private layers: PIXI.TilingSprite[] = [];
 	private speed: number = 0.25;

@@ -11,7 +11,7 @@ export type ComponentDestroyOptions = {
 	baseTexture?: boolean;
 };
 
-export class Component<T extends AppBase = AppBase> extends PIXI.Container {
+export class Entity<T extends AppBase = AppBase> extends PIXI.Container {
 	/**
 	 * Pixi application reference.
 	 */

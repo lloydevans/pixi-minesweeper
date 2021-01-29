@@ -1,5 +1,5 @@
 import { BmText } from "./common/bm-text";
-import { Component } from "./common/component";
+import { Entity } from "./common/entity";
 import { auth, functions } from "./firebase";
 import { MSApp } from "./ms-app";
 import { MSGameConfig } from "./ms-config";
@@ -9,7 +9,7 @@ import { PanelLogin } from "./ui/panel-login";
 /**
  *
  */
-export class SceneMenu extends Component<MSApp> {
+export class SceneMenu extends Entity<MSApp> {
 	title!: BmText;
 	panelLogin?: PanelLogin;
 	panelGameOptions?: PanelGameOptions;

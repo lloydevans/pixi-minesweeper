@@ -2,7 +2,7 @@ import clamp from "lodash-es/clamp";
 import * as PIXI from "pixi.js-legacy";
 import { BmText } from "./common/bm-text";
 import { hexToNum } from "./common/color";
-import { Component } from "./common/component";
+import { Entity } from "./common/entity";
 import { Spine } from "./common/spine";
 import { shallowObjectEquals } from "./common/utils";
 import { MSApp } from "./ms-app";
@@ -31,7 +31,7 @@ enum AnimTrack {
 /**
  *
  */
-export class MSCell extends Component<MSApp> {
+export class MSCell extends Entity<MSApp> {
 	public get ix(): number {
 		return this.viewState.x;
 	}

@@ -1,9 +1,9 @@
 import { AppBase } from "./app-base";
-import { Component } from "./component";
+import { Entity } from "./entity";
 
 /**
  */
-export class UiElement<T extends AppBase = AppBase> extends Component<T> {
+export class UiElement<T extends AppBase = AppBase> extends Entity<T> {
 	public get focused() {
 		return this._focused;
 	}

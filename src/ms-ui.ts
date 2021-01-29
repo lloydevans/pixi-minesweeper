@@ -3,7 +3,7 @@ import { UiButton } from "./common/ui-button";
 import { BmText } from "./common/bm-text";
 import { Spine } from "./common/spine";
 import { MSApp } from "./ms-app";
-import { Component } from "./common/component";
+import { Entity } from "./common/entity";
 
 /**
  */
@@ -12,7 +12,7 @@ const MAX_TIME = 999;
 /**
  * Class handle UI elements.
  */
-export class MSUi extends Component<MSApp> {
+export class MSUi extends Entity<MSApp> {
 	private buttonRestart!: UiButton;
 	private buttonCross!: UiButton;
 	private flagsContainer!: PIXI.Container;

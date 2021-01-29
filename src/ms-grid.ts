@@ -1,9 +1,9 @@
-import { Component } from "./common/component";
+import { Entity } from "./common/entity";
 import { MSApp } from "./ms-app";
 import { MSCell } from "./ms-cell";
 import { MSCellState } from "./ms-cell-state";
 
-export class MSGrid extends Component<MSApp> {
+export class MSGrid extends Entity<MSApp> {
 	children: MSCell[] = [];
 
 	/**
