@@ -179,10 +179,6 @@ export class AppBase extends PIXI.Application {
 	private getWindowDpr(): number {
 		let dpr = clamp(window.devicePixelRatio, MIN_DPR, MAX_DPR);
 
-		if (PIXI.utils.isMobile.amazon.device) {
-			dpr = 1;
-		}
-
 		return dpr;
 	}
 
