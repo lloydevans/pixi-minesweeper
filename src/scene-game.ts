@@ -55,8 +55,6 @@ export class SceneGame extends Scene {
 	 *
 	 */
 	protected async init() {
-		// @ts-ignore
-		window.game = this;
 
 		this.root.addChild(this.container);
 		this.root.addChild(this.ui);
