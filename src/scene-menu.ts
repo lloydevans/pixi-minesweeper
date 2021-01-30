@@ -10,11 +10,11 @@ import { showGame } from "./ms-entry";
  *
  */
 export class SceneMenu extends Scene {
-	title!: BmText;
-	panelLogin?: PanelLogin;
-	panelGameOptions?: PanelGameOptions;
+	private title!: BmText;
+	private panelLogin?: PanelLogin;
+	private panelGameOptions?: PanelGameOptions;
 
-	async init() {
+	protected async init() {
 		this.title = new BmText(this.app, {
 			text: "Minesweeper",
 			fontName: "bmfont",

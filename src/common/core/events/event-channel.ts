@@ -1,5 +1,6 @@
 import { AppEventName } from "./app-event-name";
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export class EventChannel<T extends Function> {
 	private emitter: PIXI.utils.EventEmitter;
 	private name: AppEventName;

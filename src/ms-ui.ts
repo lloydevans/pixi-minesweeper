@@ -23,7 +23,7 @@ export class MSUi extends Entity {
 	private timeCount!: BmText;
 
 	/**
-	 * Initialisation must be called after assets are loaded.
+	 * Initialization must be called after assets are loaded.
 	 */
 	protected init() {
 		this.flagsContainer = new PIXI.Container();

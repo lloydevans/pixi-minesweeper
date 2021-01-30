@@ -32,7 +32,7 @@ export class SceneGame extends Scene {
 	private gameData?: MSStateClient;
 	private gameSnapshotUnsubscribe!: () => void;
 
-	constructor(app: App) {
+	public constructor(app: App) {
 		super(app);
 
 		this.board = PIXI.Sprite.from(PIXI.Texture.WHITE);
@@ -55,7 +55,6 @@ export class SceneGame extends Scene {
 	 *
 	 */
 	protected async init() {
-
 		this.root.addChild(this.container);
 		this.root.addChild(this.ui);
 		this.root.addChild(this.touchUi);
@@ -124,7 +123,7 @@ export class SceneGame extends Scene {
 		this.gameSnapshotUnsubscribe && this.gameSnapshotUnsubscribe();
 		this.gameSnapshotUnsubscribe = db
 			.collection("accounts")
-			.doc(auth.currentUser!.uid)
+			.doc(auth.currentUser?.uid)
 			.collection("games_client")
 			.doc(this.gameId)
 			.onSnapshot((doc) => {
@@ -167,9 +166,11 @@ export class SceneGame extends Scene {
 		await this.initGrid();
 
 		if (state.isLose()) {
-			const { x, y } = this.gameData!.history[0];
-			this.animateLose(x, y);
-			this.grid.updateCellStateReferences();
+			if (this.gameData) {
+				const { x, y } = this.gameData.history[0];
+				this.animateLose(x, y);
+				this.grid.updateCellStateReferences();
+			}
 		} //
 		else if (state.isWin()) {
 			this.animateWin();
@@ -249,7 +250,7 @@ export class SceneGame extends Scene {
 	 */
 	protected cleanup() {
 		this.gameSnapshotUnsubscribe && this.gameSnapshotUnsubscribe();
-		// Prevent static cell view instances being recursivley destroyed.
+		// Prevent static cell view instances being recursively destroyed.
 		this.grid.removeChildren().forEach((el) => {
 			el.off("pointertap", this.onPointerTap, this);
 			el.off("pointerdown", this.onPointerDown, this);
@@ -405,7 +406,7 @@ export class SceneGame extends Scene {
 				return (
 					await db //
 						.collection("accounts")
-						.doc(auth.currentUser!.uid)
+						.doc(auth.currentUser?.uid)
 						.collection("games_client")
 						.doc(this.gameId)
 						.get()
@@ -597,13 +598,13 @@ export class SceneGame extends Scene {
 			const idx = Math.floor(Math.random() * result.incorrect.length);
 			const el = result.incorrect.splice(idx, 1)[0];
 			const msCell = getCellView(el.x, el.y);
-			const cellState = state.cellAt(el.x, el.y)!;
+			const cellState = state.cellAt(el.x, el.y);
 
 			msCell.animateResult();
 
 			this.app.audio.play("click", { transpose: (Math.random() - 0.5) * 6 });
 
-			if (!cellState.flag) {
+			if (!cellState?.flag) {
 				msCell.animateDigEnd();
 			}
 

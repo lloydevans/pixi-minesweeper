@@ -13,8 +13,8 @@ type BGSet = "bg-green" | "bg-swamp";
 export class MSBg extends Entity {
 	public readonly offset = new PIXI.Point();
 	private layers: PIXI.TilingSprite[] = [];
-	private speed: number = 0.25;
-	private scroll: number = 0;
+	private speed = 0.25;
+	private scroll = 0;
 	private bgSet: BGSet = "bg-swamp";
 	private tileScale = 1.15;
 

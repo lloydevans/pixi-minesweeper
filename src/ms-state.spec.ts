@@ -54,7 +54,7 @@ describe("MSState tests", () => {
 		expect(state.indexInBounds(state.totalCells)).toBe(false);
 	});
 
-	it("should claculate correct total flags", () => {
+	it("should calculate correct total flags", () => {
 		const state = getState(MOCK_CONFIG);
 		expect(state.totalFlags).toBe(0);
 

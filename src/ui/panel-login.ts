@@ -10,7 +10,7 @@ export class PanelLogin extends Entity {
 	private inputPassword!: UiTextInputDom;
 	private buttonPrimary!: UiButtonText;
 	private buttonSecondary!: UiButtonText;
-	private buttonForgotPword!: UiButtonText;
+	private buttonForgotPassword!: UiButtonText;
 	private buttonGuest!: UiButtonText;
 	private secondaryButtons = new PIXI.Container();
 	private menuState: "login" | "create" | "forgot-pword" = "login";
@@ -66,20 +66,20 @@ export class PanelLogin extends Entity {
 		this.buttonGuest.accessible = true;
 		this.buttonGuest.hitArea = new PIXI.Rectangle(-128, -24, 256, 48);
 
-		this.buttonForgotPword = new UiButtonText(this.app, {
+		this.buttonForgotPassword = new UiButtonText(this.app, {
 			textureUp: PIXI.Texture.EMPTY,
 			textureDown: PIXI.Texture.EMPTY,
 			text: "Forgot password?",
 			fontSize: 24,
 		});
-		this.buttonForgotPword.accessible = true;
+		this.buttonForgotPassword.accessible = true;
 
 		this.buttonSecondary.y = 0;
 		this.buttonGuest.y = 40;
-		this.buttonForgotPword.y = 80;
+		this.buttonForgotPassword.y = 80;
 		this.secondaryButtons.addChild(this.buttonSecondary);
 		this.secondaryButtons.addChild(this.buttonGuest);
-		this.secondaryButtons.addChild(this.buttonForgotPword);
+		this.secondaryButtons.addChild(this.buttonForgotPassword);
 
 		this.error.y = 60;
 		this.inputUsername.y = -100;
@@ -97,7 +97,7 @@ export class PanelLogin extends Entity {
 		this.buttonPrimary.on("pointertap", this.buttonPrimaryCb, this);
 		this.buttonSecondary.on("pointertap", this.buttonSecondaryCb, this);
 		this.buttonGuest.on("pointertap", this.buttonGuestCb, this);
-		this.buttonForgotPword.on("pointertap", () => {});
+		this.buttonForgotPassword.on("pointertap", () => {});
 
 		this.inputEmail.on("input", this.inputCB, this);
 		this.inputUsername.on("input", this.inputCB, this);
@@ -110,9 +110,9 @@ export class PanelLogin extends Entity {
 	private async buttonPrimaryCb() {
 		this.app.setAllUiElementsActive(false);
 
-		let email = this.inputEmail.value;
-		let password = this.inputPassword.value;
-		let username = this.inputUsername.value;
+		const email = this.inputEmail.value;
+		const password = this.inputPassword.value;
+		const username = this.inputUsername.value;
 
 		switch (this.menuState) {
 			case "create":

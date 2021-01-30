@@ -3,9 +3,11 @@
 		"arial",
 		"blop",
 		"bmfont",
+		"coord",
 		"createjs",
 		"lerp",
 		"pixi",
+		"pword",
 		"scroller",
 		"skel",
 		"tonejs",
@@ -13,5 +15,6 @@
 		"tweenjs",
 		"tweens"
 	],
-	"cSpell.allowCompoundWords": true
+	"cSpell.allowCompoundWords": true,
+	"cSpell.ignoreWords": []
 }
