@@ -8,8 +8,8 @@ import { MSBgFlat } from "./ms-bg-flat";
 import { MSCell } from "./ms-cell";
 import { UserData } from "./ms-config";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MSState } from "./ms-state";
-import { SceneGame } from "./scene-game";
-import { SceneMenu } from "./scene-menu";
+import { SceneGame } from "./scenes/scene-game";
+import { SceneMenu } from "./scenes/scene-menu";
 
 export const state = new MSState();
 
