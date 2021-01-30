@@ -31,7 +31,6 @@ export class UiButton extends UiElement {
 	constructor(app: App, config: ButtonOptions) {
 		super(app);
 
-		this.app = app;
 		this.config = defaults(config, ButtonOptionDefaults);
 
 		this.back = PIXI.Sprite.from(this.config.textureUp);

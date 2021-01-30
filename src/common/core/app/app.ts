@@ -6,9 +6,9 @@ import { ToneAudio } from "../audio/tone-audio";
 import { Tween } from "../tweens/tween";
 import { TweenGroup } from "../tweens/tween-group";
 import { TweenOptions } from "../tweens/tween-props";
-import { UiElement } from "../components/ui-element"
+import { UiElement } from "../components/ui-element";
 import { EventChannel } from "../events/event-channel";
-import { AppReferenceSize } from "./app-reference-size";
+import { ReferenceSize } from "./reference-size";
 
 export const MAX_DPR = 4;
 export const MIN_DPR = 0.5;
@@ -25,6 +25,11 @@ interface AppEventChannels {
  */
 export class App extends PIXI.Application {
 	/**
+	 * Root container.
+	 */
+	public readonly root = new PIXI.Container();
+
+	/**
 	 * Global event channels.
 	 */
 	public events: AppEventChannels;
@@ -37,7 +42,7 @@ export class App extends PIXI.Application {
 	/**
 	 * Reference size of the app. If this is not defined, no root scaling is applied.
 	 */
-	public referenceSize?: AppReferenceSize;
+	public referenceSize?: ReferenceSize;
 
 	/**
 	 * Current app ready state. Modified via setReady,
@@ -75,11 +80,6 @@ export class App extends PIXI.Application {
 	 * Global app tween group.
 	 */
 	protected readonly tweenGroup = new TweenGroup(false, 1);
-
-	/**
-	 * Root container.
-	 */
-	protected readonly root = new PIXI.Container();
 
 	/**
 	 * List of all UI elements currently added to app instance.

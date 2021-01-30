@@ -1,9 +1,9 @@
-import { App } from "../../core/app/app";
 import { Entity } from "../../core/entity/entity";
+import { App } from "../app/app";
 
 /**
  */
-export class UiElement<T extends App = App> extends Entity<T> {
+export class UiElement extends Entity {
 	public get focused() {
 		return this._focused;
 	}
@@ -37,7 +37,7 @@ export class UiElement<T extends App = App> extends Entity<T> {
 	private _focused = true;
 	private _active = true;
 
-	constructor(app: T) {
+	constructor(app: App) {
 		super(app);
 
 		this.on("pointertap", () => {

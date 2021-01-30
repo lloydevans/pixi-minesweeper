@@ -1,9 +1,9 @@
 import * as PIXI from "pixi.js-legacy";
-import { UiButton } from "./common/core/components/ui-button";
 import { BmText } from "./common/core/components/bm-text";
-import { Spine } from "./common/spine";
-import { MSApp } from "./ms-app";
+import { UiButton } from "./common/core/components/ui-button";
 import { Entity } from "./common/core/entity/entity";
+import { Spine } from "./common/spine";
+import { state } from './ms-entry';
 
 /**
  */
@@ -12,7 +12,7 @@ const MAX_TIME = 999;
 /**
  * Class handle UI elements.
  */
-export class MSUi extends Entity<MSApp> {
+export class MSUi extends Entity {
 	private buttonRestart!: UiButton;
 	private buttonCross!: UiButton;
 	private flagsContainer!: PIXI.Container;
@@ -83,7 +83,7 @@ export class MSUi extends Entity<MSApp> {
 	 * @param dt
 	 */
 	protected update(dt: number) {
-		const flagCount = this.app.state.flagCount.toString();
+		const flagCount = state.flagCount.toString();
 		if (flagCount !== this.flagsCount.text) {
 			this.flagsCount.text = flagCount;
 		}

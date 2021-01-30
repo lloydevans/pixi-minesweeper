@@ -1,7 +1,6 @@
 import clamp from "lodash-es/clamp";
 import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
-import { MSApp } from "../../../ms-app";
 import { hexToNum } from "../../color";
 import { UiElement } from "./ui-element";
 import { BmText } from "./bm-text";
@@ -53,7 +52,7 @@ export const UITextInputOptionDefaults: UITextInputOptions = {
 /**
  * This is a quick recreation of the dom single line text input as PixiJS graphics.
  */
-export class UiTextInput extends UiElement<App> {
+export class UiTextInput extends UiElement {
 	public get value() {
 		return this.input.value;
 	}
@@ -71,7 +70,7 @@ export class UiTextInput extends UiElement<App> {
 	private input: HTMLInputElement = window.document.createElement("input");
 	private options: UITextInputOptions;
 
-	constructor(app: MSApp, options?: Partial<UITextInputOptions>) {
+	constructor(app: App, options?: Partial<UITextInputOptions>) {
 		super(app);
 
 		this.options = defaults(options || {}, UITextInputOptionDefaults);

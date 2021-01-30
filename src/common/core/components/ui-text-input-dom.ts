@@ -3,7 +3,6 @@ import * as PIXI from "pixi.js-legacy";
 import { App } from "../../core/app/app";
 import { hexToNum } from "../../color";
 import { BmText } from "./bm-text";
-import { MSApp } from "../../../ms-app";
 import { UiElement } from "./ui-element";
 
 export interface UITextInputOptions {
@@ -30,7 +29,7 @@ export const UITextInputOptionDefaults: UITextInputOptions = {
 	height: 32,
 };
 
-export class UiTextInputDom extends UiElement<App> {
+export class UiTextInputDom extends UiElement {
 	public get value() {
 		return this.input.value;
 	}
@@ -40,7 +39,7 @@ export class UiTextInputDom extends UiElement<App> {
 	private options: UITextInputOptions;
 	private debugHitarea = new PIXI.Graphics();
 
-	constructor(app: MSApp, options?: Partial<UITextInputOptions>) {
+	constructor(app: App, options?: Partial<UITextInputOptions>) {
 		super(app);
 
 		this.options = defaults(options || {}, UITextInputOptionDefaults);

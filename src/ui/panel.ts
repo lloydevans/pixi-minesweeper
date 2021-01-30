@@ -1,6 +1,4 @@
-import { Component } from "../common/component";
-import { MSApp } from "../ms-app";
 
-export class Panel extends Component<MSApp> {
+import { Entity } from "../common/core/entity/entity";
 
-}
+export class Panel extends Entity {}

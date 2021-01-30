@@ -1,8 +1,8 @@
 import * as PIXI from "pixi.js-legacy";
 import { App } from "../app/app";
+import { Tween } from "../tweens/tween";
 import { TweenGroup } from "../tweens/tween-group";
 import { TweenOptions } from "../tweens/tween-props";
-import { Tween } from "../tweens/tween";
 
 // These are copied from the Container inline type.
 export type ComponentDestroyOptions = {
@@ -11,11 +11,11 @@ export type ComponentDestroyOptions = {
 	baseTexture?: boolean;
 };
 
-export class Entity<T extends App = App> extends PIXI.Container {
+export class Entity extends PIXI.Container {
 	/**
 	 * Pixi application reference.
 	 */
-	public app: T;
+	public app: App;
 
 	/**
 	 * Reference to audio manager instance.
@@ -34,18 +34,12 @@ export class Entity<T extends App = App> extends PIXI.Container {
 	 *
 	 * @param app - Pixi application reference.
 	 */
-	constructor(app: T) {
+	constructor(app: App) {
 		super();
 
 		this.app = app;
 
-		if (this.app.ready) {
-			// Defer this until next update.
-			this.app.ticker.addOnce(this.ready, this);
-		} //
-		else {
-			this.app.events.ready.once(this.ready, this);
-		}
+		this.ready();
 	}
 
 	/**

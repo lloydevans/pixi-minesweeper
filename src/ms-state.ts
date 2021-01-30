@@ -7,9 +7,6 @@ export const MAX_GRID_WIDTH = 24;
 export const MAX_GRID_HEIGHT = 24;
 export const MIN_EMPTY = 2;
 
-/**
- *
- */
 export enum GameResolution {
 	Incomplete,
 	Quit,

@@ -1,11 +1,12 @@
 import clamp from "lodash-es/clamp";
 import * as PIXI from "pixi.js-legacy";
-import { BmText } from "./common/core/components/bm-text";
 import { hexToNum } from "./common/color";
+import { App } from "./common/core/app/app";
+import { BmText } from "./common/core/components/bm-text";
 import { Entity } from "./common/core/entity/entity";
 import { Spine } from "./common/spine";
 import { shallowObjectEquals } from "./common/utils";
-import { MSApp } from "./ms-app";
+import { getCellView, state } from './ms-entry';
 import { CELL_STATE_DEFAULT } from "./ms-cell-state";
 import type { MSCellState } from "./ms-cell-state";
 import type { NumberKey } from "./ms-config";
@@ -13,6 +14,17 @@ import type { NumberKey } from "./ms-config";
 // Reference size of cell graphics before any scaling.
 export const REF_WIDTH = 64;
 export const REF_HEIGHT = 64;
+
+const NUMBER_COLORS = {
+	"1": "#4b6f9c",
+	"2": "#5c9c49",
+	"3": "#995848",
+	"4": "#544896",
+	"5": "#964872",
+	"6": "#469183",
+	"7": "#818a6a",
+	"8": "#51524f",
+};
 
 enum AnimTrack {
 	FillColor,
@@ -31,7 +43,7 @@ enum AnimTrack {
 /**
  *
  */
-export class MSCell extends Entity<MSApp> {
+export class MSCell extends Entity {
 	public get ix(): number {
 		return this.viewState.x;
 	}
@@ -49,7 +61,7 @@ export class MSCell extends Entity<MSApp> {
 	 *
 	 * @param app - App reference.
 	 */
-	constructor(app: MSApp) {
+	constructor(app: App) {
 		super(app);
 
 		this.viewState = { ...CELL_STATE_DEFAULT };
@@ -142,15 +154,15 @@ export class MSCell extends Entity<MSApp> {
 		this.anim.setSkinByName(this.viewState.covered ? "front" : "back");
 
 		if (this.ix - 1 > -1) {
-			const l = this.app.getCellView(this.ix - 1, this.iy);
+			const l = getCellView(this.ix - 1, this.iy);
 			const visible = l.viewState.covered !== this.viewState.covered;
 			this.setEdgeVisible("l", visible);
 			l.setEdgeVisible("r", visible);
 		} else {
 			this.setEdgeVisible("l", true);
 		}
-		if (this.ix + 1 < this.app.state.width) {
-			const r = this.app.getCellView(this.ix + 1, this.iy);
+		if (this.ix + 1 < state.width) {
+			const r = getCellView(this.ix + 1, this.iy);
 			const visible = r.viewState.covered !== this.viewState.covered;
 			this.setEdgeVisible("r", visible);
 			r.setEdgeVisible("l", visible);
@@ -158,15 +170,15 @@ export class MSCell extends Entity<MSApp> {
 			this.setEdgeVisible("r", true);
 		}
 		if (this.iy - 1 > -1) {
-			const u = this.app.getCellView(this.ix, this.iy - 1);
+			const u = getCellView(this.ix, this.iy - 1);
 			const visible = u.viewState.covered !== this.viewState.covered;
 			this.setEdgeVisible("u", visible);
 			u.setEdgeVisible("d", visible);
 		} else {
 			this.setEdgeVisible("u", true);
 		}
-		if (this.iy + 1 < this.app.state.height) {
-			const d = this.app.getCellView(this.ix, this.iy + 1);
+		if (this.iy + 1 < state.height) {
+			const d = getCellView(this.ix, this.iy + 1);
 			const visible = d.viewState.covered !== this.viewState.covered;
 			this.setEdgeVisible("d", visible);
 			d.setEdgeVisible("u", visible);
@@ -226,7 +238,7 @@ export class MSCell extends Entity<MSApp> {
 	private setText(total: number) {
 		total = Math.floor(clamp(total, 0, 8));
 		const key = total.toString() as NumberKey;
-		this.adjacentText.tint = hexToNum(this.app.style.colorNumbers[key]);
+		this.adjacentText.tint = hexToNum(NUMBER_COLORS[key]);
 		this.adjacentText.visible = true;
 		this.adjacentText.text = key;
 	}
@@ -238,7 +250,7 @@ export class MSCell extends Entity<MSApp> {
 	public setCoveredEnabled(enabled = true) {
 		this.viewState.covered = enabled;
 		if (enabled) {
-			const stateName = this.app.state.config.cheatMode ? "covered-cheat" : "covered";
+			const stateName = state.config.cheatMode ? "covered-cheat" : "covered";
 			this.anim.state.setAnimation(AnimTrack.Cover, stateName, false);
 			this.setInteractiveEnabled(true);
 		} else {

@@ -1,13 +1,12 @@
 import * as PIXI from "pixi.js-legacy";
 import { UiButton } from "./common/core/components/ui-button";
 import { Entity } from "./common/core/entity/entity";
-import { MSApp } from "./ms-app";
 import { MSCellState } from "./ms-cell-state";
 
 /**
  * UI overlay for touch and accessible controls.
  */
-export class MSTouchUi extends Entity<MSApp> {
+export class MSTouchUi extends Entity {
 	public targetCell?: MSCellState;
 
 	private buttonFlag!: UiButton;
@@ -43,14 +42,14 @@ export class MSTouchUi extends Entity<MSApp> {
 
 		this.buttonDig.on("pointertap", () => {
 			if (this.targetCell) {
-				this.app.scenes.game && this.app.scenes.game.leftClick(this.targetCell);
+				this.emit("left-click", this.targetCell);
 				this.visible = false;
 			}
 		});
 
 		this.buttonFlag.on("pointertap", () => {
 			if (this.targetCell) {
-				this.app.scenes.game && this.app.scenes.game.rightClick(this.targetCell);
+				this.emit("right-click", this.targetCell);
 				this.visible = false;
 			}
 		});

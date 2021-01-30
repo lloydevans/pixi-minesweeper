@@ -1,15 +1,15 @@
 import { BmText } from "./common/core/components/bm-text";
-import { Entity } from "./common/core/entity/entity";
+import { Scene } from "./common/core/scene/scene";
 import { auth, functions } from "./firebase";
-import { MSApp } from "./ms-app";
 import { MSGameConfig } from "./ms-config";
 import { PanelGameOptions } from "./ui/panel-game-options";
 import { PanelLogin } from "./ui/panel-login";
+import { showGame } from "./ms-entry";
 
 /**
  *
  */
-export class SceneMenu extends Entity<MSApp> {
+export class SceneMenu extends Scene {
 	title!: BmText;
 	panelLogin?: PanelLogin;
 	panelGameOptions?: PanelGameOptions;
@@ -23,7 +23,7 @@ export class SceneMenu extends Entity<MSApp> {
 		this.title.y = -190;
 		this.title._anchor.set(0.5);
 
-		this.addChild(this.title);
+		this.root.addChild(this.title);
 
 		if (!auth.currentUser) {
 			this.showLogin();
@@ -35,6 +35,7 @@ export class SceneMenu extends Entity<MSApp> {
 
 	private showLogin() {
 		this.panelGameOptions && this.panelGameOptions.destroy();
+
 		this.panelLogin = new PanelLogin(this.app);
 
 		this.panelLogin.on("create", async (email: string, password: string, username: string) => {
@@ -83,7 +84,7 @@ export class SceneMenu extends Entity<MSApp> {
 			this.app.setAllUiElementsActive(true);
 		});
 
-		this.addChild(this.panelLogin);
+		this.root.addChild(this.panelLogin);
 	}
 
 	private showGameOptions() {
@@ -95,7 +96,7 @@ export class SceneMenu extends Entity<MSApp> {
 
 			try {
 				const gameId = (await functions.httpsCallable("newGame")(config))?.data;
-				this.app.showGame(gameId);
+				showGame(gameId);
 			} catch (err) {
 				console.log(err);
 				this.app.setAllUiElementsActive(true);
@@ -117,6 +118,6 @@ export class SceneMenu extends Entity<MSApp> {
 			}
 		});
 
-		this.addChild(this.panelGameOptions);
+		this.root.addChild(this.panelGameOptions);
 	}
 }

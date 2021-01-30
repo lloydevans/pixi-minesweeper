@@ -1,10 +1,11 @@
 import clamp from "lodash-es/clamp";
 import * as PIXI from "pixi.js-legacy";
-import { hexToNum, ColorSchemes } from "./common/color";
+import { ColorSchemes, hexToNum } from "./common/color";
+import { App } from "./common/core/app/app";
+import { Scene } from "./common/core/scene/scene";
 import { Ease } from "./common/ease";
-import { Scene } from "./common/scene";
 import { auth, db, functions } from "./firebase";
-import { MSApp } from "./ms-app";
+import { cellPool, getCellView, showMenu, state } from "./ms-entry";
 import { MSCell, REF_HEIGHT, REF_WIDTH } from "./ms-cell";
 import { CELL_STATE_DEFAULT, MSCellState } from "./ms-cell-state";
 import { MSGrid } from "./ms-grid";
@@ -12,29 +13,42 @@ import { MSStateClient } from "./ms-state";
 import { MSTouchUi } from "./ms-touch-ui";
 import { MSUi } from "./ms-ui";
 
-export class SceneGame extends Scene<MSApp> {
+export class SceneGame extends Scene {
 	public get currentTime() {
 		return this.time;
 	}
 
-	private time = 0;
-	private timeActive = false;
-	private board = PIXI.Sprite.from(PIXI.Texture.WHITE);
+	private time: number;
+	private timeActive: boolean;
+	private board: PIXI.Sprite;
 	private cellWidth = REF_WIDTH;
 	private cellHeight = REF_HEIGHT;
-	private container = new PIXI.Container();
+	private container: PIXI.Container;
 	private gridBack?: PIXI.TilingSprite;
-	private grid = new MSGrid(this.app);
-	private touchUi = new MSTouchUi(this.app);
-	private ui = new MSUi(this.app);
+	private grid: MSGrid;
+	private touchUi: MSTouchUi;
+	private ui: MSUi;
 	private gameId?: string;
 	private gameData?: MSStateClient;
 	private gameSnapshotUnsubscribe!: () => void;
 
-	constructor(app: MSApp) {
+	constructor(app: App) {
 		super(app);
 
+		this.board = PIXI.Sprite.from(PIXI.Texture.WHITE);
+		this.cellHeight = REF_HEIGHT;
+		this.cellWidth = REF_WIDTH;
+		this.grid = new MSGrid(this.app);
+		this.time = 0;
+		this.timeActive = false;
+		this.touchUi = new MSTouchUi(this.app);
+		this.ui = new MSUi(this.app);
+
+		this.container = new PIXI.Container();
 		this.container.visible = false;
+
+		this.touchUi.on("left-click", this.leftClick, this);
+		this.touchUi.on("right-click", this.rightClick, this);
 	}
 
 	/**
@@ -44,9 +58,9 @@ export class SceneGame extends Scene<MSApp> {
 		// @ts-ignore
 		window.game = this;
 
-		this.addChild(this.container);
-		this.addChild(this.ui);
-		this.addChild(this.touchUi);
+		this.root.addChild(this.container);
+		this.root.addChild(this.ui);
+		this.root.addChild(this.touchUi);
 
 		this.grid.setInteractionEnabled(false);
 
@@ -63,7 +77,7 @@ export class SceneGame extends Scene<MSApp> {
 			this.app.setAllUiElementsActive(false);
 
 			try {
-				const gameId = (await functions.httpsCallable("newGame")(this.app.state.config)).data;
+				const gameId = (await functions.httpsCallable("newGame")(state.config)).data;
 
 				if (!gameId) {
 					throw new Error("New game request failed to return game ID");
@@ -86,7 +100,7 @@ export class SceneGame extends Scene<MSApp> {
 
 			try {
 				functions.httpsCallable("quitGame")(this.gameId);
-				this.app.showMenu();
+				showMenu();
 			} catch (err) {
 				console.log(err);
 			}
@@ -105,8 +119,8 @@ export class SceneGame extends Scene<MSApp> {
 
 		const gameData = await this.getGameData();
 
-		if (!this.app.state.config) {
-			this.app.state.setConfig(gameData.config);
+		if (!state.config) {
+			state.setConfig(gameData.config);
 		}
 
 		this.gameSnapshotUnsubscribe && this.gameSnapshotUnsubscribe();
@@ -133,8 +147,8 @@ export class SceneGame extends Scene<MSApp> {
 		this.gameData = data;
 
 		if (data?.cells) {
-			this.app.state.parseClientState(data);
-			this.emit("snapshot", data);
+			state.parseClientState(data);
+			this.root.emit("snapshot", data);
 		}
 	}
 
@@ -144,22 +158,22 @@ export class SceneGame extends Scene<MSApp> {
 	 * @param config
 	 */
 	public async initGame() {
-		// analytics.logEvent("new_game", this.app.state.config);
+		// analytics.logEvent("new_game", state.config);
 		this.grid.setInteractionEnabled(false);
 		this.container.visible = true;
 
 		this.time = 0;
 		this.touchUi.hide();
-		this.tweenGroup.reset();
+		// Reset app tweens
 
 		await this.initGrid();
 
-		if (this.app.state.isLose()) {
+		if (state.isLose()) {
 			const { x, y } = this.gameData!.history[0];
 			this.animateLose(x, y);
 			this.grid.updateCellStateReferences();
 		} //
-		else if (this.app.state.isWin()) {
+		else if (state.isWin()) {
 			this.animateWin();
 			this.grid.updateCellStateReferences();
 		} //
@@ -174,7 +188,7 @@ export class SceneGame extends Scene<MSApp> {
 	 *
 	 */
 	private waitForBoardStateUpdate(): Promise<MSStateClient> {
-		return new Promise((resolve) => this.once("snapshot", resolve));
+		return new Promise((resolve) => this.root.once("snapshot", resolve));
 	}
 
 	/**
@@ -197,8 +211,8 @@ export class SceneGame extends Scene<MSApp> {
 		const marginY = 96;
 		const maxWidth = width - marginX * 2;
 		const maxHeight = height - marginY * 2;
-		const refBoardWidth = REF_WIDTH * this.app.state.width;
-		const refBoardHeight = REF_HEIGHT * this.app.state.height;
+		const refBoardWidth = REF_WIDTH * state.width;
+		const refBoardHeight = REF_HEIGHT * state.height;
 		let scale = 1;
 
 		if (refBoardHeight > maxHeight) {
@@ -211,8 +225,8 @@ export class SceneGame extends Scene<MSApp> {
 		this.cellWidth = REF_WIDTH * scale;
 		this.cellHeight = REF_HEIGHT * scale;
 
-		const widthPx = this.app.state.width * this.cellWidth;
-		const heightPx = this.app.state.height * this.cellHeight;
+		const widthPx = state.width * this.cellWidth;
+		const heightPx = state.height * this.cellHeight;
 		const boardWidth = widthPx + this.cellWidth / 2;
 		const boardHeight = heightPx + this.cellHeight / 2;
 		this.board.x = -boardWidth / 2;
@@ -220,15 +234,15 @@ export class SceneGame extends Scene<MSApp> {
 		this.board.width = boardWidth;
 		this.board.height = boardHeight;
 		this.grid.scale.set(this.cellWidth / REF_WIDTH);
-		this.grid.x = -(this.app.state.width / 2) * this.cellWidth;
-		this.grid.y = -(this.app.state.height / 2) * this.cellHeight;
+		this.grid.x = -(state.width / 2) * this.cellWidth;
+		this.grid.y = -(state.height / 2) * this.cellHeight;
 
 		if (this.gridBack) {
 			this.gridBack.tileScale.set(2 * (this.cellWidth / REF_WIDTH));
-			this.gridBack.width = this.app.state.width * this.cellWidth;
-			this.gridBack.height = this.app.state.height * this.cellHeight;
-			this.gridBack.x = (-this.app.state.width * this.cellWidth) / 2;
-			this.gridBack.y = (-this.app.state.height * this.cellHeight) / 2;
+			this.gridBack.width = state.width * this.cellWidth;
+			this.gridBack.height = state.height * this.cellHeight;
+			this.gridBack.x = (-state.width * this.cellWidth) / 2;
+			this.gridBack.y = (-state.height * this.cellHeight) / 2;
 		}
 	}
 
@@ -253,13 +267,13 @@ export class SceneGame extends Scene<MSApp> {
 			el.off("pointerdown", this.onPointerDown, this);
 		});
 
-		while (this.app.cellPool.length < this.app.state.totalCells) {
-			await this.delay(100);
+		while (cellPool.length < state.totalCells) {
+			await this.app.delay(100);
 		}
 
-		for (let i = 0; i < this.app.state.totalCells; i++) {
-			const [x, y] = this.app.state.coordsOf(i);
-			const msCell = this.app.getCellView(x, y);
+		for (let i = 0; i < state.totalCells; i++) {
+			const [x, y] = state.coordsOf(i);
+			const msCell = getCellView(x, y);
 			this.grid.addChild(msCell);
 
 			// Temporarily give the cell this state for animation purposes.
@@ -278,7 +292,7 @@ export class SceneGame extends Scene<MSApp> {
 	private onPointerTap(e: PIXI.InteractionEvent) {
 		const msCell = e.currentTarget as MSCell;
 
-		const cellState = this.app.state.cellAt(msCell.ix, msCell.iy);
+		const cellState = state.cellAt(msCell.ix, msCell.iy);
 
 		if (!cellState) {
 			throw new Error(`Can't find cell at ${msCell.ix},${msCell.iy}`);
@@ -297,7 +311,7 @@ export class SceneGame extends Scene<MSApp> {
 				break;
 
 			case "touch":
-				if (this.app.state.firstMove) {
+				if (state.firstMove) {
 					this.leftClick(cellState);
 				} //
 				else if (cellState === this.touchUi.targetCell) {
@@ -306,7 +320,7 @@ export class SceneGame extends Scene<MSApp> {
 				else {
 					this.touchUi.show();
 					this.touchUi.setTargetCell(cellState);
-					const local = this.toLocal(msCell.getGlobalPosition());
+					const local = this.root.toLocal(msCell.getGlobalPosition());
 					this.touchUi.x = local.x;
 					this.touchUi.y = local.y;
 				}
@@ -322,7 +336,7 @@ export class SceneGame extends Scene<MSApp> {
 	private onPointerDown(e: PIXI.InteractionEvent) {
 		const msCell = e.currentTarget as MSCell;
 
-		const cellState = this.app.state.cellAt(msCell.ix, msCell.iy);
+		const cellState = state.cellAt(msCell.ix, msCell.iy);
 
 		if (!cellState) {
 			throw new Error(`Can't find cell at ${msCell.ix},${msCell.iy}`);
@@ -332,7 +346,7 @@ export class SceneGame extends Scene<MSApp> {
 			case "mouse":
 				const isRightClick = e.data.button === 2;
 
-				this.audio.play("blop");
+				this.app.audio.play("blop");
 
 				if (isRightClick) {
 					msCell.animatePlaceFlagStart();
@@ -357,7 +371,7 @@ export class SceneGame extends Scene<MSApp> {
 		const periodMs = period * 1000;
 		const cycles = Math.floor(duration / period);
 		const count = cycles * 2;
-		let tween = this.tween(this.container.pivot);
+		let tween = this.app.tween(this.container.pivot);
 		let angle = Math.PI / 2;
 
 		for (let i = 0; i < count; i++) {
@@ -372,11 +386,6 @@ export class SceneGame extends Scene<MSApp> {
 		}
 
 		tween = tween.to({ x: 0, y: 0 }, periodMs / 2, Ease.sineInOut);
-
-		tween.on("change", () => {
-			this.app.background!.offset.x = this.container.pivot.x;
-			this.app.background!.offset.y = this.container.pivot.y * 0.5;
-		});
 	}
 
 	/**
@@ -420,7 +429,7 @@ export class SceneGame extends Scene<MSApp> {
 
 		cellState.flag = !cellState.flag;
 
-		const msCell = this.app.getCellView(cellState.x, cellState.y);
+		const msCell = getCellView(cellState.x, cellState.y);
 		const x = msCell.ix;
 		const y = msCell.iy;
 
@@ -438,10 +447,10 @@ export class SceneGame extends Scene<MSApp> {
 		this.app.log("Board updated");
 
 		if (cellState.flag) {
-			this.audio.play("blop", { transpose: 12 });
+			this.app.audio.play("blop", { transpose: 12 });
 		} //
 		else {
-			this.audio.play("blop", { transpose: 24 });
+			this.app.audio.play("blop", { transpose: 24 });
 		}
 
 		msCell.updateViewState();
@@ -455,11 +464,11 @@ export class SceneGame extends Scene<MSApp> {
 	public async leftClick(cellState: MSCellState) {
 		this.grid.setInteractionEnabled(false);
 
-		const msCell = this.app.getCellView(cellState.x, cellState.y);
+		const msCell = getCellView(cellState.x, cellState.y);
 		const x = msCell.ix;
 		const y = msCell.iy;
 
-		if (this.app.state.firstMove) {
+		if (state.firstMove) {
 			this.app.log("First click");
 		}
 
@@ -475,49 +484,49 @@ export class SceneGame extends Scene<MSApp> {
 		}
 
 		// Get an array of cell coords which were uncovered by the last move.
-		if (!this.app.state.lastMove) {
+		if (!state.lastMove) {
 			throw new Error("Last move not present.");
 		}
-		const result = this.app.state.lastMove.uncovered;
+		const result = state.lastMove.uncovered;
 
-		this.audio.play("blop", { transpose: 12 });
-		this.audio.play("dirt-thud-2", { delay: 0.005, transpose: 12 });
+		this.app.audio.play("blop", { transpose: 12 });
+		this.app.audio.play("dirt-thud-2", { delay: 0.005, transpose: 12 });
 
 		if (result.length > 1) {
-			const s = result.length / this.app.state.totalCells;
+			const s = result.length / state.totalCells;
 
 			this.screenShake(s * 8);
 
-			this.audio.play("rumble", { type: "attack", volume: s }); // Rumble start
+			this.app.audio.play("rumble", { type: "attack", volume: s }); // Rumble start
 
-			this.audio.play("dirt-thud-0", { delay: 0.005, volume: s });
+			this.app.audio.play("dirt-thud-0", { delay: 0.005, volume: s });
 
 			await this.grid.animateUpdateFrom(cellState);
 
-			this.audio.play("rumble", { type: "release" }); // Rumble end
+			this.app.audio.play("rumble", { type: "release" }); // Rumble end
 		} else {
-			this.audio.play("dirt-thud-2", { delay: 0.005, transpose: 6, volume: 0.5 });
+			this.app.audio.play("dirt-thud-2", { delay: 0.005, transpose: 6, volume: 0.5 });
 			msCell.updateViewState();
 		}
 
 		// Lose state
-		if (this.app.state.isLose()) {
+		if (state.isLose()) {
 			this.app.log("Lose state");
 
 			if (cellState.flag) {
-				this.app.state.clearFlag(x, y);
+				state.clearFlag(x, y);
 			}
 
-			this.audio.play("click", { delay: 0.05 });
+			this.app.audio.play("click", { delay: 0.05 });
 
-			this.audio.play("dirt-thud-2", { delay: 0.005, transpose: 12 });
+			this.app.audio.play("dirt-thud-2", { delay: 0.005, transpose: 12 });
 
 			msCell.updateViewState();
 			this.animateLose(x, y);
 		}
 
 		// Win state
-		else if (this.app.state.isWin()) {
+		else if (state.isWin()) {
 			this.app.log("Win state");
 
 			this.animateWin();
@@ -535,38 +544,38 @@ export class SceneGame extends Scene<MSApp> {
 	 * Animate win.
 	 */
 	private async animateWin() {
-		// analytics.logEvent("win_game", this.app.state.config);
+		// analytics.logEvent("win_game", state.config);
 
 		this.endGame();
 
-		this.audio.play("chime-rattle-a");
-		this.audio.play("chord", { transpose: 12, volume: 0.5 });
+		this.app.audio.play("chime-rattle-a");
+		this.app.audio.play("chord", { transpose: 12, volume: 0.5 });
 
-		const unplacedFlags = this.app.state.getUnplacedFlags();
+		const unplacedFlags = state.getUnplacedFlags();
 
 		while (unplacedFlags.length > 0) {
 			const idx = Math.floor(Math.random() * unplacedFlags.length);
 			const el = unplacedFlags.splice(idx, 1)[0];
-			const msCell = this.app.getCellView(el.x, el.y);
+			const msCell = getCellView(el.x, el.y);
 			msCell.setFlagEnabled(true);
 			msCell.animateCorrect();
 
-			this.audio.play("chime");
+			this.app.audio.play("chime");
 
-			await this.delay(66);
+			await this.app.delay(66);
 		}
 
-		const correctFlags = this.app.state.getCorrectFlags();
+		const correctFlags = state.getCorrectFlags();
 
 		while (correctFlags.length > 0) {
 			const idx = Math.floor(Math.random() * correctFlags.length);
 			const el = correctFlags.splice(idx, 1)[0];
-			const msCell = this.app.getCellView(el.x, el.y);
+			const msCell = getCellView(el.x, el.y);
 			msCell.animateCorrect();
 
-			this.audio.play("chime");
+			this.app.audio.play("chime");
 
-			await this.delay(66);
+			await this.app.delay(66);
 		}
 	}
 
@@ -574,44 +583,44 @@ export class SceneGame extends Scene<MSApp> {
 	 * Animate loss.
 	 */
 	private async animateLose(x: number, y: number) {
-		// analytics.logEvent("lose_game", this.app.state.config);
+		// analytics.logEvent("lose_game", state.config);
 
 		this.endGame();
 
-		const result = this.app.state.getResultData();
+		const result = state.getResultData();
 
 		const firstIdx = result.incorrect.findIndex((el) => el.x === x && el.y === y);
 		result.incorrect.splice(firstIdx, 1);
-		this.app.getCellView(x, y).animateResult();
+		getCellView(x, y).animateResult();
 
-		await this.delay(500);
+		await this.app.delay(500);
 
 		while (result.incorrect.length > 0) {
 			const idx = Math.floor(Math.random() * result.incorrect.length);
 			const el = result.incorrect.splice(idx, 1)[0];
-			const msCell = this.app.getCellView(el.x, el.y);
-			const cellState = this.app.state.cellAt(el.x, el.y)!;
+			const msCell = getCellView(el.x, el.y);
+			const cellState = state.cellAt(el.x, el.y)!;
 
 			msCell.animateResult();
 
-			this.audio.play("click", { transpose: (Math.random() - 0.5) * 6 });
+			this.app.audio.play("click", { transpose: (Math.random() - 0.5) * 6 });
 
 			if (!cellState.flag) {
 				msCell.animateDigEnd();
 			}
 
-			await this.delay(50);
+			await this.app.delay(50);
 		}
 
 		while (result.correct.length > 0) {
 			const idx = Math.floor(Math.random() * result.correct.length);
 			const el = result.correct.splice(idx, 1)[0];
-			const msCell = this.app.getCellView(el.x, el.y);
+			const msCell = getCellView(el.x, el.y);
 			msCell.animateResult();
 
-			this.audio.play("chime");
+			this.app.audio.play("chime");
 
-			await this.delay(100);
+			await this.app.delay(100);
 		}
 	}
 

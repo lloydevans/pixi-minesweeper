@@ -1,13 +1,12 @@
 import * as PIXI from "pixi.js-legacy";
 import { ColorSchemes, hexToNum } from "../common/color";
-import { Entity } from "../common/core/entity/entity";
 import { UiButtonScroller } from "../common/core/components/ui-button-scroller";
 import { UiButtonText } from "../common/core/components/ui-button-text";
-import { MSApp } from "../ms-app";
+import { Entity } from "../common/core/entity/entity";
 import { MS_GAME_CONFIG_DEFAULT } from "../ms-config";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MIN_EMPTY, MIN_GRID_HEIGHT, MIN_GRID_WIDTH } from "../ms-state";
 
-export class PanelGameOptions extends Entity<MSApp> {
+export class PanelGameOptions extends Entity {
 	private buttonPrimary!: UiButtonText;
 	private buttonSecondary!: UiButtonText;
 	private widthScroller!: UiButtonScroller;

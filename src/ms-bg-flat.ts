@@ -1,13 +1,12 @@
 import * as PIXI from "pixi.js-legacy";
 import { ColorSchemes, hexToNum, hexToRgba, numToRgba, RgbaObject, rgbToNum } from "./common/color";
 import { Entity } from "./common/core/entity/entity";
-import { Ease } from "./common/ease";
 import { Tween } from "./common/core/tweens/tween";
-import { MSApp } from "./ms-app";
+import { Ease } from "./common/ease";
 
 /**
  */
-export class MSBgFlat extends Entity<MSApp> {
+export class MSBgFlat extends Entity {
 	public offset = new PIXI.Point();
 	private speed: number = 0.1;
 	private scroll: number = 0;
