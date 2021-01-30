@@ -13,13 +13,13 @@ export interface ButtonScrollerOptions {
 }
 
 export class UiButtonScroller extends Container {
-	app: App;
+	private app: App;
 
 	private _min: number;
-	get min(): number {
+	public get min(): number {
 		return this._min;
 	}
-	set min(value: number) {
+	public set min(value: number) {
 		this._min = value;
 		if (this.current > this._min) {
 			this.set(this._min);
@@ -27,10 +27,10 @@ export class UiButtonScroller extends Container {
 	}
 
 	private _max: number;
-	get max(): number {
+	public get max(): number {
 		return this._max;
 	}
-	set max(value: number) {
+	public set max(value: number) {
 		this._max = value;
 		if (this.current > this._max) {
 			this.set(this._max);
@@ -38,12 +38,12 @@ export class UiButtonScroller extends Container {
 	}
 
 	private _current: number;
-	get current(): number {
+	public get current(): number {
 		return this._current;
 	}
 
 	private _default: number;
-	get default(): number {
+	public get default(): number {
 		return this._default;
 	}
 
@@ -52,7 +52,7 @@ export class UiButtonScroller extends Container {
 	private buttonRight: UiButton;
 	private label: BmText;
 
-	constructor(app: App, options: ButtonScrollerOptions) {
+	public constructor(app: App, options: ButtonScrollerOptions) {
 		super();
 
 		this.app = app;

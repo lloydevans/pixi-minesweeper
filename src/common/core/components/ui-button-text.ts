@@ -29,7 +29,7 @@ export class UiButtonText extends UiButton {
 	private options: ButtonTextOptions;
 	private label: BmText;
 
-	constructor(app: App, options: ButtonTextOptions) {
+	public constructor(app: App, options: ButtonTextOptions) {
 		super(app, options);
 
 		this.options = defaults(options, ButtonTextOptionDefaults);

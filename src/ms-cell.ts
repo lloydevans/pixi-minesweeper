@@ -6,7 +6,7 @@ import { BmText } from "./common/core/components/bm-text";
 import { Entity } from "./common/core/entity/entity";
 import { Spine } from "./common/spine";
 import { shallowObjectEquals } from "./common/utils";
-import { getCellView, state } from './ms-entry';
+import { getCellView, state } from "./ms-entry";
 import { CELL_STATE_DEFAULT } from "./ms-cell-state";
 import type { MSCellState } from "./ms-cell-state";
 import type { NumberKey } from "./ms-config";
@@ -61,7 +61,7 @@ export class MSCell extends Entity {
 	 *
 	 * @param app - App reference.
 	 */
-	constructor(app: App) {
+	public constructor(app: App) {
 		super(app);
 
 		this.viewState = { ...CELL_STATE_DEFAULT };
@@ -69,7 +69,10 @@ export class MSCell extends Entity {
 		this.anim = new Spine(this.app.getSpine("grid-square"));
 		this.anim.stateData.defaultMix = 0;
 
-		this.adjacentText = new BmText(this.app, { fontName: "bmfont", fontSize: 38 });
+		this.adjacentText = new BmText(this.app, {
+			fontName: "bmfont",
+			fontSize: 38,
+		});
 		this.adjacentText._anchor.set(0.5);
 
 		this.addChild(this.adjacentText);

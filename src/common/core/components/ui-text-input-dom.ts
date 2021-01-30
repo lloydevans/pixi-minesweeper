@@ -39,7 +39,7 @@ export class UiTextInputDom extends UiElement {
 	private options: UITextInputOptions;
 	private debugHitarea = new PIXI.Graphics();
 
-	constructor(app: App, options?: Partial<UITextInputOptions>) {
+	public constructor(app: App, options?: Partial<UITextInputOptions>) {
 		super(app);
 
 		this.options = defaults(options || {}, UITextInputOptionDefaults);

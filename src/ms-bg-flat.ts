@@ -8,8 +8,8 @@ import { Ease } from "./common/ease";
  */
 export class MSBgFlat extends Entity {
 	public offset = new PIXI.Point();
-	private speed: number = 0.1;
-	private scroll: number = 0;
+	private speed = 0.1;
+	private scroll = 0;
 	private sprite!: PIXI.TilingSprite;
 	private rgba: RgbaObject = { r: 0, g: 0, b: 0, a: 1 };
 

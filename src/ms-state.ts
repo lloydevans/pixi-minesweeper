@@ -73,8 +73,8 @@ export class MSState {
 		return state;
 	}
 
-	public width: number = 0;
-	public height: number = 0;
+	public width = 0;
+	public height = 0;
 	public config: MSStateConfig = {
 		startMines: 1,
 		gridWidth: 4,
@@ -102,7 +102,7 @@ export class MSState {
 
 	private resolution: GameResolution = GameResolution.Incomplete;
 
-	constructor(config: Partial<MSStateConfig> = {}) {
+	public constructor(config: Partial<MSStateConfig> = {}) {
 		Object.entries(MS_STATE_CONFIG_DEFAULT).forEach((entry) => {
 			const key = entry[0] as keyof MSStateConfig;
 			const el = entry[1];
@@ -176,7 +176,7 @@ export class MSState {
 	/**
 	 * Clear and set the moves history.
 	 *
-	 * @param moves - Array of MoveData onbjects.
+	 * @param moves - Array of MoveData objects.
 	 */
 	private setHistory(moves: MoveDataHistory[]) {
 		this.history.length = 0;
@@ -186,7 +186,7 @@ export class MSState {
 	/**
 	 * Add a move to the history list.
 	 *
-	 * @param moves - Array of MoveData onbjects.
+	 * @param moves - Array of MoveData objects.
 	 */
 	private addHistory(move: MoveDataHistory) {
 		this.history.unshift(move);
@@ -626,7 +626,7 @@ export class MSState {
 	 * @param x - X coord
 	 * @param y - Y coord
 	 */
-	public select(x: number, y: number, flag: boolean = false): MSCellState[] {
+	public select(x: number, y: number, flag = false): MSCellState[] {
 		const cell = this.cellAt(x, y);
 
 		if (!cell) {
