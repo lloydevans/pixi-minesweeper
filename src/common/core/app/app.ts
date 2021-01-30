@@ -3,9 +3,9 @@ import * as PIXI from "pixi.js-legacy";
 import * as screenfull from "screenfull";
 import { lerp } from "../../../maths/lerp";
 import { ToneAudio } from "../audio/tone-audio";
-import { Tween } from "../tweens/tween";
-import { TweenGroup } from "../tweens/tween-group";
-import { TweenOptions } from "../tweens/tween-props";
+import { Tween } from "../../tweens/tween";
+import { TweenGroup } from "../../tweens/tween-group";
+import { TweenOptions } from "../../tweens/tween-props";
 import { UiElement } from "../components/ui-element";
 import { EventChannel } from "../events/event-channel";
 import { ReferenceSize } from "./reference-size";
@@ -99,7 +99,7 @@ export class App extends PIXI.Application {
 	/**
 	 *
 	 */
-	constructor() {
+	public constructor() {
 		super();
 
 		this.events = {
@@ -193,7 +193,7 @@ export class App extends PIXI.Application {
 	 *
 	 */
 	private getWindowDpr(): number {
-		let dpr = clamp(window.devicePixelRatio, MIN_DPR, MAX_DPR);
+		const dpr = clamp(window.devicePixelRatio, MIN_DPR, MAX_DPR);
 
 		return dpr;
 	}
@@ -224,9 +224,9 @@ export class App extends PIXI.Application {
 		this.root.y = this.renderer.height / this.dpr / 2;
 
 		if (this.referenceSize) {
-			let refSize = lerp(this.referenceSize.width, this.referenceSize.height, this.referenceSize.blend);
-			let refWindow = lerp(width, height, this.referenceSize.blend);
-			let r = refSize / refWindow;
+			const refSize = lerp(this.referenceSize.width, this.referenceSize.height, this.referenceSize.blend);
+			const refWindow = lerp(width, height, this.referenceSize.blend);
+			const r = refSize / refWindow;
 			this.root.scale.set(1 / r);
 			this._width *= r;
 			this._height *= r;

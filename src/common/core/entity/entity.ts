@@ -1,8 +1,8 @@
 import * as PIXI from "pixi.js-legacy";
 import { App } from "../app/app";
-import { Tween } from "../tweens/tween";
-import { TweenGroup } from "../tweens/tween-group";
-import { TweenOptions } from "../tweens/tween-props";
+import { Tween } from "../../tweens/tween";
+import { TweenGroup } from "../../tweens/tween-group";
+import { TweenOptions } from "../../tweens/tween-props";
 
 // These are copied from the Container inline type.
 export type ComponentDestroyOptions = {
@@ -34,7 +34,7 @@ export class Entity extends PIXI.Container {
 	 *
 	 * @param app - Pixi application reference.
 	 */
-	constructor(app: App) {
+	public constructor(app: App) {
 		super();
 
 		this.app = app;
@@ -77,7 +77,7 @@ export class Entity extends PIXI.Container {
 	 *
 	 */
 	protected tween<T>(target: T, options?: TweenOptions): Tween<T> {
-		let tween = this.tweenGroup.get(target, options);
+		const tween = this.tweenGroup.get(target, options);
 		return tween;
 	}
 

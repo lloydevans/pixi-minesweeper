@@ -3,7 +3,7 @@ import * as PIXI from "pixi.js-legacy";
 import { ColorSchemes, hexToNum } from "../common/color";
 import { App } from "../common/core/app/app";
 import { Scene } from "../common/core/scene/scene";
-import { Ease } from "../common/ease";
+import { Ease } from "../common/tweens/ease";
 import { auth, db, functions } from "../firebase";
 import { cellPool, getCellView, showMenu, state } from "../ms-entry";
 import { MSCell, REF_HEIGHT, REF_WIDTH } from "../ms-cell";
