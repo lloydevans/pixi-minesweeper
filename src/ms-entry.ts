@@ -1,5 +1,4 @@
 import * as PIXI from "pixi.js-legacy";
-import { ColorSchemes } from "./common/color";
 import { App } from "./common/core/app/app";
 import { ToneAudioConfig } from "./common/core/audio/tone-audio";
 import { preventContextMenu } from "./common/utils";

@@ -1,5 +1,5 @@
 /**
- * Prevent contetx menu on right click anywhere on the page.
+ * Prevent context menu on right click anywhere on the page.
  */
 export function preventContextMenu() {
 	window.addEventListener("contextmenu", (e) => e.preventDefault(), false);
@@ -30,15 +30,15 @@ export function jsonClone<T>(obj: T): T {
 }
 
 /**
- * Replacment for isEqual until lodash is imported for cloud functions.
+ * Replacement for isEqual until lodash is imported for cloud functions.
  */
 export function shallowObjectEquals(a: any, b: any) {
-	for (let key in a) {
+	for (const key in a) {
 		if (!(key in b) || a[key] !== b[key]) {
 			return false;
 		}
 	}
-	for (let key in b) {
+	for (const key in b) {
 		if (!(key in a) || a[key] !== b[key]) {
 			return false;
 		}

@@ -70,7 +70,7 @@ export class UiTextInput extends UiElement {
 	private input: HTMLInputElement = window.document.createElement("input");
 	private options: UITextInputOptions;
 
-	constructor(app: App, options?: Partial<UITextInputOptions>) {
+	public constructor(app: App, options?: Partial<UITextInputOptions>) {
 		super(app);
 
 		this.options = defaults(options || {}, UITextInputOptionDefaults);
@@ -119,8 +119,8 @@ export class UiTextInput extends UiElement {
 	private setCursorPosition(start = this.textCursorStart, end = this.textCursorEnd) {
 		this.textCursorStart = clamp(start, 0, this.input.value.length);
 		this.textCursorEnd = clamp(end || start, 0, this.input.value.length);
-		let cursorPx = this.charPositions[this.textCursorStart];
-		let cursorPxEnd = this.charPositions[this.textCursorEnd];
+		const cursorPx = this.charPositions[this.textCursorStart];
+		const cursorPxEnd = this.charPositions[this.textCursorEnd];
 
 		switch (this.input.selectionDirection) {
 			case "forward":
@@ -138,7 +138,7 @@ export class UiTextInput extends UiElement {
 		this.textSelection.clear();
 
 		if (this.textCursorStart !== this.textCursorEnd) {
-			let selectionWidth = cursorPxEnd - cursorPx;
+			const selectionWidth = cursorPxEnd - cursorPx;
 			this.textSelection.beginFill(hexToNum(this.options.textColor), 0.3);
 			this.textSelection.drawRect(
 				this.text.x + cursorPx,
@@ -200,7 +200,7 @@ export class UiTextInput extends UiElement {
 		this.text.text = "";
 
 		// It's not exactly efficient but works. Getting to the char positions
-		// in bitmap text is abit tricky unless I'm missing something.
+		// in bitmap text is a bit tricky unless I'm missing something.
 		this.charPositions = [0];
 		Array.from(text).forEach((el, i) => {
 			this.text.text += el;
@@ -244,8 +244,8 @@ export class UiTextInput extends UiElement {
 		this.textMask.endFill();
 		this.textMask.tint = 0;
 
-		let outlineW = width + this.options.borderThickness * 2;
-		let outlineH = height + this.options.borderThickness * 2;
+		const outlineW = width + this.options.borderThickness * 2;
+		const outlineH = height + this.options.borderThickness * 2;
 		this.outline.clear();
 		this.outline.beginFill(0xffffff);
 		this.outline.drawRoundedRect(-outlineW / 2, -outlineH / 2, outlineW, outlineH, this.options.radius);

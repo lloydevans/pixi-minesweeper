@@ -37,7 +37,7 @@ export class UiElement extends Entity {
 	private _focused = true;
 	private _active = true;
 
-	constructor(app: App) {
+	public constructor(app: App) {
 		super(app);
 
 		this.on("pointertap", () => {

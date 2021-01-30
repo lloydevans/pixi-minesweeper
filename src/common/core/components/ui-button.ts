@@ -28,7 +28,7 @@ export class UiButton extends UiElement {
 		this.back.tint = value;
 	}
 
-	constructor(app: App, config: ButtonOptions) {
+	public constructor(app: App, config: ButtonOptions) {
 		super(app);
 
 		this.config = defaults(config, ButtonOptionDefaults);

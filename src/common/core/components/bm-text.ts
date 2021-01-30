@@ -40,7 +40,7 @@ export class BmText extends PIXI.BitmapText {
 		(this.anchor as PIXI.Point).y = this._anchor.y;
 	}, this);
 
-	constructor(app: App, options: BmTextOptions = {}) {
+	public constructor(app: App, options: BmTextOptions = {}) {
 		super(options.text || "", options as any);
 
 		this.app = app;

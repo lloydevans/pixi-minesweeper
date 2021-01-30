@@ -84,7 +84,7 @@ export class UiButtonScroller extends Container {
 		this.set(this.default);
 	}
 
-	set(value: number) {
+	public set(value: number) {
 		this._current = Math.floor(clamp(value, this.min, this.max));
 		this.number.text = this.current.toString();
 		this.buttonLeft.interactive = this.current !== this.min;

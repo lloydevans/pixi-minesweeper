@@ -3,13 +3,16 @@ import { App } from "../app/app";
 import { Tween } from "../../tweens/tween";
 import { TweenGroup } from "../../tweens/tween-group";
 import { TweenOptions } from "../../tweens/tween-props";
+import { Component } from "../../core/components/component";
 
 // These are copied from the Container inline type.
-export type ComponentDestroyOptions = {
+export type EntityDestroyOptions = {
 	children?: boolean;
 	texture?: boolean;
 	baseTexture?: boolean;
 };
+
+type ComponentCtor<T> = new (entity: Entity) => T;
 
 export class Entity extends PIXI.Container {
 	/**
@@ -18,10 +21,46 @@ export class Entity extends PIXI.Container {
 	public app: App;
 
 	/**
+	 *
+	 */
+	private components: Component[] = [];
+
+	/**
 	 * Reference to audio manager instance.
 	 */
 	public get audio() {
 		return this.app.audio;
+	}
+
+	/**
+	 *
+	 * @param ctor
+	 */
+	public getComponent<T extends Component>(ctor: ComponentCtor<T>): T | undefined {
+		return this.components.find((el) => el instanceof ctor) as T;
+	}
+
+	/**
+	 *
+	 */
+	public addComponent<T extends Component>(ctor: ComponentCtor<T>): T {
+		const existingComponent = this.getComponent(ctor);
+
+		if (existingComponent) {
+			throw new Error("Component already exists on entity.");
+		}
+
+		let component;
+
+		try {
+			component = new ctor(this);
+		} catch (err) {
+			throw new Error("Error instantiating component:\n\n" + err);
+		}
+
+		this.components.push(component);
+
+		return component;
 	}
 
 	/**
@@ -64,7 +103,7 @@ export class Entity extends PIXI.Container {
 	 *
 	 * @param options - Destroy options.
 	 */
-	public destroy(options?: ComponentDestroyOptions) {
+	public destroy(options?: EntityDestroyOptions) {
 		this.update && this.app.events.update.off(this.update, this);
 		this.resize && this.app.events.resize.off(this.resize, this);
 		this.cleanup && this.cleanup();
