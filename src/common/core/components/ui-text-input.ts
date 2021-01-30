@@ -80,11 +80,18 @@ export class UiTextInput extends UiElement {
 		this.input.style.zIndex = "-1000";
 		window.document.body.appendChild(this.input);
 
-		this.text = new BmText(this.app, { fontName: "bmfont", fontSize: 18 });
+		this.text = new BmText(this.app, {
+			fontName: "bmfont",
+			fontSize: 18,
+		});
 		this.text._anchor.set(0, 0.5);
 		this.text.tint = hexToNum(this.options.textColor);
 
-		this.label = new BmText(this.app, { text: this.options.label, fontName: "bmfont", fontSize: 18 });
+		this.label = new BmText(this.app, {
+			text: this.options.label,
+			fontName: "bmfont",
+			fontSize: 18,
+		});
 		this.label._anchor.set(1, 0.5);
 		this.label.tint = hexToNum(this.options.labelColor);
 
