@@ -4,6 +4,7 @@
 	"scripts": {
 		"start": "npm run serve-modern",
 		"test": "npx --no-install jest",
+		"test-coverage": "npx jest --collect-coverage",
 		"test-watch": "npm run test -- --watch",
 		"serve": "npx --no-install webpack-dev-server",
 		"serve-modern": "npm run serve -- --env.modern",
