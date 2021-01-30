@@ -6,6 +6,7 @@
 		"createjs",
 		"lerp",
 		"pixi",
+		"scroller",
 		"skel",
 		"tonejs",
 		"tslib",
