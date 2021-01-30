@@ -1,6 +1,6 @@
-import { BmText } from "../common/core/components/bm-text";
-import { Scene } from "../common/core/scene/scene";
-import { auth, functions } from "../firebase";
+import { BmText } from "../../common/core/components/bm-text";
+import { Scene } from "../../common/core/scene/scene";
+import { auth, functions } from "../../firebase";
 import { MSGameConfig } from "../ms-config";
 import { PanelGameOptions } from "../ui/panel-game-options";
 import { PanelLogin } from "../ui/panel-login";

@@ -1,4 +1,4 @@
-import { jsonClone, shallowObjectEquals } from "./common/utils";
+import { jsonClone, shallowObjectEquals } from "../common/utils";
 import { MSCellState, MSCellType } from "./ms-cell-state";
 
 export const MIN_GRID_WIDTH = 4;

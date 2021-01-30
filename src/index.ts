@@ -10,4 +10,4 @@ import "../libs/tween-group";
 createjs.Ticker.timingMode = createjs.Ticker.RAF;
 createjs.Ticker.maxDelta = 100;
 
-import "./ms-entry";
+import "./minesweeper/ms-entry";

@@ -1,6 +1,6 @@
 import * as PIXI from "pixi.js-legacy";
-import { Entity } from "./common/core/entity/entity";
-import { Ease } from "./common/tweens/ease";
+import { Entity } from "../common/core/entity/entity";
+import { Ease } from "../common/tweens/ease";
 
 const REF_BG_WIDTH = 320;
 const REF_BG_HEIGHT = 180;

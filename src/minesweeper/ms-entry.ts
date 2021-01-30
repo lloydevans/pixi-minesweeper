@@ -1,8 +1,8 @@
 import * as PIXI from "pixi.js-legacy";
-import { App } from "./common/core/app/app";
-import { ToneAudioConfig } from "./common/core/audio/tone-audio";
-import { preventContextMenu } from "./common/utils";
-import { auth, db, setPersistence } from "./firebase";
+import { App } from "../common/core/app/app";
+import { ToneAudioConfig } from "../common/core/audio/tone-audio";
+import { preventContextMenu } from "../common/utils";
+import { auth, db, setPersistence } from "../firebase";
 import { MSBgFlat } from "./ms-bg-flat";
 import { MSCell } from "./ms-cell";
 import { UserData } from "./ms-config";

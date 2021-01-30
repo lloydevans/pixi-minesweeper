@@ -1,4 +1,4 @@
-import { Entity } from "./common/core/entity/entity";
+import { Entity } from "../common/core/entity/entity";
 import { MSCell } from "./ms-cell";
 import { MSCellState } from "./ms-cell-state";
 import { getCellView, state } from "./ms-entry";

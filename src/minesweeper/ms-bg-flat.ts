@@ -1,8 +1,8 @@
 import * as PIXI from "pixi.js-legacy";
-import { ColorSchemes, hexToNum, hexToRgba, numToRgba, RgbaObject, rgbToNum } from "./common/color";
-import { Entity } from "./common/core/entity/entity";
-import { Tween } from "./common/tweens/tween";
-import { Ease } from "./common/tweens/ease";
+import { ColorSchemes, hexToNum, hexToRgba, numToRgba, RgbaObject, rgbToNum } from "../common/color";
+import { Entity } from "../common/core/entity/entity";
+import { Tween } from "../common/tweens/tween";
+import { Ease } from "../common/tweens/ease";
 
 /**
  */
