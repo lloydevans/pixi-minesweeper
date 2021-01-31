@@ -1,7 +1,7 @@
 import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
 import * as Tone from "tone";
-import { Entity } from "../entity/entity";
+import { Entity } from "../../entity/entity";
 import { UiElement } from "./ui-element";
 
 export interface ButtonOptions {

@@ -6,7 +6,7 @@ import { Tween } from "../../tweens/tween";
 import { TweenGroup } from "../../tweens/tween-group";
 import { TweenOptions } from "../../tweens/tween-props";
 import { ToneAudio } from "../audio/tone-audio";
-import { UiElement } from "../components/ui-element";
+import { UiElement } from "../components/ui/ui-element";
 import { ReferenceSize } from "./reference-size";
 
 export const MAX_DPR = 4;
@@ -81,7 +81,7 @@ export class App extends PIXI.Application {
 	/**
 	 *
 	 */
-	private readonly emitter = new PIXI.utils.EventEmitter();
+	public readonly emitter = new PIXI.utils.EventEmitter();
 
 	/**
 	 *

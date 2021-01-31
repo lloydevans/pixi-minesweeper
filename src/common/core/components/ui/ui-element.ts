@@ -1,5 +1,5 @@
-import { Entity } from "../entity/entity";
-import { Component } from "./component";
+import { Entity } from "../../entity/entity";
+import { Component } from "../component";
 
 /**
  */

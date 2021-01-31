@@ -2,8 +2,8 @@ import { isEventKey } from "keycode";
 import clamp from "lodash-es/clamp";
 import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
-import { hexToNum } from "../../color";
-import { Entity } from "../entity/entity";
+import { hexToNum } from "../../../color";
+import { Entity } from "../../entity/entity";
 import { BmText } from "../objects/bm-text";
 import { UiElement } from "./ui-element";
 

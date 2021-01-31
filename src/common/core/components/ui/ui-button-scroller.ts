@@ -1,14 +1,11 @@
 import clamp from "lodash-es/clamp";
 import defaults from "lodash-es/defaults";
 import { Texture } from "pixi.js-legacy";
-import { Entity } from "../entity/entity";
-import { BmText } from "../internal/bm-text";
-import { Component } from "./component";
+import { Entity } from "../../entity/entity";
+import { BmText } from "../../internal/bm-text";
+import { Component } from "../component";
 import { UiButton } from "./ui-button";
 
-/**
- *
- */
 export interface ButtonScrollerOptions {
 	arrowTexture: Texture;
 	text: string;
@@ -17,9 +14,6 @@ export interface ButtonScrollerOptions {
 	max: number;
 }
 
-/**
- *
- */
 export const ButtonScrollerOptionDefaults: ButtonScrollerOptions = {
 	arrowTexture: PIXI.Texture.WHITE,
 	text: "",
@@ -28,9 +22,6 @@ export const ButtonScrollerOptionDefaults: ButtonScrollerOptions = {
 	max: 0,
 };
 
-/**
- *
- */
 export class UiButtonScroller extends Component {
 	public get min(): number {
 		return this._min;

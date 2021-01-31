@@ -1,6 +1,6 @@
 import * as PIXI from "pixi.js-legacy";
 import { BmText } from "../common/core/internal/bm-text";
-import { UiButton } from "../common/core/components/ui-button";
+import { UiButton } from "../common/core/components/ui/ui-button";
 import { Entity } from "../common/core/entity/entity";
 import { Spine } from "../common/spine";
 import { state } from "./ms-entry";

@@ -20,8 +20,8 @@ const scenes: {
 } = {};
 
 const app = new App();
-app.events.init.once(initCb);
-app.events.update.once(updateCb);
+app.emitter.on("init", initCb);
+app.emitter.on("update", updateCb);
 app.referenceSize = {
 	width: 1280,
 	height: 720,

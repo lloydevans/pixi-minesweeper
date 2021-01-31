@@ -1,7 +1,7 @@
 import { ColorSchemes, hexToNum } from "../../common/color";
 import { BmText } from "../../common/core/internal/bm-text";
-import { UiButtonText } from "../../common/core/components/ui-button-text";
-import { UiTextInputDom } from "../../common/core/components/ui-text-input-dom";
+import { UiButtonText } from "../../common/core/components/ui/ui-button-text";
+import { UiTextInputDom } from "../../common/core/components/ui/ui-text-input-dom";
 import { Entity } from "../../common/core/entity/entity";
 
 export class PanelLogin extends Entity {

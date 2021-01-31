@@ -68,9 +68,9 @@ export class MSGrid extends Entity {
 				break;
 			}
 
-			this.audio.play("blop", { transpose: 12, volume: 0.5 });
-			this.audio.play("blop", { transpose: 24, delay: 0.05, volume: 0.25 });
-			this.audio.play("blop", { transpose: 36, delay: 0.1, volume: 0.125 });
+			this.app.audio.play("blop", { transpose: 12, volume: 0.5 });
+			this.app.audio.play("blop", { transpose: 24, delay: 0.05, volume: 0.25 });
+			this.app.audio.play("blop", { transpose: 36, delay: 0.1, volume: 0.125 });
 
 			await this.delay(delay);
 		}
@@ -112,8 +112,8 @@ export class MSGrid extends Entity {
 
 				if (indexes.length % Math.floor(state.totalCells / 6) === 0) {
 					const t = x / state.width + y / state.height;
-					this.audio.play("blop", { transpose: t, volume: 0.5 });
-					this.audio.play("blop", { transpose: t + 12, delay: 0.01, volume: 0.5 });
+					this.app.audio.play("blop", { transpose: t, volume: 0.5 });
+					this.app.audio.play("blop", { transpose: t + 12, delay: 0.01, volume: 0.5 });
 					await this.delay(33);
 				}
 			}
@@ -149,7 +149,7 @@ export class MSGrid extends Entity {
 				cellState && msCell.setState(cellState);
 
 				if (indexes.length % (state.width * Math.round(state.height / 10)) === 0) {
-					this.audio.play("blop", { transpose: x / state.width + y / state.height });
+					this.app.audio.play("blop", { transpose: x / state.width + y / state.height });
 					await this.delay(33);
 				}
 			}
