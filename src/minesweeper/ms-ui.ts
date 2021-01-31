@@ -1,9 +1,9 @@
 import * as PIXI from "pixi.js-legacy";
-import { BmText } from "../common/core/components/bm-text";
+import { BmText } from "../common/core/internal/bm-text";
 import { UiButton } from "../common/core/components/ui-button";
 import { Entity } from "../common/core/entity/entity";
 import { Spine } from "../common/spine";
-import { state } from './ms-entry';
+import { state } from "./ms-entry";
 
 /**
  */
@@ -15,10 +15,10 @@ const MAX_TIME = 999;
 export class MSUi extends Entity {
 	private buttonRestart!: UiButton;
 	private buttonCross!: UiButton;
-	private flagsContainer!: PIXI.Container;
+	private flagsEntity!: PIXI.Container;
 	private flagsGraphic!: Spine;
 	private flagsCount!: BmText;
-	private timeContainer!: PIXI.Container;
+	private timeEntity!: PIXI.Container;
 	private timeGraphic!: Spine;
 	private timeCount!: BmText;
 
@@ -26,8 +26,8 @@ export class MSUi extends Entity {
 	 * Initialization must be called after assets are loaded.
 	 */
 	protected init() {
-		this.flagsContainer = new PIXI.Container();
-		this.flagsContainer.y = -8;
+		this.flagsEntity = new Entity(this.app);
+		this.flagsEntity.y = -8;
 
 		this.flagsGraphic = new Spine(this.app.getSpine("grid-square"));
 		this.flagsGraphic.state.setAnimation(0, "flag-idle", false);
@@ -38,8 +38,8 @@ export class MSUi extends Entity {
 		this.flagsCount.x = 38;
 		this.flagsCount.y = -24;
 
-		this.timeContainer = new PIXI.Container();
-		this.timeContainer.y = -8;
+		this.timeEntity = new Entity(this.app);
+		this.timeEntity.y = -8;
 
 		this.timeGraphic = new Spine(this.app.getSpine("timer"));
 		this.timeGraphic.scale.set(0.75);
@@ -50,26 +50,19 @@ export class MSUi extends Entity {
 		this.timeCount.x = 38;
 		this.timeCount.y = -24;
 
-		this.buttonCross = new UiButton(this.app, {
-			textureUp: this.app.getFrame("textures", "button-cross"),
-			textureDown: this.app.getFrame("textures", "button-cross"),
-		});
+		this.buttonCross = new Entity(this.app).add(UiButton);
+		this.buttonRestart = new Entity(this.app).add(UiButton);
 
-		this.buttonRestart = new UiButton(this.app, {
-			textureUp: this.app.getFrame("textures", "button-restart"),
-			textureDown: this.app.getFrame("textures", "button-restart"),
-		});
+		this.timeEntity.addChild(this.timeGraphic);
+		this.timeEntity.addChild(this.timeCount);
 
-		this.timeContainer.addChild(this.timeGraphic);
-		this.timeContainer.addChild(this.timeCount);
+		this.flagsEntity.addChild(this.flagsGraphic);
+		this.flagsEntity.addChild(this.flagsCount);
 
-		this.flagsContainer.addChild(this.flagsGraphic);
-		this.flagsContainer.addChild(this.flagsCount);
-
-		this.addChild(this.timeContainer);
-		this.addChild(this.flagsContainer);
-		this.addChild(this.buttonRestart);
-		this.addChild(this.buttonCross);
+		this.addChild(this.timeEntity);
+		this.addChild(this.flagsEntity);
+		this.addChild(this.buttonRestart.entity);
+		this.addChild(this.buttonCross.entity);
 
 		this.buttonCross.on("pointertap", () => this.emit("close"));
 		this.buttonRestart.on("pointertap", () => this.emit("restart"));
@@ -98,13 +91,13 @@ export class MSUi extends Entity {
 	 * Resize callback.
 	 */
 	protected resize(width: number, height: number) {
-		this.buttonCross.x = width / 2 - 48;
-		this.buttonCross.y = -height / 2 + 42;
-		this.buttonRestart.x = width / 2 - 128;
-		this.buttonRestart.y = -height / 2 + 42;
-		this.flagsContainer.x = -width / 2 + 32;
-		this.flagsContainer.y = -height / 2 + 64;
-		this.timeContainer.x = -width / 2 + 170;
-		this.timeContainer.y = -height / 2 + 64;
+		this.buttonCross.entity.x = width / 2 - 48;
+		this.buttonCross.entity.y = -height / 2 + 42;
+		this.buttonRestart.entity.x = width / 2 - 128;
+		this.buttonRestart.entity.y = -height / 2 + 42;
+		this.flagsEntity.x = -width / 2 + 32;
+		this.flagsEntity.y = -height / 2 + 64;
+		this.timeEntity.x = -width / 2 + 170;
+		this.timeEntity.y = -height / 2 + 64;
 	}
 }

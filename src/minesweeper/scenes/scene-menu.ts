@@ -1,4 +1,4 @@
-import { BmText } from "../../common/core/components/bm-text";
+import { BmText } from "../../common/core/internal/bm-text";
 import { Scene } from "../../common/core/scene/scene";
 import { auth, functions } from "../../firebase";
 import { MSGameConfig } from "../ms-config";

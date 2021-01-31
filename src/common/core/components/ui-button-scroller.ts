@@ -1,21 +1,37 @@
 import clamp from "lodash-es/clamp";
-import { Container, Texture } from "pixi.js-legacy";
-import { App } from "../app/app";
+import defaults from "lodash-es/defaults";
+import { Texture } from "pixi.js-legacy";
+import { Entity } from "../entity/entity";
+import { BmText } from "../internal/bm-text";
+import { Component } from "./component";
 import { UiButton } from "./ui-button";
-import { BmText } from "./bm-text";
 
+/**
+ *
+ */
 export interface ButtonScrollerOptions {
 	arrowTexture: Texture;
-	label: string;
+	text: string;
 	default: number;
 	min: number;
 	max: number;
 }
 
-export class UiButtonScroller extends Container {
-	private app: App;
+/**
+ *
+ */
+export const ButtonScrollerOptionDefaults: ButtonScrollerOptions = {
+	arrowTexture: PIXI.Texture.WHITE,
+	text: "",
+	default: 0,
+	min: 0,
+	max: 0,
+};
 
-	private _min: number;
+/**
+ *
+ */
+export class UiButtonScroller extends Component {
 	public get min(): number {
 		return this._min;
 	}
@@ -26,7 +42,6 @@ export class UiButtonScroller extends Container {
 		}
 	}
 
-	private _max: number;
 	public get max(): number {
 		return this._max;
 	}
@@ -37,61 +52,128 @@ export class UiButtonScroller extends Container {
 		}
 	}
 
-	private _current: number;
 	public get current(): number {
 		return this._current;
 	}
 
-	private _default: number;
 	public get default(): number {
 		return this._default;
 	}
 
+	public options: ButtonScrollerOptions;
+
+	private _default: number;
+	private _current: number;
+	private _max: number;
+	private _min: number;
+
+	private needsViewUpdate = true;
+	private container: Entity;
 	private number: BmText;
-	private buttonLeft: UiButton;
-	private buttonRight: UiButton;
+	private btnL: UiButton;
+	private btnR: UiButton;
 	private label: BmText;
 
-	public constructor(app: App, options: ButtonScrollerOptions) {
-		super();
+	/**
+	 *
+	 * @param entity
+	 */
+	public constructor(entity: Entity) {
+		super(entity);
 
-		this.app = app;
+		this.options = defaults({}, ButtonScrollerOptionDefaults);
 
-		this._min = options.min;
-		this._max = options.max;
-		this._default = options.default;
+		this._min = this.options.min;
+		this._max = this.options.max;
+		this._default = this.options.default;
 		this._current = this.default;
 
-		this.buttonLeft = new UiButton(this.app, { textureUp: options.arrowTexture, textureDown: options.arrowTexture });
-		this.buttonLeft.rotation = Math.PI;
-		this.buttonLeft.x = -64;
+		this.container = new Entity(this.app);
+		this.btnL = new Entity(this.app).add(UiButton);
+		this.btnR = new Entity(this.app).add(UiButton);
 
-		this.buttonRight = new UiButton(this.app, { textureUp: options.arrowTexture, textureDown: options.arrowTexture });
-		this.buttonRight.x = 64;
+		this.number = new BmText(this.app, {
+			text: this.default.toString(),
+			fontName: "bmfont",
+			fontSize: 38,
+		});
 
-		this.number = new BmText(this.app, { text: this.default.toString(), fontName: "bmfont", fontSize: 38 });
+		this.label = new BmText(this.app, {
+			text: this.options.text,
+			fontName: "bmfont",
+			fontSize: 38,
+		});
+
+		this.btnL.entity.rotation = Math.PI;
+		this.btnL.entity.x = -64;
+		this.btnR.entity.x = 64;
 		this.number._anchor.set(0.5);
-
-		this.label = new BmText(this.app, { text: options.label, fontName: "bmfont", fontSize: 38 });
 		this.label._anchor.set(1, 0.5);
 		this.label.position.set(-106, 0);
 
-		this.addChild(this.label, this.number, this.buttonLeft, this.buttonRight);
+		this.entity.addChild(this.container);
+		this.container.addChild(this.label);
+		this.container.addChild(this.number);
+		this.container.addChild(this.btnL.entity);
+		this.container.addChild(this.btnR.entity);
 
-		this.buttonLeft.on("pointertap", () => this.set(this.current - 1));
-		this.buttonRight.on("pointertap", () => this.set(this.current + 1));
-
+		this.btnL.on("pointertap", () => this.set(this.current - 1));
+		this.btnR.on("pointertap", () => this.set(this.current + 1));
+		this.entity.on("prerender", this.prerenderCb, this);
 		this.set(this.default);
 	}
 
+	/**
+	 *
+	 * @param options
+	 */
+	public setOptions(options: Partial<ButtonScrollerOptions>) {
+		this.options = defaults(options, ButtonScrollerOptionDefaults);
+		this._min = this.options.min;
+		this._max = this.options.max;
+		this._default = this.options.default;
+		this._current = this.default;
+
+		this.btnL.setOptions({
+			textureUp: this.options.arrowTexture,
+			textureDown: this.options.arrowTexture,
+		});
+
+		this.btnR.setOptions({
+			textureUp: this.options.arrowTexture,
+			textureDown: this.options.arrowTexture,
+		});
+
+		this.needsViewUpdate = true;
+	}
+
+	/**
+	 *
+	 */
+	private prerenderCb() {
+		if (this.needsViewUpdate) {
+			this.needsViewUpdate = false;
+			this.updateView();
+		}
+	}
+
+	/**
+	 *
+	 * @param value
+	 */
 	public set(value: number) {
 		this._current = Math.floor(clamp(value, this.min, this.max));
-		this.number.text = this.current.toString();
-		this.buttonLeft.interactive = this.current !== this.min;
-		this.buttonLeft.alpha = this.current !== this.min ? 1 : 0.5;
-		this.buttonRight.interactive = this.current !== this.max;
-		this.buttonRight.alpha = this.current !== this.max ? 1 : 0.5;
-
 		this.emit("set", this.current);
+	}
+
+	/**
+	 *
+	 */
+	private updateView() {
+		this.number.text = this.current.toString();
+		this.btnL.entity.interactive = this.current !== this.min;
+		this.btnL.entity.alpha = this.current !== this.min ? 1 : 0.5;
+		this.btnR.entity.interactive = this.current !== this.max;
+		this.btnR.entity.alpha = this.current !== this.max ? 1 : 0.5;
 	}
 }

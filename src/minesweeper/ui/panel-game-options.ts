@@ -15,59 +15,64 @@ export class PanelGameOptions extends Entity {
 	private container = new PIXI.Container();
 
 	protected init() {
-		this.buttonPrimary = new UiButtonText(this.app, {
+		this.buttonPrimary = new Entity(this.app).add(UiButtonText);
+		this.buttonPrimary.setOptions({
 			textureDown: this.app.getFrame("textures", "button-down"),
 			textureUp: this.app.getFrame("textures", "button-up"),
+			tint: hexToNum(ColorSchemes.beachRainbow.red),
 			text: "START",
 		});
-		this.buttonPrimary.tint = hexToNum(ColorSchemes.beachRainbow.red);
 
-		this.buttonSecondary = new UiButtonText(this.app, {
+		this.buttonSecondary = new Entity(this.app).add(UiButtonText);
+		this.buttonSecondary.setOptions({
 			textureDown: this.app.getFrame("textures", "button-down"),
 			textureUp: this.app.getFrame("textures", "button-up"),
+			tint: hexToNum(ColorSchemes.beachRainbow.purple),
 			text: "LOGOUT",
 		});
-		this.buttonSecondary.tint = hexToNum(ColorSchemes.beachRainbow.purple);
 
-		this.widthScroller = new UiButtonScroller(this.app, {
+		this.widthScroller = new Entity(this.app).add(UiButtonScroller);
+		this.widthScroller.setOptions({
 			arrowTexture: this.app.getFrame("textures", "button-arrow"),
-			label: "Width",
+			text: "Width",
 			default: MS_GAME_CONFIG_DEFAULT.gridWidth,
 			min: MIN_GRID_WIDTH,
 			max: MAX_GRID_WIDTH,
 		});
 
-		this.heightScroller = new UiButtonScroller(this.app, {
+		this.heightScroller = new Entity(this.app).add(UiButtonScroller);
+		this.widthScroller.setOptions({
 			arrowTexture: this.app.getFrame("textures", "button-arrow"),
-			label: "Height",
+			text: "Height",
 			default: MS_GAME_CONFIG_DEFAULT.gridHeight,
 			min: MIN_GRID_HEIGHT,
 			max: MAX_GRID_HEIGHT,
 		});
 
-		this.minesScroller = new UiButtonScroller(this.app, {
+		this.minesScroller = new Entity(this.app).add(UiButtonScroller);
+		this.widthScroller.setOptions({
 			arrowTexture: this.app.getFrame("textures", "button-arrow"),
-			label: "Mines",
+			text: "Mines",
 			default: MS_GAME_CONFIG_DEFAULT.startMines,
 			min: 1,
 			max: MS_GAME_CONFIG_DEFAULT.gridWidth * MS_GAME_CONFIG_DEFAULT.gridHeight - MIN_EMPTY,
 		});
 
-		this.buttonPrimary.position.set(0, 180);
-		this.buttonSecondary.position.set(0, 260);
-		this.widthScroller.x = 64;
-		this.widthScroller.y = -80;
-		this.heightScroller.x = 64;
-		this.heightScroller.y = 0;
-		this.minesScroller.x = 64;
-		this.minesScroller.y = 80;
+		this.buttonPrimary.entity.position.set(0, 180);
+		this.buttonSecondary.entity.position.set(0, 260);
+		this.widthScroller.entity.x = 64;
+		this.widthScroller.entity.y = -80;
+		this.heightScroller.entity.x = 64;
+		this.heightScroller.entity.y = 0;
+		this.minesScroller.entity.x = 64;
+		this.minesScroller.entity.y = 80;
 
 		this.addChild(this.container);
-		this.container.addChild(this.buttonPrimary);
-		this.container.addChild(this.buttonSecondary);
-		this.container.addChild(this.widthScroller);
-		this.container.addChild(this.heightScroller);
-		this.container.addChild(this.minesScroller);
+		this.container.addChild(this.buttonPrimary.entity);
+		this.container.addChild(this.buttonSecondary.entity);
+		this.container.addChild(this.widthScroller.entity);
+		this.container.addChild(this.heightScroller.entity);
+		this.container.addChild(this.minesScroller.entity);
 
 		this.widthScroller.on("set", this.updatePreview, this);
 		this.heightScroller.on("set", this.updatePreview, this);
@@ -84,23 +89,6 @@ export class PanelGameOptions extends Entity {
 		this.buttonSecondary.on("pointertap", () => {
 			this.emit("logout");
 		});
-	}
-
-	/**
-	 *
-	 * @param width
-	 * @param height
-	 */
-	protected resize(width: number, height: number) {
-		// It's not great to resize like this but this menu is a temporary.
-		// if (width > height) {
-		// 	this.container.height = Math.min(height - 128, 410);
-		// 	this.container.scale.x = this.container.scale.y;
-		// } //
-		// else {
-		// 	this.container.width = Math.min(width - 128, 410);
-		// 	this.container.scale.y = this.container.scale.x;
-		// }
 	}
 
 	/**

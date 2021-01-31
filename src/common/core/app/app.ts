@@ -1,38 +1,30 @@
 import clamp from "lodash-es/clamp";
 import * as PIXI from "pixi.js-legacy";
 import * as screenfull from "screenfull";
-import { lerp } from "../../../maths/lerp";
-import { ToneAudio } from "../audio/tone-audio";
+import { lerp } from "../../maths/lerp";
 import { Tween } from "../../tweens/tween";
 import { TweenGroup } from "../../tweens/tween-group";
 import { TweenOptions } from "../../tweens/tween-props";
+import { ToneAudio } from "../audio/tone-audio";
 import { UiElement } from "../components/ui-element";
-import { EventChannel } from "../events/event-channel";
 import { ReferenceSize } from "./reference-size";
 
 export const MAX_DPR = 4;
 export const MIN_DPR = 0.5;
-
-interface AppEventChannels {
-	init: EventChannel<() => void>;
-	ready: EventChannel<() => void>;
-	update: EventChannel<(dt: number) => void>;
-	resize: EventChannel<(width: number, height: number) => void>;
-}
 
 /**
  * General purpose app functionality.
  */
 export class App extends PIXI.Application {
 	/**
+	 *
+	 */
+	public static current: App;
+
+	/**
 	 * Root container.
 	 */
 	public readonly root = new PIXI.Container();
-
-	/**
-	 * Global event channels.
-	 */
-	public events: AppEventChannels;
 
 	/**
 	 * App audio manager reference
@@ -102,12 +94,7 @@ export class App extends PIXI.Application {
 	public constructor() {
 		super();
 
-		this.events = {
-			init: new EventChannel<() => void>(this.emitter, "init"),
-			ready: new EventChannel<() => void>(this.emitter, "ready"),
-			update: new EventChannel<(dt: number) => void>(this.emitter, "update"),
-			resize: new EventChannel<(width: number, height: number) => void>(this.emitter, "resize"),
-		};
+		App.current = this;
 	}
 
 	/**
@@ -233,37 +220,6 @@ export class App extends PIXI.Application {
 		}
 
 		this.emitter.emit("resize", this.width, this.height);
-	}
-
-	/**
-	 * Make a request. If it fails, wait for an amount of delayed retries.
-	 *
-	 * @param action - Action to perform.
-	 * @param delay - Delay in seconds between retries.
-	 * @param maxTries - Max tries before giving up.
-	 */
-	public async persistentRequest<T>(action: () => Promise<T>, delay = 1, maxTries = 10): Promise<T> {
-		let tries = 0;
-		let result;
-
-		while (!result) {
-			let error;
-
-			try {
-				result = await action();
-			} catch (err) {
-				error = err;
-				await this.delay(delay * 1000);
-			}
-
-			tries++;
-
-			if (error && tries > maxTries) {
-				throw error;
-			}
-		}
-
-		return result;
 	}
 
 	/**

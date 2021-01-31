@@ -1,8 +1,8 @@
 import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
-import { App } from "../../core/app/app";
 import { hexToNum } from "../../color";
-import { BmText } from "./bm-text";
+import { Entity } from "../entity/entity";
+import { BmText } from "../internal/bm-text";
 import { UiElement } from "./ui-element";
 
 export interface UITextInputOptions {
@@ -33,18 +33,34 @@ export class UiTextInputDom extends UiElement {
 	public get value() {
 		return this.input.value;
 	}
+
 	private input = window.document.createElement("input");
+
 	private domVisible = false;
+
 	private label: BmText;
-	private options: UITextInputOptions;
+
 	private debugHitarea = new PIXI.Graphics();
 
-	public constructor(app: App, options?: Partial<UITextInputOptions>) {
-		super(app);
+	/**
+	 * Configuration options.
+	 */
+	public options: UITextInputOptions;
 
-		this.options = defaults(options || {}, UITextInputOptionDefaults);
+	/**
+	 *
+	 * @param entity
+	 */
+	public constructor(entity: Entity) {
+		super(entity);
 
-		this.label = new BmText(this.app, { text: this.options.label, fontName: "bmfont", fontSize: 18 });
+		this.options = { ...UITextInputOptionDefaults };
+
+		this.label = new BmText(this.entity.app, {
+			text: this.options.label,
+			fontName: "bmfont",
+			fontSize: 18,
+		});
 		this.label._anchor.set(1, 0.5);
 		this.label.tint = hexToNum(this.options.labelColor);
 
@@ -70,17 +86,42 @@ export class UiTextInputDom extends UiElement {
 		});
 	}
 
+	/**
+	 *
+	 * @param options
+	 */
+	public setOptions(options?: Partial<UITextInputOptions>) {
+		const _options = defaults(options || {}, UITextInputOptionDefaults);
+		// this.needsViewUpdate
+	}
+
+	/**
+	 *
+	 */
+	public updateView() {
+		this.label.tint = hexToNum(this.options.labelColor);
+		this.input.type = this.options.type;
+		this.label.text = this.options.label;
+		this.setSize(this.options.width, this.options.height);
+	}
+
+	/**
+	 *
+	 */
 	private onInput(e: Event) {
 		this.emit("input", e);
 	}
 
+	/**
+	 *
+	 */
 	protected init() {
 		this.setSize(this.options.width, this.options.height);
 
-		this.interactive = true;
-		this.buttonMode = true;
+		this.entity.interactive = true;
+		this.entity.buttonMode = true;
 
-		this.addChild(this.label);
+		this.container.addChild(this.label);
 
 		this.on("focus", () => {
 			this.input.focus();
@@ -91,12 +132,16 @@ export class UiTextInputDom extends UiElement {
 		});
 	}
 
+	/**
+	 *
+	 * @param dt
+	 */
 	protected update(dt: number) {
-		if ((!this.parent || !this.worldVisible) && this.domVisible) {
+		if ((!this.entity.parent || !this.entity.worldVisible) && this.domVisible) {
 			this.input.parentElement?.removeChild(this.input);
 			this.domVisible = false;
 		}
-		if (this.parent && this.worldVisible && !this.domVisible) {
+		if (this.entity.parent && this.entity.worldVisible && !this.domVisible) {
 			document.body.appendChild(this.input);
 			this.domVisible = true;
 		}
@@ -112,9 +157,9 @@ export class UiTextInputDom extends UiElement {
 		element.style.width = this.app.renderer.width + "px";
 		element.style.height = this.app.renderer.height + "px";
 
-		const wt = this.worldTransform;
+		const wt = this.entity.worldTransform;
 
-		let hitArea = this.hitArea as PIXI.Rectangle;
+		let hitArea = this.entity.hitArea as PIXI.Rectangle;
 
 		if (hitArea) {
 			element.style.left = (wt.tx + hitArea.x * wt.a) * sx + "px";
@@ -122,7 +167,7 @@ export class UiTextInputDom extends UiElement {
 			element.style.width = hitArea.width * wt.a * sx + "px";
 			element.style.height = hitArea.height * wt.d * sy + "px";
 		} else {
-			hitArea = this.getBounds();
+			hitArea = this.entity.getBounds();
 			element.style.left = hitArea.x * sx + "px";
 			element.style.top = hitArea.y * sy + "px";
 			element.style.width = hitArea.width * sx + "px";
@@ -130,6 +175,11 @@ export class UiTextInputDom extends UiElement {
 		}
 	}
 
+	/**
+	 *
+	 * @param width
+	 * @param height
+	 */
 	private setSize(width: number, height: number) {
 		this.label._anchor.x = 1;
 
@@ -140,7 +190,7 @@ export class UiTextInputDom extends UiElement {
 		const w = width;
 		const h = height;
 
-		this.hitArea = new PIXI.Rectangle(x + -w / 2, y + -h / 2, w, h);
+		this.entity.hitArea = new PIXI.Rectangle(x + -w / 2, y + -h / 2, w, h);
 
 		this.debugHitarea.clear();
 		this.debugHitarea.beginFill(0x00ff00);

@@ -399,24 +399,18 @@ export class SceneGame extends Scene {
 	 *
 	 */
 	private async getGameData(): Promise<MSStateClient> {
-		let gameData;
+		const doc = await db //
+			.collection("accounts")
+			.doc(auth.currentUser?.uid)
+			.collection("games_client")
+			.doc(this.gameId)
+			.get();
 
-		try {
-			gameData = this.app.persistentRequest(async () => {
-				return (
-					await db //
-						.collection("accounts")
-						.doc(auth.currentUser?.uid)
-						.collection("games_client")
-						.doc(this.gameId)
-						.get()
-				).data() as MSStateClient;
-			});
-		} catch (err) {
-			throw new Error("Failed to retreive game data.");
+		if (!doc) {
+			throw new Error("Failed to retrieve game client doc.");
 		}
 
-		return gameData;
+		return doc.data() as MSStateClient;
 	}
 
 	/**

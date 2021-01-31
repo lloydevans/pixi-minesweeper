@@ -1,12 +1,15 @@
-import { Entity } from "../../core/entity/entity";
-import { App } from "../app/app";
+import { Entity } from "../entity/entity";
+import { Component } from "./component";
 
 /**
  */
-export class UiElement extends Entity {
+export class UiElement extends Component {
+	protected container: Entity;
+
 	public get focused() {
 		return this._focused;
 	}
+
 	public set focused(value: boolean) {
 		if (value !== this._focused) {
 			this._focused = value;
@@ -20,25 +23,28 @@ export class UiElement extends Entity {
 	public get active() {
 		return this._active;
 	}
+
 	public set active(value: boolean) {
 		if (value !== this._active) {
 			this._active = value;
 			if (this._active) {
-				this.alpha = 1;
+				this.container.alpha = 1;
 			} else {
-				this.alpha = 0.5;
+				this.container.alpha = 0.5;
 			}
 			this.emit("active", this._active);
-			this.interactive = this._active;
-			this.buttonMode = this._active;
+			this.container.interactive = this._active;
+			this.container.buttonMode = this._active;
 		}
 	}
 
 	private _focused = true;
 	private _active = true;
 
-	public constructor(app: App) {
-		super(app);
+	public constructor(entity: Entity) {
+		super(entity);
+
+		this.container = new Entity(this.app);
 
 		this.on("pointertap", () => {
 			this.focused = true;

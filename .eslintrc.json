@@ -45,7 +45,7 @@
 		},
 
 		{
-			"files": ["builder/**/*.js"],
+			"files": ["builder/**/*.js", "jest.config.js", "webpack.config.js"],
 
 			"extends": ["eslint:recommended"],
 

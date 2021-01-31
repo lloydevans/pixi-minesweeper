@@ -1,19 +1,16 @@
 import * as PIXI from "pixi.js-legacy";
-import { App } from "../app/app";
+import { Component } from "../../core/components/component";
 import { Tween } from "../../tweens/tween";
 import { TweenGroup } from "../../tweens/tween-group";
 import { TweenOptions } from "../../tweens/tween-props";
-import { Component } from "../../core/components/component";
-
-// These are copied from the Container inline type.
-export type EntityDestroyOptions = {
-	children?: boolean;
-	texture?: boolean;
-	baseTexture?: boolean;
-};
+import { App } from "../app/app";
+import { DestroyOptions } from "./destroy-options";
 
 type ComponentCtor<T> = new (entity: Entity) => T;
 
+/**
+ *
+ */
 export class Entity extends PIXI.Container {
 	/**
 	 * Pixi application reference.
@@ -26,41 +23,34 @@ export class Entity extends PIXI.Container {
 	private components: Component[] = [];
 
 	/**
-	 * Reference to audio manager instance.
-	 */
-	public get audio() {
-		return this.app.audio;
-	}
-
-	/**
 	 *
-	 * @param ctor
+	 * @param componentCtor
 	 */
-	public getComponent<T extends Component>(ctor: ComponentCtor<T>): T | undefined {
-		return this.components.find((el) => el instanceof ctor) as T;
+	public get<T extends Component>(componentCtor: ComponentCtor<T>): T | undefined {
+		return this.components.find((el) => el instanceof componentCtor) as T;
 	}
 
 	/**
 	 *
 	 */
-	public addComponent<T extends Component>(ctor: ComponentCtor<T>): T {
-		const existingComponent = this.getComponent(ctor);
+	public add<T extends Component>(componentCtor: ComponentCtor<T>): T {
+		const existingComponent = this.get(componentCtor);
 
 		if (existingComponent) {
 			throw new Error("Component already exists on entity.");
 		}
 
-		let component;
+		let instance;
 
 		try {
-			component = new ctor(this);
+			instance = new componentCtor(this);
 		} catch (err) {
 			throw new Error("Error instantiating component:\n\n" + err);
 		}
 
-		this.components.push(component);
+		this.components.push(instance);
 
-		return component;
+		return instance;
 	}
 
 	/**
@@ -77,25 +67,6 @@ export class Entity extends PIXI.Container {
 		super();
 
 		this.app = app;
-
-		this.ready();
-	}
-
-	/**
-	 * Do stuff once ready.
-	 */
-	private ready() {
-		// Call init function if it exists.
-		this.init && this.init();
-		this.emit("init");
-
-		// Call resize function if it exists.
-		this.resize && this.resize(this.app.width, this.app.height);
-		this.emit("resize", this.app.width, this.app.height);
-
-		// Add listeners
-		this.update && this.app.events.update.on(this.update, this);
-		this.resize && this.app.events.resize.on(this.resize, this);
 	}
 
 	/**
@@ -103,10 +74,7 @@ export class Entity extends PIXI.Container {
 	 *
 	 * @param options - Destroy options.
 	 */
-	public destroy(options?: EntityDestroyOptions) {
-		this.update && this.app.events.update.off(this.update, this);
-		this.resize && this.app.events.resize.off(this.resize, this);
-		this.cleanup && this.cleanup();
+	public destroy(options?: DestroyOptions) {
 		this.tweenGroup.reset();
 		this.emit("destroy");
 		super.destroy(options);
@@ -126,38 +94,4 @@ export class Entity extends PIXI.Container {
 	protected delay(time: number) {
 		return new Promise((resolve) => this.tween(this).wait(time).call(resolve));
 	}
-
-	/**
-	 *
-	 */
-	protected defer() {
-		return new Promise((resolve) => this.app.ticker.addOnce(resolve));
-	}
-
-	/**
-	 * Init method is called after app ready event. If app is already ready, it
-	 * runs during the constructor.
-	 */
-	protected init?(): void;
-
-	/**
-	 * Optional method called on destroy.
-	 */
-	protected cleanup?(): void;
-
-	/**
-	 * Optional method called on update.
-	 *
-	 * @param dt - Frame delta time.
-	 */
-	protected update?(dt: number): void;
-
-	/**
-	 * Optional method called on resize. Note, this is called once after init
-	 * regardles of wether the app has resized or not.
-	 *
-	 * @param width - App virtual width.
-	 * @param height - App virtual height.
-	 */
-	protected resize?(width: number, height: number): void;
 }

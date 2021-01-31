@@ -1,7 +1,7 @@
 import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
 import * as Tone from "tone";
-import { App } from "../../core/app/app";
+import { Entity } from "../entity/entity";
 import { UiElement } from "./ui-element";
 
 export interface ButtonOptions {
@@ -15,11 +15,18 @@ export const ButtonOptionDefaults = {
 };
 
 /**
- * Very quick button class.
+ * Basic button class.
  */
 export class UiButton extends UiElement {
+	/**
+	 * Graphic behind button content.
+	 */
 	protected back: PIXI.Sprite;
-	private config: ButtonOptions;
+
+	/**
+	 * Configuration options.
+	 */
+	public options: ButtonOptions;
 
 	public get tint() {
 		return this.back.tint;
@@ -28,30 +35,43 @@ export class UiButton extends UiElement {
 		this.back.tint = value;
 	}
 
-	public constructor(app: App, config: ButtonOptions) {
-		super(app);
+	/**
+	 * Components are instantiated via `Entity.prototype.add`.
+	 *
+	 * @param entity - The Entity instance this component will be added to.
+	 */
+	public constructor(entity: Entity) {
+		super(entity);
 
-		this.config = defaults(config, ButtonOptionDefaults);
+		this.options = defaults({}, ButtonOptionDefaults);
 
-		this.back = PIXI.Sprite.from(this.config.textureUp);
+		this.back = PIXI.Sprite.from(this.options.textureUp);
 		this.back.anchor.set(0.5);
 
-		this.addChild(this.back);
-
-		this.on("mouseover", this.onPointerOver, this);
-		this.on("pointerout", this.onPointerOut, this);
-		this.on("pointertap", this.onPointerTap, this);
-		this.on("pointerdown", this.onPointerDown, this);
-		this.on("pointerup", this.onPointerUp, this);
-		this.on("pointerupoutside", this.onPointerCancel, this);
-		this.on("pointercancel", this.onPointerCancel, this);
+		this.container.on("mouseover", this.onPointerOver, this);
+		this.container.on("pointerout", this.onPointerOut, this);
+		this.container.on("pointertap", this.onPointerTap, this);
+		this.container.on("pointerdown", this.onPointerDown, this);
+		this.container.on("pointerup", this.onPointerUp, this);
+		this.container.on("pointerupoutside", this.onPointerCancel, this);
+		this.container.on("pointercancel", this.onPointerCancel, this);
 
 		if (Tone.context.state !== "running") {
-			this.on("pointerdown", this.toneStart, this);
-			this.on("pointerup", this.toneStart, this);
+			this.container.on("pointerdown", this.toneStart, this);
+			this.container.on("pointerup", this.toneStart, this);
 		}
 
 		this.setInteractive(true);
+
+		this.entity.addChild(this.container);
+		this.container.addChild(this.back);
+	}
+
+	/**
+	 *
+	 */
+	public setOptions(config: ButtonOptions) {
+		this.options = defaults(config, ButtonOptionDefaults);
 	}
 
 	/**
@@ -59,16 +79,16 @@ export class UiButton extends UiElement {
 	 * @param value
 	 */
 	public setInteractive(value: boolean) {
-		this.buttonMode = value;
-		this.interactive = value;
+		this.entity.buttonMode = value;
+		this.entity.interactive = value;
 	}
 
 	/**
 	 * Start audio context.
 	 */
 	private async toneStart() {
-		this.off("pointerdown", this.toneStart, this);
-		this.off("pointerup", this.toneStart, this);
+		this.container.off("pointerdown", this.toneStart, this);
+		this.container.off("pointerup", this.toneStart, this);
 		if (Tone.context.state !== "running") {
 			try {
 				await Tone.start();
@@ -83,7 +103,7 @@ export class UiButton extends UiElement {
 	 * @param e
 	 */
 	protected onPointerOut(e: PIXI.InteractionEvent) {
-		this.back.texture = this.config.textureUp;
+		this.back.texture = this.options.textureUp;
 	}
 
 	/**
@@ -91,7 +111,7 @@ export class UiButton extends UiElement {
 	 * @param e
 	 */
 	protected onPointerOver(e: PIXI.InteractionEvent) {
-		this.back.texture = this.config.textureUp;
+		this.back.texture = this.options.textureUp;
 	}
 
 	/**
@@ -99,7 +119,7 @@ export class UiButton extends UiElement {
 	 * @param e
 	 */
 	protected async onPointerUp(e: PIXI.InteractionEvent) {
-		this.back.texture = this.config.textureUp;
+		this.back.texture = this.options.textureUp;
 
 		if (Tone.context.state === "running") {
 			// TODO: Configuration.
@@ -112,7 +132,7 @@ export class UiButton extends UiElement {
 	 * @param e
 	 */
 	protected async onPointerDown(e: PIXI.InteractionEvent) {
-		this.back.texture = this.config.textureDown;
+		this.back.texture = this.options.textureDown;
 
 		if (Tone.context.state === "running") {
 			// TODO: Configuration.
@@ -125,7 +145,7 @@ export class UiButton extends UiElement {
 	 * @param e
 	 */
 	protected onPointerCancel(e: PIXI.InteractionEvent) {
-		this.alpha = 1;
+		this.container.alpha = 1;
 	}
 
 	/**

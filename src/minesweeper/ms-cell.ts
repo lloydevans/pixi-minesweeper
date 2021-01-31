@@ -2,7 +2,7 @@ import clamp from "lodash-es/clamp";
 import * as PIXI from "pixi.js-legacy";
 import { hexToNum } from "../common/color";
 import { App } from "../common/core/app/app";
-import { BmText } from "../common/core/components/bm-text";
+import { BmText } from "../common/core/internal/bm-text";
 import { Entity } from "../common/core/entity/entity";
 import { Spine } from "../common/spine";
 import { shallowObjectEquals } from "../common/utils";

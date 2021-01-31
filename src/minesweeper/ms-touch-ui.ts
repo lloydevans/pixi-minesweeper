@@ -22,22 +22,25 @@ export class MSTouchUi extends Entity {
 		cursor.beginFill(0x00ff00);
 		cursor.drawCircle(0, 0, 8);
 
-		this.buttonFlag = new UiButton(this.app, {
+		this.buttonFlag = new Entity(this.app).add(UiButton);
+		this.buttonFlag.setOptions({
 			textureUp: this.app.getFrame("textures", "button-flag"),
 			textureDown: this.app.getFrame("textures", "button-flag"),
 		});
-		this.buttonFlag.x = -64;
-		this.buttonFlag.y = 0;
 
-		this.buttonDig = new UiButton(this.app, {
+		this.buttonDig = new Entity(this.app).add(UiButton);
+		this.buttonDig.setOptions({
 			textureUp: this.app.getFrame("textures", "button-dig"),
 			textureDown: this.app.getFrame("textures", "button-dig"),
 		});
-		this.buttonDig.x = 0;
-		this.buttonDig.y = 64;
 
-		this.addChild(this.buttonFlag);
-		this.addChild(this.buttonDig);
+		this.buttonFlag.entity.x = -64;
+		this.buttonFlag.entity.y = 0;
+		this.buttonDig.entity.x = 0;
+		this.buttonDig.entity.y = 64;
+
+		this.addChild(this.buttonFlag.entity);
+		this.addChild(this.buttonDig.entity);
 		this.addChild(cursor);
 
 		this.buttonDig.on("pointertap", () => {

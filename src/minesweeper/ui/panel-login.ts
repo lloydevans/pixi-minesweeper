@@ -1,5 +1,5 @@
 import { ColorSchemes, hexToNum } from "../../common/color";
-import { BmText } from "../../common/core/components/bm-text";
+import { BmText } from "../../common/core/internal/bm-text";
 import { UiButtonText } from "../../common/core/components/ui-button-text";
 import { UiTextInputDom } from "../../common/core/components/ui-text-input-dom";
 import { Entity } from "../../common/core/entity/entity";
@@ -9,9 +9,9 @@ export class PanelLogin extends Entity {
 	private inputEmail!: UiTextInputDom;
 	private inputPassword!: UiTextInputDom;
 	private buttonPrimary!: UiButtonText;
-	private buttonSecondary!: UiButtonText;
-	private buttonForgotPassword!: UiButtonText;
-	private buttonGuest!: UiButtonText;
+	private btnSecondary!: UiButtonText;
+	private btnForgotPassword!: UiButtonText;
+	private btnGuest!: UiButtonText;
 	private secondaryButtons = new PIXI.Container();
 	private menuState: "login" | "create" | "forgot-pword" = "login";
 	private error!: BmText;
@@ -22,82 +22,91 @@ export class PanelLogin extends Entity {
 		this.error._anchor.set(0.5);
 		this.error.tint = hexToNum("#aa3333");
 
-		this.inputUsername = new UiTextInputDom(this.app, {
+		this.inputUsername = new Entity(this.app).add(UiTextInputDom);
+		this.inputUsername.setOptions({
 			label: "Username",
 			placeholder: "",
 			type: "text",
 		});
 
-		this.inputEmail = new UiTextInputDom(this.app, {
+		this.inputEmail = new Entity(this.app).add(UiTextInputDom);
+		this.inputEmail.setOptions({
 			label: "Email",
 			placeholder: "",
 			type: "email",
 		});
 
-		this.inputPassword = new UiTextInputDom(this.app, {
+		this.inputPassword = new Entity(this.app).add(UiTextInputDom);
+		this.inputPassword.setOptions({
 			label: "Password",
 			placeholder: "",
 			type: "password",
 		});
 
-		this.buttonPrimary = new UiButtonText(this.app, {
+		this.buttonPrimary = new Entity(this.app).add(UiButtonText);
+		this.buttonPrimary.setOptions({
 			textureDown: this.app.getFrame("textures", "button-down"),
 			textureUp: this.app.getFrame("textures", "button-up"),
+			tint: hexToNum(ColorSchemes.beachRainbow.red),
 			text: "LOGIN",
 		});
-		this.buttonPrimary.tint = hexToNum(ColorSchemes.beachRainbow.red);
-		this.buttonPrimary.accessible = true;
 
-		this.buttonSecondary = new UiButtonText(this.app, {
+		this.btnSecondary = new Entity(this.app).add(UiButtonText);
+		this.btnSecondary.setOptions({
 			textureUp: PIXI.Texture.EMPTY,
 			textureDown: PIXI.Texture.EMPTY,
 			text: "Create account",
 			fontSize: 24,
 		});
-		this.buttonSecondary.accessible = true;
-		this.buttonSecondary.hitArea = new PIXI.Rectangle(-128, -24, 256, 48);
 
-		this.buttonGuest = new UiButtonText(this.app, {
+		this.btnGuest = new Entity(this.app).add(UiButtonText);
+		this.btnGuest.setOptions({
 			textureUp: PIXI.Texture.EMPTY,
 			textureDown: PIXI.Texture.EMPTY,
 			text: "Play as guest",
 			fontSize: 24,
 		});
-		this.buttonGuest.accessible = true;
-		this.buttonGuest.hitArea = new PIXI.Rectangle(-128, -24, 256, 48);
 
-		this.buttonForgotPassword = new UiButtonText(this.app, {
+		this.btnForgotPassword = new Entity(this.app).add(UiButtonText);
+		this.btnForgotPassword.setOptions({
 			textureUp: PIXI.Texture.EMPTY,
 			textureDown: PIXI.Texture.EMPTY,
 			text: "Forgot password?",
 			fontSize: 24,
 		});
-		this.buttonForgotPassword.accessible = true;
 
-		this.buttonSecondary.y = 0;
-		this.buttonGuest.y = 40;
-		this.buttonForgotPassword.y = 80;
-		this.secondaryButtons.addChild(this.buttonSecondary);
-		this.secondaryButtons.addChild(this.buttonGuest);
-		this.secondaryButtons.addChild(this.buttonForgotPassword);
+		this.buttonPrimary.entity.accessible = true;
+		this.btnSecondary.entity.accessible = true;
+		this.btnSecondary.entity.hitArea = new PIXI.Rectangle(-128, -24, 256, 48);
+		this.btnGuest.entity.accessible = true;
+		this.btnGuest.entity.hitArea = new PIXI.Rectangle(-128, -24, 256, 48);
+		this.btnForgotPassword.entity.accessible = true;
 
-		this.error.y = 60;
-		this.inputUsername.y = -100;
-		this.inputEmail.y = -50;
-		this.inputPassword.y = 0;
-		this.buttonPrimary.y = 128;
+		this.btnSecondary.entity.y = 0;
+		this.btnGuest.entity.y = 40;
+		this.btnForgotPassword.entity.y = 80;
+
+		this.inputUsername.entity.y = -100;
+		this.inputEmail.entity.y = -50;
+		this.inputPassword.entity.y = 0;
+		this.buttonPrimary.entity.y = 128;
 		this.secondaryButtons.y = 180;
+		this.error.y = 60;
+
 		// this.addChild(this.inputUsername);
-		this.addChild(this.inputEmail);
-		this.addChild(this.inputPassword);
-		this.addChild(this.buttonPrimary);
+		this.secondaryButtons.addChild(this.btnSecondary.entity);
+		this.secondaryButtons.addChild(this.btnGuest.entity);
+		this.secondaryButtons.addChild(this.btnForgotPassword.entity);
+		this.addChild(this.inputEmail.entity);
+		this.addChild(this.inputPassword.entity);
+		this.addChild(this.buttonPrimary.entity);
 		this.addChild(this.secondaryButtons);
 		this.addChild(this.error);
 
 		this.buttonPrimary.on("pointertap", this.buttonPrimaryCb, this);
-		this.buttonSecondary.on("pointertap", this.buttonSecondaryCb, this);
-		this.buttonGuest.on("pointertap", this.buttonGuestCb, this);
-		this.buttonForgotPassword.on("pointertap", () => {});
+		this.btnSecondary.on("pointertap", this.buttonSecondaryCb, this);
+		this.btnGuest.on("pointertap", this.buttonGuestCb, this);
+		this.btnForgotPassword.on("pointertap", () => {});
 
 		this.inputEmail.on("input", this.inputCB, this);
 		this.inputUsername.on("input", this.inputCB, this);
@@ -159,25 +168,25 @@ export class PanelLogin extends Entity {
 
 	private showLogin() {
 		this.menuState = "login";
-		this.inputEmail.visible = true;
-		this.inputPassword.visible = true;
-		this.inputUsername.visible = false;
+		this.inputEmail.entity.visible = true;
+		this.inputPassword.entity.visible = true;
+		this.inputUsername.entity.visible = false;
 		this.buttonPrimary.text = "LOGIN";
-		this.buttonSecondary.text = "Create account";
+		this.btnSecondary.text = "Create account";
 	}
 
 	private showCreateAccount() {
 		this.menuState = "create";
-		this.inputEmail.visible = true;
-		this.inputPassword.visible = true;
-		this.inputUsername.visible = true;
+		this.inputEmail.entity.visible = true;
+		this.inputPassword.entity.visible = true;
+		this.inputUsername.entity.visible = true;
 		this.buttonPrimary.text = "CREATE";
-		this.buttonSecondary.text = "Login";
+		this.btnSecondary.text = "Login";
 	}
 
 	private showForgotPword() {
-		this.inputEmail.visible = true;
-		this.inputPassword.visible = false;
-		this.inputUsername.visible = false;
+		this.inputEmail.entity.visible = true;
+		this.inputPassword.entity.visible = false;
+		this.inputUsername.entity.visible = false;
 	}
 }

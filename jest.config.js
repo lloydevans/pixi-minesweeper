@@ -18,11 +18,16 @@ const config = {
 
 	moduleFileExtensions: ["ts", "tsx", "js", "json"],
 
-	collectCoverageFrom: ["src/ms-state.ts", "src/ms-state.spec.ts"],
+	collectCoverageFrom: [
+		"src/minesweeper/ms-state.ts",
+		"src/minesweeper/ms-state.spec.ts",
+		"src/common/core/events/event-channel.spec.ts",
+		"src/common/core/events/event-channel.ts",
+	],
 
 	coverageDirectory: "coverage",
 
-	collectCoverage: true
+	collectCoverage: true,
 };
 
 module.exports = config;

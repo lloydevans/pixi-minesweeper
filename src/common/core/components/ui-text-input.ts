@@ -1,11 +1,11 @@
+import { isEventKey } from "keycode";
 import clamp from "lodash-es/clamp";
 import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
 import { hexToNum } from "../../color";
+import { Entity } from "../entity/entity";
+import { BmText } from "../objects/bm-text";
 import { UiElement } from "./ui-element";
-import { BmText } from "./bm-text";
-import { isEventKey } from "keycode";
-import { App } from "../app/app";
 
 export interface UITextInputOptions {
 	type: "text" | "email" | "password";
@@ -70,8 +70,8 @@ export class UiTextInput extends UiElement {
 	private input: HTMLInputElement = window.document.createElement("input");
 	private options: UITextInputOptions;
 
-	public constructor(app: App, options?: Partial<UITextInputOptions>) {
-		super(app);
+	public constructor(entity: Entity, options?: Partial<UITextInputOptions>) {
+		super(entity);
 
 		this.options = defaults(options || {}, UITextInputOptionDefaults);
 
@@ -95,7 +95,8 @@ export class UiTextInput extends UiElement {
 		this.label._anchor.set(1, 0.5);
 		this.label.tint = hexToNum(this.options.labelColor);
 
-		this.tween(this.textCursor, { loop: -1 })
+		this.app
+			.tween(this.textCursor, { loop: -1 })
 			.wait(500)
 			.call(() => (this.textCursor.alpha = 0.75))
 			.wait(500)
@@ -161,8 +162,8 @@ export class UiTextInput extends UiElement {
 	protected init() {
 		this.setSize(this.options.width, this.options.height);
 
-		this.interactive = true;
-		this.buttonMode = true;
+		this.container.interactive = true;
+		this.container.buttonMode = true;
 
 		this.textCursor.visible = false;
 		this.textContainer.mask = this.textMask;
@@ -170,11 +171,11 @@ export class UiTextInput extends UiElement {
 		this.textContainer.addChild(this.textCursor);
 		this.textContainer.addChild(this.textSelection);
 
-		this.addChild(this.textMask);
-		this.addChild(this.outline);
-		this.addChild(this.back);
-		this.addChild(this.textContainer);
-		this.addChild(this.label);
+		this.container.addChild(this.textMask);
+		this.container.addChild(this.outline);
+		this.container.addChild(this.back);
+		this.container.addChild(this.textContainer);
+		this.container.addChild(this.label);
 
 		this.on("pointerover", this.onPointerOver, this);
 		this.on("pointerout", this.onPointerOut, this);
@@ -267,6 +268,6 @@ export class UiTextInput extends UiElement {
 
 		this.label.x = -width / 2 - 16;
 
-		this.hitArea = new PIXI.Rectangle(-outlineW / 2, -outlineH / 2, outlineW, outlineH);
+		this.container.hitArea = new PIXI.Rectangle(-outlineW / 2, -outlineH / 2, outlineW, outlineH);
 	}
 }

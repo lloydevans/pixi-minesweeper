@@ -1,10 +1,14 @@
 import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
-import { App } from "../app/app";
-import { BmText, BmTextOptions } from "./bm-text";
-import { UiButton, ButtonOptions } from "./ui-button";
+import { BmText } from "../internal/bm-text";
+import { ButtonOptions, UiButton } from "./ui-button";
 
-export interface ButtonTextOptions extends BmTextOptions, ButtonOptions {
+export interface ButtonTextOptions extends ButtonOptions {
+	fontName?: string;
+	text?: string;
+	fontSize?: number;
+	tint?: number;
+	maxWidth?: number;
 	textureOffsetDownX?: number;
 	textureOffsetDownY?: number;
 }
@@ -15,6 +19,7 @@ export const ButtonTextOptionDefaults: ButtonTextOptions = {
 	textureOffsetDownX: 2,
 	textureOffsetDownY: 2,
 	fontSize: 32,
+	tint: 0,
 	fontName: "bmfont",
 };
 
@@ -26,19 +31,22 @@ export class UiButtonText extends UiButton {
 		this.label.text = value;
 	}
 
-	private options: ButtonTextOptions;
-	private label: BmText;
+	public options!: ButtonTextOptions;
 
-	public constructor(app: App, options: ButtonTextOptions) {
-		super(app, options);
+	private label!: BmText;
 
-		this.options = defaults(options, ButtonTextOptionDefaults);
+	/**
+	 *
+	 * @param options
+	 */
+	public init() {
+		this.options = defaults({}, ButtonTextOptionDefaults);
 
-		this.label = new BmText(this.app, this.options);
+		this.label = new BmText(this.entity.app, this.options);
 		this.label.text = this.options.text || "";
 		this.label._anchor.set(0.5);
 
-		this.addChild(this.label);
+		this.entity.addChild(this.label);
 
 		this.on("pointerdown", () => {
 			this.label.position.set(this.options.textureOffsetDownX, this.options.textureOffsetDownY);
@@ -46,5 +54,12 @@ export class UiButtonText extends UiButton {
 		this.on("pointerup", () => {
 			this.label.position.set(0);
 		});
+	}
+
+	/**
+	 *
+	 */
+	public setOptions(config: ButtonTextOptions) {
+		this.options = defaults(config, ButtonTextOptionDefaults);
 	}
 }
