@@ -1,21 +1,21 @@
 import * as PIXI from "pixi.js-legacy";
 import { ColorSchemes, hexToNum } from "../../common/color";
-import { UiButtonScroller } from "../../common/core/components/ui/ui-button-scroller";
-import { UiButtonText } from "../../common/core/components/ui/ui-button-text";
+import { ButtonScroller } from "../../common/core/components/ui/button-scroller";
+import { ButtonText } from "../../common/core/components/ui/button-text";
 import { Entity } from "../../common/core/entity/entity";
 import { MS_GAME_CONFIG_DEFAULT } from "../ms-config";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MIN_EMPTY, MIN_GRID_HEIGHT, MIN_GRID_WIDTH } from "../ms-state";
 
 export class PanelGameOptions extends Entity {
-	private buttonPrimary!: UiButtonText;
-	private buttonSecondary!: UiButtonText;
-	private widthScroller!: UiButtonScroller;
-	private heightScroller!: UiButtonScroller;
-	private minesScroller!: UiButtonScroller;
+	private buttonPrimary!: ButtonText;
+	private buttonSecondary!: ButtonText;
+	private widthScroller!: ButtonScroller;
+	private heightScroller!: ButtonScroller;
+	private minesScroller!: ButtonScroller;
 	private container = new PIXI.Container();
 
 	protected init() {
-		this.buttonPrimary = new Entity(this.app).add(UiButtonText);
+		this.buttonPrimary = new Entity(this.app).add(ButtonText);
 		this.buttonPrimary.setOptions({
 			textureDown: this.app.getFrame("textures", "button-down"),
 			textureUp: this.app.getFrame("textures", "button-up"),
@@ -23,7 +23,7 @@ export class PanelGameOptions extends Entity {
 			text: "START",
 		});
 
-		this.buttonSecondary = new Entity(this.app).add(UiButtonText);
+		this.buttonSecondary = new Entity(this.app).add(ButtonText);
 		this.buttonSecondary.setOptions({
 			textureDown: this.app.getFrame("textures", "button-down"),
 			textureUp: this.app.getFrame("textures", "button-up"),
@@ -31,7 +31,7 @@ export class PanelGameOptions extends Entity {
 			text: "LOGOUT",
 		});
 
-		this.widthScroller = new Entity(this.app).add(UiButtonScroller);
+		this.widthScroller = new Entity(this.app).add(ButtonScroller);
 		this.widthScroller.setOptions({
 			arrowTexture: this.app.getFrame("textures", "button-arrow"),
 			text: "Width",
@@ -40,7 +40,7 @@ export class PanelGameOptions extends Entity {
 			max: MAX_GRID_WIDTH,
 		});
 
-		this.heightScroller = new Entity(this.app).add(UiButtonScroller);
+		this.heightScroller = new Entity(this.app).add(ButtonScroller);
 		this.widthScroller.setOptions({
 			arrowTexture: this.app.getFrame("textures", "button-arrow"),
 			text: "Height",
@@ -49,7 +49,7 @@ export class PanelGameOptions extends Entity {
 			max: MAX_GRID_HEIGHT,
 		});
 
-		this.minesScroller = new Entity(this.app).add(UiButtonScroller);
+		this.minesScroller = new Entity(this.app).add(ButtonScroller);
 		this.widthScroller.setOptions({
 			arrowTexture: this.app.getFrame("textures", "button-arrow"),
 			text: "Mines",

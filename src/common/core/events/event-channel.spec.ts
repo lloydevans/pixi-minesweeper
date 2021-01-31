@@ -75,9 +75,9 @@ describe("EventChannel", () => {
 		const ctx1 = {};
 		const ctx2 = {};
 		const ctx3 = {};
-		const cb1 = function () {}.bind(ctx1);
-		const cb2 = function () {}.bind(ctx2);
-		const cb3 = function () {}.bind(ctx3);
+		const cb1 = function () {};
+		const cb2 = function () {};
+		const cb3 = function () {};
 		channel.on(cb1, ctx1);
 		channel.on(cb1, ctx1);
 		channel.on(cb2, ctx2);

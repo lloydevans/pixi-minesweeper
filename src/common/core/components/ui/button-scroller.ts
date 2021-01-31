@@ -4,7 +4,7 @@ import { Texture } from "pixi.js-legacy";
 import { Entity } from "../../entity/entity";
 import { BmText } from "../../internal/bm-text";
 import { Component } from "../component";
-import { UiButton } from "./ui-button";
+import { Button } from "./button";
 
 export interface ButtonScrollerOptions {
 	arrowTexture: Texture;
@@ -22,7 +22,7 @@ export const ButtonScrollerOptionDefaults: ButtonScrollerOptions = {
 	max: 0,
 };
 
-export class UiButtonScroller extends Component {
+export class ButtonScroller extends Component {
 	public get min(): number {
 		return this._min;
 	}
@@ -61,8 +61,8 @@ export class UiButtonScroller extends Component {
 	private needsViewUpdate = true;
 	private container: Entity;
 	private number: BmText;
-	private btnL: UiButton;
-	private btnR: UiButton;
+	private btnL: Button;
+	private btnR: Button;
 	private label: BmText;
 
 	/**
@@ -80,8 +80,8 @@ export class UiButtonScroller extends Component {
 		this._current = this.default;
 
 		this.container = new Entity(this.app);
-		this.btnL = new Entity(this.app).add(UiButton);
-		this.btnR = new Entity(this.app).add(UiButton);
+		this.btnL = new Entity(this.app).add(Button);
+		this.btnR = new Entity(this.app).add(Button);
 
 		this.number = new BmText(this.app, {
 			text: this.default.toString(),

@@ -17,7 +17,7 @@ export const ButtonOptionDefaults = {
 /**
  * Basic button class.
  */
-export class UiButton extends UiElement {
+export class Button extends UiElement {
 	/**
 	 * Graphic behind button content.
 	 */

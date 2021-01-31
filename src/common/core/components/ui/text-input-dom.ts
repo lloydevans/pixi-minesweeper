@@ -29,7 +29,7 @@ export const UITextInputOptionDefaults: UITextInputOptions = {
 	height: 32,
 };
 
-export class UiTextInputDom extends UiElement {
+export class TextInputDom extends UiElement {
 	public get value() {
 		return this.input.value;
 	}

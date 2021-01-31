@@ -4,7 +4,7 @@ import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
 import { hexToNum } from "../../../color";
 import { Entity } from "../../entity/entity";
-import { BmText } from "../objects/bm-text";
+import { BmText } from "../../internal/bm-text";
 import { UiElement } from "./ui-element";
 
 export interface UITextInputOptions {
@@ -52,7 +52,7 @@ export const UITextInputOptionDefaults: UITextInputOptions = {
 /**
  * This is a quick recreation of the dom single line text input as PixiJS graphics.
  */
-export class UiTextInput extends UiElement {
+export class TextInput extends UiElement {
 	public get value() {
 		return this.input.value;
 	}

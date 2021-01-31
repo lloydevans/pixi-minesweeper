@@ -1,6 +1,6 @@
 import * as PIXI from "pixi.js-legacy";
 import { BmText } from "../common/core/internal/bm-text";
-import { UiButton } from "../common/core/components/ui/ui-button";
+import { Button } from "../common/core/components/ui/button";
 import { Entity } from "../common/core/entity/entity";
 import { Spine } from "../common/spine";
 import { state } from "./ms-entry";
@@ -13,8 +13,8 @@ const MAX_TIME = 999;
  * Class handle UI elements.
  */
 export class MSUi extends Entity {
-	private buttonRestart!: UiButton;
-	private buttonCross!: UiButton;
+	private buttonRestart!: Button;
+	private buttonCross!: Button;
 	private flagsEntity!: PIXI.Container;
 	private flagsGraphic!: Spine;
 	private flagsCount!: BmText;
@@ -50,8 +50,8 @@ export class MSUi extends Entity {
 		this.timeCount.x = 38;
 		this.timeCount.y = -24;
 
-		this.buttonCross = new Entity(this.app).add(UiButton);
-		this.buttonRestart = new Entity(this.app).add(UiButton);
+		this.buttonCross = new Entity(this.app).add(Button);
+		this.buttonRestart = new Entity(this.app).add(Button);
 
 		this.timeEntity.addChild(this.timeGraphic);
 		this.timeEntity.addChild(this.timeCount);

@@ -1,7 +1,7 @@
 import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
 import { BmText } from "../../internal/bm-text";
-import { ButtonOptions, UiButton } from "./ui-button";
+import { ButtonOptions, Button } from "./button";
 
 export interface ButtonTextOptions extends ButtonOptions {
 	fontName?: string;
@@ -23,7 +23,7 @@ export const ButtonTextOptionDefaults: ButtonTextOptions = {
 	fontName: "bmfont",
 };
 
-export class UiButtonText extends UiButton {
+export class ButtonText extends Button {
 	public get text(): string {
 		return this.label.text;
 	}
