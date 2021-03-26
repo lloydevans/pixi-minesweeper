@@ -20,12 +20,11 @@ describe("EventChannel", () => {
 	});
 
 	it("should call listener with args", () => {
-		const channel = new EventChannel<[number, string]>();
-		channel.on((num: number, str: string) => {
+		const channel = new EventChannel<number>();
+		channel.on((num: number) => {
 			expect(num).toBe(1);
-			expect(str).toBe("hello");
 		});
-		channel.emit(1, "hello");
+		channel.emit(1);
 	});
 
 	it("should call listener with supplid context", () => {
@@ -59,9 +58,9 @@ describe("EventChannel", () => {
 	it("should remove all listeners with equal callback function", () => {
 		const channel = new EventChannel();
 		let callCount = 0;
-		const cb1 = () => callCount++;
-		const cb2 = () => callCount++;
-		const cb3 = () => callCount++;
+		const cb1 = (): number => callCount++;
+		const cb2 = (): number => callCount++;
+		const cb3 = (): number => callCount++;
 		channel.on(cb1);
 		channel.on(cb2);
 		channel.on(cb3);
@@ -75,9 +74,9 @@ describe("EventChannel", () => {
 		const ctx1 = {};
 		const ctx2 = {};
 		const ctx3 = {};
-		const cb1 = function () {};
-		const cb2 = function () {};
-		const cb3 = function () {};
+		const cb1 = function (): void {};
+		const cb2 = function (): void {};
+		const cb3 = function (): void {};
 		channel.on(cb1, ctx1);
 		channel.on(cb1, ctx1);
 		channel.on(cb2, ctx2);
