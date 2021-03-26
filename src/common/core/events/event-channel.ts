@@ -1,28 +1,50 @@
-interface Listener<T extends Array<unknown>> {
-	fn: (...args: T) => void;
+interface Listener<T extends unknown> {
+	fn: (arg: T) => void;
 	ctx?: unknown;
 	once?: boolean;
 }
 
-/**
- *
- */
-export class EventChannel<T extends Array<unknown> = []> {
+/** */
+export class EventChannel<T extends unknown = void> {
+	/** */
 	private listeners: Listener<T>[] = [];
 
-	public get listenerCount() {
+	/** */
+	public get listenerCount(): number {
 		return this.listeners.length;
 	}
 
-	public on(fn: (...args: T) => void, ctx?: unknown) {
+	/**
+	 * Add an event listener.
+	 *
+	 * @param fn
+	 * @param ctx
+	 */
+	public on<ThisType>(fn: (this: ThisType, arg: T) => void, ctx: ThisType): void;
+	public on(fn: (arg: T) => void): void;
+	public on(fn: (arg: T) => void, ctx?: unknown): void {
 		this.listeners.push({ fn, ctx: ctx });
 	}
 
-	public once(fn: (...args: T) => void, ctx?: unknown) {
+	/**
+	 * Add an event listener which fires once only.
+	 *
+	 * @param fn
+	 * @param ctx
+	 */
+	public once<ThisType>(fn: (this: ThisType, arg: T) => void, ctx: ThisType): void;
+	public once(fn: (arg: T) => void): void;
+	public once(fn: (arg: T) => void, ctx?: unknown): void {
 		this.listeners.push({ fn, ctx: ctx, once: true });
 	}
 
-	public off(fn?: (...args: T) => void, ctx?: unknown) {
+	/**
+	 * Remove an event listener.
+	 *
+	 * @param fn
+	 * @param ctx
+	 */
+	public off(fn?: (arg: T) => void, ctx?: unknown): void {
 		if (!fn && !ctx) {
 			this.listeners = [];
 		}
@@ -50,13 +72,19 @@ export class EventChannel<T extends Array<unknown> = []> {
 		}
 	}
 
-	public emit(...args: T) {
+	/**
+	 * Emit the event.
+	 *
+	 * @param args
+	 */
+	public emit(arg: T): void {
 		for (let i = 0; i < this.listeners.length; i++) {
 			const listener = this.listeners[i];
+
 			if (listener.ctx) {
-				listener.fn.call(listener.ctx, ...args);
+				listener.fn.call(listener.ctx, arg);
 			} else {
-				listener.fn(...args);
+				listener.fn(arg);
 			}
 
 			if (listener.once) {
