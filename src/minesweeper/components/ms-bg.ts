@@ -1,6 +1,6 @@
 import * as PIXI from "pixi.js-legacy";
-import { Entity } from "../common/core/entity/entity";
-import { Ease } from "../common/tweens/ease";
+import { Component } from "../../common/core/components/component";
+import { Ease } from "../../common/tweens/ease";
 
 const REF_BG_WIDTH = 320;
 const REF_BG_HEIGHT = 180;
@@ -10,7 +10,7 @@ type BGSet = "bg-green" | "bg-swamp";
 /**
  * Tiling background graphics with simple paralax effect.
  */
-export class MSBg extends Entity {
+export class MSBg extends Component {
 	public readonly offset = new PIXI.Point();
 	private layers: PIXI.TilingSprite[] = [];
 	private speed = 0.25;
@@ -26,7 +26,7 @@ export class MSBg extends Entity {
 			this.createBgLayer(bgSet + "-d")
 		);
 
-		this.addChild(...this.layers);
+		this.entity.addChild(...this.layers);
 	}
 
 	protected update(dt: number) {

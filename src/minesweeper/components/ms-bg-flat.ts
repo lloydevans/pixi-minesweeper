@@ -1,12 +1,12 @@
 import * as PIXI from "pixi.js-legacy";
-import { ColorSchemes, hexToNum, hexToRgba, numToRgba, RgbaObject, rgbToNum } from "../common/color";
-import { Entity } from "../common/core/entity/entity";
-import { Tween } from "../common/tweens/tween";
-import { Ease } from "../common/tweens/ease";
+import { ColorSchemes, hexToNum, hexToRgba, numToRgba, RgbaObject, rgbToNum } from "../../common/color";
+import { Component } from "../../common/core/components/component";
+import { Ease } from "../../common/tweens/ease";
+import { Tween } from "../../common/tweens/tween";
 
 /**
  */
-export class MSBgFlat extends Entity {
+export class MSBgFlat extends Component {
 	public offset = new PIXI.Point();
 	private speed = 0.1;
 	private scroll = 0;
@@ -17,7 +17,7 @@ export class MSBgFlat extends Entity {
 		this.sprite = this.createSprite("tiles", "bg-tile");
 		this.sprite.tint = hexToNum(Object.values(ColorSchemes.beachRainbowDark)[1]);
 		this.sprite.tileScale.set(0.5);
-		this.addChild(this.sprite);
+		this.entity.addChild(this.sprite);
 	}
 
 	protected update(dt: number) {
@@ -37,7 +37,7 @@ export class MSBgFlat extends Entity {
 		Tween.removeTweens(this.rgba);
 
 		Object.assign(this.rgba, numToRgba(this.sprite.tint));
-		const tween = this.tween(this.rgba).to(hexToRgba(hex), ms, ease);
+		const tween = this.app.tween(this.rgba).to(hexToRgba(hex), ms, ease);
 		tween.on("change", () => (this.sprite.tint = rgbToNum(this.rgba)));
 	}
 
