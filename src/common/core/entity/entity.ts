@@ -26,8 +26,14 @@ export class Entity extends PIXI.Container {
 	 *
 	 * @param componentCtor
 	 */
-	public get<T extends Component>(componentCtor: ComponentCtor<T>): T | undefined {
-		return this.components.find((el) => el instanceof componentCtor) as T;
+	public get<T extends Component>(componentCtor: ComponentCtor<T>): T {
+		const component = this.components.find((el) => el instanceof componentCtor) as T;
+
+		if (!component) {
+			throw new Error("Can't find component!");
+		}
+
+		return component;
 	}
 
 	/**
