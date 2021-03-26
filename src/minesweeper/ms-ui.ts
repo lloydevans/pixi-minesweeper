@@ -70,8 +70,6 @@ export class MSUi extends Entity {
 
 	/**
 	 * Update callback.
-	 * Simple poll for changes.
-	 * TODO: observables/signals/listeners?
 	 *
 	 * @param dt
 	 */
@@ -80,11 +78,6 @@ export class MSUi extends Entity {
 		if (flagCount !== this.flagsCount.text) {
 			this.flagsCount.text = flagCount;
 		}
-
-		// const time = Math.min(MAX_TIME, Math.floor(this.app.currentTime)).toString();
-		// if (time !== this.timeCount.text) {
-		// 	this.timeCount.text = time;
-		// }
 	}
 
 	/**
