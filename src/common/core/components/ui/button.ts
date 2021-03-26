@@ -67,9 +67,7 @@ export class Button extends UiElement {
 		this.container.addChild(this.back);
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	public setOptions(config: ButtonOptions) {
 		this.options = defaults(config, ButtonOptionDefaults);
 	}

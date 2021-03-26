@@ -51,9 +51,7 @@ export class SceneGame extends Scene {
 		this.touchUi.on("right-click", this.rightClick, this);
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	protected async init() {
 		this.root.addChild(this.container);
 		this.root.addChild(this.ui);
@@ -183,9 +181,7 @@ export class SceneGame extends Scene {
 		}
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	private waitForBoardStateUpdate(): Promise<MSStateClient> {
 		return new Promise((resolve) => this.root.once("snapshot", resolve));
 	}
@@ -245,9 +241,7 @@ export class SceneGame extends Scene {
 		}
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	protected cleanup() {
 		this.gameSnapshotUnsubscribe && this.gameSnapshotUnsubscribe();
 		// Prevent static cell view instances being recursively destroyed.
@@ -257,9 +251,7 @@ export class SceneGame extends Scene {
 		});
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	private async initGrid() {
 		this.grid.removeChildren().forEach((el) => {
 			el.off("pointertap", this.onPointerTap, this);
@@ -358,9 +350,7 @@ export class SceneGame extends Scene {
 		}
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	public screenShake(amp = 8, duration = 0.75, hz = 16) {
 		duration = clamp(duration, 0.1, 8);
 		amp = clamp(amp, 0, 16) * 0.75;
@@ -387,17 +377,13 @@ export class SceneGame extends Scene {
 		tween = tween.to({ x: 0, y: 0 }, periodMs / 2, Ease.sineInOut);
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	private setMove(x: number, y: number, flag = false) {
 		// TODO: Offline mode
 		return functions.httpsCallable("newMove")({ x, y, flag });
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	private async getGameData(): Promise<MSStateClient> {
 		const doc = await db //
 			.collection("accounts")
@@ -451,9 +437,7 @@ export class SceneGame extends Scene {
 		this.grid.setInteractionEnabled(true);
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	public async leftClick(cellState: MSCellState) {
 		this.grid.setInteractionEnabled(false);
 

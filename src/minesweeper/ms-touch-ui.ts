@@ -12,9 +12,7 @@ export class MSTouchUi extends Entity {
 	private buttonFlag!: Button;
 	private buttonDig!: Button;
 
-	/**
-	 *
-	 */
+	/** */
 	protected init() {
 		this.visible = false;
 

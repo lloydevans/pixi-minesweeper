@@ -107,9 +107,7 @@ export class MSCell extends Entity {
 		this.setInteractiveEnabled(true);
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	public reset() {
 		// TODO: Clear tracks instead of hidden states?
 		const coverType = (this.state.x + this.state.y) % 2 === 0 ? "even" : "odd";
@@ -142,17 +140,13 @@ export class MSCell extends Entity {
 		return !shallowObjectEquals(this.state, this.viewState);
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	private updateGridPosition() {
 		this.x = this.ix * REF_WIDTH + REF_WIDTH / 2;
 		this.y = this.iy * REF_HEIGHT + REF_HEIGHT / 2;
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	public updateEdgeSprites() {
 		this.anim.setSkinByName(this.viewState.covered ? "front" : "back");
 
@@ -277,9 +271,7 @@ export class MSCell extends Entity {
 		this.accessible = enabled;
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	public setMineEnabled(enabled = true) {
 		this.viewState.mine = enabled;
 
@@ -290,9 +282,7 @@ export class MSCell extends Entity {
 		}
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	public setFlagEnabled(enabled = true) {
 		this.viewState.flag = enabled;
 
@@ -303,9 +293,7 @@ export class MSCell extends Entity {
 		}
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	public animateResult() {
 		if (this.state.mine && this.state.flag) {
 			this.animateCorrect();
@@ -323,51 +311,37 @@ export class MSCell extends Entity {
 		}
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	public animatePress() {
 		this.anim.state.setAnimation(AnimTrack.Hover, "hover-press", false);
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	public animateHoverStart() {
 		this.anim.state.setAnimation(AnimTrack.Hover, "hover-over", false);
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	public animateHoverEnd() {
 		this.anim.state.setAnimation(AnimTrack.Hover, "hover-out", false);
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	public animatePlaceFlagStart() {
 		this.anim.state.setAnimation(AnimTrack.Flag, "flag-place-start", false);
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	public animateDigStart() {
 		this.anim.state.setAnimation(AnimTrack.Dig, "dig-start", false);
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	public animateDigEnd() {
 		this.anim.state.setAnimation(AnimTrack.Dig, "dig-end", false);
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	public animateDigCancel() {
 		const anim = this.anim.state.getCurrent(AnimTrack.Dig);
 		if (anim.animation.name === "dig-start") {
@@ -378,9 +352,7 @@ export class MSCell extends Entity {
 		}
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	public animatePlaceFlagCancel() {
 		const anim = this.anim.state.getCurrent(AnimTrack.Flag);
 		if (anim.animation.name === "flag-place-start") {
@@ -391,23 +363,17 @@ export class MSCell extends Entity {
 		}
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	public animateCorrect() {
 		this.anim.state.setAnimation(AnimTrack.Feedback, "feedback-correct", false);
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	public animateIncorrect() {
 		this.anim.state.setAnimation(AnimTrack.Feedback, "feedback-incorrect", false);
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	public explodeMine() {
 		this.anim.state.setAnimation(AnimTrack.Mine, "mine-explode", false);
 	}

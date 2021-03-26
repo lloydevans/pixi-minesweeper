@@ -17,9 +17,7 @@ export class Entity extends PIXI.Container {
 	 */
 	public app: App;
 
-	/**
-	 *
-	 */
+	/** */
 	private components: Component[] = [];
 
 	/**
@@ -36,9 +34,7 @@ export class Entity extends PIXI.Container {
 		return component;
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	public add<T extends Component>(componentCtor: ComponentCtor<T>): T {
 		const existingComponent = this.get(componentCtor);
 
@@ -86,17 +82,13 @@ export class Entity extends PIXI.Container {
 		super.destroy(options);
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	protected tween<T>(target: T, options?: TweenOptions): Tween<T> {
 		const tween = this.tweenGroup.get(target, options);
 		return tween;
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	protected delay(time: number) {
 		return new Promise((resolve) => this.tween(this).wait(time).call(resolve));
 	}

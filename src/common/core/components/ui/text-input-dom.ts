@@ -95,9 +95,7 @@ export class TextInputDom extends UiElement {
 		// this.needsViewUpdate
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	public updateView() {
 		this.label.tint = hexToNum(this.options.labelColor);
 		this.input.type = this.options.type;
@@ -105,16 +103,12 @@ export class TextInputDom extends UiElement {
 		this.setSize(this.options.width, this.options.height);
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	private onInput(e: Event) {
 		this.emit("input", e);
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	protected init() {
 		this.setSize(this.options.width, this.options.height);
 

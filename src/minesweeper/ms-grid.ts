@@ -91,9 +91,7 @@ export class MSGrid extends Entity {
 		return needsUpdate;
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	public async noiseWipe() {
 		const indexes: number[] = [];
 		for (let i = 0; i < state.totalCells; i++) {
@@ -120,9 +118,7 @@ export class MSGrid extends Entity {
 		}
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	public updateCellStateReferences() {
 		this.children.forEach((el, i) => {
 			const cell = state.cellAt(el.ix, el.iy);
@@ -130,9 +126,7 @@ export class MSGrid extends Entity {
 		});
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	public async swipeWipe(direction: "up" | "down") {
 		const indexes: number[] = [];
 		for (let i = 0; i < state.totalCells; i++) {

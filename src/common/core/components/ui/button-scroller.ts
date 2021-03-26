@@ -138,9 +138,7 @@ export class ButtonScroller extends Component {
 		this.needsViewUpdate = true;
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	private prerenderCb() {
 		if (this.needsViewUpdate) {
 			this.needsViewUpdate = false;
@@ -157,9 +155,7 @@ export class ButtonScroller extends Component {
 		this.emit("set", this.current);
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	private updateView() {
 		this.number.text = this.current.toString();
 		this.btnL.entity.interactive = this.current !== this.min;

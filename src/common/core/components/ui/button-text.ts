@@ -56,9 +56,7 @@ export class ButtonText extends Button {
 		});
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	public setOptions(config: ButtonTextOptions) {
 		this.options = defaults(config, ButtonTextOptionDefaults);
 	}

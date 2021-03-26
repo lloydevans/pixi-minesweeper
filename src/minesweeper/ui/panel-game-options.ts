@@ -91,9 +91,7 @@ export class PanelGameOptions extends Entity {
 		});
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	protected updatePreview() {
 		const gridWidth = this.widthScroller.current;
 		const gridHeight = this.heightScroller.current;

@@ -144,9 +144,7 @@ export class ToneAudio {
 		this.initInstruments(config);
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	public update() {
 		if (Tone.context.state !== "running") {
 			return;
@@ -157,9 +155,7 @@ export class ToneAudio {
 		}
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	private initPlayers(options: ToneAudioConfig) {
 		const sources = Object.entries(options.sources);
 
@@ -178,9 +174,7 @@ export class ToneAudio {
 		}
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	private initInstruments(options: ToneAudioConfig) {
 		const sources = Object.entries(options.sources);
 
@@ -277,9 +271,7 @@ export class ToneAudio {
 		};
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	private updateMusic(midi: MidiPlaybackData) {
 		const { tracks, start, duration } = midi;
 

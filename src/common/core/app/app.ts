@@ -16,9 +16,7 @@ export const MIN_DPR = 0.5;
  * General purpose app functionality.
  */
 export class App extends PIXI.Application {
-	/**
-	 *
-	 */
+	/** */
 	public static current: App;
 
 	/**
@@ -78,19 +76,13 @@ export class App extends PIXI.Application {
 	 */
 	protected readonly uiElements: UiElement[] = [];
 
-	/**
-	 *
-	 */
+	/** */
 	public readonly emitter = new PIXI.utils.EventEmitter();
 
-	/**
-	 *
-	 */
+	/** */
 	private initialized = false;
 
-	/**
-	 *
-	 */
+	/** */
 	public constructor() {
 		super();
 
@@ -140,17 +132,13 @@ export class App extends PIXI.Application {
 		console.log(...args);
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	public tween<T>(target: T, options?: TweenOptions): Tween<T> {
 		const tween = this.tweenGroup.get(target, options);
 		return tween;
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	public delay(time: number) {
 		return new Promise((resolve) => this.tween(this).wait(time).call(resolve));
 	}
@@ -165,9 +153,7 @@ export class App extends PIXI.Application {
 		}
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	public requestFullscreen(): Promise<void> {
 		if (screenfull.isEnabled) {
 			return screenfull.request(this.view);
@@ -176,25 +162,19 @@ export class App extends PIXI.Application {
 		}
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	private getWindowDpr(): number {
 		const dpr = clamp(window.devicePixelRatio, MIN_DPR, MAX_DPR);
 
 		return dpr;
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	private getTextureDpr(): number {
 		return this.getWindowDpr() | 0;
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	private resizeRoot(width: number, height: number, dpr: number) {
 		this._width = width;
 		this._height = height;

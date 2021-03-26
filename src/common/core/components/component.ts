@@ -47,9 +47,7 @@ export class Component extends PIXI.utils.EventEmitter {
 		this.init && this.init();
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	public destroy() {
 		this.cleanup && this.cleanup();
 	}
