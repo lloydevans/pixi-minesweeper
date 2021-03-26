@@ -3,12 +3,13 @@ import { App } from "../common/core/app/app";
 import { ToneAudioConfig } from "../common/core/audio/tone-audio";
 import { preventContextMenu } from "../common/utils";
 import { auth, db, setPersistence } from "../firebase";
-import { MSBgFlat } from "./ms-bg-flat";
+import { MSBgFlat } from "./components/ms-bg-flat";
 import { MSCell } from "./ms-cell";
 import { UserData } from "./ms-config";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MSState } from "./ms-state";
 import { SceneGame } from "./scenes/scene-game";
 import { SceneMenu } from "./scenes/scene-menu";
+import { Entity } from "../common/core/entity/entity";
 
 export const state = new MSState();
 
@@ -77,8 +78,8 @@ function updateCb() {
 }
 
 async function loadCb() {
-	const background = new MSBgFlat(app);
-	app.root.addChildAt(background, 0);
+	const background = new Entity(app).add(MSBgFlat);
+	app.root.addChildAt(background.entity, 0);
 
 	const tonAudioConfig = app.getJson("audio") as ToneAudioConfig;
 	app.audio.init(tonAudioConfig);
@@ -156,7 +157,7 @@ export async function firstStart() {
 		}
 	}
 
-	if (userdata && userdata.activeGame) {
+	if (userdata?.activeGame) {
 		showGame(userdata.activeGame);
 	} else {
 		showMenu();
