@@ -1,11 +1,13 @@
-interface Listener<T extends () => void = () => void> {
+type ListenerFn = (...args: unknown[]) => unknown;
+
+interface Listener<T extends ListenerFn = () => void> {
 	fn: (...arg: Parameters<T>) => void;
 	ctx?: unknown;
 	once?: boolean;
 }
 
 /** */
-export class EventChannel<T extends (...args: unknown[]) => unknown = () => void> {
+export class EventChannel<T extends ListenerFn = () => void> {
 	/** */
 	private listeners: Listener<T>[] = [];
 
