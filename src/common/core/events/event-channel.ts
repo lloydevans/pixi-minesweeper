@@ -1,11 +1,11 @@
-interface Listener<T extends unknown> {
-	fn: (arg: T) => void;
+interface Listener<T extends () => void = () => void> {
+	fn: (...arg: Parameters<T>) => void;
 	ctx?: unknown;
 	once?: boolean;
 }
 
 /** */
-export class EventChannel<T extends unknown = void> {
+export class EventChannel<T extends (...args: unknown[]) => unknown = () => void> {
 	/** */
 	private listeners: Listener<T>[] = [];
 
@@ -20,9 +20,9 @@ export class EventChannel<T extends unknown = void> {
 	 * @param fn
 	 * @param ctx
 	 */
-	public on<ThisType>(fn: (this: ThisType, arg: T) => void, ctx: ThisType): void;
-	public on(fn: (arg: T) => void): void;
-	public on(fn: (arg: T) => void, ctx?: unknown): void {
+	public on<ThisType>(fn: (this: ThisType, ...arg: Parameters<T>) => void, ctx: ThisType): void;
+	public on(fn: (...arg: Parameters<T>) => void): void;
+	public on(fn: (...arg: Parameters<T>) => void, ctx?: unknown): void {
 		this.listeners.push({ fn, ctx: ctx });
 	}
 
@@ -32,9 +32,9 @@ export class EventChannel<T extends unknown = void> {
 	 * @param fn
 	 * @param ctx
 	 */
-	public once<ThisType>(fn: (this: ThisType, arg: T) => void, ctx: ThisType): void;
-	public once(fn: (arg: T) => void): void;
-	public once(fn: (arg: T) => void, ctx?: unknown): void {
+	public once<ThisType>(fn: (this: ThisType, ...arg: Parameters<T>) => void, ctx: ThisType): void;
+	public once(fn: (...arg: Parameters<T>) => void): void;
+	public once(fn: (...arg: Parameters<T>) => void, ctx?: unknown): void {
 		this.listeners.push({ fn, ctx: ctx, once: true });
 	}
 
@@ -44,7 +44,7 @@ export class EventChannel<T extends unknown = void> {
 	 * @param fn
 	 * @param ctx
 	 */
-	public off(fn?: (arg: T) => void, ctx?: unknown): void {
+	public off(fn?: (...arg: Parameters<T>) => void, ctx?: unknown): void {
 		if (!fn && !ctx) {
 			this.listeners = [];
 		}
@@ -77,14 +77,14 @@ export class EventChannel<T extends unknown = void> {
 	 *
 	 * @param args
 	 */
-	public emit(arg: T): void {
+	public emit(...args: Parameters<T>): void {
 		for (let i = 0; i < this.listeners.length; i++) {
 			const listener = this.listeners[i];
 
 			if (listener.ctx) {
-				listener.fn.call(listener.ctx, arg);
+				listener.fn.call(listener.ctx, args);
 			} else {
-				listener.fn(arg);
+				listener.fn(...args);
 			}
 
 			if (listener.once) {

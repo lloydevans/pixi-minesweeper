@@ -20,10 +20,8 @@ describe("EventChannel", () => {
 	});
 
 	it("should call listener with args", () => {
-		const channel = new EventChannel<number>();
-		channel.on((num: number) => {
-			expect(num).toBe(1);
-		});
+		const channel = new EventChannel<(value: number) => void>();
+		channel.on((value) => expect(value).toBe(1));
 		channel.emit(1);
 	});
 
