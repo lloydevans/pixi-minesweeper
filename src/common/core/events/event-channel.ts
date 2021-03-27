@@ -1,6 +1,6 @@
-type ListenerFn = (...args: unknown[]) => unknown;
+export type ListenerFn = (...args: unknown[]) => unknown;
 
-interface Listener<T extends ListenerFn = () => void> {
+export interface Listener<T extends ListenerFn = () => void> {
 	fn: (...arg: Parameters<T>) => ReturnType<T>;
 	ctx?: unknown;
 	once?: boolean;
@@ -8,13 +8,13 @@ interface Listener<T extends ListenerFn = () => void> {
 
 /** */
 export class EventChannel<T extends ListenerFn = () => void> {
-	/** */
-	private listeners: Listener<T>[] = [];
-
-	/** */
+	/** Total current listeners */
 	public get listenerCount(): number {
 		return this.listeners.length;
 	}
+
+	/** Listeners array */
+	private listeners: Listener<T>[] = [];
 
 	/**
 	 * Add an event listener.
