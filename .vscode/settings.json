@@ -18,7 +18,10 @@
 	],
 	"cSpell.allowCompoundWords": true,
 	"cSpell.ignoreWords": [],
-	"editor.codeActionsOnSave": {
-		"source.organizeImports": true
+	"editor.formatOnSave": true,
+	"[typescript]": {
+		"editor.codeActionsOnSave": {
+			"source.organizeImports": true
+		}
 	}
 }
