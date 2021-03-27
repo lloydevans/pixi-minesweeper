@@ -1,7 +1,7 @@
 import * as PIXI from "pixi.js-legacy";
-import { BmText } from "../common/core/internal/bm-text";
 import { Button } from "../common/core/components/ui/button";
 import { Entity } from "../common/core/entity/entity";
+import { BmText } from "../common/core/internal/bm-text";
 import { Spine } from "../common/spine";
 import { state } from "./ms-entry";
 

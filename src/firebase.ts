@@ -1,9 +1,9 @@
-import firebase from "firebase/app";
-import "firebase/performance";
 import "firebase/analytics";
+import firebase from "firebase/app";
+import "firebase/auth";
 import "firebase/firestore";
 import "firebase/functions";
-import "firebase/auth";
+import "firebase/performance";
 
 // Public project config.
 const firebaseConfig = {

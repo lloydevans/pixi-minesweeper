@@ -2,14 +2,14 @@ import clamp from "lodash-es/clamp";
 import * as PIXI from "pixi.js-legacy";
 import { hexToNum } from "../common/color";
 import { App } from "../common/core/app/app";
-import { BmText } from "../common/core/internal/bm-text";
 import { Entity } from "../common/core/entity/entity";
+import { BmText } from "../common/core/internal/bm-text";
 import { Spine } from "../common/spine";
 import { shallowObjectEquals } from "../common/utils";
-import { getCellView, state } from "./ms-entry";
 import { CELL_STATE_DEFAULT } from "./ms-cell-state";
 import type { MSCellState } from "./ms-cell-state";
 import type { NumberKey } from "./ms-config";
+import { getCellView, state } from "./ms-entry";
 
 // Reference size of cell graphics before any scaling.
 export const REF_WIDTH = 64;

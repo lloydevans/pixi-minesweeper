@@ -1,5 +1,5 @@
-import { TweenOptions } from "./tween-props";
 import { Ease } from "./ease";
+import { TweenOptions } from "./tween-props";
 
 /**
  *

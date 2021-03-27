@@ -1,5 +1,5 @@
-import { Entity } from "../entity/entity";
 import { App } from "../app/app";
+import { Entity } from "../entity/entity";
 
 /** */
 export class Scene {

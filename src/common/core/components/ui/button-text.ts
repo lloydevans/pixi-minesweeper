@@ -1,7 +1,7 @@
 import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
 import { BmText } from "../../internal/bm-text";
-import { ButtonOptions, Button } from "./button";
+import { Button, ButtonOptions } from "./button";
 
 export interface ButtonTextOptions extends ButtonOptions {
 	fontName?: string;

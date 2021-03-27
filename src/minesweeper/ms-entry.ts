@@ -1,6 +1,7 @@
 import * as PIXI from "pixi.js-legacy";
 import { App } from "../common/core/app/app";
 import { ToneAudioConfig } from "../common/core/audio/tone-audio";
+import { Entity } from "../common/core/entity/entity";
 import { preventContextMenu } from "../common/utils";
 import { auth, db, setPersistence } from "../firebase";
 import { MSBgFlat } from "./components/ms-bg-flat";
@@ -9,7 +10,6 @@ import { UserData } from "./ms-config";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MSState } from "./ms-state";
 import { SceneGame } from "./scenes/scene-game";
 import { SceneMenu } from "./scenes/scene-menu";
-import { Entity } from "../common/core/entity/entity";
 
 export const state = new MSState();
 

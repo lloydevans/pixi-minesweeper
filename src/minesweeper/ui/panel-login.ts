@@ -1,3 +1,4 @@
+import * as PIXI from "pixi.js-legacy";
 import { ColorSchemes, hexToNum } from "../../common/color";
 import { ButtonText } from "../../common/core/components/ui/button-text";
 import { TextInputDom } from "../../common/core/components/ui/text-input-dom";
