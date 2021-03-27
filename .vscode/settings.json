@@ -17,5 +17,8 @@
 		"tweens"
 	],
 	"cSpell.allowCompoundWords": true,
-	"cSpell.ignoreWords": []
+	"cSpell.ignoreWords": [],
+	"editor.codeActionsOnSave": {
+		"source.organizeImports": true
+	}
 }
