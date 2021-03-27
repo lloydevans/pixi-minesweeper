@@ -1,15 +1,6 @@
 {
-	"include": [
-		"src/index.ts",
-		"custom.d.ts",
-		"node_modules/pixi-spine/dist/pixi-spine.d.ts"
-		//
-	],
-	"exclude": [
-		".git",
-		"node_modules"
-		//
-	],
+	"include": ["src/index.ts", "custom.d.ts", "node_modules/pixi-spine/dist/pixi-spine.d.ts"],
+	"exclude": [".git", "node_modules"],
 	"compilerOptions": {
 		"declaration": true,
 		"esModuleInterop": true,
@@ -27,6 +18,6 @@
 		"strict": true,
 		"strictFunctionTypes": true,
 		"strictNullChecks": true,
-		"target": "ES5",
+		"target": "ES5"
 	}
 }
