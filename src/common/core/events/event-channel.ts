@@ -22,9 +22,9 @@ export class EventChannel<T extends ListenerFn = () => void> {
 	 * @param fn
 	 * @param ctx
 	 */
-	public on<ThisType>(fn: (this: ThisType, ...arg: Parameters<T>) => void, ctx: ThisType): void;
-	public on(fn: (...arg: Parameters<T>) => void): void;
-	public on(fn: (...arg: Parameters<T>) => void, ctx?: unknown): void {
+	public on<ThisType>(fn: (this: ThisType, ...arg: Parameters<T>) => ReturnType<T>, ctx: ThisType): void;
+	public on(fn: (...arg: Parameters<T>) => ReturnType<T>): void;
+	public on(fn: (...arg: Parameters<T>) => ReturnType<T>, ctx?: unknown): void {
 		this.listeners.push({ fn, ctx: ctx });
 	}
 
@@ -34,9 +34,9 @@ export class EventChannel<T extends ListenerFn = () => void> {
 	 * @param fn
 	 * @param ctx
 	 */
-	public once<ThisType>(fn: (this: ThisType, ...arg: Parameters<T>) => void, ctx: ThisType): void;
-	public once(fn: (...arg: Parameters<T>) => void): void;
-	public once(fn: (...arg: Parameters<T>) => void, ctx?: unknown): void {
+	public once<ThisType>(fn: (this: ThisType, ...arg: Parameters<T>) => ReturnType<T>, ctx: ThisType): void;
+	public once(fn: (...arg: Parameters<T>) => ReturnType<T>): void;
+	public once(fn: (...arg: Parameters<T>) => ReturnType<T>, ctx?: unknown): void {
 		this.listeners.push({ fn, ctx: ctx, once: true });
 	}
 
@@ -46,7 +46,7 @@ export class EventChannel<T extends ListenerFn = () => void> {
 	 * @param fn
 	 * @param ctx
 	 */
-	public off(fn?: (...arg: Parameters<T>) => void, ctx?: unknown): void {
+	public off(fn?: (...arg: Parameters<T>) => ReturnType<T>, ctx?: unknown): void {
 		if (!fn && !ctx) {
 			this.listeners = [];
 		}
