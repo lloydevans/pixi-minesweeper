@@ -1,7 +1,7 @@
 type ListenerFn = (...args: unknown[]) => unknown;
 
 interface Listener<T extends ListenerFn = () => void> {
-	fn: (...arg: Parameters<T>) => void;
+	fn: (...arg: Parameters<T>) => ReturnType<T>;
 	ctx?: unknown;
 	once?: boolean;
 }
