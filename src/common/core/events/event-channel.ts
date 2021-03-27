@@ -1,20 +1,20 @@
-export type ListenerFn = (...args: unknown[]) => unknown;
+type ListenerFnBase = (...args: unknown[]) => unknown;
 
-export interface Listener<T extends ListenerFn = () => void> {
-	fn: (...arg: Parameters<T>) => ReturnType<T>;
+interface ListenerEntry<ListenerFn extends ListenerFnBase> {
+	fn: (...arg: Parameters<ListenerFn>) => ReturnType<ListenerFn>;
 	ctx?: unknown;
 	once?: boolean;
 }
 
 /** */
-export class EventChannel<T extends ListenerFn = () => void> {
+export class EventChannel<ListenerFn extends ListenerFnBase = () => void> {
 	/** Total current listeners */
 	public get listenerCount(): number {
 		return this.listeners.length;
 	}
 
 	/** Listeners array */
-	private listeners: Listener<T>[] = [];
+	private listeners: ListenerEntry<ListenerFn>[] = [];
 
 	/**
 	 * Add an event listener.
@@ -22,9 +22,9 @@ export class EventChannel<T extends ListenerFn = () => void> {
 	 * @param fn
 	 * @param ctx
 	 */
-	public on<ThisType>(fn: (this: ThisType, ...arg: Parameters<T>) => ReturnType<T>, ctx: ThisType): void;
-	public on(fn: (...arg: Parameters<T>) => ReturnType<T>): void;
-	public on(fn: (...arg: Parameters<T>) => ReturnType<T>, ctx?: unknown): void {
+	public on<ThisType>(fn: (this: ThisType, ...arg: Parameters<ListenerFn>) => ReturnType<ListenerFn>, ctx: ThisType): void;
+	public on(fn: (...arg: Parameters<ListenerFn>) => ReturnType<ListenerFn>): void;
+	public on(fn: (...arg: Parameters<ListenerFn>) => ReturnType<ListenerFn>, ctx?: unknown): void {
 		this.listeners.push({ fn, ctx });
 	}
 
@@ -34,9 +34,9 @@ export class EventChannel<T extends ListenerFn = () => void> {
 	 * @param fn
 	 * @param ctx
 	 */
-	public once<ThisType>(fn: (this: ThisType, ...arg: Parameters<T>) => ReturnType<T>, ctx: ThisType): void;
-	public once(fn: (...arg: Parameters<T>) => ReturnType<T>): void;
-	public once(fn: (...arg: Parameters<T>) => ReturnType<T>, ctx?: unknown): void {
+	public once<ThisType>(fn: (this: ThisType, ...arg: Parameters<ListenerFn>) => ReturnType<ListenerFn>, ctx: ThisType): void;
+	public once(fn: (...arg: Parameters<ListenerFn>) => ReturnType<ListenerFn>): void;
+	public once(fn: (...arg: Parameters<ListenerFn>) => ReturnType<ListenerFn>, ctx?: unknown): void {
 		this.listeners.push({ fn, ctx, once: true });
 	}
 
@@ -46,7 +46,7 @@ export class EventChannel<T extends ListenerFn = () => void> {
 	 * @param fn
 	 * @param ctx
 	 */
-	public off(fn?: (...arg: Parameters<T>) => ReturnType<T>, ctx?: unknown): void {
+	public off(fn?: (...arg: Parameters<ListenerFn>) => ReturnType<ListenerFn>, ctx?: unknown): void {
 		if (!fn && !ctx) {
 			this.listeners = [];
 		}
@@ -79,7 +79,7 @@ export class EventChannel<T extends ListenerFn = () => void> {
 	 *
 	 * @param args
 	 */
-	public emit(...args: Parameters<T>): void {
+	public emit(...args: Parameters<ListenerFn>): void {
 		for (let i = 0; i < this.listeners.length; i++) {
 			const listener = this.listeners[i];
 
