@@ -2,7 +2,7 @@
 	"include": ["src/index.ts", "custom.d.ts", "node_modules/pixi-spine/dist/pixi-spine.d.ts"],
 	"exclude": [".git", "node_modules"],
 	"compilerOptions": {
-		"declaration": true,
+		"declaration": false,
 		"esModuleInterop": true,
 		"importHelpers": true,
 		"lib": ["DOM", "ES2019"],
