@@ -15,7 +15,7 @@
 		"midi": "node ./builder/midi-converter.js"
 	},
 	"prettier": {
-		"printWidth": 120,
+		"printWidth": 140,
 		"endOfLine": "auto",
 		"useTabs": true
 	},
