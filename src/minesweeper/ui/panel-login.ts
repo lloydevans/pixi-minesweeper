@@ -1,11 +1,12 @@
 import * as PIXI from "pixi.js-legacy";
 import { ColorSchemes, hexToNum } from "../../common/color";
+import { Component } from "../../common/core/components/component";
 import { ButtonText } from "../../common/core/components/ui/button-text";
 import { TextInputDom } from "../../common/core/components/ui/text-input-dom";
 import { Entity } from "../../common/core/entity/entity";
 import { BmText } from "../../common/core/internal/bm-text";
 
-export class PanelLogin extends Entity {
+export class PanelLogin extends Component {
 	private inputUsername!: TextInputDom;
 	private inputEmail!: TextInputDom;
 	private inputPassword!: TextInputDom;
@@ -17,59 +18,52 @@ export class PanelLogin extends Entity {
 	private menuState: "login" | "create" | "forgot-pword" = "login";
 	private error!: BmText;
 
-	protected init() {
+	public init() {
 		this.error = new BmText(this.app, { fontName: "bmfont", fontSize: 16 });
 		this.error.maxWidth = 256;
 		this.error._anchor.set(0.5);
 		this.error.tint = hexToNum("#aa3333");
 
-		this.inputUsername = new Entity(this.app).add(TextInputDom);
-		this.inputUsername.setOptions({
+		this.inputUsername = new Entity(this.app).add(TextInputDom, {
 			label: "Username",
 			placeholder: "",
 			type: "text",
 		});
 
-		this.inputEmail = new Entity(this.app).add(TextInputDom);
-		this.inputEmail.setOptions({
+		this.inputEmail = new Entity(this.app).add(TextInputDom, {
 			label: "Email",
 			placeholder: "",
 			type: "email",
 		});
 
-		this.inputPassword = new Entity(this.app).add(TextInputDom);
-		this.inputPassword.setOptions({
+		this.inputPassword = new Entity(this.app).add(TextInputDom, {
 			label: "Password",
 			placeholder: "",
 			type: "password",
 		});
 
-		this.buttonPrimary = new Entity(this.app).add(ButtonText);
-		this.buttonPrimary.setOptions({
+		this.buttonPrimary = new Entity(this.app).add(ButtonText, {
 			textureDown: this.app.getFrame("textures", "button-down"),
 			textureUp: this.app.getFrame("textures", "button-up"),
 			tint: hexToNum(ColorSchemes.beachRainbow.red),
 			text: "LOGIN",
 		});
 
-		this.btnSecondary = new Entity(this.app).add(ButtonText);
-		this.btnSecondary.setOptions({
+		this.btnSecondary = new Entity(this.app).add(ButtonText, {
 			textureUp: PIXI.Texture.EMPTY,
 			textureDown: PIXI.Texture.EMPTY,
 			text: "Create account",
 			fontSize: 24,
 		});
 
-		this.btnGuest = new Entity(this.app).add(ButtonText);
-		this.btnGuest.setOptions({
+		this.btnGuest = new Entity(this.app).add(ButtonText, {
 			textureUp: PIXI.Texture.EMPTY,
 			textureDown: PIXI.Texture.EMPTY,
 			text: "Play as guest",
 			fontSize: 24,
 		});
 
-		this.btnForgotPassword = new Entity(this.app).add(ButtonText);
-		this.btnForgotPassword.setOptions({
+		this.btnForgotPassword = new Entity(this.app).add(ButtonText, {
 			textureUp: PIXI.Texture.EMPTY,
 			textureDown: PIXI.Texture.EMPTY,
 			text: "Forgot password?",
@@ -94,15 +88,14 @@ export class PanelLogin extends Entity {
 		this.secondaryButtons.y = 180;
 		this.error.y = 60;
 
-		// this.addChild(this.inputUsername);
 		this.secondaryButtons.addChild(this.btnSecondary.entity);
 		this.secondaryButtons.addChild(this.btnGuest.entity);
 		this.secondaryButtons.addChild(this.btnForgotPassword.entity);
-		this.addChild(this.inputEmail.entity);
-		this.addChild(this.inputPassword.entity);
-		this.addChild(this.buttonPrimary.entity);
-		this.addChild(this.secondaryButtons);
-		this.addChild(this.error);
+		this.entity.addChild(this.inputEmail.entity);
+		this.entity.addChild(this.inputPassword.entity);
+		this.entity.addChild(this.buttonPrimary.entity);
+		this.entity.addChild(this.secondaryButtons);
+		this.entity.addChild(this.error);
 
 		this.buttonPrimary.on("pointertap", this.buttonPrimaryCb, this);
 		this.btnSecondary.on("pointertap", this.buttonSecondaryCb, this);

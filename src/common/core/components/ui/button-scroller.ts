@@ -4,10 +4,10 @@ import * as PIXI from "pixi.js-legacy";
 import { Texture } from "pixi.js-legacy";
 import { Entity } from "../../entity/entity";
 import { BmText } from "../../internal/bm-text";
-import { Component } from "../component";
+import { Component, ComponentOptions } from "../component";
 import { Button } from "./button";
 
-export interface ButtonScrollerOptions {
+export interface ButtonScrollerOptions extends ComponentOptions {
 	arrowTexture: Texture;
 	text: string;
 	default: number;
@@ -52,27 +52,21 @@ export class ButtonScroller extends Component {
 		return this._default;
 	}
 
-	public options: ButtonScrollerOptions;
+	public options!: ButtonScrollerOptions;
 
-	private _default: number;
-	private _current: number;
-	private _max: number;
-	private _min: number;
+	private _default!: number;
+	private _current!: number;
+	private _max!: number;
+	private _min!: number;
 
 	private needsViewUpdate = true;
-	private container: Entity;
-	private number: BmText;
-	private btnL: Button;
-	private btnR: Button;
-	private label: BmText;
+	private container!: Entity;
+	private number!: BmText;
+	private btnL!: Button;
+	private btnR!: Button;
+	private label!: BmText;
 
-	/**
-	 *
-	 * @param entity
-	 */
-	public constructor(entity: Entity) {
-		super(entity);
-
+	public init(options?: ButtonScrollerOptions) {
 		this.options = defaults({}, ButtonScrollerOptionDefaults);
 
 		this._min = this.options.min;
@@ -81,8 +75,16 @@ export class ButtonScroller extends Component {
 		this._current = this.default;
 
 		this.container = new Entity(this.app);
-		this.btnL = new Entity(this.app).add(Button);
-		this.btnR = new Entity(this.app).add(Button);
+
+		this.btnL = new Entity(this.app).add(Button, {
+			textureUp: this.options.arrowTexture,
+			textureDown: this.options.arrowTexture,
+		});
+
+		this.btnR = new Entity(this.app).add(Button, {
+			textureUp: this.options.arrowTexture,
+			textureDown: this.options.arrowTexture,
+		});
 
 		this.number = new BmText(this.app, {
 			text: this.default.toString(),
@@ -113,28 +115,12 @@ export class ButtonScroller extends Component {
 		this.btnR.on("pointertap", () => this.set(this.current + 1));
 		this.entity.on("prerender", this.prerenderCb, this);
 		this.set(this.default);
-	}
 
-	/**
-	 *
-	 * @param options
-	 */
-	public setOptions(options: Partial<ButtonScrollerOptions>) {
 		this.options = defaults(options, ButtonScrollerOptionDefaults);
 		this._min = this.options.min;
 		this._max = this.options.max;
 		this._default = this.options.default;
 		this._current = this.default;
-
-		this.btnL.setOptions({
-			textureUp: this.options.arrowTexture,
-			textureDown: this.options.arrowTexture,
-		});
-
-		this.btnR.setOptions({
-			textureUp: this.options.arrowTexture,
-			textureDown: this.options.arrowTexture,
-		});
 
 		this.needsViewUpdate = true;
 	}

@@ -5,8 +5,7 @@ import { BmText } from "../common/core/internal/bm-text";
 import { Spine } from "../common/spine";
 import { state } from "./ms-entry";
 
-/**
- */
+/** */
 const MAX_TIME = 999;
 
 /**

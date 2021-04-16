@@ -1,14 +1,16 @@
 import { App } from "../app/app";
 import { Entity } from "../entity/entity";
 
+export interface ComponentOptions {
+	enabled?: boolean;
+}
+
 /**
  * Base component class to enforce basic structure and provide some base functionality.
  *
  */
-export class Component extends PIXI.utils.EventEmitter {
-	/**
-	 * Component enabled state.
-	 */
+export abstract class Component extends PIXI.utils.EventEmitter {
+	/** Component enabled state. */
 	public get enabled(): boolean {
 		return this._enabled;
 	}
@@ -17,19 +19,13 @@ export class Component extends PIXI.utils.EventEmitter {
 		this._enabled = value;
 	}
 
-	/**
-	 * Parent entity reference.
-	 */
+	/** Parent entity reference. */
 	public readonly entity: Entity;
 
-	/**
-	 * Parent app reference.
-	 */
-	public readonly app: App;
+	/** Parent app reference. */
+	protected readonly app: App;
 
-	/**
-	 * Component enabled state.
-	 */
+	/** Internal component enabled state. */
 	private _enabled = false;
 
 	/**
@@ -44,7 +40,7 @@ export class Component extends PIXI.utils.EventEmitter {
 
 		this.app = entity.app;
 
-		this.init && this.init();
+		this.app.ticker.addOnce(() => this.init && this.init());
 	}
 
 	/** */
@@ -56,7 +52,7 @@ export class Component extends PIXI.utils.EventEmitter {
 	 * Init method is called after app ready event. If app is already ready, it
 	 * runs during the constructor.
 	 */
-	protected init?(): void;
+	public abstract init(...param: unknown[]): void;
 
 	/**
 	 * Optional method called on destroy.

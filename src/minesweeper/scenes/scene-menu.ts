@@ -14,7 +14,7 @@ export class SceneMenu extends Scene {
 	private panelLogin?: PanelLogin;
 	private panelGameOptions?: PanelGameOptions;
 
-	protected async init() {
+	public init() {
 		this.title = new BmText(this.app, {
 			text: "Minesweeper",
 			fontName: "bmfont",
@@ -23,7 +23,7 @@ export class SceneMenu extends Scene {
 		this.title.y = -190;
 		this.title._anchor.set(0.5);
 
-		this.root.addChild(this.title);
+		this.entity.addChild(this.title);
 
 		if (!auth.currentUser) {
 			this.showLogin();
@@ -36,7 +36,10 @@ export class SceneMenu extends Scene {
 	private showLogin() {
 		this.panelGameOptions && this.panelGameOptions.destroy();
 
-		this.panelLogin = new PanelLogin(this.app);
+		this.panelLogin = this.entity.add(PanelLogin);
+		this.entity.addChild(this.panelLogin.entity);
+
+		console.log(this.panelLogin);
 
 		this.panelLogin.on("create", async (email: string, password: string, username: string) => {
 			this.app.setAllUiElementsActive(false);
@@ -44,7 +47,7 @@ export class SceneMenu extends Scene {
 			this.panelLogin?.clearError();
 
 			try {
-				const result = await auth.createUserWithEmailAndPassword(email, password);
+				await auth.createUserWithEmailAndPassword(email, password);
 				// await result!.user!.updateProfile({ displayName: username });
 				this.showGameOptions();
 			} catch (err) {
@@ -83,13 +86,13 @@ export class SceneMenu extends Scene {
 
 			this.app.setAllUiElementsActive(true);
 		});
-
-		this.root.addChild(this.panelLogin);
 	}
 
 	private showGameOptions() {
 		this.panelLogin && this.panelLogin.destroy();
+
 		this.panelGameOptions = new PanelGameOptions(this.app);
+		this.entity.addChild(this.panelGameOptions);
 
 		this.panelGameOptions.on("start", async (config: MSGameConfig) => {
 			this.app.setAllUiElementsActive(false);
@@ -117,7 +120,5 @@ export class SceneMenu extends Scene {
 				this.showLogin();
 			}
 		});
-
-		this.root.addChild(this.panelGameOptions);
 	}
 }

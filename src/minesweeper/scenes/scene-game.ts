@@ -1,7 +1,6 @@
 import clamp from "lodash-es/clamp";
 import * as PIXI from "pixi.js-legacy";
 import { ColorSchemes, hexToNum } from "../../common/color";
-import { App } from "../../common/core/app/app";
 import { Scene } from "../../common/core/scene/scene";
 import { Ease } from "../../common/tweens/ease";
 import { auth, db, functions } from "../../firebase";
@@ -18,23 +17,22 @@ export class SceneGame extends Scene {
 		return this.time;
 	}
 
-	private time: number;
-	private timeActive: boolean;
-	private board: PIXI.Sprite;
+	private time!: number;
+	private timeActive!: boolean;
+	private board!: PIXI.Sprite;
 	private cellWidth = REF_WIDTH;
 	private cellHeight = REF_HEIGHT;
-	private container: PIXI.Container;
+	private container!: PIXI.Container;
 	private gridBack?: PIXI.TilingSprite;
-	private grid: MSGrid;
-	private touchUi: MSTouchUi;
-	private ui: MSUi;
+	private grid!: MSGrid;
+	private touchUi!: MSTouchUi;
+	private ui!: MSUi;
 	private gameId?: string;
 	private gameData?: MSStateClient;
 	private gameSnapshotUnsubscribe!: () => void;
 
-	public constructor(app: App) {
-		super(app);
-
+	/** */
+	public async init() {
 		this.board = PIXI.Sprite.from(PIXI.Texture.WHITE);
 		this.cellHeight = REF_HEIGHT;
 		this.cellWidth = REF_WIDTH;
@@ -49,13 +47,10 @@ export class SceneGame extends Scene {
 
 		this.touchUi.on("left-click", this.leftClick, this);
 		this.touchUi.on("right-click", this.rightClick, this);
-	}
 
-	/** */
-	protected async init() {
-		this.root.addChild(this.container);
-		this.root.addChild(this.ui);
-		this.root.addChild(this.touchUi);
+		this.entity.addChild(this.container);
+		this.entity.addChild(this.ui);
+		this.entity.addChild(this.touchUi);
 
 		this.grid.setInteractionEnabled(false);
 
@@ -143,7 +138,7 @@ export class SceneGame extends Scene {
 
 		if (data?.cells) {
 			state.parseClientState(data);
-			this.root.emit("snapshot", data);
+			this.entity.emit("snapshot", data);
 		}
 	}
 
@@ -183,7 +178,7 @@ export class SceneGame extends Scene {
 
 	/** */
 	private waitForBoardStateUpdate(): Promise<MSStateClient> {
-		return new Promise((resolve) => this.root.once("snapshot", resolve));
+		return new Promise((resolve) => this.entity.once("snapshot", resolve));
 	}
 
 	/**
@@ -311,7 +306,7 @@ export class SceneGame extends Scene {
 				else {
 					this.touchUi.show();
 					this.touchUi.setTargetCell(cellState);
-					const local = this.root.toLocal(msCell.getGlobalPosition());
+					const local = this.entity.toLocal(msCell.getGlobalPosition());
 					this.touchUi.x = local.x;
 					this.touchUi.y = local.y;
 				}

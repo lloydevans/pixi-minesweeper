@@ -1,11 +1,10 @@
 import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
 import { hexToNum } from "../../../color";
-import { Entity } from "../../entity/entity";
 import { BmText } from "../../internal/bm-text";
+import { ComponentOptions } from "../component";
 import { UiElement } from "./ui-element";
-
-export interface UITextInputOptions {
+export interface UITextInputOptions extends ComponentOptions {
 	type: "text" | "email" | "password";
 	label: string;
 	labelColor: string;
@@ -38,23 +37,15 @@ export class TextInputDom extends UiElement {
 
 	private domVisible = false;
 
-	private label: BmText;
+	private label!: BmText;
 
 	private debugHitarea = new PIXI.Graphics();
 
-	/**
-	 * Configuration options.
-	 */
-	public options: UITextInputOptions;
+	protected options!: UITextInputOptions;
 
-	/**
-	 *
-	 * @param entity
-	 */
-	public constructor(entity: Entity) {
-		super(entity);
-
-		this.options = { ...UITextInputOptionDefaults };
+	/**  */
+	public init(options: Partial<UITextInputOptions> = { ...UITextInputOptionDefaults }): void {
+		this.options = defaults({}, options, UITextInputOptionDefaults);
 
 		this.label = new BmText(this.entity.app, {
 			text: this.options.label,
@@ -71,7 +62,9 @@ export class TextInputDom extends UiElement {
 		this.input.style.margin = "0";
 
 		const onInputCb = this.onInput.bind(this);
+
 		this.input.addEventListener("input", onInputCb);
+
 		this.once("destroy", () => {
 			this.input.removeEventListener("input", onInputCb);
 			this.input.parentElement?.removeChild(this.input);
@@ -84,32 +77,7 @@ export class TextInputDom extends UiElement {
 				this.input.disabled = true;
 			}
 		});
-	}
 
-	/**
-	 *
-	 * @param options
-	 */
-	public setOptions(options?: Partial<UITextInputOptions>) {
-		const _options = defaults(options || {}, UITextInputOptionDefaults);
-		// this.needsViewUpdate
-	}
-
-	/** */
-	public updateView() {
-		this.label.tint = hexToNum(this.options.labelColor);
-		this.input.type = this.options.type;
-		this.label.text = this.options.label;
-		this.setSize(this.options.width, this.options.height);
-	}
-
-	/** */
-	private onInput(e: Event) {
-		this.emit("input", e);
-	}
-
-	/** */
-	protected init() {
 		this.setSize(this.options.width, this.options.height);
 
 		this.entity.interactive = true;
@@ -124,6 +92,19 @@ export class TextInputDom extends UiElement {
 		this.on("blur", () => {
 			this.input.blur();
 		});
+	}
+
+	/** */
+	public updateView() {
+		this.label.tint = hexToNum(this.options.labelColor);
+		this.input.type = this.options.type;
+		this.label.text = this.options.label;
+		this.setSize(this.options.width, this.options.height);
+	}
+
+	/** */
+	private onInput(e: Event) {
+		this.emit("input", e);
 	}
 
 	/**

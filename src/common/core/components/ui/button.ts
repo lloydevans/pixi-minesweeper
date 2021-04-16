@@ -1,10 +1,10 @@
 import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js-legacy";
 import * as Tone from "tone";
-import { Entity } from "../../entity/entity";
+import { ComponentOptions } from "../component";
 import { UiElement } from "./ui-element";
 
-export interface ButtonOptions {
+export interface ButtonOptions extends ComponentOptions {
 	textureDown: PIXI.Texture;
 	textureUp: PIXI.Texture;
 }
@@ -14,20 +14,18 @@ export const ButtonOptionDefaults = {
 	textureUp: PIXI.Texture.WHITE,
 };
 
-/**
- * Basic button class.
- */
+/** Basic button class. */
 export class Button extends UiElement {
-	/**
-	 * Graphic behind button content.
-	 */
-	protected back: PIXI.Sprite;
+	/** Graphic behind button content. */
+	protected back!: PIXI.Sprite;
 
-	/**
-	 * Configuration options.
-	 */
-	public options: ButtonOptions;
+	/**  */
+	protected textureDown!: PIXI.Texture;
 
+	/**  */
+	protected textureUp!: PIXI.Texture;
+
+	/**  */
 	public get tint() {
 		return this.back.tint;
 	}
@@ -35,17 +33,13 @@ export class Button extends UiElement {
 		this.back.tint = value;
 	}
 
-	/**
-	 * Components are instantiated via `Entity.prototype.add`.
-	 *
-	 * @param entity - The Entity instance this component will be added to.
-	 */
-	public constructor(entity: Entity) {
-		super(entity);
+	/** */
+	public init(options: Partial<ButtonOptions> = {}) {
+		const _options: ButtonOptions = defaults(options, ButtonOptionDefaults);
+		this.textureDown = _options.textureDown;
+		this.textureUp = _options.textureUp;
 
-		this.options = defaults({}, ButtonOptionDefaults);
-
-		this.back = PIXI.Sprite.from(this.options.textureUp);
+		this.back = PIXI.Sprite.from(this.textureUp);
 		this.back.anchor.set(0.5);
 
 		this.container.on("mouseover", this.onPointerOver, this);
@@ -65,11 +59,6 @@ export class Button extends UiElement {
 
 		this.entity.addChild(this.container);
 		this.container.addChild(this.back);
-	}
-
-	/** */
-	public setOptions(config: ButtonOptions) {
-		this.options = defaults(config, ButtonOptionDefaults);
 	}
 
 	/**
@@ -101,7 +90,7 @@ export class Button extends UiElement {
 	 * @param e
 	 */
 	protected onPointerOut(e: PIXI.InteractionEvent) {
-		this.back.texture = this.options.textureUp;
+		this.back.texture = this.textureUp;
 	}
 
 	/**
@@ -109,7 +98,7 @@ export class Button extends UiElement {
 	 * @param e
 	 */
 	protected onPointerOver(e: PIXI.InteractionEvent) {
-		this.back.texture = this.options.textureUp;
+		this.back.texture = this.textureUp;
 	}
 
 	/**
@@ -117,10 +106,9 @@ export class Button extends UiElement {
 	 * @param e
 	 */
 	protected async onPointerUp(e: PIXI.InteractionEvent) {
-		this.back.texture = this.options.textureUp;
+		this.back.texture = this.textureUp;
 
 		if (Tone.context.state === "running") {
-			// TODO: Configuration.
 			this.app.audio.play("blop", { transpose: 24, delay: 0.01 });
 		}
 	}
@@ -130,10 +118,9 @@ export class Button extends UiElement {
 	 * @param e
 	 */
 	protected async onPointerDown(e: PIXI.InteractionEvent) {
-		this.back.texture = this.options.textureDown;
+		this.back.texture = this.textureDown;
 
 		if (Tone.context.state === "running") {
-			// TODO: Configuration.
 			this.app.audio.play("blop", { transpose: 12 });
 		}
 	}

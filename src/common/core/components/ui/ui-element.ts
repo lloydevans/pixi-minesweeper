@@ -1,9 +1,8 @@
 import { Entity } from "../../entity/entity";
 import { Component } from "../component";
 
-/**
- */
-export class UiElement extends Component {
+/** */
+export abstract class UiElement extends Component {
 	protected container: Entity;
 
 	public get focused() {

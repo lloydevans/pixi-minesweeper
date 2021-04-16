@@ -2,8 +2,10 @@ import "core-js";
 
 import "./firebase";
 
-import "pixi.js-legacy";
+import * as PIXI from "pixi.js-legacy";
 import "pixi-spine";
+
+window.PIXI = PIXI;
 
 import "tweenjs/lib/tweenjs";
 import "../libs/tween-group";

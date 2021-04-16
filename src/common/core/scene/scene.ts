@@ -1,18 +1,11 @@
-import { App } from "../app/app";
+import { Component } from "../components/component";
 import { Entity } from "../entity/entity";
 
 /** */
-export class Scene {
-	/** */
-	public root: Entity;
-
-	/** */
-	protected app: App;
-
-	/** */
-	public constructor(app: App) {
-		this.app = app;
-
-		this.root = new Entity(app);
+export class Scene extends Component {
+	public constructor() {
+		super(new Entity());
 	}
+
+	public init(): void {}
 }

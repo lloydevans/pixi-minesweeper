@@ -15,24 +15,21 @@ export class PanelGameOptions extends Entity {
 	private container = new PIXI.Container();
 
 	protected init() {
-		this.buttonPrimary = new Entity(this.app).add(ButtonText);
-		this.buttonPrimary.setOptions({
+		this.buttonPrimary = new Entity(this.app).add(ButtonText, {
 			textureDown: this.app.getFrame("textures", "button-down"),
 			textureUp: this.app.getFrame("textures", "button-up"),
 			tint: hexToNum(ColorSchemes.beachRainbow.red),
 			text: "START",
 		});
 
-		this.buttonSecondary = new Entity(this.app).add(ButtonText);
-		this.buttonSecondary.setOptions({
+		this.buttonSecondary = new Entity(this.app).add(ButtonText, {
 			textureDown: this.app.getFrame("textures", "button-down"),
 			textureUp: this.app.getFrame("textures", "button-up"),
 			tint: hexToNum(ColorSchemes.beachRainbow.purple),
 			text: "LOGOUT",
 		});
 
-		this.widthScroller = new Entity(this.app).add(ButtonScroller);
-		this.widthScroller.setOptions({
+		this.widthScroller = new Entity(this.app).add(ButtonScroller, {
 			arrowTexture: this.app.getFrame("textures", "button-arrow"),
 			text: "Width",
 			default: MS_GAME_CONFIG_DEFAULT.gridWidth,
@@ -40,8 +37,7 @@ export class PanelGameOptions extends Entity {
 			max: MAX_GRID_WIDTH,
 		});
 
-		this.heightScroller = new Entity(this.app).add(ButtonScroller);
-		this.widthScroller.setOptions({
+		this.heightScroller = new Entity(this.app).add(ButtonScroller, {
 			arrowTexture: this.app.getFrame("textures", "button-arrow"),
 			text: "Height",
 			default: MS_GAME_CONFIG_DEFAULT.gridHeight,
@@ -49,8 +45,7 @@ export class PanelGameOptions extends Entity {
 			max: MAX_GRID_HEIGHT,
 		});
 
-		this.minesScroller = new Entity(this.app).add(ButtonScroller);
-		this.widthScroller.setOptions({
+		this.minesScroller = new Entity(this.app).add(ButtonScroller, {
 			arrowTexture: this.app.getFrame("textures", "button-arrow"),
 			text: "Mines",
 			default: MS_GAME_CONFIG_DEFAULT.startMines,

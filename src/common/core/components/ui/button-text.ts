@@ -39,8 +39,8 @@ export class ButtonText extends Button {
 	 *
 	 * @param options
 	 */
-	public init() {
-		this.options = defaults({}, ButtonTextOptionDefaults);
+	public init(options: ButtonTextOptions = { ...ButtonTextOptionDefaults }) {
+		this.options = defaults({}, options, ButtonTextOptionDefaults);
 
 		this.label = new BmText(this.entity.app, this.options);
 		this.label.text = this.options.text || "";
@@ -54,10 +54,5 @@ export class ButtonText extends Button {
 		this.on("pointerup", () => {
 			this.label.position.set(0);
 		});
-	}
-
-	/** */
-	public setOptions(config: ButtonTextOptions) {
-		this.options = defaults(config, ButtonTextOptionDefaults);
 	}
 }

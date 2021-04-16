@@ -36,14 +36,10 @@ function pageLoad() {
 	window.document.body.style.padding = "0px";
 	window.document.body.style.border = "0px";
 
-	app.init();
-
 	// TODO: Loading bar
-	app.loader.onComplete.once(() => {
-		window.document.body.appendChild(app.view);
-	});
+	app.loader.onComplete.once(() => window.document.body.appendChild(app.view));
 
-	firstStart();
+	app.init();
 }
 
 function initCb() {
@@ -110,17 +106,17 @@ async function loadCb() {
 }
 
 export async function showGame(gameId: string) {
-	Object.values(scenes).forEach((el) => el?.root.destroy());
-	scenes.game = new SceneGame(app);
-	app.root.addChild(scenes.game.root);
+	Object.values(scenes).forEach((el) => el?.entity.destroy({ children: true }));
+	scenes.game = new SceneGame();
+	app.root.addChild(scenes.game.entity);
 	await scenes.game.setGameId(gameId);
 	await scenes.game.initGame();
 }
 
 export async function showMenu() {
-	Object.values(scenes).forEach((el) => el?.root.destroy());
-	scenes.menu = new SceneMenu(app);
-	app.root.addChild(scenes.menu.root);
+	Object.values(scenes).forEach((el) => el?.entity.destroy({ children: true }));
+	scenes.menu = new SceneMenu();
+	app.root.addChild(scenes.menu.entity);
 }
 
 export function getCellView(x: number, y: number): MSCell {

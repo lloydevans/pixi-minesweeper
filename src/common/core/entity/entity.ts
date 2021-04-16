@@ -6,7 +6,7 @@ import { TweenOptions } from "../../tweens/tween-props";
 import { App } from "../app/app";
 import { DestroyOptions } from "./destroy-options";
 
-type ComponentCtor<T> = new (entity: Entity) => T;
+type ComponentCtor<T extends Component = Component> = new (entity: Entity, ...params: unknown[]) => T;
 
 /**
  *
@@ -22,54 +22,59 @@ export class Entity extends PIXI.Container {
 
 	/**
 	 *
+	 *
+	 * @param app - Pixi application reference.
+	 */
+	public constructor(app: App = App.shared) {
+		super();
+
+		this.app = app;
+	}
+
+	/**
+	 *
 	 * @param componentCtor
 	 */
 	public get<T extends Component>(componentCtor: ComponentCtor<T>): T {
 		const component = this.components.find((el) => el instanceof componentCtor) as T;
 
 		if (!component) {
-			throw new Error("Can't find component!");
+			throw new Error(`Can't find "${componentCtor.name}" component.`);
 		}
 
 		return component;
 	}
 
-	/** */
-	public add<T extends Component>(componentCtor: ComponentCtor<T>): T {
-		const existingComponent = this.get(componentCtor);
-
-		if (existingComponent) {
-			throw new Error("Component already exists on entity.");
+	/**
+	 *
+	 * @param componentCtor
+	 */
+	public add<T extends Component>(componentCtor: ComponentCtor<T>, ...initParams: Parameters<T["init"]>): T {
+		if (this.has(componentCtor)) {
+			throw new Error(`Component "${componentCtor.name}" already exists on entity.`);
 		}
 
-		let instance;
-
-		try {
-			instance = new componentCtor(this);
-		} catch (err) {
-			throw new Error("Error instantiating component:\n\n" + err);
-		}
+		const instance = new componentCtor(this);
 
 		this.components.push(instance);
 
+		instance.init(...initParams);
+
 		return instance;
+	}
+
+	/**
+	 *
+	 * @param componentCtor
+	 */
+	public has<T extends Component>(componentCtor: ComponentCtor<T>): boolean {
+		return !!this.components.find((el) => el instanceof componentCtor);
 	}
 
 	/**
 	 * Component tween group.
 	 */
 	protected readonly tweenGroup = new TweenGroup(false, 1);
-
-	/**
-	 *
-	 *
-	 * @param app - Pixi application reference.
-	 */
-	public constructor(app: App) {
-		super();
-
-		this.app = app;
-	}
 
 	/**
 	 * Do some extra things on the Container destroy method.
