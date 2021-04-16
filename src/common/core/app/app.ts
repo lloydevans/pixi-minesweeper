@@ -17,63 +17,45 @@ export const MIN_DPR = 0.5;
  */
 export class App extends PIXI.Application {
 	/** */
-	public static current: App;
+	public static shared: App;
 
-	/**
-	 * Root container.
-	 */
+	/** Root container. */
 	public readonly root = new PIXI.Container();
 
-	/**
-	 * App audio manager reference
-	 */
+	/** App audio manager reference */
 	public readonly audio = new ToneAudio();
 
-	/**
-	 * Reference size of the app. If this is not defined, no root scaling is applied.
-	 */
+	/** Reference size of the app. If this is not defined, no root scaling is applied. */
 	public referenceSize?: ReferenceSize;
 
-	/**
-	 * Current app ready state. Modified via setReady,
-	 */
+	/** Current app ready state. Modified via setReady, */
 	public get ready() {
 		return this._ready;
 	}
 	private _ready = false;
 
-	/**
-	 * Renderer pixel ratio. Use resizeRoot to modify.
-	 */
+	/** Renderer pixel ratio. Use resizeRoot to modify. */
 	public get dpr() {
 		return this._dpr;
 	}
 	private _dpr = 1;
 
-	/**
-	 * Renderer virtual width. Use resizeRoot to modify.
-	 */
+	/** Renderer virtual width. Use resizeRoot to modify. */
 	public get width() {
 		return this._width;
 	}
 	private _width = 0;
 
-	/**
-	 * Renderer virtual height. Use resizeRoot to modify.
-	 */
+	/** Renderer virtual height. Use resizeRoot to modify. */
 	public get height() {
 		return this._height;
 	}
 	private _height = 0;
 
-	/**
-	 * Global app tween group.
-	 */
+	/** Global app tween group. */
 	protected readonly tweenGroup = new TweenGroup(false, 1);
 
-	/**
-	 * List of all UI elements currently added to app instance.
-	 */
+	/** List of all UI elements currently added to app instance. */
 	protected readonly uiElements: UiElement[] = [];
 
 	/** */
@@ -86,7 +68,7 @@ export class App extends PIXI.Application {
 	public constructor() {
 		super();
 
-		App.current = this;
+		App.shared = App.shared ?? this;
 	}
 
 	/**
