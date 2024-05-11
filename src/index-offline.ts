@@ -6,11 +6,11 @@
 import "core-js";
 
 // PixiJS lib imports.
-import * as PIXI from "pixi.js-legacy";
+import * as PIXI from "pixi.js";
 import "pixi-spine";
 
 // Put PIXI on window for console debugging.
-window.PIXI = PIXI;
+// window.PIXI = PIXI;
 
 // CreateJS lib imports.
 import "tweenjs/lib/tweenjs";
@@ -22,14 +22,14 @@ import { MSApp } from "./ms-app";
 function start() {
 	const app = new MSApp();
 
-	app.init();
+	// app.init();
 
 	window.document.body.style.background = "black";
 	window.document.body.style.overflow = "hidden";
 	window.document.body.style.margin = "0px";
 	window.document.body.style.padding = "0px";
 	window.document.body.style.border = "0px";
-	window.document.body.appendChild(app.view);
+	// window.document.body.appendChild(app.view);
 }
 
 if (window.document.readyState === "loading") {

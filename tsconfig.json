@@ -6,7 +6,7 @@
 		"node_modules/pixi-spine/dist/pixi-spine.d.ts"
 	],
 	"compilerOptions": {
-		"strict": true,
+		"strict": false,
 		"lib": ["DOM", "ES2019"],
 		"target": "ES5",
 		"module": "ES2015",

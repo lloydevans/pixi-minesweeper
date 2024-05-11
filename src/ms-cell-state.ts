@@ -1,6 +1,3 @@
-/**
- *
- */
 export enum MSCellType {
 	Covered,
 	Flag,
@@ -16,44 +13,26 @@ export enum MSCellType {
 	Adjacent8,
 }
 
-/**
- *
- */
 export interface MSCellState {
-	/**
-	 * X grid position of the cell.
-	 */
+	/** X grid position of the cell. */
 	x: number;
 
-	/**
-	 * Y grid position of the cell.
-	 */
+	/** Y grid position of the cell. */
 	y: number;
 
-	/**
-	 * Number of adjacent mines.
-	 */
+	/** Number of adjacent mines. */
 	adjacent: number;
 
-	/**
-	 * Whether the cell is covered or not.
-	 */
+	/** Whether the cell is covered or not. */
 	covered: boolean;
 
-	/**
-	 * Whether the cell contains a mine or not.
-	 */
+	/** Whether the cell contains a mine or not. */
 	mine: boolean;
 
-	/**
-	 * Whether the cell contains a flag or not.
-	 */
+	/** Whether the cell contains a flag or not. */
 	flag: boolean;
 }
 
-/**
- *
- */
 export const CELL_STATE_DEFAULT: MSCellState = {
 	x: -1,
 	y: -1,

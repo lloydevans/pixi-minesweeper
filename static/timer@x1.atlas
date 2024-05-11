@@ -1,0 +1,8 @@
+timer@x1.png
+size:128,128
+filter:Linear,Linear
+pma:true
+scale:0.33
+timer
+bounds:2,2,67,74
+offsets:9,5,84,84

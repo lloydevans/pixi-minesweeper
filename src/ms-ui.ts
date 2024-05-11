@@ -1,4 +1,4 @@
-import * as PIXI from "pixi.js-legacy";
+import * as PIXI from "pixi.js";
 import { UiButton } from "./common/ui-button";
 import { BmText } from "./common/bm-text";
 import { Spine } from "./common/spine";
@@ -34,7 +34,7 @@ export class MSUi extends Component<MSApp> {
 		this.flagsGraphic.y = -24;
 
 		this.flagsCount = new BmText(this.app, { fontName: "bmfont", fontSize: 38 });
-		this.flagsCount._anchor.set(0, 0.5);
+		(this.flagsCount as any)._anchor.set(0, 0.5);
 		this.flagsCount.x = 38;
 		this.flagsCount.y = -24;
 
@@ -46,7 +46,7 @@ export class MSUi extends Component<MSApp> {
 		this.timeGraphic.y = -22;
 
 		this.timeCount = new BmText(this.app, { fontName: "bmfont", fontSize: 38 });
-		this.timeCount._anchor.set(0, 0.5);
+		(this.timeCount as any)._anchor.set(0, 0.5);
 		this.timeCount.x = 38;
 		this.timeCount.y = -24;
 
@@ -60,10 +60,10 @@ export class MSUi extends Component<MSApp> {
 			textureDown: this.app.getFrame("textures", "button-restart"),
 		});
 
-		this.timeContainer.addChild(this.timeGraphic);
+		// this.timeContainer.addChild(this.timeGraphic);
 		this.timeContainer.addChild(this.timeCount);
 
-		this.flagsContainer.addChild(this.flagsGraphic);
+		// this.flagsContainer.addChild(this.flagsGraphic);
 		this.flagsContainer.addChild(this.flagsCount);
 
 		this.addChild(this.timeContainer);

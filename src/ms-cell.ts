@@ -1,5 +1,5 @@
 import clamp from "lodash-es/clamp";
-import * as PIXI from "pixi.js-legacy";
+import * as PIXI from "pixi.js";
 import { BmText } from "./common/bm-text";
 import { hexToNum } from "./common/color";
 import { Component } from "./common/component";
@@ -28,9 +28,6 @@ enum AnimTrack {
 	EdgeD,
 }
 
-/**
- *
- */
 export class MSCell extends Component<MSApp> {
 	public get ix(): number {
 		return this.viewState.x;
@@ -45,23 +42,19 @@ export class MSCell extends Component<MSApp> {
 	private adjacentText: BmText;
 	private pointerDown = false;
 
-	/**
-	 *
-	 * @param app - App reference.
-	 */
 	constructor(app: MSApp) {
 		super(app);
 
 		this.viewState = { ...CELL_STATE_DEFAULT };
 
-		this.anim = new Spine(this.app.getSpine("grid-square"));
+		this.anim = new Spine(this.app.getSpine("grid-square@1x"));
 		this.anim.stateData.defaultMix = 0;
 
 		this.adjacentText = new BmText(this.app, { fontName: "bmfont", fontSize: 38 });
-		this.adjacentText._anchor.set(0.5);
+		(this.adjacentText as any)._anchor.set(0.5);
 
 		this.addChild(this.adjacentText);
-		this.addChild(this.anim);
+		// this.addChild(this.anim);
 
 		this.hitArea = new PIXI.Rectangle(-REF_WIDTH / 2, -REF_HEIGHT / 2, REF_WIDTH, REF_HEIGHT);
 
@@ -79,10 +72,6 @@ export class MSCell extends Component<MSApp> {
 		});
 	}
 
-	/**
-	 *
-	 * @param state
-	 */
 	public setState(state: MSCellState) {
 		this.state = state;
 		this.reset();
@@ -92,9 +81,6 @@ export class MSCell extends Component<MSApp> {
 		this.setInteractiveEnabled(true);
 	}
 
-	/**
-	 *
-	 */
 	public reset() {
 		// TODO: Clear tracks instead of hidden states?
 		const coverType = (this.state.x + this.state.y) % 2 === 0 ? "even" : "odd";
@@ -110,34 +96,21 @@ export class MSCell extends Component<MSApp> {
 		this.anim.state.setAnimation(AnimTrack.EdgeD, "edge-d-hidden", false);
 	}
 
-	/**
-	 *
-	 * @param edge
-	 */
 	public setEdgeVisible(edge: "l" | "r" | "u" | "d", visible: boolean) {
 		const stateName = "edge-" + edge + "-" + (visible ? "visible" : "hidden");
 		const animTrackKey = ("Edge" + edge.toUpperCase()) as keyof typeof AnimTrack;
 		this.anim.state.setAnimation(AnimTrack[animTrackKey], stateName, false);
 	}
 
-	/**
-	 * Check if the cell needs its viewstate updated.
-	 */
 	public needsUpdate(): boolean {
 		return !shallowObjectEquals(this.state, this.viewState);
 	}
 
-	/**
-	 *
-	 */
 	private updateGridPosition() {
 		this.x = this.ix * REF_WIDTH + REF_WIDTH / 2;
 		this.y = this.iy * REF_HEIGHT + REF_HEIGHT / 2;
 	}
 
-	/**
-	 *
-	 */
 	public updateEdgeSprites() {
 		this.anim.setSkinByName(this.viewState.covered ? "front" : "back");
 
@@ -175,10 +148,6 @@ export class MSCell extends Component<MSApp> {
 		}
 	}
 
-	/**
-	 *
-	 * @param state
-	 */
 	public updateViewState() {
 		const state: MSCellState = this.state;
 
@@ -219,10 +188,6 @@ export class MSCell extends Component<MSApp> {
 		this.pointerDown = false;
 	}
 
-	/**
-	 *
-	 * @param total
-	 */
 	private setText(total: number) {
 		total = Math.floor(clamp(total, 0, 8));
 		const key = total.toString() as NumberKey;
@@ -231,10 +196,6 @@ export class MSCell extends Component<MSApp> {
 		this.adjacentText.text = key;
 	}
 
-	/**
-	 *
-	 * @param enabled
-	 */
 	public setCoveredEnabled(enabled = true) {
 		this.viewState.covered = enabled;
 		if (enabled) {
@@ -249,22 +210,14 @@ export class MSCell extends Component<MSApp> {
 		this.updateEdgeSprites();
 	}
 
-	/**
-	 *
-	 * @param enabled
-	 */
 	public setInteractiveEnabled(enabled = true) {
 		if (!enabled) {
 			this.animateHoverEnd();
 		}
-		this.interactive = enabled;
-		this.buttonMode = enabled;
+		this.eventMode = "static";
 		this.accessible = enabled;
 	}
 
-	/**
-	 *
-	 */
 	public setMineEnabled(enabled = true) {
 		this.viewState.mine = enabled;
 
@@ -275,9 +228,6 @@ export class MSCell extends Component<MSApp> {
 		}
 	}
 
-	/**
-	 *
-	 */
 	public setFlagEnabled(enabled = true) {
 		this.viewState.flag = enabled;
 
@@ -288,9 +238,6 @@ export class MSCell extends Component<MSApp> {
 		}
 	}
 
-	/**
-	 *
-	 */
 	public animateResult() {
 		if (this.state.mine && this.state.flag) {
 			this.animateCorrect();
@@ -308,91 +255,58 @@ export class MSCell extends Component<MSApp> {
 		}
 	}
 
-	/**
-	 *
-	 */
 	public animatePress() {
 		this.anim.state.setAnimation(AnimTrack.Hover, "hover-press", false);
 	}
 
-	/**
-	 *
-	 */
 	public animateHoverStart() {
 		this.anim.state.setAnimation(AnimTrack.Hover, "hover-over", false);
 	}
 
-	/**
-	 *
-	 */
 	public animateHoverEnd() {
 		this.anim.state.setAnimation(AnimTrack.Hover, "hover-out", false);
 	}
 
-	/**
-	 *
-	 */
 	public animatePlaceFlagStart() {
 		this.anim.state.setAnimation(AnimTrack.Flag, "flag-place-start", false);
 	}
 
-	/**
-	 *
-	 */
 	public animateDigStart() {
 		this.anim.state.setAnimation(AnimTrack.Dig, "dig-start", false);
 	}
 
-	/**
-	 *
-	 */
 	public animateDigEnd() {
 		this.anim.state.setAnimation(AnimTrack.Dig, "dig-end", false);
 	}
 
-	/**
-	 *
-	 */
 	public animateDigCancel() {
-		const anim = this.anim.state.getCurrent(AnimTrack.Dig);
-		if (anim.animation.name === "dig-start") {
-			this.anim.state.setAnimation(AnimTrack.Dig, "dig-cancel", false);
-			this.app.audio.play("blop", { transpose: 24 });
-			this.app.audio.play("drip", { delay: 0.1 });
-			this.animateHoverEnd();
-		}
+		// const anim = this.anim.state.getCurrent(AnimTrack.Dig);
+		// if (anim.animation.name === "dig-start") {
+		// 	this.anim.state.setAnimation(AnimTrack.Dig, "dig-cancel", false);
+		// 	this.app.audio.play("blop", { transpose: 24 });
+		// 	this.app.audio.play("drip", { delay: 0.1 });
+		// 	this.animateHoverEnd();
+		// }
 	}
 
-	/**
-	 *
-	 */
 	public animatePlaceFlagCancel() {
-		const anim = this.anim.state.getCurrent(AnimTrack.Flag);
-		if (anim.animation.name === "flag-place-start") {
-			this.anim.state.setAnimation(AnimTrack.Flag, "flag-destroy", false);
-			this.app.audio.play("blop", { transpose: 24 });
-			this.app.audio.play("drip", { delay: 0.1 });
-			this.animateHoverEnd();
-		}
+		// const anim = this.anim.state.getCurrent(AnimTrack.Flag);
+		// if (anim.animation.name === "flag-place-start") {
+		// 	this.anim.state.setAnimation(AnimTrack.Flag, "flag-destroy", false);
+		// 	this.app.audio.play("blop", { transpose: 24 });
+		// 	this.app.audio.play("drip", { delay: 0.1 });
+		// 	this.animateHoverEnd();
+		// }
 	}
 
-	/**
-	 *
-	 */
 	public animateCorrect() {
 		this.anim.state.setAnimation(AnimTrack.Feedback, "feedback-correct", false);
 	}
 
-	/**
-	 *
-	 */
 	public animateIncorrect() {
 		this.anim.state.setAnimation(AnimTrack.Feedback, "feedback-incorrect", false);
 	}
 
-	/**
-	 *
-	 */
 	public explodeMine() {
 		this.anim.state.setAnimation(AnimTrack.Mine, "mine-explode", false);
 	}

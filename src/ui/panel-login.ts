@@ -1,3 +1,4 @@
+import * as PIXI from "pixi.js";
 import { BmText } from "../common/bm-text";
 import { ColorSchemes, hexToNum } from "../common/color";
 import { Component } from "../common/component";
@@ -19,8 +20,8 @@ export class PanelLogin extends Component<MSApp> {
 
 	protected init() {
 		this.error = new BmText(this.app, { fontName: "bmfont", fontSize: 16 });
-		this.error.maxWidth = 256;
-		this.error._anchor.set(0.5);
+		// this.error.maxWidth = 256;
+		(this.error as any)._anchor.set(0.5);
 		this.error.tint = hexToNum("#aa3333");
 
 		this.inputUsername = new UiTextInputDom(this.app, {
@@ -111,9 +112,12 @@ export class PanelLogin extends Component<MSApp> {
 	private async buttonPrimaryCb() {
 		this.app.setAllUiElementsActive(false);
 
-		let email = this.inputEmail.value;
-		let password = this.inputPassword.value;
-		let username = this.inputUsername.value;
+		// let email = this.inputEmail.value;
+		// let password = this.inputPassword.value;
+		// let username = this.inputUsername.value;
+		let email = "email";
+		let password = "password";
+		let username = "username";
 
 		switch (this.menuState) {
 			case "create":

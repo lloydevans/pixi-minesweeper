@@ -8,7 +8,7 @@ import "core-js";
 import "./firebase";
 
 // Pixi imports
-import "pixi.js-legacy";
+import "pixi.js";
 import "pixi-spine";
 
 // CreateJS lib imports.
@@ -18,8 +18,13 @@ createjs.Ticker.timingMode = createjs.Ticker.RAF;
 createjs.Ticker.maxDelta = 100;
 
 import { MSApp } from "./ms-app";
+import { Assets } from "pixi.js";
+export * from "@pixi-spine/loader-uni";
 
-function start() {
+import * as PixiSpine from "pixi-spine";
+(window as any).PixiSpine = PixiSpine;
+
+async function start() {
 	window.document.body.style.background = "black";
 	window.document.body.style.overflow = "hidden";
 	window.document.body.style.margin = "0px";
@@ -27,13 +32,15 @@ function start() {
 	window.document.body.style.border = "0px";
 
 	const app = new MSApp();
+	// await app.init({});
+	// (window as any).app = app;
 
-	app.init();
+	window.document.body.appendChild(app.view as unknown as Element);
 
-	// TODO: Loading bar
-	app.loader.onComplete.once(() => {
-		window.document.body.appendChild(app.view);
-	});
+	app.gameInit();
+
+
+	(window as any).Assets = Assets;
 }
 
 if (window.document.readyState === "loading") {

@@ -1,11 +1,11 @@
-import * as PIXI from "pixi.js-legacy";
+import * as PIXI from "pixi.js";
 import { UiButton } from "./common/ui-button";
 import { Component } from "./common/component";
 import { MSApp } from "./ms-app";
 import { MSCellState } from "./ms-cell-state";
 
 /**
- * UI overlay for touch and accesible controls.
+ * UI overlay for touch and accessible controls.
  */
 export class MSTouchUi extends Component<MSApp> {
 	public targetCell?: MSCellState;

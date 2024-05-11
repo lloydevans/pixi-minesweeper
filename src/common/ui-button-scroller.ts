@@ -1,5 +1,5 @@
 import clamp from "lodash-es/clamp";
-import { Container, Texture } from "pixi.js-legacy";
+import { Container, Texture } from "pixi.js";
 import { AppBase } from "./app-base";
 import { UiButton } from "./ui-button";
 import { BmText } from "./bm-text";
@@ -50,7 +50,7 @@ export class UiButtonScroller extends Container {
 	private number: BmText;
 	private buttonLeft: UiButton;
 	private buttonRight: UiButton;
-	private label: BmText;
+	private _label: BmText;
 
 	constructor(app: AppBase, options: ButtonScrollerOptions) {
 		super();
@@ -70,13 +70,13 @@ export class UiButtonScroller extends Container {
 		this.buttonRight.x = 64;
 
 		this.number = new BmText(this.app, { text: this.default.toString(), fontName: "bmfont", fontSize: 38 });
-		this.number._anchor.set(0.5);
+		(this.number as any)._anchor.set(0.5);
 
-		this.label = new BmText(this.app, { text: options.label, fontName: "bmfont", fontSize: 38 });
-		this.label._anchor.set(1, 0.5);
-		this.label.position.set(-106, 0);
+		this._label = new BmText(this.app, { text: options.label, fontName: "bmfont", fontSize: 38 });
+		(this._label as any)._anchor.set(1, 0.5);
+		this._label.position.set(-106, 0);
 
-		this.addChild(this.label, this.number, this.buttonLeft, this.buttonRight);
+		this.addChild(this._label, this.number, this.buttonLeft, this.buttonRight);
 
 		this.buttonLeft.on("pointertap", () => this.set(this.current - 1));
 		this.buttonRight.on("pointertap", () => this.set(this.current + 1));
@@ -87,9 +87,9 @@ export class UiButtonScroller extends Container {
 	set(value: number) {
 		this._current = Math.floor(clamp(value, this.min, this.max));
 		this.number.text = this.current.toString();
-		this.buttonLeft.interactive = this.current !== this.min;
+		this.buttonLeft.eventMode = this.current !== this.max ? "static" : "none";
 		this.buttonLeft.alpha = this.current !== this.min ? 1 : 0.5;
-		this.buttonRight.interactive = this.current !== this.max;
+		this.buttonRight.eventMode = this.current !== this.max ? "static" : "none";
 		this.buttonRight.alpha = this.current !== this.max ? 1 : 0.5;
 
 		this.emit("set", this.current);

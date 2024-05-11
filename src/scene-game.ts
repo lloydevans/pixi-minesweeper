@@ -1,9 +1,9 @@
 import clamp from "lodash-es/clamp";
-import * as PIXI from "pixi.js-legacy";
+import * as PIXI from "pixi.js";
 import { hexToNum, ColorSchemes } from "./common/color";
 import { Ease } from "./common/ease";
 import { Scene } from "./common/scene";
-import { auth, db, functions } from "./firebase";
+// import { auth, db, functions } from "./firebase";
 import { MSApp } from "./ms-app";
 import { MSCell, REF_HEIGHT, REF_WIDTH } from "./ms-cell";
 import { CELL_STATE_DEFAULT, MSCellState } from "./ms-cell-state";
@@ -11,6 +11,8 @@ import { MSGrid } from "./ms-grid";
 import { MSStateClient } from "./ms-state";
 import { MSTouchUi } from "./ms-touch-ui";
 import { MSUi } from "./ms-ui";
+import { httpsCallable } from "firebase/functions";
+import { doc, getDoc, onSnapshot } from "firebase/firestore";
 
 export class SceneGame extends Scene<MSApp> {
 	public get currentTime() {
@@ -37,9 +39,6 @@ export class SceneGame extends Scene<MSApp> {
 		this.container.visible = false;
 	}
 
-	/**
-	 *
-	 */
 	protected async init() {
 		// @ts-ignore
 		window.game = this;
@@ -63,7 +62,7 @@ export class SceneGame extends Scene<MSApp> {
 			this.app.setAllUiElementsActive(false);
 
 			try {
-				const gameId = (await functions.httpsCallable("newGame")(this.app.state.config)).data;
+				const gameId: string = (await httpsCallable(functions, "newGame")(this.app.state.config)).data as string;
 
 				if (!gameId) {
 					throw new Error("New game request failed to return game ID");
@@ -85,7 +84,7 @@ export class SceneGame extends Scene<MSApp> {
 			this.app.setAllUiElementsActive(false);
 
 			try {
-				functions.httpsCallable("quitGame")(this.gameId);
+				httpsCallable(functions, "quitGame")(this.gameId);
 				this.app.showMenu();
 			} catch (err) {
 				console.log(err);
@@ -96,10 +95,6 @@ export class SceneGame extends Scene<MSApp> {
 		});
 	}
 
-	/**
-	 *
-	 * @param gameId
-	 */
 	public async setGameId(gameId: string) {
 		this.gameId = gameId;
 
@@ -110,25 +105,17 @@ export class SceneGame extends Scene<MSApp> {
 		}
 
 		this.gameSnapshotUnsubscribe && this.gameSnapshotUnsubscribe();
-		this.gameSnapshotUnsubscribe = db
-			.collection("accounts")
-			.doc(auth.currentUser!.uid)
-			.collection("games_client")
-			.doc(this.gameId)
-			.onSnapshot((doc) => {
-				const data = doc.data() as MSStateClient;
-				this.updateSnapshot(data);
-			});
+		const docRef = doc(db, "accounts", auth.currentUser!.uid, "games_client", this.gameId!);
+		onSnapshot(docRef, (doc) => {
+			const data = doc.data() as MSStateClient;
+			this.updateSnapshot(data);
+		});
 
 		this.updateSnapshot(gameData);
 
 		this.resize(this.app.width, this.app.height);
 	}
 
-	/**
-	 *
-	 * @param data
-	 */
 	private updateSnapshot(data: MSStateClient) {
 		this.gameData = data;
 
@@ -138,11 +125,6 @@ export class SceneGame extends Scene<MSApp> {
 		}
 	}
 
-	/**
-	 * Start a new game with given config.
-	 *
-	 * @param config
-	 */
 	public async initGame() {
 		// analytics.logEvent("new_game", this.app.state.config);
 		this.grid.setInteractionEnabled(false);
@@ -170,28 +152,16 @@ export class SceneGame extends Scene<MSApp> {
 		}
 	}
 
-	/**
-	 *
-	 */
 	private waitForBoardStateUpdate(): Promise<MSStateClient> {
 		return new Promise((resolve) => this.once("snapshot", resolve));
 	}
 
-	/**
-	 *
-	 * @param dt
-	 */
 	protected update(dt: number) {
 		if (this.timeActive) {
 			this.time += this.app.ticker.elapsedMS / 1000;
 		}
 	}
 
-	/**
-	 *
-	 * @param width
-	 * @param height
-	 */
 	protected resize(width: number, height: number) {
 		const marginX = 64;
 		const marginY = 96;
@@ -232,9 +202,6 @@ export class SceneGame extends Scene<MSApp> {
 		}
 	}
 
-	/**
-	 *
-	 */
 	protected cleanup() {
 		this.gameSnapshotUnsubscribe && this.gameSnapshotUnsubscribe();
 		// Prevent static cell view instances being recursivley destroyed.
@@ -244,9 +211,6 @@ export class SceneGame extends Scene<MSApp> {
 		});
 	}
 
-	/**
-	 *
-	 */
 	private async initGrid() {
 		this.grid.removeChildren().forEach((el) => {
 			el.off("pointertap", this.onPointerTap, this);
@@ -271,11 +235,7 @@ export class SceneGame extends Scene<MSApp> {
 		}
 	}
 
-	/**
-	 *
-	 * @param e
-	 */
-	private onPointerTap(e: PIXI.InteractionEvent) {
+	private onPointerTap(e: any) {
 		const msCell = e.currentTarget as MSCell;
 
 		const cellState = this.app.state.cellAt(msCell.ix, msCell.iy);
@@ -315,11 +275,8 @@ export class SceneGame extends Scene<MSApp> {
 		}
 	}
 
-	/**
-	 *
-	 * @param e
-	 */
-	private onPointerDown(e: PIXI.InteractionEvent) {
+	private onPointerDown(e: any) {
+		console.log(e);
 		const msCell = e.currentTarget as MSCell;
 
 		const cellState = this.app.state.cellAt(msCell.ix, msCell.iy);
@@ -345,9 +302,6 @@ export class SceneGame extends Scene<MSApp> {
 		}
 	}
 
-	/**
-	 *
-	 */
 	public screenShake(amp = 8, duration = 0.75, hz = 16) {
 		duration = clamp(duration, 0.1, 8);
 		amp = clamp(amp, 0, 16) * 0.75;
@@ -379,30 +333,18 @@ export class SceneGame extends Scene<MSApp> {
 		});
 	}
 
-	/**
-	 *
-	 */
 	private setMove(x: number, y: number, flag = false) {
 		// TODO: Offline mode
-		return functions.httpsCallable("newMove")({ x, y, flag });
+		return httpsCallable(functions, "newMove")({ x, y, flag });
 	}
 
-	/**
-	 *
-	 */
 	private async getGameData(): Promise<MSStateClient> {
 		let gameData;
 
 		try {
 			gameData = this.app.persistentRequest(async () => {
-				return (
-					await db //
-						.collection("accounts")
-						.doc(auth.currentUser!.uid)
-						.collection("games_client")
-						.doc(this.gameId)
-						.get()
-				).data() as MSStateClient;
+				const docRef = doc(db, "accounts", auth.currentUser!.uid, "games_client", this.gameId!);
+				return (await getDoc(docRef)).data() as MSStateClient;
 			});
 		} catch (err) {
 			throw new Error("Failed to retreive game data.");
@@ -411,10 +353,6 @@ export class SceneGame extends Scene<MSApp> {
 		return gameData;
 	}
 
-	/**
-	 *
-	 * @param cellState
-	 */
 	public async rightClick(cellState: MSCellState) {
 		this.grid.setInteractionEnabled(false);
 
@@ -432,7 +370,7 @@ export class SceneGame extends Scene<MSApp> {
 			this.setMove(x, y, true);
 			await this.waitForBoardStateUpdate();
 		} catch (error) {
-			console.log(error.code, error.message);
+			// console.log(error.code, error.message);
 		}
 
 		this.app.log("Board updated");
@@ -449,9 +387,6 @@ export class SceneGame extends Scene<MSApp> {
 		this.grid.setInteractionEnabled(true);
 	}
 
-	/**
-	 *
-	 */
 	public async leftClick(cellState: MSCellState) {
 		this.grid.setInteractionEnabled(false);
 
@@ -470,7 +405,7 @@ export class SceneGame extends Scene<MSApp> {
 			await this.waitForBoardStateUpdate();
 			this.app.log("Board updated");
 		} catch (error) {
-			console.log(error.code, error.message);
+			// console.log(error.code, error.message);
 			throw new Error("Move request failed.");
 		}
 
@@ -531,9 +466,6 @@ export class SceneGame extends Scene<MSApp> {
 		}
 	}
 
-	/**
-	 * Animate win.
-	 */
 	private async animateWin() {
 		// analytics.logEvent("win_game", this.app.state.config);
 
@@ -570,9 +502,6 @@ export class SceneGame extends Scene<MSApp> {
 		}
 	}
 
-	/**
-	 * Animate loss.
-	 */
 	private async animateLose(x: number, y: number) {
 		// analytics.logEvent("lose_game", this.app.state.config);
 
@@ -615,9 +544,6 @@ export class SceneGame extends Scene<MSApp> {
 		}
 	}
 
-	/**
-	 * End current game.
-	 */
 	private endGame() {
 		this.timeActive = false;
 		this.grid.setInteractionEnabled(false);

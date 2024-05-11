@@ -1,0 +1,7 @@
+timer@x3.png
+size:256,256
+filter:Linear,Linear
+pma:true
+timer
+bounds:2,2,201,222
+offsets:28,17,256,256

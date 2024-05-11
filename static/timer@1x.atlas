@@ -1,13 +1,7 @@
-
 timer@1x.png
-size: 128,128
-format: RGBA8888
-filter: Linear,Linear
-repeat: none
+size:128,128
+filter:Linear,Linear
+pma:true
+scale:0.25
 timer
-  rotate: false
-  xy: 2, 2
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: -1
+bounds:2,2,64,64

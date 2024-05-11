@@ -1,4 +1,4 @@
-import * as PIXI from "pixi.js-legacy";
+import * as PIXI from "pixi.js";
 import { AppBase } from "./app-base";
 import { TweenGroup } from "./tween-group";
 import { TweenOptions } from "./tween-props";
@@ -12,28 +12,18 @@ export type ComponentDestroyOptions = {
 };
 
 export class Component<T extends AppBase = AppBase> extends PIXI.Container {
-	/**
-	 * Pixi application reference.
-	 */
+	/** Pixi application reference. */
 	public app: T;
 
-	/**
-	 * Reference to audio manager instance.
-	 */
+	/** Reference to audio manager instance. */
 	public get audio() {
 		return this.app.audio;
 	}
 
-	/**
-	 * Component tween group.
-	 */
+	/** Component tween group. */
 	protected readonly tweenGroup = new TweenGroup(false, 1);
 
-	/**
-	 * Core app component class helps manage linkages to core systems.
-	 *
-	 * @param app - Pixi application reference.
-	 */
+	/** Core app component class helps manage linkages to core systems. */
 	constructor(app: T) {
 		super();
 
@@ -48,9 +38,7 @@ export class Component<T extends AppBase = AppBase> extends PIXI.Container {
 		}
 	}
 
-	/**
-	 * Do stuff once ready.
-	 */
+	/** Do stuff once ready. */
 	private ready() {
 		// Call init function if it exists.
 		this.init && this.init();
@@ -79,24 +67,15 @@ export class Component<T extends AppBase = AppBase> extends PIXI.Container {
 		super.destroy(options);
 	}
 
-	/**
-	 *
-	 */
 	protected tween<T>(target: T, options?: TweenOptions): Tween<T> {
 		let tween = this.tweenGroup.get(target, options);
 		return tween;
 	}
 
-	/**
-	 *
-	 */
 	protected delay(time: number) {
 		return new Promise((resolve) => this.tween(this).wait(time).call(resolve));
 	}
 
-	/**
-	 *
-	 */
 	protected defer() {
 		return new Promise((resolve) => this.app.ticker.addOnce(resolve));
 	}

@@ -7,9 +7,6 @@ export const MAX_GRID_WIDTH = 24;
 export const MAX_GRID_HEIGHT = 24;
 export const MIN_EMPTY = 2;
 
-/**
- *
- */
 export enum GameResolution {
 	Incomplete,
 	Quit,
@@ -298,8 +295,6 @@ export class MSState {
 		}
 	}
 
-	/**
-	 */
 	public cellToType(cell: MSCellState): MSCellType {
 		let type = MSCellType.Empty;
 
@@ -316,8 +311,6 @@ export class MSState {
 		return type;
 	}
 
-	/**
-	 */
 	public cellFromType(type: MSCellType, target: MSCellState) {
 		target.adjacent = 0;
 		target.covered = false;

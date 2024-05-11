@@ -29,8 +29,8 @@ export class UiElement<T extends AppBase = AppBase> extends Component<T> {
 				this.alpha = 0.5;
 			}
 			this.emit("active", this._active);
-			this.interactive = this._active;
-			this.buttonMode = this._active;
+			this.eventMode = this._active ? "static" : "none";
+			// this.buttonMode = this._active;
 		}
 	}
 

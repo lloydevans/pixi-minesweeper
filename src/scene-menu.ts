@@ -1,3 +1,4 @@
+import { createUserWithEmailAndPassword, signInAnonymously, signInWithEmailAndPassword } from "firebase/auth";
 import { BmText } from "./common/bm-text";
 import { Component } from "./common/component";
 import { auth, functions } from "./firebase";
@@ -5,10 +6,8 @@ import { MSApp } from "./ms-app";
 import { MSGameConfig } from "./ms-config";
 import { PanelGameOptions } from "./ui/panel-game-options";
 import { PanelLogin } from "./ui/panel-login";
+import { httpsCallable } from "firebase/functions";
 
-/**
- *
- */
 export class SceneMenu extends Component<MSApp> {
 	title!: BmText;
 	panelLogin?: PanelLogin;
@@ -21,7 +20,7 @@ export class SceneMenu extends Component<MSApp> {
 			fontSize: 72,
 		});
 		this.title.y = -190;
-		this.title._anchor.set(0.5);
+		(this.title as any)._anchor.set(0.5);
 
 		this.addChild(this.title);
 
@@ -43,11 +42,11 @@ export class SceneMenu extends Component<MSApp> {
 			this.panelLogin?.clearError();
 
 			try {
-				const result = await auth.createUserWithEmailAndPassword(email, password);
+				const result = await createUserWithEmailAndPassword(auth, email, password);
 				// await result!.user!.updateProfile({ displayName: username });
 				this.showGameOptions();
 			} catch (err) {
-				this.panelLogin?.showError(err.message);
+				this.panelLogin?.showError((err as any)?.message || err);
 			}
 
 			this.app.setAllUiElementsActive(true);
@@ -59,10 +58,10 @@ export class SceneMenu extends Component<MSApp> {
 			this.panelLogin?.clearError();
 
 			try {
-				await auth.signInWithEmailAndPassword(email, password);
+				await signInWithEmailAndPassword(auth, email, password);
 				this.showGameOptions();
 			} catch (err) {
-				this.panelLogin?.showError(err.message);
+				this.panelLogin?.showError((err as any)?.message || err);
 			}
 
 			this.app.setAllUiElementsActive(true);
@@ -74,10 +73,10 @@ export class SceneMenu extends Component<MSApp> {
 			this.panelLogin?.clearError();
 
 			try {
-				await auth.signInAnonymously();
+				await signInAnonymously(auth);
 				this.showGameOptions();
 			} catch (err) {
-				this.panelLogin?.showError(err.message);
+				this.panelLogin?.showError((err as any)?.message || err);
 			}
 
 			this.app.setAllUiElementsActive(true);
@@ -94,7 +93,7 @@ export class SceneMenu extends Component<MSApp> {
 			this.app.setAllUiElementsActive(false);
 
 			try {
-				const gameId = (await functions.httpsCallable("newGame")(config))?.data;
+				const gameId: string = (await httpsCallable(functions, "newGame")(config))?.data as string;
 				this.app.showGame(gameId);
 			} catch (err) {
 				console.log(err);

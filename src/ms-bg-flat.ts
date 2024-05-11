@@ -1,12 +1,10 @@
-import * as PIXI from "pixi.js-legacy";
+import * as PIXI from "pixi.js";
 import { ColorSchemes, hexToNum, hexToRgba, numToRgba, RgbaObject, rgbToNum } from "./common/color";
 import { Component } from "./common/component";
 import { Ease } from "./common/ease";
 import { Tween } from "./common/tween";
 import { MSApp } from "./ms-app";
 
-/**
- */
 export class MSBgFlat extends Component<MSApp> {
 	public offset = new PIXI.Point();
 	private speed: number = 0.1;
@@ -37,7 +35,7 @@ export class MSBgFlat extends Component<MSApp> {
 	public animateColor(hex: string, ms = 333, ease = Ease.sineInOut) {
 		Tween.removeTweens(this.rgba);
 
-		Object.assign(this.rgba, numToRgba(this.sprite.tint));
+		Object.assign(this.rgba, numToRgba(this.sprite.tint as number));
 
 		const tween = this.tween(this.rgba).to(hexToRgba(hex), ms, ease);
 

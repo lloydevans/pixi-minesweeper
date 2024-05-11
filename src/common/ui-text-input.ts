@@ -1,6 +1,6 @@
 import clamp from "lodash-es/clamp";
 import defaults from "lodash-es/defaults";
-import * as PIXI from "pixi.js-legacy";
+import * as PIXI from "pixi.js";
 import { MSApp } from "../ms-app";
 import { hexToNum } from "./color";
 import { UiElement } from "./ui-element";
@@ -145,7 +145,7 @@ export class UiTextInput extends UiElement<AppBase> {
 				this.text.x + cursorPx,
 				-(this.options.height - 8) / 2,
 				selectionWidth,
-				this.options.height - 8
+				this.options.height - 8,
 			);
 			this.textSelection.endFill();
 			this.textSelection.tint = hexToNum(this.options.backColor);
@@ -155,8 +155,7 @@ export class UiTextInput extends UiElement<AppBase> {
 	protected init() {
 		this.setSize(this.options.width, this.options.height);
 
-		this.interactive = true;
-		this.buttonMode = true;
+		this.eventMode = "static";
 
 		this.textCursor.visible = false;
 		this.textContainer.mask = this.textMask;

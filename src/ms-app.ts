@@ -1,21 +1,19 @@
 import clone from "lodash-es/clone";
 import defaults from "lodash-es/defaults";
-import * as PIXI from "pixi.js-legacy";
+import * as PIXI from "pixi.js";
 import { AppBase } from "./common/app-base";
 import { ColorSchemes } from "./common/color";
 import { ToneAudioConfig } from "./common/tone-audio";
 import { preventContextMenu } from "./common/utils";
-import { auth, db, setPersistence } from "./firebase";
+// import { auth, db, setPersistence } from "./firebase";
 import { MSBgFlat } from "./ms-bg-flat";
 import { MSCell } from "./ms-cell";
 import { MSStyleConfig, MS_STYLE_DEFAULT, UserData } from "./ms-config";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MSState } from "./ms-state";
 import { SceneGame } from "./scene-game";
 import { SceneMenu } from "./scene-menu";
+import { doc, getDoc } from "firebase/firestore";
 
-/**
- * Core App class.
- */
 export class MSApp extends AppBase {
 	public background?: MSBgFlat;
 	public container = new PIXI.Container();
@@ -27,11 +25,8 @@ export class MSApp extends AppBase {
 		menu?: SceneMenu;
 	} = {};
 
-	/**
-	 *
-	 */
 	constructor() {
-		super({ forceCanvas: false });
+		super();
 
 		this.referenceSize = {
 			width: 1280,
@@ -49,53 +44,49 @@ export class MSApp extends AppBase {
 		this.events.on("update", this.updateCb, this);
 	}
 
-	/**
-	 * Init callback.
-	 */
 	private async initCb() {
-		this.addSpine("grid-square");
-		this.addSpine("timer");
+		this.addSpine("grid-square@1x");
+		this.addSpine("timer@1x");
 		this.addAtlas("textures");
 		this.addAtlas("tiles");
 		this.addAtlas("bg", 1);
 		this.addBitmapFont("bmfont");
 		this.addJson("config", "config.json");
 		this.addJson("audio", "audio.json");
-		this.loader.load();
+		// this.loader.load();
+		// this.loader.onComplete.once(this.loadCb, this);
+		await new Promise((r) => setTimeout(r, 5000));
 
-		this.loader.onComplete.once(this.loadCb, this);
+		this.loadCb();
 	}
 
-	/**
-	 * Load callback.
-	 */
 	private async loadCb() {
 		this.audio.init(this.getJson("audio") as ToneAudioConfig);
 
 		this.style = this.parseConfig(this.getJson("config") as MSStyleConfig);
 
-		const tilesAtlas = this.getAtlas("tiles");
-		if (tilesAtlas.spritesheet) {
-			tilesAtlas.spritesheet.baseTexture.mipmap = PIXI.MIPMAP_MODES.OFF;
-			tilesAtlas.spritesheet.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
-			tilesAtlas.spritesheet.baseTexture.update();
-		}
+		// const tilesAtlas = this.getAtlas("tiles");
+		// if (tilesAtlas.spritesheet) {
+		// tilesAtlas.spritesheet.baseTexture.mipmap = PIXI.MIPMAP_MODES.OFF;
+		// tilesAtlas.spritesheet.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+		// tilesAtlas.spritesheet.baseTexture.update();
+		// }
 
-		const bgAtlas = this.getAtlas("bg");
-		if (bgAtlas.spritesheet) {
-			bgAtlas.spritesheet.baseTexture.mipmap = PIXI.MIPMAP_MODES.OFF;
-			bgAtlas.spritesheet.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
-			bgAtlas.spritesheet.baseTexture.update();
-		}
+		// const bgAtlas = this.getAtlas("bg");
+		// if (bgAtlas.spritesheet) {
+		// bgAtlas.spritesheet.baseTexture.mipmap = PIXI.MIPMAP_MODES.OFF;
+		// bgAtlas.spritesheet.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+		// bgAtlas.spritesheet.baseTexture.update();
+		// }
 
 		this.background = new MSBgFlat(this);
 		this.root.addChildAt(this.background, 0);
 
-		try {
-			await setPersistence();
-		} catch (err) {
-			console.log(err);
-		}
+		// try {
+		// 	await setPersistence();
+		// } catch (err) {
+		// 	console.log(err);
+		// }
 
 		this.setReady();
 
@@ -103,36 +94,34 @@ export class MSApp extends AppBase {
 	}
 
 	async firstStart() {
-		const user = auth.currentUser;
+		console.log("firstStart");
+		// const user = auth.currentUser;
 		let userdata;
 
-		if (user) {
-			try {
-				const account = await db.collection("accounts").doc(user.uid).get();
-				userdata = account.data() as UserData;
-			} catch (err) {
-				console.log(err);
-			}
-		}
+		// if (user) {
+		// 	try {
+		// 		const account = await getDoc(doc(db, user.uid));
+		// 		userdata = account.data() as UserData;
+		// 	} catch (err) {
+		// 		console.log(err);
+		// 	}
+		// }
 
 		if (!userdata) {
 			this.showMenu();
 		} //
 		else {
-			if (userdata.activeGame) {
-				this.showGame(userdata.activeGame);
-			} //
-			else {
-				this.showMenu();
-			}
+			// if (userdata.activeGame) {
+			// 	this.showGame(userdata.activeGame);
+			// } //
+			// else {
+			// 	this.showMenu();
+			// }
 		}
 	}
 
-	/**
-	 *
-	 * @param config
-	 */
 	public async showGame(gameId: string) {
+		console.log("showGame");
 		this.tweenGroup.reset();
 		this.background?.animateColor(ColorSchemes.beachRainbowDark.purple);
 		Object.values(this.scenes).forEach((el) => el?.destroy());
@@ -142,10 +131,8 @@ export class MSApp extends AppBase {
 		await this.scenes.game.initGame();
 	}
 
-	/**
-	 *
-	 */
 	public async showMenu() {
+		console.log("showMenu");
 		this.tweenGroup.reset();
 		this.background?.animateColor(ColorSchemes.beachRainbowDark.yellow);
 		Object.values(this.scenes).forEach((el) => el?.destroy());
@@ -153,11 +140,6 @@ export class MSApp extends AppBase {
 		this.root.addChild(this.scenes.menu);
 	}
 
-	/**
-	 * Update callback.
-	 *
-	 * @param dt - Delta time.
-	 */
 	private updateCb(dt: number) {
 		// Generate cell view instances in the background.
 		const maxCells = MAX_GRID_WIDTH * MAX_GRID_HEIGHT;
@@ -175,11 +157,6 @@ export class MSApp extends AppBase {
 		}
 	}
 
-	/**
-	 *
-	 * @param x
-	 * @param y
-	 */
 	public getCellView(x: number, y: number): MSCell {
 		const idx = this.state.indexOf(x, y);
 		const cell = this.cellPool[idx];
@@ -191,19 +168,10 @@ export class MSApp extends AppBase {
 		return cell;
 	}
 
-	/**
-	 *
-	 * @param config
-	 */
 	private parseConfig(config: Partial<MSStyleConfig> = {}): MSStyleConfig {
 		return defaults(config, MS_STYLE_DEFAULT);
 	}
 
-	/**
-	 *
-	 * @param x
-	 * @param y
-	 */
 	private createCellView(x: number, y: number): MSCell {
 		const msCell = new MSCell(this);
 		return msCell;

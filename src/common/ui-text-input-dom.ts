@@ -1,5 +1,5 @@
 import defaults from "lodash-es/defaults";
-import * as PIXI from "pixi.js-legacy";
+import * as PIXI from "pixi.js";
 import { AppBase } from "./app-base";
 import { hexToNum } from "./color";
 import { BmText } from "./bm-text";
@@ -36,7 +36,7 @@ export class UiTextInputDom extends UiElement<AppBase> {
 	}
 	private input = window.document.createElement("input");
 	private domVisible = false;
-	private label: BmText;
+	// private label: BmText;
 	private options: UITextInputOptions;
 	private debugHitarea = new PIXI.Graphics();
 
@@ -45,9 +45,9 @@ export class UiTextInputDom extends UiElement<AppBase> {
 
 		this.options = defaults(options || {}, UITextInputOptionDefaults);
 
-		this.label = new BmText(this.app, { text: this.options.label, fontName: "bmfont", fontSize: 18 });
-		this.label._anchor.set(1, 0.5);
-		this.label.tint = hexToNum(this.options.labelColor);
+		// this.label = new BmText(this.app, { text: this.options.label, fontName: "bmfont", fontSize: 18 });
+		// this.label._anchor.set(1, 0.5);
+		// this.label.tint = hexToNum(this.options.labelColor);
 
 		this.input.type = this.options.type;
 		this.input.style.position = "absolute";
@@ -78,10 +78,9 @@ export class UiTextInputDom extends UiElement<AppBase> {
 	protected init() {
 		this.setSize(this.options.width, this.options.height);
 
-		this.interactive = true;
-		this.buttonMode = true;
+		this.eventMode = "static";
 
-		this.addChild(this.label);
+		// this.addChild(this.label);
 
 		this.on("focus", () => {
 			this.input.focus();
@@ -93,48 +92,43 @@ export class UiTextInputDom extends UiElement<AppBase> {
 	}
 
 	protected update(dt: number) {
-		if ((!this.parent || !this.worldVisible) && this.domVisible) {
-			this.input.parentElement?.removeChild(this.input);
-			this.domVisible = false;
-		}
-		if (this.parent && this.worldVisible && !this.domVisible) {
-			document.body.appendChild(this.input);
-			this.domVisible = true;
-		}
-
-		const rect = this.app.renderer.view.getBoundingClientRect();
-		const resolution = this.app.renderer.resolution;
-		const sx = (rect.width / this.app.renderer.width) * resolution;
-		const sy = (rect.height / this.app.renderer.height) * resolution;
-		const element = this.input;
-
-		element.style.left = rect.left + "px";
-		element.style.top = rect.top + "px";
-		element.style.width = this.app.renderer.width + "px";
-		element.style.height = this.app.renderer.height + "px";
-
-		const wt = this.worldTransform;
-
-		let hitArea = this.hitArea as PIXI.Rectangle;
-
-		if (hitArea) {
-			element.style.left = (wt.tx + hitArea.x * wt.a) * sx + "px";
-			element.style.top = (wt.ty + hitArea.y * wt.d) * sy + "px";
-			element.style.width = hitArea.width * wt.a * sx + "px";
-			element.style.height = hitArea.height * wt.d * sy + "px";
-		} else {
-			hitArea = this.getBounds();
-			element.style.left = hitArea.x * sx + "px";
-			element.style.top = hitArea.y * sy + "px";
-			element.style.width = hitArea.width * sx + "px";
-			element.style.height = hitArea.height * sy + "px";
-		}
+		// if ((!this.parent || !this.worldVisible) && this.domVisible) {
+		// 	this.input.parentElement?.removeChild(this.input);
+		// 	this.domVisible = false;
+		// }
+		// if (this.parent && this.worldVisible && !this.domVisible) {
+		// 	document.body.appendChild(this.input);
+		// 	this.domVisible = true;
+		// }
+		// const rect = this.app.renderer.view.getBoundingClientRect();
+		// const resolution = this.app.renderer.resolution;
+		// const sx = (rect.width / this.app.renderer.width) * resolution;
+		// const sy = (rect.height / this.app.renderer.height) * resolution;
+		// const element = this.input;
+		// element.style.left = rect.left + "px";
+		// element.style.top = rect.top + "px";
+		// element.style.width = this.app.renderer.width + "px";
+		// element.style.height = this.app.renderer.height + "px";
+		// const wt = this.worldTransform;
+		// let hitArea = this.hitArea as PIXI.Rectangle;
+		// if (hitArea) {
+		// 	element.style.left = (wt.tx + hitArea.x * wt.a) * sx + "px";
+		// 	element.style.top = (wt.ty + hitArea.y * wt.d) * sy + "px";
+		// 	element.style.width = hitArea.width * wt.a * sx + "px";
+		// 	element.style.height = hitArea.height * wt.d * sy + "px";
+		// } else {
+		// 	hitArea = this.getBounds();
+		// 	element.style.left = hitArea.x * sx + "px";
+		// 	element.style.top = hitArea.y * sy + "px";
+		// 	element.style.width = hitArea.width * sx + "px";
+		// 	element.style.height = hitArea.height * sy + "px";
+		// }
 	}
 
-	private setSize(width: number, height: number) {
-		this.label._anchor.x = 1;
+	setSize(width: number, height: number) {
+		// this.label._anchor.x = 1;
 
-		this.label.x = -width / 2 - 16;
+		// this.label.x = -width / 2 - 16;
 
 		const x = 0;
 		const y = 0;

@@ -1,4 +1,4 @@
-import * as PIXI from "pixi.js-legacy";
+import * as PIXI from "pixi.js";
 import { ColorSchemes, hexToNum } from "../common/color";
 import { Component } from "../common/component";
 import { UiButtonScroller } from "../common/ui-button-scroller";

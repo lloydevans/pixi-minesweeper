@@ -30,12 +30,10 @@ module.exports = (env = {}) => {
 		},
 
 		devServer: {
-			clientLogLevel: "none",
 			host: "0.0.0.0",
 			port: 3000,
 			hot: false,
 			open: false,
-			inline: false,
 			compress: true,
 		},
 
@@ -77,7 +75,6 @@ module.exports = (env = {}) => {
 		plugins: [
 			new HtmlWebpackPlugin({ template: "src/index.html", hash: true }),
 			new CopyWebpackPlugin({ patterns: [{ from: "static" }] }),
-			new webpack.ProvidePlugin({ PIXI: "pixi.js-legacy" }),
 			new webpack.DefinePlugin({
 				ENV_VERSION: JSON.stringify(pkg.version),
 				ENV_PROD: JSON.stringify(!!env.prod),
