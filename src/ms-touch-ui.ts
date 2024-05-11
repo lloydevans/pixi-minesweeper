@@ -24,6 +24,7 @@ export class MSTouchUi extends Component<MSApp> {
 			textureUp: this.app.getFrame("textures", "button-flag"),
 			textureDown: this.app.getFrame("textures", "button-flag"),
 		});
+		this.buttonFlag.tint = 0x444444;
 		this.buttonFlag.x = -64;
 		this.buttonFlag.y = 0;
 
@@ -31,6 +32,7 @@ export class MSTouchUi extends Component<MSApp> {
 			textureUp: this.app.getFrame("textures", "button-dig"),
 			textureDown: this.app.getFrame("textures", "button-dig"),
 		});
+		this.buttonDig.tint = 0x444444;
 		this.buttonDig.x = 0;
 		this.buttonDig.y = 64;
 

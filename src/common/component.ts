@@ -47,11 +47,9 @@ export class Component<T extends AppBase> extends PIXI.Container {
 	private ready() {
 		// Call init function if it exists.
 		this.init && this.init();
-		this.emit("init");
 
 		// Call resize function if it exists.
 		this.resize && this.resize(this.app.width, this.app.height);
-		this.emit("resize", this.app.width, this.app.height);
 
 		// Add listeners
 		this.update && this.app.events.on("update", this.update, this);
@@ -74,13 +72,6 @@ export class Component<T extends AppBase> extends PIXI.Container {
 
 	protected delay(time: number) {
 		return new Promise((resolve) => this.tween(this).wait(time).call(resolve));
-	}
-
-	/**
-	 *
-	 */
-	protected defer() {
-		return new Promise((resolve) => this.app.ticker.addOnce(resolve));
 	}
 
 	/**

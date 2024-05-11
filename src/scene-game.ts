@@ -3,12 +3,14 @@ import * as PIXI from "pixi.js";
 import { hexToNum } from "./common/color";
 import { Ease } from "./common/ease";
 import { Scene } from "./common/scene";
-import { auth, db, functions } from "./firebase";
+import { analytics } from "./firebase";
 import { MSApp } from "./ms-app";
-import { MSCell, REF_HEIGHT, REF_WIDTH } from "./ms-cell";
+import { MSBg } from "./ms-bg";
+import { REF_HEIGHT, REF_WIDTH, MSCell } from "./ms-cell";
 import { CELL_STATE_DEFAULT, MSCellState } from "./ms-cell-state";
+import type { MSGameConfig } from "./ms-config";
 import { MSGrid } from "./ms-grid";
-import { MSStateClient } from "./ms-state";
+import { MSMenu } from "./ms-menu";
 import { MSTouchUi } from "./ms-touch-ui";
 import { MSUi } from "./ms-ui";
 import { logEvent } from "firebase/analytics";
@@ -20,152 +22,55 @@ export class SceneGame extends Scene<MSApp> {
 
 	private time = 0;
 	private timeActive = false;
+	private transitionIdx = 0;
+	private gameConfig!: MSGameConfig;
 	private board = PIXI.Sprite.from(PIXI.Texture.WHITE);
 	private cellWidth = REF_WIDTH;
 	private cellHeight = REF_HEIGHT;
 	private container = new PIXI.Container();
+	private isFirstClick = true;
 	private gridBack?: PIXI.TilingSprite;
 	private grid = new MSGrid(this.app);
 	private touchUi = new MSTouchUi(this.app);
+	private menu = new MSMenu(this.app);
 	private ui = new MSUi(this.app);
-	private gameId?: string;
-	private gameData?: MSStateClient;
-	private gameSnapshotUnsubscribe!: () => void;
-
-	constructor(app: MSApp) {
-		super(app);
-
-		this.container.visible = false;
-	}
+	private bg = new MSBg(this.app);
 
 	init() {
 		this.grid.interactiveChildren = false;
 
 		this.gridBack = new PIXI.TilingSprite(this.app.getFrame("tiles", "back-0"));
 
-		this.board.tint = hexToNum(ColorSchemes.beachRainbowDark.yellow);
+		this.board.tint = hexToNum(this.app.config.colorBoard);
+
+		this.menu.on("start", (config: MSGameConfig) => {
+			this.newGame(config);
+			this.showGame();
+		});
+
+		this.menu.on("preview", (config: MSGameConfig) => {
+			this.previewGame(config);
+		});
+
+		this.ui.on("close", () => {
+			this.showMenu();
+		});
+
+		this.ui.on("restart", () => {
+			this.app.audio.play("dirt-thud-0", { delay: 0.005, transpose: 12 });
+			this.newGame(this.gameConfig);
+		});
+
+		this.ui.visible = false;
 
 		this.container.addChild(this.board);
 		this.container.addChild(this.gridBack);
 		this.container.addChild(this.grid);
-
-		this.ui.on("restart", async () => {
-			this.grid.setInteractionEnabled(false);
-			this.app.setAllUiElementsActive(false);
-
-			try {
-				const gameId = (await functions.httpsCallable("newGame")(this.app.state.config)).data;
-
-				if (!gameId) {
-					throw new Error("New game request failed to return game ID");
-				}
-
-				await this.setGameId(gameId);
-				await this.waitForBoardStateUpdate();
-				await this.initGame();
-			} catch (err) {
-				console.log(err);
-			}
-
-			this.app.setAllUiElementsActive(true);
-			this.grid.setInteractionEnabled(true);
-		});
-
-		this.ui.on("close", async () => {
-			this.grid.setInteractionEnabled(false);
-			this.app.setAllUiElementsActive(false);
-
-			try {
-				functions.httpsCallable("quitGame")(this.gameId);
-				this.app.showMenu();
-			} catch (err) {
-				console.log(err);
-			}
-
-			this.app.setAllUiElementsActive(true);
-			this.grid.setInteractionEnabled(true);
-		});
-	}
-
-	/**
-	 *
-	 * @param gameId
-	 */
-	public async setGameId(gameId: string) {
-		this.gameId = gameId;
-
-		const gameData = await this.getGameData();
-
-		if (!this.app.state.config) {
-			this.app.state.setConfig(gameData.config);
-		}
-
-		this.gameSnapshotUnsubscribe && this.gameSnapshotUnsubscribe();
-		this.gameSnapshotUnsubscribe = db
-			.collection("accounts")
-			.doc(auth.currentUser!.uid)
-			.collection("games_client")
-			.doc(this.gameId)
-			.onSnapshot((doc) => {
-				const data = doc.data() as MSStateClient;
-				this.updateSnapshot(data);
-			});
-
-		this.updateSnapshot(gameData);
-
-		this.resize(this.app.width, this.app.height);
-	}
-
-	/**
-	 *
-	 * @param data
-	 */
-	private updateSnapshot(data: MSStateClient) {
-		this.gameData = data;
-
-		if (data?.cells) {
-			this.app.state.parseClientState(data);
-			this.emit("snapshot", data);
-		}
-	}
-
-	/**
-	 * Start a new game with given config.
-	 *
-	 * @param config
-	 */
-	public async initGame() {
-		// analytics.logEvent("new_game", this.app.state.config);
-		this.grid.setInteractionEnabled(false);
-		this.container.visible = true;
-
-		this.time = 0;
-		this.touchUi.hide();
-		this.tweenGroup.reset();
-
-		await this.initGrid();
-
-		if (this.app.state.isLose()) {
-			const { x, y } = this.gameData!.history[0];
-			this.animateLose(x, y);
-			this.grid.updateCellStateReferences();
-		} //
-		else if (this.app.state.isWin()) {
-			this.animateWin();
-			this.grid.updateCellStateReferences();
-		} //
-		else {
-			await this.grid.noiseWipe();
-			this.timeActive = true;
-			this.grid.setInteractionEnabled(true);
-		}
-	}
-
-	/**
-	 *
-	 */
-	private waitForBoardStateUpdate(): Promise<MSStateClient> {
-		return new Promise((resolve) => this.once("snapshot", resolve));
+		this.addChild(this.bg);
+		this.addChild(this.container);
+		this.addChild(this.ui);
+		this.addChild(this.touchUi);
+		this.addChild(this.menu);
 	}
 
 	update(dt: number) {
@@ -193,10 +98,10 @@ export class SceneGame extends Scene<MSApp> {
 		this.cellWidth = REF_WIDTH * scale;
 		this.cellHeight = REF_HEIGHT * scale;
 
-		const widthPx = this.app.state.width * this.cellWidth;
-		const heightPx = this.app.state.height * this.cellHeight;
-		const boardWidth = widthPx + this.cellWidth / 2;
-		const boardHeight = heightPx + this.cellHeight / 2;
+		const dimensionsX = this.app.state.width * this.cellWidth;
+		const dimensionsY = this.app.state.height * this.cellHeight;
+		const boardWidth = dimensionsX + this.cellWidth / 2;
+		const boardHeight = dimensionsY + this.cellHeight / 2;
 		this.board.x = -boardWidth / 2;
 		this.board.y = -boardHeight / 2;
 		this.board.width = boardWidth;
@@ -220,6 +125,7 @@ export class SceneGame extends Scene<MSApp> {
 		this.grid.removeChildren().forEach((el) => {
 			el.off("pointertap", this.onPointerTap, this);
 			el.off("pointerdown", this.onPointerDown, this);
+			el.off("pointerout", this.onPointerOut, this);
 		});
 
 		while (this.app.cellPool.length < this.app.state.totalCells) {
@@ -230,14 +136,18 @@ export class SceneGame extends Scene<MSApp> {
 			const [x, y] = this.app.state.coordsOf(i);
 			const msCell = this.app.getCellView(x, y);
 			this.grid.addChild(msCell);
-
-			// Temporarily give the cell this state for animation purposes.
-			msCell.setState({ ...CELL_STATE_DEFAULT, ...{ x, y, covered: false } });
-			msCell.reset();
-
+			this.app.cellPool[i].setState({
+				...CELL_STATE_DEFAULT,
+				...{ x, y, covered: false },
+			});
 			msCell.on("pointertap", this.onPointerTap, this);
 			msCell.on("pointerdown", this.onPointerDown, this);
+			msCell.on("pointerout", this.onPointerOut, this);
 		}
+
+		await this.delay(250);
+
+		await this.transitionCells();
 	}
 
 	private onPointerTap(e: PIXI.FederatedPointerEvent) {
@@ -262,7 +172,7 @@ export class SceneGame extends Scene<MSApp> {
 				break;
 
 			case "touch":
-				if (this.app.state.firstMove) {
+				if (this.isFirstClick) {
 					this.leftClick(cellState);
 				} //
 				else if (cellState === this.touchUi.targetCell) {
@@ -376,8 +286,8 @@ export class SceneGame extends Scene<MSApp> {
 		tween = tween.to({ x: 0, y: 0 }, periodMs / 2, Ease.sineInOut);
 
 		tween.on("change", () => {
-			this.app.background!.offset.x = this.container.pivot.x;
-			this.app.background!.offset.y = this.container.pivot.y * 0.5;
+			this.bg.offset.x = this.container.pivot.x;
+			this.bg.offset.y = this.container.pivot.y * 0.5;
 		});
 	}
 
@@ -403,29 +313,10 @@ export class SceneGame extends Scene<MSApp> {
 		if (this.gridBack) {
 			this.gridBack.visible = true;
 		}
-
-		return gameData;
 	}
 
 	public rightClick(cellState: MSCellState) {
 		cellState.flag = !cellState.flag;
-
-		const msCell = this.app.getCellView(cellState.x, cellState.y);
-		const x = msCell.ix;
-		const y = msCell.iy;
-
-		msCell.cancelPointer();
-
-		// Set move.
-		try {
-			this.app.log("Place flag", x, y);
-			this.setMove(x, y, true);
-			await this.waitForBoardStateUpdate();
-		} catch (error) {
-			console.log(error.code, error.message);
-		}
-
-		this.app.log("Board updated");
 
 		if (cellState.flag) {
 			this.audio.play("blop", { transpose: 12 });
@@ -434,88 +325,60 @@ export class SceneGame extends Scene<MSApp> {
 			this.audio.play("blop", { transpose: 24 });
 		}
 
-		msCell.updateViewState();
+		const msCell = this.app.getCellView(cellState.x, cellState.y);
 
-		this.grid.setInteractionEnabled(true);
+		msCell.updateViewState();
 	}
 
 	public async leftClick(cellState: MSCellState) {
-		this.grid.setInteractionEnabled(false);
-
 		const msCell = this.app.getCellView(cellState.x, cellState.y);
 		const x = msCell.ix;
 		const y = msCell.iy;
 
-		if (this.app.state.firstMove) {
-			this.app.log("First click");
+		let result;
+
+		if (this.isFirstClick) {
+			this.isFirstClick = false;
+			result = this.app.state.selectFirst(x, y);
+		} //
+		else {
+			result = this.app.state.select(x, y);
 		}
 
-		// Set move.
-		try {
-			this.app.log("Set move", x, y);
-			this.setMove(x, y);
-			await this.waitForBoardStateUpdate();
-			this.app.log("Board updated");
-		} catch (error) {
-			console.log(error.code, error.message);
-			throw new Error("Move request failed.");
-		}
-
-		// Get an array of cell coords which were uncovered by the last move.
-		if (!this.app.state.lastMove) {
-			throw new Error("Last move not present.");
-		}
-		const result = this.app.state.lastMove.uncovered;
-
-		this.audio.play("blop", { transpose: 12 });
-		this.audio.play("dirt-thud-2", { delay: 0.005, transpose: 12 });
-
-		if (result.length > 1) {
-			const s = result.length / this.app.state.totalCells;
-
-			this.screenShake(s * 8);
-
-			this.audio.play("rumble", { type: "attack", volume: s }); // Rumble start
-
-			this.audio.play("dirt-thud-0", { delay: 0.005, volume: s });
-
-			await this.grid.animateUpdateFrom(cellState);
-
-			this.audio.play("rumble", { type: "release" }); // Rumble end
-		} else {
-			this.audio.play("dirt-thud-2", { delay: 0.005, transpose: 6, volume: 0.5 });
-			msCell.updateViewState();
-		}
-
-		// Lose state
-		if (this.app.state.isLose()) {
-			this.app.log("Lose state");
-
+		if (cellState.mine) {
 			if (cellState.flag) {
 				this.app.state.clearFlag(x, y);
 			}
 
 			this.audio.play("click", { delay: 0.05 });
-
 			this.audio.play("dirt-thud-2", { delay: 0.005, transpose: 12 });
 
 			msCell.updateViewState();
-			this.animateLose(x, y);
-		}
-
-		// Win state
-		else if (this.app.state.isWin()) {
-			this.app.log("Win state");
-
-			this.animateWin();
-		}
-
-		// Continue state
+			this.animateLose(cellState);
+		} //
 		else {
-			this.app.log("Continue state");
+			this.audio.play("blop", { transpose: 12 });
+			this.audio.play("dirt-thud-2", { delay: 0.005, transpose: 12 });
 
-			this.grid.setInteractionEnabled(true);
+			if (result.length > 1) {
+				const s = result.length / this.app.state.totalCells;
+
+				this.screenShake(s * 8);
+
+				// Start sounds
+				this.audio.play("rumble", { type: "attack", volume: s });
+				this.audio.play("dirt-thud-0", { delay: 0.005, volume: s });
+
+				await this.grid.animateUpdateFrom(cellState);
+
+				this.audio.play("rumble", { type: "release" });
+			} else {
+				this.audio.play("dirt-thud-2", { delay: 0.005, transpose: 6, volume: 0.5 });
+				msCell.updateViewState();
+			}
 		}
+
+		this.checkWin();
 	}
 
 	private async animateWin() {
@@ -559,11 +422,10 @@ export class SceneGame extends Scene<MSApp> {
 
 		this.endGame();
 
-		const result = this.app.state.getResultData();
+		const result = this.app.state.getLossData();
 
-		const firstIdx = result.incorrect.findIndex((el) => el.x === x && el.y === y);
-		result.incorrect.splice(firstIdx, 1);
-		this.app.getCellView(x, y).animateResult();
+		result.incorrect.splice(result.incorrect.indexOf(firstMine), 1);
+		this.app.getCellView(firstMine.x, firstMine.y).animateResult();
 
 		await this.delay(500);
 

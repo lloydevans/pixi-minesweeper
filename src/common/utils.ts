@@ -16,29 +16,3 @@ export async function forEachRandom<T>(target: ReadonlyArray<T>, cb: (el: T) => 
 		await cb(el);
 	}
 }
-
-/**
- * Clone JSON-friendly JS objects.
- *
- * @param obj - Target object.
- */
-export function jsonClone<T>(obj: T): T {
-	return JSON.parse(JSON.stringify(obj));
-}
-
-/**
- * Replacment for isEqual until lodash is imported for cloud functions.
- */
-export function shallowObjectEquals(a: any, b: any) {
-	for (let key in a) {
-		if (!(key in b) || a[key] !== b[key]) {
-			return false;
-		}
-	}
-	for (let key in b) {
-		if (!(key in a) || a[key] !== b[key]) {
-			return false;
-		}
-	}
-	return true;
-}

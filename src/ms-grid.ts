@@ -7,21 +7,12 @@ export class MSGrid extends Component<MSApp> {
 	children: MSCell[] = [];
 
 	/**
-	 * Enable and disable interactions on the game grid.
-	 *
-	 * @param enabled - Enabled state
-	 */
-	public setInteractionEnabled(enabled = true) {
-		this.interactiveChildren = enabled;
-	}
-
-	/**
 	 * Animate cell updates outwards from a target position.
 	 *
 	 * @param cell - Cell to animate outwards from.
 	 * @param cb - Runs once for each cell. One cell per round updated must return true to continue the animation.
 	 */
-	public async animateUpdateFrom(cell: MSCellState, delay = 66, cb = this.cellUpdateCb): Promise<void> {
+	public async animateUpdateFrom(cell: MSCellState, delay = 80, cb = this.cellUpdateCb): Promise<void> {
 		this.interactiveChildren = false;
 
 		const maxSide = Math.max(this.app.state.width, this.app.state.height);
@@ -109,7 +100,7 @@ export class MSGrid extends Component<MSApp> {
 				const t = x / this.app.state.width + y / this.app.state.height;
 				this.audio.play("blop", { transpose: t, volume: 0.5 });
 				this.audio.play("blop", { transpose: t + 12, delay: 0.01, volume: 0.5 });
-				await this.delay(33);
+				await this.delay(66);
 			}
 		}
 	}

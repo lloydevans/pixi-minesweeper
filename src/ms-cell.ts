@@ -5,7 +5,6 @@ import { hexToNum } from "./common/color";
 import { Component } from "./common/component";
 import { BmText } from "./common/bm-text";
 import { Spine } from "./common/spine";
-import { shallowObjectEquals } from "./common/utils";
 import { MSApp } from "./ms-app";
 import { CELL_STATE_DEFAULT } from "./ms-cell-state";
 import type { MSCellState } from "./ms-cell-state";
@@ -37,13 +36,14 @@ export class MSCell extends Component<MSApp> {
 	}
 
 	private anim: Spine;
-	private state!: MSCellState;
+	private state: MSCellState;
 	private viewState: MSCellState;
 	private adjacentText: BmText;
 
 	constructor(app: MSApp) {
 		super(app);
 
+		this.state = { ...CELL_STATE_DEFAULT };
 		this.viewState = { ...CELL_STATE_DEFAULT };
 
 		this.anim = new Spine(this.app.getSpine("grid-square@1x"));
@@ -65,16 +65,6 @@ export class MSCell extends Component<MSApp> {
 
 		this.on("mouseover", this.animateHoverStart, this);
 		this.on("mouseout", this.animateHoverEnd, this);
-		this.on("pointerdown", () => {
-			this.pointerDown = true;
-		});
-		this.on("pointerout", () => {
-			if (this.pointerDown) {
-				this.pointerDown = false;
-				this.animatePlaceFlagCancel();
-				this.animateDigCancel();
-			}
-		});
 	}
 
 	public setState(state: MSCellState) {
@@ -112,7 +102,7 @@ export class MSCell extends Component<MSApp> {
 	}
 
 	public needsUpdate(): boolean {
-		return !shallowObjectEquals(this.state, this.viewState);
+		return !isEqual(this.state, this.viewState);
 	}
 
 	private updateGridPosition() {
@@ -190,7 +180,7 @@ export class MSCell extends Component<MSApp> {
 	private setText(total: number) {
 		total = Math.floor(clamp(total, 0, 8));
 		const key = total.toString() as NumberKey;
-		this.adjacentText.tint = hexToNum(this.app.style.colorNumbers[key]);
+		this.adjacentText.tint = hexToNum(this.app.config.colorNumbers[key]);
 		this.adjacentText.visible = true;
 		this.adjacentText.text = key;
 	}
@@ -221,7 +211,6 @@ export class MSCell extends Component<MSApp> {
 
 	public setMineEnabled(enabled = true) {
 		this.viewState.mine = enabled;
-
 		if (enabled) {
 			this.anim.state.setAnimation(AnimTrack.Mine, "mine-explode", false);
 		} else {

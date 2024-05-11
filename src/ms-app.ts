@@ -1,31 +1,28 @@
-import clone from "lodash-es/clone";
 import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js";
 import { AppBase } from "./common/app-base";
-import { ColorSchemes } from "./common/color";
-import { ToneAudioConfig } from "./common/tone-audio";
 import { preventContextMenu } from "./common/utils";
-import { auth, db, setPersistence } from "./firebase";
-import { MSBgFlat } from "./ms-bg-flat";
 import { MSCell } from "./ms-cell";
 import type { MSConfig, MSGameConfig } from "./ms-config";
 import { MS_CONFIG_DEFAULT } from "./ms-config";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MSState } from "./ms-state";
 import { SceneGame } from "./scene-game";
-import { SceneMenu } from "./scene-menu";
+
+export const INITIAL_GAME_CONFIG: MSGameConfig = {
+	startMines: 5,
+	gridWidth: 9,
+	gridHeight: 7,
+};
 
 /**
  * Core App class.
  */
 export class MSApp extends AppBase {
-	public background?: MSBgFlat;
-	public container = new PIXI.Container();
 	public state: MSState = new MSState();
 	public cellPool: MSCell[] = [];
-	public style: MSStyleConfig;
+	public config: MSConfig;
 	public scenes: {
 		game?: SceneGame;
-		menu?: SceneMenu;
 	} = {};
 
 	private isLoaded = false;
@@ -33,15 +30,9 @@ export class MSApp extends AppBase {
 	constructor() {
 		super();
 
-		this.referenceSize = {
-			width: 1280,
-			height: 720,
-			blend: 1,
-		};
-
 		preventContextMenu();
 
-		this.root.addChild(this.container);
+		this.config = { ...MS_CONFIG_DEFAULT };
 
 		this.events.on("update", this.onUpdate, this);
 
@@ -67,26 +58,13 @@ export class MSApp extends AppBase {
 
 		this.scenes.game = new SceneGame(this);
 		this.root.addChild(this.scenes.game);
-		await this.scenes.game.setGameId(gameId);
-		await this.scenes.game.initGame();
-	}
-
-	/**
-	 *
-	 */
-	public async showMenu() {
-		this.tweenGroup.reset();
-		this.background?.animateColor(ColorSchemes.beachRainbowDark.yellow);
-		Object.values(this.scenes).forEach((el) => el?.destroy());
-		this.scenes.menu = new SceneMenu(this);
-		this.root.addChild(this.scenes.menu);
 	}
 
 	private onUpdate(dt: number) {
 		// Generate cell view instances in the background.
 		const maxCells = MAX_GRID_WIDTH * MAX_GRID_HEIGHT;
 		const length = this.cellPool.length;
-		if (this.ready && length < maxCells) {
+		if (this.isLoaded && length < maxCells) {
 			for (let i = 0; i < 5; i++) {
 				const idx = length + i;
 				if (idx > maxCells - 1) {
