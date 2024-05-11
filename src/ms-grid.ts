@@ -82,9 +82,6 @@ export class MSGrid extends Component<MSApp> {
 		return needsUpdate;
 	}
 
-	/**
-	 *
-	 */
 	public async noiseWipe() {
 		const indexes: number[] = [];
 		for (let i = 0; i < this.app.state.totalCells; i++) {
@@ -108,9 +105,6 @@ export class MSGrid extends Component<MSApp> {
 		}
 	}
 
-	/**
-	 *
-	 */
 	public async swipeWipe(direction: "up" | "down") {
 		const indexes: number[] = [];
 		for (let i = 0; i < this.app.state.totalCells; i++) {

@@ -1,22 +1,21 @@
 import clamp from "lodash-es/clamp";
 import isEqual from "lodash-es/isEqual";
-import * as PIXI from "pixi.js-legacy";
+import * as PIXI from "pixi.js";
 import { hexToNum } from "./common/color";
 import { Component } from "./common/component";
-import { GameText } from "./common/game-text";
+import { BmText } from "./common/bm-text";
 import { Spine } from "./common/spine";
 import { MSApp } from "./ms-app";
 import { CELL_STATE_DEFAULT } from "./ms-cell-state";
 import type { MSCellState } from "./ms-cell-state";
 import type { NumberKey } from "./ms-config";
 
-// Reference size of cell graphics before any scaling.
 export const REF_WIDTH = 64;
 export const REF_HEIGHT = 64;
 
 enum AnimTrack {
-	FillColor,
 	Cover,
+	FillColor,
 	Feedback,
 	Mine,
 	Flag,
@@ -28,9 +27,6 @@ enum AnimTrack {
 	EdgeD,
 }
 
-/**
- *
- */
 export class MSCell extends Component<MSApp> {
 	public get ix(): number {
 		return this.viewState.x;
@@ -42,28 +38,25 @@ export class MSCell extends Component<MSApp> {
 	private anim: Spine;
 	private state: MSCellState;
 	private viewState: MSCellState;
-	private adjacentText: GameText;
+	private adjacentText: BmText;
 
-	/**
-	 *
-	 * @param app - App reference.
-	 */
 	constructor(app: MSApp) {
 		super(app);
 
 		this.state = { ...CELL_STATE_DEFAULT };
 		this.viewState = { ...CELL_STATE_DEFAULT };
 
-		this.anim = new Spine(this.app.getSpine("grid-square"));
+		this.anim = new Spine(this.app.getSpine("grid-square@1x"));
 		this.anim.stateData.setMix("flag-hidden", "flag-place-start", 0);
 		this.anim.stateData.setMix("flag-destroy", "flag-place-start", 0);
 		this.anim.stateData.defaultMix = 0;
 
-		this.adjacentText = new GameText(this.app, "", {
+		this.adjacentText = new BmText(this.app, {
+			text: "",
 			fontName: "bmfont",
 			fontSize: 38,
 		});
-		this.adjacentText._anchor.set(0.5);
+		this.adjacentText.anchor.set(0.5);
 
 		this.addChild(this.adjacentText);
 		this.addChild(this.anim);
@@ -74,16 +67,12 @@ export class MSCell extends Component<MSApp> {
 		this.on("mouseout", this.animateHoverEnd, this);
 	}
 
-	/**
-	 *
-	 * @param state
-	 */
 	public setState(state: MSCellState) {
 		this.state = state;
 
-		// @ts-ignore // Missing type.
-		this.tabIndex = this.app.state.indexOf(this.ix, this.iy);
-		this.accessibleHint = `cell:${this.ix},${this.iy}`;
+		// this.tabIndex = this.app.state.indexOf(this.ix, this.iy);
+		// this.accessibleHint = `cell:${this.ix},${this.iy}`;
+
 		this.reset();
 		this.updateViewState();
 		this.updateGridPosition();
@@ -91,11 +80,8 @@ export class MSCell extends Component<MSApp> {
 		this.setInteractiveEnabled(true);
 	}
 
-	/**
-	 *
-	 */
 	public reset() {
-		// TODO: Clear tracks instead of hidden states?
+		// Clear tracks instead of hidden states?
 		const coverType = (this.state.x + this.state.y) % 2 === 0 ? "even" : "odd";
 		this.anim.state.setAnimation(AnimTrack.FillColor, "fill-" + coverType, false);
 		this.anim.state.setAnimation(AnimTrack.Flag, "flag-hidden", false);
@@ -109,34 +95,21 @@ export class MSCell extends Component<MSApp> {
 		this.anim.state.setAnimation(AnimTrack.EdgeD, "edge-d-hidden", false);
 	}
 
-	/**
-	 *
-	 * @param edge
-	 */
 	public setEdgeVisible(edge: "l" | "r" | "u" | "d", visible: boolean) {
 		const stateName = "edge-" + edge + "-" + (visible ? "visible" : "hidden");
 		const animTrackKey = ("Edge" + edge.toUpperCase()) as keyof typeof AnimTrack;
 		this.anim.state.setAnimation(AnimTrack[animTrackKey], stateName, false);
 	}
 
-	/**
-	 * Check if the cell needs its viewstate updated.
-	 */
 	public needsUpdate(): boolean {
 		return !isEqual(this.state, this.viewState);
 	}
 
-	/**
-	 *
-	 */
 	private updateGridPosition() {
 		this.x = this.ix * REF_WIDTH + REF_WIDTH / 2;
 		this.y = this.iy * REF_HEIGHT + REF_HEIGHT / 2;
 	}
 
-	/**
-	 *
-	 */
 	public updateEdgeSprites() {
 		this.anim.setSkinByName(this.viewState.covered ? "front" : "back");
 
@@ -174,10 +147,6 @@ export class MSCell extends Component<MSApp> {
 		}
 	}
 
-	/**
-	 *
-	 * @param state
-	 */
 	public updateViewState(state: MSCellState = this.state) {
 		if (state.flag !== this.viewState.flag) {
 			this.setFlagEnabled(state.flag);
@@ -208,10 +177,6 @@ export class MSCell extends Component<MSApp> {
 		Object.assign(this.viewState, state);
 	}
 
-	/**
-	 *
-	 * @param total
-	 */
 	private setText(total: number) {
 		total = Math.floor(clamp(total, 0, 8));
 		const key = total.toString() as NumberKey;
@@ -220,10 +185,6 @@ export class MSCell extends Component<MSApp> {
 		this.adjacentText.text = key;
 	}
 
-	/**
-	 *
-	 * @param enabled
-	 */
 	public setCoveredEnabled(enabled = true) {
 		this.viewState.covered = enabled;
 		if (enabled) {
@@ -231,6 +192,7 @@ export class MSCell extends Component<MSApp> {
 			this.anim.state.setAnimation(AnimTrack.Cover, stateName, false);
 			this.setInteractiveEnabled(true);
 		} else {
+			this.anim.state.clearTrack(AnimTrack.FillColor);
 			this.anim.state.setAnimation(AnimTrack.Cover, "covered-out", false);
 			this.setInteractiveEnabled(false);
 		}
@@ -238,22 +200,15 @@ export class MSCell extends Component<MSApp> {
 		this.updateEdgeSprites();
 	}
 
-	/**
-	 *
-	 * @param enabled
-	 */
 	public setInteractiveEnabled(enabled = true) {
 		if (!enabled) {
 			this.animateHoverEnd();
 		}
-		this.interactive = enabled;
-		this.buttonMode = enabled;
-		this.accessible = enabled;
+
+		this.eventMode = enabled ? "static" : "none";
+		// this.accessible = enabled;
 	}
 
-	/**
-	 *
-	 */
 	public setMineEnabled(enabled = true) {
 		this.viewState.mine = enabled;
 		if (enabled) {
@@ -263,9 +218,6 @@ export class MSCell extends Component<MSApp> {
 		}
 	}
 
-	/**
-	 *
-	 */
 	public setFlagEnabled(enabled = true) {
 		this.viewState.flag = enabled;
 
@@ -276,9 +228,6 @@ export class MSCell extends Component<MSApp> {
 		}
 	}
 
-	/**
-	 *
-	 */
 	public animateResult() {
 		if (this.state.mine && this.state.flag) {
 			this.animateCorrect();
@@ -296,53 +245,33 @@ export class MSCell extends Component<MSApp> {
 		}
 	}
 
-	/**
-	 *
-	 */
 	public animatePress() {
 		this.anim.state.setAnimation(AnimTrack.Hover, "hover-press", false);
 	}
 
-	/**
-	 *
-	 */
 	public animateHoverStart() {
 		this.anim.state.setAnimation(AnimTrack.Hover, "hover-over", false);
 	}
 
-	/**
-	 *
-	 */
 	public animateHoverEnd() {
 		this.anim.state.setAnimation(AnimTrack.Hover, "hover-out", false);
 	}
 
-	/**
-	 *
-	 */
 	public animatePlaceFlagStart() {
 		this.anim.state.setAnimation(AnimTrack.Flag, "flag-place-start", false);
 	}
 
-	/**
-	 *
-	 */
 	public animateDigStart() {
 		this.anim.state.setAnimation(AnimTrack.Dig, "dig-start", false);
 	}
 
-	/**
-	 *
-	 */
 	public animateDigEnd() {
 		this.anim.state.setAnimation(AnimTrack.Dig, "dig-end", false);
 	}
 
-	/**
-	 *
-	 */
 	public animateDigCancel() {
-		if (this.anim.state.getCurrent(AnimTrack.Dig).animation.name === "dig-start") {
+		// getCurrent does seem to be there, just a type issue
+		if ((this.anim.state as any).getCurrent(AnimTrack.Dig).animation.name === "dig-start") {
 			this.anim.state.setAnimation(AnimTrack.Dig, "dig-cancel", false);
 			this.app.audio.play("blop", { transpose: 24 });
 			this.app.audio.play("drip", { delay: 0.1 });
@@ -350,11 +279,9 @@ export class MSCell extends Component<MSApp> {
 		}
 	}
 
-	/**
-	 *
-	 */
 	public animatePlaceFlagCancel() {
-		if (this.anim.state.getCurrent(AnimTrack.Flag).animation.name === "flag-place-start") {
+		// getCurrent does seem to be there, just a type issue
+		if ((this.anim.state as any).getCurrent(AnimTrack.Flag).animation.name === "flag-place-start") {
 			this.anim.state.setAnimation(AnimTrack.Flag, "flag-destroy", false);
 			this.app.audio.play("blop", { transpose: 24 });
 			this.app.audio.play("drip", { delay: 0.1 });
@@ -362,23 +289,14 @@ export class MSCell extends Component<MSApp> {
 		}
 	}
 
-	/**
-	 *
-	 */
 	public animateCorrect() {
 		this.anim.state.setAnimation(AnimTrack.Feedback, "feedback-correct", false);
 	}
 
-	/**
-	 *
-	 */
 	public animateIncorrect() {
 		this.anim.state.setAnimation(AnimTrack.Feedback, "feedback-incorrect", false);
 	}
 
-	/**
-	 *
-	 */
 	public explodeMine() {
 		this.anim.state.setAnimation(AnimTrack.Mine, "mine-explode", false);
 	}

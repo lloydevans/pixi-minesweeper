@@ -6,7 +6,7 @@
 import "core-js";
 
 // PixiJS lib imports.
-import * as PIXI from "pixi.js-legacy";
+import * as PIXI from "pixi.js";
 import "pixi-spine";
 
 // Put PIXI on window for console debugging.

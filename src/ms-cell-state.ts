@@ -2,40 +2,25 @@
  *
  */
 export interface MSCellState {
-	/**
-	 * X index of the cell.
-	 */
+	/** X index of the cell. */
 	x: number;
 
-	/**
-	 * Y index of the cell.
-	 */
+	/** Y index of the cell. */
 	y: number;
 
-	/**
-	 * Number of adjacent mines.
-	 */
+	/** Number of adjacent mines. */
 	adjacent: number;
 
-	/**
-	 * Whether the cell is covered or not.
-	 */
+	/** Whether the cell is covered or not. */
 	covered: boolean;
 
-	/**
-	 * Whether the cell contains a mine or not.
-	 */
+	/** Whether the cell contains a mine or not. */
 	mine: boolean;
 
-	/**
-	 * Whether the cell contains a flag or not.
-	 */
+	/** Whether the cell contains a flag or not. */
 	flag: boolean;
 }
 
-/**
- *
- */
 export const CELL_STATE_DEFAULT = {
 	x: -1,
 	y: -1,

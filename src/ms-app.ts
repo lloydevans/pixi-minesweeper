@@ -1,10 +1,10 @@
 import defaults from "lodash-es/defaults";
-import * as PIXI from "pixi.js-legacy";
+import * as PIXI from "pixi.js";
 import { AppBase } from "./common/app-base";
 import { preventContextMenu } from "./common/utils";
 import { MSCell } from "./ms-cell";
-import { MS_CONFIG_DEFAULT } from "./ms-config";
 import type { MSConfig, MSGameConfig } from "./ms-config";
+import { MS_CONFIG_DEFAULT } from "./ms-config";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MSState } from "./ms-state";
 import { SceneGame } from "./scene-game";
 
@@ -27,74 +27,41 @@ export class MSApp extends AppBase {
 
 	private isLoaded = false;
 
-	/**
-	 *
-	 */
 	constructor() {
-		super({ forceCanvas: false });
+		super();
 
 		preventContextMenu();
 
 		this.config = { ...MS_CONFIG_DEFAULT };
 
-		this.events.on("init", this.onInit, this);
 		this.events.on("update", this.onUpdate, this);
+
+		this.setReady();
 	}
 
-	/**
-	 * Init callback.
-	 */
-	private onInit() {
-		this.addSpine("grid-square");
-		this.addSpine("timer");
-		this.addAtlas("textures");
-		this.addAtlas("tiles");
-		this.addAtlas("bg", 1);
-		this.addBitmapFont("bmfont");
-		this.addJson("config", "config.json");
-		this.addJson("audio", "audio.json");
-		this.loader.load();
-
-		this.loader.onComplete.once(this.onLoad, this);
-	}
-
-	/**
-	 * Load callback.
-	 */
-	private onLoad() {
+	public onLoad() {
 		this.isLoaded = true;
 
-		this.audio.init(this.getJson("audio"));
-
-		this.config = this.parseConfig(this.getJson("config"));
-
 		const tilesAtlas = this.getAtlas("tiles");
-		if (tilesAtlas.spritesheet) {
-			tilesAtlas.spritesheet.baseTexture.mipmap = PIXI.MIPMAP_MODES.OFF;
-			tilesAtlas.spritesheet.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
-			tilesAtlas.spritesheet.baseTexture.update();
+		if (tilesAtlas) {
+			tilesAtlas.baseTexture.mipmap = PIXI.MIPMAP_MODES.OFF;
+			tilesAtlas.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+			tilesAtlas.baseTexture.update();
 		}
 
 		const bgAtlas = this.getAtlas("bg");
-		if (bgAtlas.spritesheet) {
-			bgAtlas.spritesheet.baseTexture.mipmap = PIXI.MIPMAP_MODES.OFF;
-			bgAtlas.spritesheet.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
-			bgAtlas.spritesheet.baseTexture.update();
+		if (bgAtlas) {
+			bgAtlas.baseTexture.mipmap = PIXI.MIPMAP_MODES.OFF;
+			bgAtlas.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+			bgAtlas.baseTexture.update();
 		}
-
-		this.setReady();
 
 		this.scenes.game = new SceneGame(this);
 		this.root.addChild(this.scenes.game);
 	}
 
-	/**
-	 * Update callback.
-	 *
-	 * @param dt
-	 */
 	private onUpdate(dt: number) {
-		// Generate cell view instances in the bakground.
+		// Generate cell view instances in the background.
 		const maxCells = MAX_GRID_WIDTH * MAX_GRID_HEIGHT;
 		const length = this.cellPool.length;
 		if (this.isLoaded && length < maxCells) {
@@ -110,11 +77,6 @@ export class MSApp extends AppBase {
 		}
 	}
 
-	/**
-	 *
-	 * @param x
-	 * @param y
-	 */
 	public getCellView(x: number, y: number): MSCell {
 		const idx = this.state.indexOf(x, y);
 		const cell = this.cellPool[idx];
@@ -126,19 +88,10 @@ export class MSApp extends AppBase {
 		return cell;
 	}
 
-	/**
-	 *
-	 * @param config
-	 */
 	private parseConfig(config: Partial<MSConfig> = {}): MSConfig {
 		return defaults(config, MS_CONFIG_DEFAULT);
 	}
 
-	/**
-	 *
-	 * @param x
-	 * @param y
-	 */
 	private createCellView(x: number, y: number): MSCell {
 		const msCell = new MSCell(this);
 		return msCell;

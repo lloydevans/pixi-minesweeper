@@ -1,38 +1,40 @@
-import * as PIXI from "pixi.js-legacy";
-import { ButtonScroller } from "./common/button-scroller";
-import { ButtonText } from "./common/button-text";
+import * as PIXI from "pixi.js";
+import { UiButtonScroller } from "./common/ui-button-scroller";
+import { UiButtonText } from "./common/ui-button-text";
 import { Component } from "./common/component";
-import { GameText } from "./common/game-text";
+import { BmText } from "./common/bm-text";
 import { INITIAL_GAME_CONFIG, MSApp } from "./ms-app";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MIN_GRID_HEIGHT, MIN_GRID_WIDTH, MIN_EMPTY } from "./ms-state";
 
 export class MSMenu extends Component<MSApp> {
-	private title!: GameText;
+	private title!: BmText;
 	private background!: PIXI.Graphics;
-	private buttonStart!: ButtonText;
-	private widthScroller!: ButtonScroller;
-	private heightScroller!: ButtonScroller;
-	private minesScroller!: ButtonScroller;
+	private buttonStart!: UiButtonText;
+	private widthScroller!: UiButtonScroller;
+	private heightScroller!: UiButtonScroller;
+	private minesScroller!: UiButtonScroller;
 	private container = new PIXI.Container();
 
 	protected init() {
 		this.background = new PIXI.Graphics();
 
-		this.title = new GameText(this.app, "MINESWEEPER", {
+		this.title = new BmText(this.app, {
+			text: "MINESWEEPER",
 			fontName: "bmfont",
 			fontSize: 72,
 		});
 		this.title.y = -190;
-		this.title._anchor.set(0.5);
+		this.title.anchor.set(0.5);
 
-		this.buttonStart = new ButtonText(this.app, {
-			backTexture: this.app.getFrame("textures", "button-long"),
+		this.buttonStart = new UiButtonText(this.app, {
+			textureUp: this.app.getFrame("textures", "button-long"),
+			textureDown: this.app.getFrame("textures", "button-long"),
 			text: "START",
 		});
 		this.buttonStart.position.set(0, 180);
-		this.buttonStart.anchor.set(0.5);
+		// this.buttonStart.anchor.set(0.5);
 
-		this.widthScroller = new ButtonScroller(this.app, {
+		this.widthScroller = new UiButtonScroller(this.app, {
 			arrowTexture: this.app.getFrame("textures", "button-arrow"),
 			label: "Width",
 			default: INITIAL_GAME_CONFIG.gridWidth,
@@ -40,7 +42,7 @@ export class MSMenu extends Component<MSApp> {
 			max: MAX_GRID_WIDTH,
 		});
 
-		this.heightScroller = new ButtonScroller(this.app, {
+		this.heightScroller = new UiButtonScroller(this.app, {
 			arrowTexture: this.app.getFrame("textures", "button-arrow"),
 			label: "Height",
 			default: INITIAL_GAME_CONFIG.gridHeight,
@@ -48,7 +50,7 @@ export class MSMenu extends Component<MSApp> {
 			max: MAX_GRID_HEIGHT,
 		});
 
-		this.minesScroller = new ButtonScroller(this.app, {
+		this.minesScroller = new UiButtonScroller(this.app, {
 			arrowTexture: this.app.getFrame("textures", "button-arrow"),
 			label: "Mines",
 			default: INITIAL_GAME_CONFIG.startMines,
@@ -83,31 +85,22 @@ export class MSMenu extends Component<MSApp> {
 		});
 	}
 
-	/**
-	 *
-	 * @param width
-	 * @param height
-	 */
 	protected resize(width: number, height: number) {
 		this.background.clear();
 		this.background.beginFill(0, 0.5);
 		this.background.drawRect(-width / 2, -height / 2, width, height);
 		this.background.endFill();
 
-		// It's not great to resize like this but this menu is a temporary.
+		// It's not great to resize like this but this menu is a temporary tingleberry.
 		if (width > height) {
 			this.container.height = Math.min(height - 128, 410);
 			this.container.scale.x = this.container.scale.y;
-		} //
-		else {
+		} else {
 			this.container.width = Math.min(width - 128, 410);
 			this.container.scale.y = this.container.scale.x;
 		}
 	}
 
-	/**
-	 *
-	 */
 	protected updatePreview() {
 		const gridWidth = this.widthScroller.current;
 		const gridHeight = this.heightScroller.current;

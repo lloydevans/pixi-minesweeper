@@ -5,9 +5,6 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = (env = {}) => {
-	/**
-	 * Build options.
-	 */
 	env = {
 		...{
 			prod: false,
@@ -17,9 +14,7 @@ module.exports = (env = {}) => {
 		...env,
 	};
 
-	/**
-	 * @type {import("webpack").Configuration}
-	 */
+	/** @type {import("webpack").Configuration} */
 	let config = {
 		entry: env.editor ? "./src/index-editor.ts" : "./src/index.ts",
 
@@ -30,18 +25,16 @@ module.exports = (env = {}) => {
 		},
 
 		devServer: {
-			clientLogLevel: "none",
 			host: "0.0.0.0",
-			port: 8080,
+			port: 3000,
 			hot: false,
 			open: false,
-			inline: false,
 			compress: true,
 		},
 
 		output: {
 			filename: "bundle.js",
-			path: path.join(__dirname, "build")
+			path: path.join(__dirname, "build"),
 		},
 
 		module: {
@@ -77,7 +70,6 @@ module.exports = (env = {}) => {
 		plugins: [
 			new HtmlWebpackPlugin({ template: "src/index.html", hash: true }),
 			new CopyWebpackPlugin({ patterns: [{ from: "static" }] }),
-			new webpack.ProvidePlugin({ PIXI: "pixi.js-legacy" }),
 			new webpack.DefinePlugin({
 				ENV_VERSION: JSON.stringify(pkg.version),
 				ENV_PROD: JSON.stringify(!!env.prod),

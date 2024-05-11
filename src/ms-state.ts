@@ -1,6 +1,6 @@
 import type { MSCellState } from "./ms-cell-state";
 import type { MSGameConfig } from "./ms-config";
-import * as PIXI from "pixi.js-legacy";
+import * as PIXI from "pixi.js";
 
 export const MIN_GRID_WIDTH = 4;
 export const MIN_GRID_HEIGHT = 4;
@@ -42,10 +42,6 @@ export class MSState {
 
 	private cells: MSCellState[] = [];
 
-	/**
-	 *
-	 * @param config
-	 */
 	public init(config: MSGameConfig) {
 		if (config.gridWidth < MIN_GRID_WIDTH) {
 			throw new Error("Grid width below " + MIN_GRID_WIDTH);
@@ -76,9 +72,6 @@ export class MSState {
 		this.shuffleMines(config.startMines);
 	}
 
-	/**
-	 *
-	 */
 	public reset() {
 		for (let x = 0; x < this.width; x++) {
 			for (let y = 0; y < this.height; y++) {
@@ -94,9 +87,6 @@ export class MSState {
 		this.shuffleMines(this.config.startMines);
 	}
 
-	/**
-	 * Initialize all cells.
-	 */
 	private initCells() {
 		this.cells = [];
 		for (let x = 0; x < this.width; x++) {
@@ -113,29 +103,16 @@ export class MSState {
 		}
 	}
 
-	/**
-	 *
-	 * @param cb
-	 */
 	public forEach(cb: (cell: MSCellState, i: number) => void) {
 		this.cells.forEach(cb);
 	}
 
-	/**
-	 * Get cell at coords.
-	 *
-	 * @param x
-	 * @param y
-	 */
 	public cellAt(x: number, y: number): MSCellState | undefined {
 		return this.cells[x + y * this.width];
 	}
 
 	/**
 	 * Returns the value of the first cell where predicate is true, and undefined otherwise.
-	 *
-	 * @param x
-	 * @param y
 	 */
 	public find(predicate: (value: MSCellState, index: number) => boolean): MSCellState | undefined {
 		return this.cells.find(predicate);
@@ -143,9 +120,6 @@ export class MSState {
 
 	/**
 	 * Place a flag at given coords.
-	 *
-	 * @param x
-	 * @param y
 	 */
 	public placeFlag(x: number, y: number) {
 		const cell = this.cellAt(x, y);
@@ -159,9 +133,6 @@ export class MSState {
 
 	/**
 	 * Clear flag at given coords.
-	 *
-	 * @param x
-	 * @param y
 	 */
 	public clearFlag(x: number, y: number) {
 		const cell = this.cellAt(x, y);
@@ -175,8 +146,6 @@ export class MSState {
 
 	/**
 	 * Place a mine at given coords.
-	 *
-	 * @param index
 	 */
 	public placeMine(x: number, y: number) {
 		const cell = this.cellAt(x, y);
@@ -190,9 +159,6 @@ export class MSState {
 
 	/**
 	 * Clear a mine at given coords.
-	 *
-	 * @param x
-	 * @param y
 	 */
 	public clearMine(x: number, y: number) {
 		const cell = this.cellAt(x, y);
@@ -490,10 +456,6 @@ export class MSState {
 		}
 	}
 
-	/**
-	 *
-	 * @param total
-	 */
 	public shuffleMines(total: number) {
 		this.clearAllMines();
 

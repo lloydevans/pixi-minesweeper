@@ -1,8 +1,8 @@
 import clamp from "lodash-es/clamp";
-import { Container, Texture } from "pixi.js-legacy";
+import { Container, Texture } from "pixi.js";
 import { AppBase } from "./app-base";
-import { Button } from "./button";
-import { GameText } from "./game-text";
+import { UiButton } from "./ui-button";
+import { BmText } from "./bm-text";
 
 export interface ButtonScrollerOptions {
 	arrowTexture: Texture;
@@ -12,7 +12,7 @@ export interface ButtonScrollerOptions {
 	max: number;
 }
 
-export class ButtonScroller extends Container {
+export class UiButtonScroller extends Container {
 	app: AppBase;
 
 	private _min: number;
@@ -47,10 +47,10 @@ export class ButtonScroller extends Container {
 		return this._default;
 	}
 
-	private number: GameText;
-	private buttonLeft: Button;
-	private buttonRight: Button;
-	private label: GameText;
+	private number: BmText;
+	private buttonLeft: UiButton;
+	private buttonRight: UiButton;
+	private label: BmText;
 
 	constructor(app: AppBase, options: ButtonScrollerOptions) {
 		super();
@@ -62,26 +62,32 @@ export class ButtonScroller extends Container {
 		this._default = options.default;
 		this._current = this.default;
 
-		this.buttonLeft = new Button(this.app, { texture: options.arrowTexture });
+		this.buttonLeft = new UiButton(this.app, {
+			textureUp: options.arrowTexture,
+			textureDown: options.arrowTexture,
+		});
 		this.buttonLeft.rotation = Math.PI;
-		this.buttonLeft.anchor.set(0.5);
 		this.buttonLeft.x = -64;
 
-		this.buttonRight = new Button(this.app, { texture: options.arrowTexture });
-		this.buttonRight.anchor.set(0.5);
+		this.buttonRight = new UiButton(this.app, {
+			textureUp: options.arrowTexture,
+			textureDown: options.arrowTexture,
+		});
 		this.buttonRight.x = 64;
 
-		this.number = new GameText(this.app, this.default.toString(), {
+		this.number = new BmText(this.app, {
+			text: this.default.toString(),
 			fontName: "bmfont",
 			fontSize: 38,
 		});
-		this.number._anchor.set(0.5);
+		this.number.anchor.set(0.5);
 
-		this.label = new GameText(this.app, options.label, {
+		this.label = new BmText(this.app, {
+			text: options.label,
 			fontName: "bmfont",
 			fontSize: 38,
 		});
-		this.label._anchor.set(1, 0.5);
+		this.label.anchor.set(1, 0.5);
 		this.label.position.set(-106, 0);
 
 		this.addChild(this.label, this.number, this.buttonLeft, this.buttonRight);
@@ -95,9 +101,9 @@ export class ButtonScroller extends Container {
 	set(value: number) {
 		this._current = Math.floor(clamp(value, this.min, this.max));
 		this.number.text = this.current.toString();
-		this.buttonLeft.interactive = this.current !== this.min;
+		this.buttonLeft.eventMode = this.current !== this.min ? "static" : "none";
 		this.buttonLeft.alpha = this.current !== this.min ? 1 : 0.5;
-		this.buttonRight.interactive = this.current !== this.max;
+		this.buttonLeft.eventMode = this.current !== this.max ? "static" : "none";
 		this.buttonRight.alpha = this.current !== this.max ? 1 : 0.5;
 
 		this.emit("set", this.current);

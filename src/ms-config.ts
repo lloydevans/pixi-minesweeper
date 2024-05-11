@@ -2,9 +2,6 @@ export type NumberKey = "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8";
 
 export type GameDifficulty = "easy" | "medium" | "hard";
 
-/**
- *
- */
 export interface MSGameConfig {
 	startMines: number;
 	gridWidth: number;
@@ -12,9 +9,6 @@ export interface MSGameConfig {
 	cheatMode?: boolean;
 }
 
-/**
- *
- */
 export interface MSConfig {
 	colorBackground: string;
 	colorBoard: string;
@@ -32,9 +26,6 @@ export interface MSConfig {
 	};
 }
 
-/**
- *
- */
 export const MS_CONFIG_DEFAULT: MSConfig = {
 	colorBackground: "#303030",
 	colorBoard: "#bda355",

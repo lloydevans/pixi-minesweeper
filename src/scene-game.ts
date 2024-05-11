@@ -1,5 +1,5 @@
 import clamp from "lodash-es/clamp";
-import * as PIXI from "pixi.js-legacy";
+import * as PIXI from "pixi.js";
 import { hexToNum } from "./common/color";
 import { Ease } from "./common/ease";
 import { Scene } from "./common/scene";
@@ -13,6 +13,7 @@ import { MSGrid } from "./ms-grid";
 import { MSMenu } from "./ms-menu";
 import { MSTouchUi } from "./ms-touch-ui";
 import { MSUi } from "./ms-ui";
+import { logEvent } from "firebase/analytics";
 
 export class SceneGame extends Scene<MSApp> {
 	public get currentTime() {
@@ -35,9 +36,6 @@ export class SceneGame extends Scene<MSApp> {
 	private ui = new MSUi(this.app);
 	private bg = new MSBg(this.app);
 
-	/**
-	 *
-	 */
 	init() {
 		this.grid.interactiveChildren = false;
 
@@ -75,21 +73,12 @@ export class SceneGame extends Scene<MSApp> {
 		this.addChild(this.menu);
 	}
 
-	/**
-	 *
-	 * @param dt
-	 */
 	update(dt: number) {
 		if (this.timeActive) {
 			this.time += this.app.ticker.elapsedMS / 1000;
 		}
 	}
 
-	/**
-	 *
-	 * @param width
-	 * @param height
-	 */
 	resize(width: number, height: number) {
 		const marginX = 64;
 		const marginY = 96;
@@ -130,9 +119,6 @@ export class SceneGame extends Scene<MSApp> {
 		}
 	}
 
-	/**
-	 *
-	 */
 	private async initGrid() {
 		this.transitionIdx = (this.transitionIdx + 1) % 3;
 
@@ -164,11 +150,7 @@ export class SceneGame extends Scene<MSApp> {
 		await this.transitionCells();
 	}
 
-	/**
-	 *
-	 * @param e
-	 */
-	private onPointerTap(e: PIXI.InteractionEvent) {
+	private onPointerTap(e: PIXI.FederatedPointerEvent) {
 		const msCell = e.currentTarget as MSCell;
 
 		const cellState = this.app.state.cellAt(msCell.ix, msCell.iy);
@@ -208,11 +190,7 @@ export class SceneGame extends Scene<MSApp> {
 		}
 	}
 
-	/**
-	 *
-	 * @param e
-	 */
-	private onPointerDown(e: PIXI.InteractionEvent) {
+	private onPointerDown(e: PIXI.FederatedPointerEvent) {
 		const msCell = e.currentTarget as MSCell;
 
 		const cellState = this.app.state.cellAt(msCell.ix, msCell.iy);
@@ -238,11 +216,7 @@ export class SceneGame extends Scene<MSApp> {
 		}
 	}
 
-	/**
-	 *
-	 * @param e
-	 */
-	private onPointerOut(e: PIXI.InteractionEvent) {
+	private onPointerOut(e: PIXI.FederatedPointerEvent) {
 		const msCell = e.currentTarget as MSCell;
 
 		const cellState = this.app.state.cellAt(msCell.ix, msCell.iy);
@@ -260,9 +234,6 @@ export class SceneGame extends Scene<MSApp> {
 		}
 	}
 
-	/**
-	 *
-	 */
 	private transitionCells() {
 		switch (this.transitionIdx) {
 			default:
@@ -271,11 +242,6 @@ export class SceneGame extends Scene<MSApp> {
 		}
 	}
 
-	/**
-	 * Start a new game with given config.
-	 *
-	 * @param config
-	 */
 	public async newGame(config: MSGameConfig = this.gameConfig) {
 		this.tweenGroup.reset();
 
@@ -286,7 +252,7 @@ export class SceneGame extends Scene<MSApp> {
 		this.isFirstClick = true;
 		this.touchUi.hide();
 
-		analytics.logEvent("new_game", this.app.state.config);
+		logEvent(analytics, "new_game", this.app.state.config);
 
 		await this.initGrid();
 
@@ -294,9 +260,6 @@ export class SceneGame extends Scene<MSApp> {
 		this.grid.interactiveChildren = true;
 	}
 
-	/**
-	 *
-	 */
 	public screenShake(amp = 8, duration = 0.75, hz = 16) {
 		duration = clamp(duration, 0.1, 8);
 		amp = clamp(amp, 0, 16) * 0.75;
@@ -328,9 +291,6 @@ export class SceneGame extends Scene<MSApp> {
 		});
 	}
 
-	/**
-	 *
-	 */
 	public showGame() {
 		this.app.audio.playMidi("minesweeper.mid");
 
@@ -340,9 +300,6 @@ export class SceneGame extends Scene<MSApp> {
 		this.ui.visible = true;
 	}
 
-	/**
-	 *
-	 */
 	public showMenu() {
 		this.tween(this.container.position).to({ y: 0 }, 300, Ease.sineInOut);
 		this.menu.visible = true;
@@ -350,11 +307,6 @@ export class SceneGame extends Scene<MSApp> {
 		this.ui.visible = false;
 	}
 
-	/**
-	 * Start a new game with given config.
-	 *
-	 * @param config
-	 */
 	public previewGame(config: MSGameConfig = this.gameConfig) {
 		this.app.state.init(config);
 		this.resize(this.app.width, this.app.height);
@@ -363,10 +315,6 @@ export class SceneGame extends Scene<MSApp> {
 		}
 	}
 
-	/**
-	 *
-	 * @param cellState
-	 */
 	public rightClick(cellState: MSCellState) {
 		cellState.flag = !cellState.flag;
 
@@ -382,9 +330,6 @@ export class SceneGame extends Scene<MSApp> {
 		msCell.updateViewState();
 	}
 
-	/**
-	 *
-	 */
 	public async leftClick(cellState: MSCellState) {
 		const msCell = this.app.getCellView(cellState.x, cellState.y);
 		const x = msCell.ix;
@@ -436,11 +381,8 @@ export class SceneGame extends Scene<MSApp> {
 		this.checkWin();
 	}
 
-	/**
-	 * Animate win.
-	 */
 	private async animateWin() {
-		analytics.logEvent("win_game", this.app.state.config);
+		logEvent(analytics, "win_game", this.app.state.config);
 
 		this.endGame();
 
@@ -475,11 +417,8 @@ export class SceneGame extends Scene<MSApp> {
 		}
 	}
 
-	/**
-	 * Animate loss.
-	 */
 	private async animateLose(firstMine: MSCellState) {
-		analytics.logEvent("lose_game", this.app.state.config);
+		logEvent(analytics, "lose_game", this.app.state.config);
 
 		this.endGame();
 
@@ -519,17 +458,11 @@ export class SceneGame extends Scene<MSApp> {
 		}
 	}
 
-	/**
-	 * End current game.
-	 */
 	private endGame() {
 		this.timeActive = false;
 		this.grid.interactiveChildren = false;
 	}
 
-	/**
-	 *
-	 */
 	private checkWin() {
 		if (this.app.state.isWin()) {
 			this.animateWin();

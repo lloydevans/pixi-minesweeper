@@ -1,4 +1,4 @@
-import * as PIXI from "pixi.js-legacy";
+import * as PIXI from "pixi.js";
 import { Component } from "./common/component";
 import { MSApp } from "./ms-app";
 import { Ease } from "./common/ease";

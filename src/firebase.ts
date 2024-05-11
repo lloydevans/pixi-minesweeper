@@ -1,8 +1,8 @@
-import firebase from "firebase/app";
-import "firebase/performance";
-import "firebase/analytics";
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+import { getPerformance } from "firebase/performance";
 
-const firebaseConfig = {
+const firebaseApp = initializeApp({
 	apiKey: "AIzaSyB1PSNZ1sZ7Esdwh_zKYhO7ody7Bo2YDhw",
 	authDomain: "minesweeper-fe661.firebaseapp.com",
 	databaseURL: "https://minesweeper-fe661.firebaseio.com",
@@ -11,15 +11,7 @@ const firebaseConfig = {
 	messagingSenderId: "227589891664",
 	appId: "1:227589891664:web:211b5d896d4ae5f8939355",
 	measurementId: "G-5SBBB77D8V",
-};
+});
 
-export let performance = {};
-export let analytics = {
-	logEvent: (name: string, params: any) => {},
-};
-
-if (ENV_PROD) {
-	firebase.initializeApp(firebaseConfig);
-	performance = firebase.performance();
-	analytics = firebase.analytics();
-}
+export let performance = getPerformance(firebaseApp);
+export let analytics = getAnalytics(firebaseApp);

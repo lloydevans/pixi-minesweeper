@@ -1,17 +1,24 @@
 import clamp from "lodash-es/clamp";
-import * as PIXI from "pixi.js-legacy";
+import * as PIXI from "pixi.js";
 import * as screenfull from "screenfull";
+import { lerp } from "../maths/lerp";
 import { ToneAudio } from "./tone-audio";
 import { Tween } from "./tween";
 import { TweenGroup } from "./tween-group";
-import { TweenProps } from "./tween-props";
+import { TweenOptions } from "./tween-props";
+import { UiElement } from "./ui-element";
+import { SkeletonBounds, Spine, ISkeletonData } from "pixi-spine";
+import { Dict } from "./types";
 
 export const MAX_DPR = 4;
 export const MIN_DPR = 0.5;
 
-/**
- * General purpose app functionality.
- */
+export interface AppReferenceSize {
+	width: number;
+	height: number;
+	blend: number;
+}
+
 export class AppBase extends PIXI.Application {
 	/**
 	 * Global event emitter.
@@ -26,69 +33,72 @@ export class AppBase extends PIXI.Application {
 	 */
 	public readonly events = new PIXI.utils.EventEmitter();
 
-	/**
-	 *
-	 */
+	/** App audio manager reference */
 	public readonly audio = new ToneAudio();
 
-	/**
-	 * Global app tween group.
-	 */
-	protected readonly tweenGroup = new TweenGroup(false, 1);
+	/** Reference size of the app. If this is not defined, no root scaling is applied. */
+	public referenceSize?: AppReferenceSize;
 
-	/**
-	 * Root container.
-	 */
-	protected readonly root = new PIXI.Container();
-
-	/**
-	 * Current app ready state. Modified via setReady,
-	 */
+	/** Current app ready state. Modified via setReady, */
 	public get ready() {
 		return this._ready;
 	}
+	private _ready = false;
 
-	/**
-	 * Renderer pixel ratio. Use resizeRoot to modify.
-	 */
+	/** Renderer pixel ratio. Use resizeRoot to modify. */
 	public get dpr() {
 		return this._dpr;
 	}
+	private _dpr = 1;
 
-	/**
-	 * Renderer virtual width. Use resizeRoot to modify.
-	 */
+	/** Renderer virtual width. Use resizeRoot to modify. */
 	public get width() {
 		return this._width;
 	}
+	private _width = 0;
 
-	/**
-	 * Renderer virtual height. Use resizeRoot to modify.
-	 */
+	/** Renderer virtual height. Use resizeRoot to modify. */
 	public get height() {
 		return this._height;
 	}
-
-	private _dpr = 1;
-	private _width = 0;
 	private _height = 0;
-	private _ready = false;
 
-	/**
-	 *
-	 */
+	/** Global app tween group. */
+	protected readonly tweenGroup = new TweenGroup(false, 1);
+
+	/** Root container. */
+	protected readonly root = new PIXI.Container();
+
+	/** List of all UI elements currently added to app instance. */
+	protected readonly uiElements: UiElement[] = [];
+
+	private initialized = false;
+
+	private assets: {
+		json: Dict<any>;
+		atlas: Dict<any>;
+		bmfont: Dict<any>;
+		spine: Dict<any>;
+	} = {
+		json: {},
+		atlas: {},
+		bmfont: {},
+		spine: {},
+	};
+
+	/** Initialize the app */
 	public init() {
-		this.stage.addChild(this.root);
-		this.ticker.add(this.update, this);
-		this.ticker.add(this.audio.update, this.audio);
-		this.loader.use(ToneAudio.configLoader);
-		this.events.emit("init");
+		if (!this.initialized) {
+			this.initialized = true;
+			this.stage.addChild(this.root);
+			this.ticker.add(this.update, this);
+			this.ticker.add(this.audio.update, this.audio);
+			this.events.emit("init");
+		} else {
+			throw new Error("App already initialized!");
+		}
 	}
 
-	/**
-	 *
-	 * @param dt
-	 */
 	private update(dt: number) {
 		const currentDpr = this.getWindowDpr();
 
@@ -103,25 +113,19 @@ export class AppBase extends PIXI.Application {
 		this.events.emit("update", dt);
 	}
 
-	/**
-	 *
-	 */
-	public tween<T>(target: T, options?: TweenProps): Tween<T> {
+	public log(...args: any[]) {
+		console.log(...args);
+	}
+
+	public tween<T>(target: T, options?: TweenOptions): Tween<T> {
 		const tween = this.tweenGroup.get(target, options);
 		return tween;
 	}
 
-	/**
-	 *
-	 */
 	public delay(time: number) {
 		return new Promise((resolve) => this.tween(this).wait(time).call(resolve));
 	}
 
-	/**
-	 * This is a rough way for components to be able to wait until required resources
-	 * are loaded before running initiailisation logic.
-	 */
 	public setReady() {
 		if (!this.ready) {
 			this._ready = true;
@@ -129,80 +133,129 @@ export class AppBase extends PIXI.Application {
 		}
 	}
 
-	/**
-	 *
-	 */
 	public requestFullscreen(): Promise<void> {
 		if (screenfull.isEnabled) {
-			return screenfull.request(this.view);
+			return screenfull.request(this.view as unknown as Element);
 		} else {
 			return Promise.resolve();
 		}
 	}
 
-	/**
-	 *
-	 */
 	private getWindowDpr(): number {
 		let dpr = clamp(window.devicePixelRatio, MIN_DPR, MAX_DPR);
 
-		if (PIXI.utils.isMobile.amazon.device) {
+		if (PIXI.isMobile.amazon.device) {
 			dpr = 1;
 		}
 
 		return dpr;
 	}
 
-	/**
-	 *
-	 */
-	private getAssetDpr(): number {
+	private getTextureDpr(): number {
 		return this.getWindowDpr() | 0;
 	}
 
-	/**
-	 *
-	 */
 	private resizeRoot(width: number, height: number, dpr: number) {
 		this._width = width;
 		this._height = height;
 		this._dpr = dpr;
 
-		this.view.style.width = this.width + "px";
-		this.view.style.height = this.height + "px";
+		this.view!.style!.width = this.width + "px";
+		this.view!.style!.height = this.height + "px";
 		this.renderer.resolution = this.dpr;
-		this.renderer.plugins.interaction.resolution = this.dpr;
+		// this.renderer.plugins.interaction.resolution = this.dpr;
 		this.renderer.resize(this.width, this.height);
 
 		// Center root container but this could be made optional.
 		this.root.x = this.renderer.width / this.dpr / 2;
 		this.root.y = this.renderer.height / this.dpr / 2;
 
+		if (this.referenceSize) {
+			let refSize = lerp(this.referenceSize.width, this.referenceSize.height, this.referenceSize.blend);
+			let refWindow = lerp(width, height, this.referenceSize.blend);
+			let r = refSize / refWindow;
+			this.root.scale.set(1 / r);
+			this._width *= r;
+			this._height *= r;
+		}
+
 		this.events.emit("resize", this.width, this.height);
 	}
 
 	/**
+	 * Make a request. If it fails, wait for an amount of delayed retries.
 	 *
-	 * @param atlasPath
+	 * @param action - Action to perform.
+	 * @param delay - Delay in seconds between retries.
+	 * @param maxTries - Max tries before giving up.
 	 */
-	public getAtlas(atlasPath: string): PIXI.LoaderResource {
-		const atlas = this.loader.resources[atlasPath];
+	public async persistentRequest<T>(action: () => Promise<T>, delay = 1, maxTries = 10): Promise<T> {
+		let tries = 0;
+		let result;
 
-		if (!atlas) {
-			throw new Error(`Can't find atlas: "${atlasPath}"`);
-		}
-		if (!atlas.spritesheet) {
-			throw new Error(`Not a valid atlas: "${atlasPath}"`);
+		while (!result) {
+			let error;
+
+			try {
+				result = await action();
+			} catch (err) {
+				error = err;
+				await this.delay(delay * 1000);
+			}
+
+			tries++;
+
+			if (error && tries > maxTries) {
+				throw error;
+			}
 		}
 
-		return atlas;
+		return result;
 	}
 
-	/**
-	 *
-	 * @param atlasPath
-	 * @param frameName
-	 */
+	public registerUiElement(element: UiElement) {
+		if (this.uiElements.indexOf(element) !== -1) {
+			throw new Error("Element already registered");
+		}
+
+		this.uiElements.push(element);
+	}
+
+	public unregisterUiElement(element: UiElement) {
+		const idx = this.uiElements.indexOf(element);
+		if (idx === -1) {
+			throw new Error("Element doesn't exist");
+		}
+
+		this.uiElements.splice(idx, 1);
+	}
+
+	public blurAllUiElements() {
+		for (let i = 0; i < this.uiElements.length; i++) {
+			const el = this.uiElements[i];
+			if (el.focused) {
+				el.focused = false;
+			}
+		}
+	}
+
+	public setAllUiElementsActive(active: boolean) {
+		for (let i = 0; i < this.uiElements.length; i++) {
+			const el = this.uiElements[i];
+			el.active = active;
+		}
+	}
+
+	public getAtlas(atlasPath: string): PIXI.Spritesheet {
+		const resource = this.assets.atlas[atlasPath];
+
+		if (!resource) {
+			throw new Error(`Can't find atlas: "${atlasPath}"`);
+		}
+
+		return resource;
+	}
+
 	public getFrame(atlasPath: string, frameName: string): PIXI.Texture {
 		const atlas = this.getAtlas(atlasPath);
 
@@ -213,35 +266,24 @@ export class AppBase extends PIXI.Application {
 		return atlas.textures[frameName];
 	}
 
-	/**
-	 *
-	 * @param spinePath
-	 */
-	public getSpine(spinePath: string) {
-		const spine = this.loader.resources[spinePath];
+	public getSpine(spinePath: string): ISkeletonData {
+		const spine = this.assets.spine[spinePath];
 
 		if (!spine) {
 			throw new Error(`Can't find spine: "${spinePath}"`);
-		}
-		if (!spine.spineData) {
-			throw new Error(`Not a valid spine: "${spinePath}"`);
 		}
 
 		return spine.spineData;
 	}
 
-	/**
-	 *
-	 * @param spineName
-	 */
-	public getJson(name: string) {
-		const resource = this.loader.resources[name];
+	public getJson(name: string): unknown {
+		const resource = this.assets.json[name];
 
-		if (!resource.data) {
+		if (!resource) {
 			throw new Error(`Can't find json: "${name}"`);
 		}
 
-		return resource.data;
+		return this.assets.json[name];
 	}
 
 	/**
@@ -250,14 +292,9 @@ export class AppBase extends PIXI.Application {
 	 * @param spinePath
 	 * @param scale
 	 */
-	public addSpine(spinePath: string, scale: number = this.getAssetDpr()) {
-		const metadata: PIXI.loaders.IMetadata = {
-			spineSkeletonScale: 1 / MAX_DPR,
-			spineAtlasFile: spinePath + "@" + scale + "x.atlas",
-		};
-
-		// Add spine asset with our own compensation scale.
-		this.loader.add(spinePath, spinePath + ".skel", { metadata });
+	public async addSpine(spinePath: string, scale: number = this.getTextureDpr()) {
+		const res = await PIXI.Assets.load(spinePath + ".json");
+		this.assets.spine[spinePath] = res;
 	}
 
 	/**
@@ -266,28 +303,30 @@ export class AppBase extends PIXI.Application {
 	 * @param atlasPath
 	 * @param scale
 	 */
-	public addAtlas(atlasPath: string, scale: number = this.getAssetDpr()) {
-		// Pixi auto detects and compensates scale based on suffix in form `@nx`.
-		this.loader.add(atlasPath, atlasPath + "@" + scale + "x.json");
+	public async addAtlas(atlasPath: string, scale: number = this.getTextureDpr()) {
+		const res = await PIXI.Assets.load(atlasPath + "@" + scale + "x.json");
+		this.assets.atlas[atlasPath] = res;
 	}
 
 	/**
 	 * Add an atlas asset to the loader.
 	 *
-	 * @param atlasName
+	 * @param assetPath
 	 * @param scale
 	 */
-	public addBitmapFont(assetPath: string, scale: number = this.getAssetDpr()) {
-		this.loader.add(assetPath, assetPath + "@" + scale + "x.fnt");
+	public async addBitmapFont(assetPath: string, scale: number = this.getTextureDpr()) {
+		const res = await PIXI.Assets.load(assetPath + "@" + scale + "x.fnt");
+		this.assets.bmfont[assetPath] = res;
 	}
 
 	/**
 	 * Add an JSON asset to the loader.
 	 *
-	 * @param atlasName
+	 * @param jsonName
 	 * @param scale
 	 */
-	public addJson(jsonName: string, url: string) {
-		this.loader.add(jsonName, url);
+	public async addJson(jsonName: string, url: string) {
+		const res = await PIXI.Assets.load(url);
+		this.assets.json[jsonName] = res;
 	}
 }
