@@ -3,7 +3,6 @@ import { Ease } from "./ease";
 
 /**
  * This serves as an alias to the namespaced Tween class.
- *
  * Experimental - Adding type safety to createjs tweenjs API.
  */
 export class Tween<T = any> extends createjs.Tween {

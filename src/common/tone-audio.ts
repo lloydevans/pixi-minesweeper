@@ -1,7 +1,7 @@
 import { Midi } from "@tonejs/midi";
 import clamp from "lodash-es/clamp";
 import defaults from "lodash-es/defaults";
-import * as PIXI from "pixi.js-legacy";
+import * as PIXI from "pixi.js";
 import * as Tone from "tone";
 import type { Dict } from "./types";
 
@@ -63,17 +63,10 @@ export interface MidiPlaybackTrackData {
 	loops: number;
 }
 
-/**
- *
- */
 export class ToneAudio {
 	private static buffers: Dict<Tone.ToneAudioBuffer> = {};
 
-	/**
-	 *
-	 * @param config
-	 */
-	private static async loadBuffers(config: ToneAudioConfig) {
+	public static async loadBuffers(config: ToneAudioConfig) {
 		const entries = Object.entries(config.sources);
 
 		const requests = [];
@@ -96,28 +89,6 @@ export class ToneAudio {
 		}
 	}
 
-	/**
-	 * Middleware handles async loading required for audio config JSON.
-	 *
-	 * @param resource - resource reference.
-	 * @param next - Continue loader.
-	 */
-	public static async configLoader(this: PIXI.Loader, resource: PIXI.LoaderResource, next: () => any) {
-		if (!resource.data?.toneAudioConfig) {
-			return next();
-		}
-
-		const config = resource.data as ToneAudioConfig;
-
-		await ToneAudio.loadBuffers(config);
-
-		return next();
-	}
-
-	/**
-	 *
-	 * @param semitones
-	 */
 	public static semitoneToRate(semitones: number): number {
 		return Math.exp((semitones * Math.log(2)) / 12);
 	}
@@ -129,9 +100,6 @@ export class ToneAudio {
 	private currentMidiData?: Midi;
 	private config!: ToneAudioConfig;
 
-	/**
-	 * Set current
-	 */
 	public async init(config: ToneAudioConfig) {
 		if (this.config) {
 			throw new Error("Already initialized");
@@ -144,9 +112,6 @@ export class ToneAudio {
 		this.initInstruments(config);
 	}
 
-	/**
-	 *
-	 */
 	public update() {
 		if (Tone.context.state !== "running") {
 			return;
@@ -157,9 +122,6 @@ export class ToneAudio {
 		}
 	}
 
-	/**
-	 *
-	 */
 	private initPlayers(options: ToneAudioConfig) {
 		const sources = Object.entries(options.sources);
 
@@ -178,9 +140,6 @@ export class ToneAudio {
 		}
 	}
 
-	/**
-	 *
-	 */
 	private initInstruments(options: ToneAudioConfig) {
 		const sources = Object.entries(options.sources);
 
@@ -204,10 +163,6 @@ export class ToneAudio {
 		}
 	}
 
-	/**
-	 *
-	 * @param name
-	 */
 	public play(name: string, options: Partial<PlayOptions> = {}) {
 		const source = this.sources[name];
 
@@ -250,10 +205,6 @@ export class ToneAudio {
 		}
 	}
 
-	/**
-	 *
-	 * @param config
-	 */
 	public async playMidi(url: string) {
 		if (this.currentMidiData) {
 			return;
@@ -277,9 +228,6 @@ export class ToneAudio {
 		};
 	}
 
-	/**
-	 *
-	 */
 	private updateMusic(midi: MidiPlaybackData) {
 		const { tracks, start, duration } = midi;
 
@@ -323,7 +271,7 @@ export class ToneAudio {
 						note.name,
 						note.duration,
 						note.time + start + loopOffset,
-						note.velocity * 0.333 // TODO: config
+						note.velocity * 0.333, // TODO: config
 					);
 				} catch (err) {
 					console.log(err);

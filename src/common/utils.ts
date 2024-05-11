@@ -1,6 +1,3 @@
-/**
- * Prevent contetx menu on right click anywhere on the page.
- */
 export function preventContextMenu() {
 	window.addEventListener("contextmenu", (e) => e.preventDefault(), false);
 }

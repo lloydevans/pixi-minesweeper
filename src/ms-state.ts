@@ -1,5 +1,6 @@
-import { jsonClone, shallowObjectEquals } from "./common/utils";
-import { MSCellState, MSCellType } from "./ms-cell-state";
+import type { MSCellState } from "./ms-cell-state";
+import type { MSGameConfig } from "./ms-config";
+import * as PIXI from "pixi.js";
 
 export const MIN_GRID_WIDTH = 4;
 export const MIN_GRID_HEIGHT = 4;
@@ -115,21 +116,7 @@ export class MSState {
 		this.setConfig(config as MSStateConfig);
 	}
 
-	/**
-	 * Set current game config object.
-	 *
-	 * @param config - Game config object.
-	 */
-	public setConfig(config: MSStateConfig) {
-		if (
-			!config ||
-			typeof config.gridWidth !== "number" ||
-			typeof config.gridHeight !== "number" ||
-			typeof config.startMines !== "number"
-		) {
-			throw new Error("Invalid config");
-		}
-
+	public init(config: MSGameConfig) {
 		if (config.gridWidth < MIN_GRID_WIDTH) {
 			throw new Error("Grid width below " + MIN_GRID_WIDTH);
 		}
@@ -154,11 +141,24 @@ export class MSState {
 		this.width = config.gridWidth;
 		this.height = config.gridHeight;
 		this.initCells();
+		this.shuffleMines(config.startMines);
 	}
 
-	/**
-	 * Initialize all cells.
-	 */
+	public reset() {
+		for (let x = 0; x < this.width; x++) {
+			for (let y = 0; y < this.height; y++) {
+				const cell = this.cells[this.indexOf(x, y)];
+				cell.x = x;
+				cell.y = y;
+				cell.adjacent = 0;
+				cell.mine = false;
+				cell.flag = false;
+				cell.covered = true;
+			}
+		}
+		this.shuffleMines(this.config.startMines);
+	}
+
 	private initCells() {
 		this.cells.length = 0;
 
@@ -176,238 +176,10 @@ export class MSState {
 		}
 	}
 
-	/**
-	 * Clear and set the moves history.
-	 *
-	 * @param moves - Array of MoveData onbjects.
-	 */
-	private setHistory(moves: MoveDataHistory[]) {
-		this.history.length = 0;
-		this.history.push(...moves);
-	}
-
-	/**
-	 * Add a move to the history list.
-	 *
-	 * @param moves - Array of MoveData onbjects.
-	 */
-	private addHistory(move: MoveDataHistory) {
-		this.history.unshift(move);
-	}
-
-	/**
-	 * Convert the current game state to server-side data.
-	 */
-	public toServerState(): MSStateServer {
-		return jsonClone({
-			resolution: this.resolution,
-			history: this.history,
-			config: this.config,
-			cells: this.cells,
-		});
-	}
-
-	/**
-	 * Convert the current game state to client-safe data. When no more moves can be
-	 * done, the results can be included.
-	 *
-	 * @param includeResult - Include results?
-	 */
-	public toClientState(includeResult = false): MSStateClient {
-		const cells: MSCellType[] = [];
-
-		for (let i = 0; i < this.cells.length; i++) {
-			cells.push(this.cellToType(this.cells[i]));
-		}
-
-		const result = includeResult ? this.cells : void 0;
-
-		return jsonClone({
-			history: this.history,
-			config: this.config,
-			result,
-			cells,
-		});
-	}
-
-	/**
-	 * Parse the current game state from server-side data.
-	 *
-	 * @param object - Server game state object revealing all info about the game.
-	 */
-	public parseServerState(object: MSStateServer) {
-		if (!shallowObjectEquals(object.config, this.config)) {
-			this.setConfig(object.config);
-		}
-
-		this.resolution = object.resolution;
-
-		this.setHistory(object.history);
-
-		for (let i = 0; i < object.cells.length; i++) {
-			Object.assign(this.cells[i], object.cells[i]);
-		}
-	}
-
-	/**
-	 * Parse the current game state from client-safe data.
-	 *
-	 * @param object - Client state object.
-	 */
-	public parseClientState(object: MSStateClient) {
-		if (!shallowObjectEquals(object.config, this.config)) {
-			this.setConfig(object.config);
-		}
-
-		this.setHistory(object.history);
-
-		if (object.result) {
-			this.readCellStates(object.result);
-		} else {
-			this.readCellTypes(object.cells);
-		}
-	}
-
-	/**
-	 * Assign cells state list directly.
-	 *
-	 * @param cells - Cell state object.
-	 */
-	private readCellStates(cells: MSCellState[]) {
-		if (cells.length !== this.cells.length) {
-			throw new Error("Cell type array must match length.");
-		}
-
-		for (let i = 0; i < cells.length; i++) {
-			Object.assign(this.cells[i], cells[i]);
-		}
-	}
-
-	/**
-	 * Set cell properties from cell type list.
-	 *
-	 * @param cells - Cell state object.
-	 */
-	private readCellTypes(cells: MSCellType[]) {
-		if (cells.length !== this.cells.length) {
-			throw new Error("Cell type array must match length.");
-		}
-
-		for (let i = 0; i < cells.length; i++) {
-			this.cellFromType(cells[i], this.cells[i]);
-		}
-	}
-
-	/**
-	 */
-	public cellToType(cell: MSCellState): MSCellType {
-		let type = MSCellType.Empty;
-
-		if (cell.covered && cell.flag) {
-			type = MSCellType.Flag;
-		} else if (cell.covered) {
-			type = MSCellType.Covered;
-		} else if (cell.adjacent > 0) {
-			type = MSCellType[("Adjacent" + cell.adjacent) as keyof typeof MSCellType];
-		} else if (cell.mine) {
-			type = MSCellType.Mine;
-		}
-
-		return type;
-	}
-
-	/**
-	 */
-	public cellFromType(type: MSCellType, target: MSCellState) {
-		target.adjacent = 0;
-		target.covered = false;
-		target.flag = false;
-		target.mine = false;
-
-		switch (type) {
-			default:
-			case MSCellType.Empty:
-				break;
-
-			case MSCellType.Covered:
-				target.covered = true;
-				break;
-
-			case MSCellType.Flag:
-				target.covered = true;
-				target.flag = true;
-				break;
-
-			case MSCellType.Mine:
-				target.mine = true;
-				break;
-
-			case MSCellType.Adjacent1:
-				target.adjacent = 1;
-				break;
-
-			case MSCellType.Adjacent2:
-				target.adjacent = 2;
-				break;
-
-			case MSCellType.Adjacent3:
-				target.adjacent = 3;
-				break;
-
-			case MSCellType.Adjacent4:
-				target.adjacent = 4;
-				break;
-
-			case MSCellType.Adjacent5:
-				target.adjacent = 5;
-				break;
-
-			case MSCellType.Adjacent6:
-				target.adjacent = 6;
-				break;
-
-			case MSCellType.Adjacent7:
-				target.adjacent = 7;
-				break;
-
-			case MSCellType.Adjacent8:
-				target.adjacent = 8;
-				break;
-		}
-	}
-
-	/**
-	 * Reset the state.
-	 */
-	public reset() {
-		for (let x = 0; x < this.width; x++) {
-			for (let y = 0; y < this.height; y++) {
-				const cell = this.cells[this.indexOf(x, y)];
-				cell.x = x;
-				cell.y = y;
-				cell.adjacent = 0;
-				cell.mine = false;
-				cell.flag = false;
-				cell.covered = true;
-			}
-		}
-	}
-
-	/**
-	 * Performs the specified action for each element in an array.
-	 *
-	 * @param cb - Callback function
-	 */
 	public forEach(cb: (cell: MSCellState, i: number) => void) {
 		this.cells.forEach(cb);
 	}
 
-	/**
-	 * Get cell at coords.
-	 *
-	 * @param x - X coord
-	 * @param y - Y coord
-	 */
 	public cellAt(x: number, y: number): MSCellState | undefined {
 		const cell = this.cells[x + y * this.width];
 
@@ -420,9 +192,6 @@ export class MSState {
 
 	/**
 	 * Returns the value of the first cell where predicate is true, and undefined otherwise.
-	 *
-	 * @param x - X coord
-	 * @param y - Y coord
 	 */
 	public find(predicate: (value: MSCellState, index: number) => boolean): MSCellState | undefined {
 		return this.cells.find(predicate);
@@ -430,9 +199,6 @@ export class MSState {
 
 	/**
 	 * Place a flag at given coords.
-	 *
-	 * @param x - X coord
-	 * @param y - Y coord
 	 */
 	public placeFlag(x: number, y: number) {
 		const cell = this.cellAt(x, y);
@@ -462,9 +228,6 @@ export class MSState {
 
 	/**
 	 * Clear flag at given coords.
-	 *
-	 * @param x - X coord
-	 * @param y - Y coord
 	 */
 	public clearFlag(x: number, y: number) {
 		const cell = this.cellAt(x, y);
@@ -478,9 +241,6 @@ export class MSState {
 
 	/**
 	 * Place a mine at given coords.
-	 *
-	 * @param x - X coord
-	 * @param y - Y coord
 	 */
 	public placeMine(x: number, y: number) {
 		const cell = this.cellAt(x, y);
@@ -494,9 +254,6 @@ export class MSState {
 
 	/**
 	 * Clear a mine at given coords.
-	 *
-	 * @param x - X coord
-	 * @param y - Y coord
 	 */
 	public clearMine(x: number, y: number) {
 		const cell = this.cellAt(x, y);
@@ -816,12 +573,6 @@ export class MSState {
 		}
 	}
 
-	/**
-	 * Randomly shuffle some mines into the current game. Any existing
-	 * mines are cleared before shuffling.
-	 *
-	 * @param total - Total mines to shuffle.
-	 */
 	public shuffleMines(total: number) {
 		this.clearAllMines();
 

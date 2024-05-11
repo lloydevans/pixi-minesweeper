@@ -1,4 +1,4 @@
-import * as PIXI from "pixi.js-legacy";
+import * as PIXI from "pixi.js";
 import { AppBase } from "./app-base";
 import { TweenGroup } from "./tween-group";
 import { TweenOptions } from "./tween-props";
@@ -11,22 +11,18 @@ export type ComponentDestroyOptions = {
 	baseTexture?: boolean;
 };
 
-export class Component<T extends AppBase = AppBase> extends PIXI.Container {
-	/**
-	 * Pixi application reference.
-	 */
+/**
+ * The start of a core component class.
+ */
+export class Component<T extends AppBase> extends PIXI.Container {
+	/** Pixi application reference. */
 	public app: T;
 
-	/**
-	 * Reference to audio manager instance.
-	 */
+	/** Reference to audio manager instance. */
 	public get audio() {
 		return this.app.audio;
 	}
 
-	/**
-	 * Component tween group.
-	 */
 	protected readonly tweenGroup = new TweenGroup(false, 1);
 
 	/**
@@ -48,9 +44,6 @@ export class Component<T extends AppBase = AppBase> extends PIXI.Container {
 		}
 	}
 
-	/**
-	 * Do stuff once ready.
-	 */
 	private ready() {
 		// Call init function if it exists.
 		this.init && this.init();
@@ -65,11 +58,6 @@ export class Component<T extends AppBase = AppBase> extends PIXI.Container {
 		this.resize && this.app.events.on("resize", this.resize, this);
 	}
 
-	/**
-	 * Do some extra things on the Container destroy method.
-	 *
-	 * @param options - Destroy options.
-	 */
 	public destroy(options?: ComponentDestroyOptions) {
 		this.update && this.app.events.off("update", this.update, this);
 		this.resize && this.app.events.off("resize", this.resize, this);
@@ -79,17 +67,11 @@ export class Component<T extends AppBase = AppBase> extends PIXI.Container {
 		super.destroy(options);
 	}
 
-	/**
-	 *
-	 */
 	protected tween<T>(target: T, options?: TweenOptions): Tween<T> {
 		let tween = this.tweenGroup.get(target, options);
 		return tween;
 	}
 
-	/**
-	 *
-	 */
 	protected delay(time: number) {
 		return new Promise((resolve) => this.tween(this).wait(time).call(resolve));
 	}

@@ -1,6 +1,6 @@
 import clamp from "lodash-es/clamp";
-import * as PIXI from "pixi.js-legacy";
-import { hexToNum, ColorSchemes } from "./common/color";
+import * as PIXI from "pixi.js";
+import { hexToNum } from "./common/color";
 import { Ease } from "./common/ease";
 import { Scene } from "./common/scene";
 import { auth, db, functions } from "./firebase";
@@ -11,6 +11,7 @@ import { MSGrid } from "./ms-grid";
 import { MSStateClient } from "./ms-state";
 import { MSTouchUi } from "./ms-touch-ui";
 import { MSUi } from "./ms-ui";
+import { logEvent } from "firebase/analytics";
 
 export class SceneGame extends Scene<MSApp> {
 	public get currentTime() {
@@ -37,18 +38,8 @@ export class SceneGame extends Scene<MSApp> {
 		this.container.visible = false;
 	}
 
-	/**
-	 *
-	 */
-	protected async init() {
-		// @ts-ignore
-		window.game = this;
-
-		this.addChild(this.container);
-		this.addChild(this.ui);
-		this.addChild(this.touchUi);
-
-		this.grid.setInteractionEnabled(false);
+	init() {
+		this.grid.interactiveChildren = false;
 
 		this.gridBack = new PIXI.TilingSprite(this.app.getFrame("tiles", "back-0"));
 
@@ -177,22 +168,13 @@ export class SceneGame extends Scene<MSApp> {
 		return new Promise((resolve) => this.once("snapshot", resolve));
 	}
 
-	/**
-	 *
-	 * @param dt
-	 */
-	protected update(dt: number) {
+	update(dt: number) {
 		if (this.timeActive) {
 			this.time += this.app.ticker.elapsedMS / 1000;
 		}
 	}
 
-	/**
-	 *
-	 * @param width
-	 * @param height
-	 */
-	protected resize(width: number, height: number) {
+	resize(width: number, height: number) {
 		const marginX = 64;
 		const marginY = 96;
 		const maxWidth = width - marginX * 2;
@@ -232,22 +214,9 @@ export class SceneGame extends Scene<MSApp> {
 		}
 	}
 
-	/**
-	 *
-	 */
-	protected cleanup() {
-		this.gameSnapshotUnsubscribe && this.gameSnapshotUnsubscribe();
-		// Prevent static cell view instances being recursivley destroyed.
-		this.grid.removeChildren().forEach((el) => {
-			el.off("pointertap", this.onPointerTap, this);
-			el.off("pointerdown", this.onPointerDown, this);
-		});
-	}
-
-	/**
-	 *
-	 */
 	private async initGrid() {
+		this.transitionIdx = (this.transitionIdx + 1) % 3;
+
 		this.grid.removeChildren().forEach((el) => {
 			el.off("pointertap", this.onPointerTap, this);
 			el.off("pointerdown", this.onPointerDown, this);
@@ -271,11 +240,7 @@ export class SceneGame extends Scene<MSApp> {
 		}
 	}
 
-	/**
-	 *
-	 * @param e
-	 */
-	private onPointerTap(e: PIXI.InteractionEvent) {
+	private onPointerTap(e: PIXI.FederatedPointerEvent) {
 		const msCell = e.currentTarget as MSCell;
 
 		const cellState = this.app.state.cellAt(msCell.ix, msCell.iy);
@@ -315,11 +280,7 @@ export class SceneGame extends Scene<MSApp> {
 		}
 	}
 
-	/**
-	 *
-	 * @param e
-	 */
-	private onPointerDown(e: PIXI.InteractionEvent) {
+	private onPointerDown(e: PIXI.FederatedPointerEvent) {
 		const msCell = e.currentTarget as MSCell;
 
 		const cellState = this.app.state.cellAt(msCell.ix, msCell.iy);
@@ -345,9 +306,50 @@ export class SceneGame extends Scene<MSApp> {
 		}
 	}
 
-	/**
-	 *
-	 */
+	private onPointerOut(e: PIXI.FederatedPointerEvent) {
+		const msCell = e.currentTarget as MSCell;
+
+		const cellState = this.app.state.cellAt(msCell.ix, msCell.iy);
+
+		if (!cellState) {
+			throw new Error(`Can't find cell at ${msCell.ix},${msCell.iy}`);
+		}
+
+		switch (e.data.pointerType) {
+			case "mouse":
+				msCell.animatePlaceFlagCancel();
+				msCell.animateDigCancel();
+
+				break;
+		}
+	}
+
+	private transitionCells() {
+		switch (this.transitionIdx) {
+			default:
+			case 0:
+				return this.grid.noiseWipe();
+		}
+	}
+
+	public async newGame(config: MSGameConfig = this.gameConfig) {
+		this.tweenGroup.reset();
+
+		this.time = 0;
+		this.app.state.init(config);
+		this.grid.interactiveChildren = false;
+		this.gameConfig = { ...config };
+		this.isFirstClick = true;
+		this.touchUi.hide();
+
+		logEvent(analytics, "new_game", this.app.state.config);
+
+		await this.initGrid();
+
+		this.timeActive = true;
+		this.grid.interactiveChildren = true;
+	}
+
 	public screenShake(amp = 8, duration = 0.75, hz = 16) {
 		duration = clamp(duration, 0.1, 8);
 		amp = clamp(amp, 0, 16) * 0.75;
@@ -379,45 +381,33 @@ export class SceneGame extends Scene<MSApp> {
 		});
 	}
 
-	/**
-	 *
-	 */
-	private setMove(x: number, y: number, flag = false) {
-		// TODO: Offline mode
-		return functions.httpsCallable("newMove")({ x, y, flag });
+	public showGame() {
+		this.app.audio.playMidi("minesweeper.mid");
+
+		this.tween(this.container.position).to({ y: 32 }, 300, Ease.sineInOut);
+		this.menu.visible = false;
+		this.grid.visible = true;
+		this.ui.visible = true;
 	}
 
-	/**
-	 *
-	 */
-	private async getGameData(): Promise<MSStateClient> {
-		let gameData;
+	public showMenu() {
+		this.tween(this.container.position).to({ y: 0 }, 300, Ease.sineInOut);
+		this.menu.visible = true;
+		this.grid.visible = false;
+		this.ui.visible = false;
+	}
 
-		try {
-			gameData = this.app.persistentRequest(async () => {
-				return (
-					await db //
-						.collection("accounts")
-						.doc(auth.currentUser!.uid)
-						.collection("games_client")
-						.doc(this.gameId)
-						.get()
-				).data() as MSStateClient;
-			});
-		} catch (err) {
-			throw new Error("Failed to retreive game data.");
+	public previewGame(config: MSGameConfig = this.gameConfig) {
+		this.app.state.init(config);
+		this.resize(this.app.width, this.app.height);
+		if (this.gridBack) {
+			this.gridBack.visible = true;
 		}
 
 		return gameData;
 	}
 
-	/**
-	 *
-	 * @param cellState
-	 */
-	public async rightClick(cellState: MSCellState) {
-		this.grid.setInteractionEnabled(false);
-
+	public rightClick(cellState: MSCellState) {
 		cellState.flag = !cellState.flag;
 
 		const msCell = this.app.getCellView(cellState.x, cellState.y);
@@ -449,9 +439,6 @@ export class SceneGame extends Scene<MSApp> {
 		this.grid.setInteractionEnabled(true);
 	}
 
-	/**
-	 *
-	 */
 	public async leftClick(cellState: MSCellState) {
 		this.grid.setInteractionEnabled(false);
 
@@ -531,11 +518,8 @@ export class SceneGame extends Scene<MSApp> {
 		}
 	}
 
-	/**
-	 * Animate win.
-	 */
 	private async animateWin() {
-		// analytics.logEvent("win_game", this.app.state.config);
+		logEvent(analytics, "win_game", this.app.state.config);
 
 		this.endGame();
 
@@ -570,11 +554,8 @@ export class SceneGame extends Scene<MSApp> {
 		}
 	}
 
-	/**
-	 * Animate loss.
-	 */
-	private async animateLose(x: number, y: number) {
-		// analytics.logEvent("lose_game", this.app.state.config);
+	private async animateLose(firstMine: MSCellState) {
+		logEvent(analytics, "lose_game", this.app.state.config);
 
 		this.endGame();
 
@@ -615,11 +596,14 @@ export class SceneGame extends Scene<MSApp> {
 		}
 	}
 
-	/**
-	 * End current game.
-	 */
 	private endGame() {
 		this.timeActive = false;
-		this.grid.setInteractionEnabled(false);
+		this.grid.interactiveChildren = false;
+	}
+
+	private checkWin() {
+		if (this.app.state.isWin()) {
+			this.animateWin();
+		}
 	}
 }

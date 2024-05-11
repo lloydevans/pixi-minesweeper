@@ -1,14 +1,7 @@
-/**
- * Production entry file.
- */
-
-// Polyfills
-import "core-js";
-
 import "./firebase";
 
 // Pixi imports
-import "pixi.js-legacy";
+import "pixi.js";
 import "pixi-spine";
 
 // CreateJS lib imports.
@@ -17,9 +10,10 @@ import "../libs/tween-group";
 createjs.Ticker.timingMode = createjs.Ticker.RAF;
 createjs.Ticker.maxDelta = 100;
 
+import { ToneAudioConfig } from "./common/tone-audio";
 import { MSApp } from "./ms-app";
 
-function start() {
+async function start() {
 	window.document.body.style.background = "black";
 	window.document.body.style.overflow = "hidden";
 	window.document.body.style.margin = "0px";
@@ -28,12 +22,22 @@ function start() {
 
 	const app = new MSApp();
 
+	await app.addSpine("grid-square@1x");
+	await app.addSpine("timer@1x");
+	await app.addAtlas("textures");
+	await app.addAtlas("tiles");
+	await app.addAtlas("bg", 1);
+	await app.addBitmapFont("bmfont");
+	await app.addJson("config", "config.json");
+	await app.addJson("audio", "audio.json");
+	await app.audio.init(app.getJson("audio") as ToneAudioConfig);
+
+	(window as any).app = app;
+
+	app.onLoad();
 	app.init();
 
-	// TODO: Loading bar
-	app.loader.onComplete.once(() => {
-		window.document.body.appendChild(app.view);
-	});
+	window.document.body.appendChild(app.view as HTMLCanvasElement);
 }
 
 if (window.document.readyState === "loading") {

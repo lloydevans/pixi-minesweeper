@@ -1,5 +1,5 @@
 import defaults from "lodash-es/defaults";
-import * as PIXI from "pixi.js-legacy";
+import * as PIXI from "pixi.js";
 import { AppBase } from "./app-base";
 import { BmText, BmTextOptions } from "./bm-text";
 import { UiButton, ButtonOptions } from "./ui-button";
@@ -20,31 +20,31 @@ export const ButtonTextOptionDefaults: ButtonTextOptions = {
 
 export class UiButtonText extends UiButton {
 	public get text(): string {
-		return this.label.text;
+		return this._label.text;
 	}
 	public set text(value: string) {
-		this.label.text = value;
+		this._label.text = value;
 	}
 
 	private options: ButtonTextOptions;
-	private label: BmText;
+	private _label: BmText;
 
 	constructor(app: AppBase, options: ButtonTextOptions) {
 		super(app, options);
 
 		this.options = defaults(options, ButtonTextOptionDefaults);
 
-		this.label = new BmText(this.app, this.options);
-		this.label.text = this.options.text || "";
-		this.label._anchor.set(0.5);
+		this._label = new BmText(this.app, this.options);
+		this._label.text = this.options.text || "";
+		this._label.anchor.set(0.5);
 
-		this.addChild(this.label);
+		this.addChild(this._label);
 
 		this.on("pointerdown", () => {
-			this.label.position.set(this.options.textureOffsetDownX, this.options.textureOffsetDownY);
+			this._label.position.set(this.options.textureOffsetDownX, this.options.textureOffsetDownY);
 		});
 		this.on("pointerup", () => {
-			this.label.position.set(0);
+			this._label.position.set(0);
 		});
 	}
 }

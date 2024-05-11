@@ -1,5 +1,5 @@
 import defaults from "lodash-es/defaults";
-import * as PIXI from "pixi.js-legacy";
+import * as PIXI from "pixi.js";
 import * as Tone from "tone";
 import { AppBase } from "./app-base";
 import { UiElement } from "./ui-element";
@@ -14,15 +14,13 @@ export const ButtonOptionDefaults = {
 	textureUp: PIXI.Texture.WHITE,
 };
 
-/**
- * Very quick button class.
- */
+/** Very quick button class. */
 export class UiButton extends UiElement {
 	protected back: PIXI.Sprite;
 	private config: ButtonOptions;
 
 	public get tint() {
-		return this.back.tint;
+		return this.back.tint as number;
 	}
 	public set tint(value: number) {
 		this.back.tint = value;
@@ -55,18 +53,10 @@ export class UiButton extends UiElement {
 		this.setInteractive(true);
 	}
 
-	/**
-	 *
-	 * @param value
-	 */
 	public setInteractive(value: boolean) {
-		this.buttonMode = value;
-		this.interactive = value;
+		this.eventMode = value ? "static" : "none";
 	}
 
-	/**
-	 * Start audio context.
-	 */
 	private async toneStart() {
 		this.off("pointerdown", this.toneStart, this);
 		this.off("pointerup", this.toneStart, this);
@@ -79,27 +69,15 @@ export class UiButton extends UiElement {
 		}
 	}
 
-	/**
-	 *
-	 * @param e
-	 */
-	protected onPointerOut(e: PIXI.InteractionEvent) {
+	protected onPointerOut() {
 		this.back.texture = this.config.textureUp;
 	}
 
-	/**
-	 *
-	 * @param e
-	 */
-	protected onPointerOver(e: PIXI.InteractionEvent) {
+	protected onPointerOver() {
 		this.back.texture = this.config.textureUp;
 	}
 
-	/**
-	 *
-	 * @param e
-	 */
-	protected async onPointerUp(e: PIXI.InteractionEvent) {
+	protected async onPointerUp() {
 		this.back.texture = this.config.textureUp;
 
 		if (Tone.context.state === "running") {
@@ -108,11 +86,7 @@ export class UiButton extends UiElement {
 		}
 	}
 
-	/**
-	 *
-	 * @param e
-	 */
-	protected async onPointerDown(e: PIXI.InteractionEvent) {
+	protected async onPointerDown() {
 		this.back.texture = this.config.textureDown;
 
 		if (Tone.context.state === "running") {
@@ -121,17 +95,9 @@ export class UiButton extends UiElement {
 		}
 	}
 
-	/**
-	 *
-	 * @param e
-	 */
-	protected onPointerCancel(e: PIXI.InteractionEvent) {
+	protected onPointerCancel() {
 		this.alpha = 1;
 	}
 
-	/**
-	 *
-	 * @param e
-	 */
-	protected onPointerTap(e: PIXI.InteractionEvent) {}
+	protected onPointerTap() {}
 }

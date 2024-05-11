@@ -7,7 +7,7 @@
 import "core-js";
 
 // PixiJS lib imports.
-import * as PIXI from "pixi.js-legacy";
+import * as PIXI from "pixi.js";
 
 // Put PIXI on window for pixi-spine.
 window.PIXI = PIXI;

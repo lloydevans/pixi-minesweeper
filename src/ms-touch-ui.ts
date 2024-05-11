@@ -1,4 +1,4 @@
-import * as PIXI from "pixi.js-legacy";
+import * as PIXI from "pixi.js";
 import { UiButton } from "./common/ui-button";
 import { Component } from "./common/component";
 import { MSApp } from "./ms-app";
@@ -13,9 +13,6 @@ export class MSTouchUi extends Component<MSApp> {
 	private buttonFlag!: UiButton;
 	private buttonDig!: UiButton;
 
-	/**
-	 *
-	 */
 	protected init() {
 		this.visible = false;
 
