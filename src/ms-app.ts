@@ -9,9 +9,9 @@ import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MSState } from "./ms-state";
 import { SceneGame } from "./scene-game";
 
 export const INITIAL_GAME_CONFIG: MSGameConfig = {
-	startMines: 5,
-	gridWidth: 9,
-	gridHeight: 7,
+	startMines: 32,
+	gridWidth: 32,
+	gridHeight: 16,
 };
 
 /**
