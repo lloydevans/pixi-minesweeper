@@ -103,7 +103,7 @@ export class UiButtonScroller extends Container {
 		this.number.text = this.current.toString();
 		this.buttonLeft.eventMode = this.current !== this.min ? "static" : "none";
 		this.buttonLeft.alpha = this.current !== this.min ? 1 : 0.5;
-		this.buttonLeft.eventMode = this.current !== this.max ? "static" : "none";
+		this.buttonRight.eventMode = this.current !== this.max ? "static" : "none";
 		this.buttonRight.alpha = this.current !== this.max ? 1 : 0.5;
 
 		this.emit("set", this.current);
