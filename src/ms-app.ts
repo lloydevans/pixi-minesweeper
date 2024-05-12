@@ -10,8 +10,8 @@ import { SceneGame } from "./scene-game";
 
 export const INITIAL_GAME_CONFIG: MSGameConfig = {
 	startMines: 32,
-	gridWidth: 32,
-	gridHeight: 16,
+	gridWidth: 26,
+	gridHeight: 14,
 };
 
 /**
