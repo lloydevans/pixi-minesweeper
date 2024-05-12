@@ -8,7 +8,7 @@ module.exports = (env = {}) => {
 	env = {
 		...{
 			prod: false,
-			modern: false,
+			modern: true,
 			editor: false,
 		},
 		...env,
