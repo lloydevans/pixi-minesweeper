@@ -15,8 +15,6 @@ export class MSUi extends Component<MSApp> {
 	private flagsGraphic!: Spine;
 	private flagsCount!: BmText;
 	private timeContainer!: PIXI.Container;
-	private timeGraphic!: Spine;
-	private timeCount!: BmText;
 
 	/** Initialisation must be called after assets are loaded. */
 	protected init() {
@@ -35,14 +33,6 @@ export class MSUi extends Component<MSApp> {
 		this.timeContainer = new PIXI.Container();
 		this.timeContainer.y = -8;
 
-		// this.timeGraphic = new Spine(this.app.getSpine("timer@1x"));
-		// this.timeGraphic.y = -22;
-
-		// this.timeCount = new BmText(this.app, { fontName: "bmfont", fontSize: 38 });
-		// this.timeCount.anchor.set(0, 0.5);
-		// this.timeCount.x = 38;
-		// this.timeCount.y = -24;
-
 		this.buttonCross = new UiButton(this.app, {
 			textureUp: this.app.getFrame("textures", "button-cross"),
 			textureDown: this.app.getFrame("textures", "button-cross"),
@@ -52,9 +42,6 @@ export class MSUi extends Component<MSApp> {
 			textureUp: this.app.getFrame("textures", "button-restart"),
 			textureDown: this.app.getFrame("textures", "button-restart"),
 		});
-
-		// this.timeContainer.addChild(this.timeGraphic);
-		// this.timeContainer.addChild(this.timeCount);
 
 		this.flagsContainer.addChild(this.flagsGraphic);
 		this.flagsContainer.addChild(this.flagsCount);
@@ -68,26 +55,13 @@ export class MSUi extends Component<MSApp> {
 		this.buttonRestart.on("pointertap", () => this.emit("restart"));
 	}
 
-	/**
-	 * Update callback.
-	 * Simple poll for changes.
-	 * TODO: observables/signals/listeners?
-	 *
-	 * @param dt
-	 */
 	protected update(dt: number) {
 		const flagCount = this.app.state.flagCount.toString();
 		if (flagCount !== this.flagsCount.text) {
 			this.flagsCount.text = flagCount;
 		}
-
-		// const time = Math.min(MAX_TIME, Math.floor(this.app.currentTime)).toString();
-		// if (time !== this.timeCount.text) {
-		// 	this.timeCount.text = time;
-		// }
 	}
 
-	/** Resize callback. */
 	protected resize(width: number, height: number) {
 		this.buttonCross.x = width / 2 - 48;
 		this.buttonCross.y = -height / 2 + 42;
