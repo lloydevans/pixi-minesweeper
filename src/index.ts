@@ -22,14 +22,17 @@ async function start() {
 
 	const app = new MSApp();
 
-	await app.addSpine("grid-square@1x");
-	await app.addSpine("timer@1x");
-	await app.addAtlas("textures");
-	await app.addAtlas("tiles");
-	await app.addAtlas("bg", 1);
-	await app.addBitmapFont("bmfont");
-	await app.addJson("config", "config.json");
-	await app.addJson("audio", "audio.json");
+	await Promise.allSettled([
+		app.addSpine("grid-square@1x"),
+		app.addSpine("timer@1x"),
+		app.addAtlas("textures"),
+		app.addAtlas("tiles"),
+		app.addAtlas("bg", 1),
+		app.addBitmapFont("bmfont"),
+		app.addJson("config", "config.json"),
+		app.addJson("audio", "audio.json"),
+	]);
+
 	await app.audio.init(app.getJson("audio") as ToneAudioConfig);
 
 	app.onLoad();
