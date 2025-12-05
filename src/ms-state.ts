@@ -57,7 +57,7 @@ export class MSState {
 		}
 		if (config.startMines > config.gridWidth * config.gridHeight - 2) {
 			throw new Error(
-				`Too many mines (${config.startMines}) for grid size: ${config.gridWidth} x ${config.gridHeight}`
+				`Too many mines (${config.startMines}) for grid size: ${config.gridWidth} x ${config.gridHeight}`,
 			);
 		}
 
