@@ -16,7 +16,7 @@ module.exports = (env = {}) => {
 
 	/** @type {import("webpack").Configuration} */
 	let config = {
-		entry: env.editor ? "./src/index-editor.ts" : "./src/index.ts",
+		entry: "./src/index.ts",
 
 		devtool: "source-map",
 
