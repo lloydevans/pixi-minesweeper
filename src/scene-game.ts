@@ -73,7 +73,7 @@ export class SceneGame extends Scene<MSApp> {
 		this.addChild(this.menu);
 	}
 
-	update(dt: number) {
+	update() {
 		if (this.timeActive) {
 			this.time += this.app.ticker.elapsedMS / 1000;
 		}
@@ -160,7 +160,7 @@ export class SceneGame extends Scene<MSApp> {
 		}
 
 		switch (e.pointerType) {
-			case "mouse":
+			case "mouse": {
 				const isRightClick = e.button === 2;
 
 				if (!isRightClick) {
@@ -170,7 +170,7 @@ export class SceneGame extends Scene<MSApp> {
 					this.rightClick(cellState);
 				}
 				break;
-
+			}
 			case "touch":
 				if (this.isFirstClick) {
 					this.leftClick(cellState);
@@ -201,15 +201,17 @@ export class SceneGame extends Scene<MSApp> {
 
 		switch (e.data.pointerType) {
 			case "mouse":
-				const isRightClick = e.data.button === 2;
+				{
+					const isRightClick = e.data.button === 2;
 
-				this.audio.play("blop");
+					this.audio.play("blop");
 
-				if (isRightClick) {
-					msCell.animatePlaceFlagStart();
-				} //
-				else {
-					msCell.animateDigStart();
+					if (isRightClick) {
+						msCell.animatePlaceFlagStart();
+					} //
+					else {
+						msCell.animateDigStart();
+					}
 				}
 
 				break;
@@ -434,7 +436,9 @@ export class SceneGame extends Scene<MSApp> {
 			const idx = Math.floor(Math.random() * result.incorrect.length);
 			const el = result.incorrect.splice(idx, 1)[0];
 			const msCell = this.app.getCellView(el.x, el.y);
-			const cellState = this.app.state.cellAt(el.x, el.y)!;
+			const cellState = this.app.state.cellAt(el.x, el.y);
+
+			if (!cellState) throw new Error(`Can't find cell at ${el.x},${el.y}`);
 
 			msCell.animateResult();
 

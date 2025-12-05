@@ -263,6 +263,7 @@ export class MSCell extends Component<MSApp> {
 
 	public animateDigCancel() {
 		// getCurrent does seem to be there, just a type issue
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		if ((this.animation.state as any).getCurrent(AnimTrack.Dig).animation.name === "dig-start") {
 			this.animation.state.setAnimation(AnimTrack.Dig, "dig-cancel", false);
 			this.app.audio.play("blop", { transpose: 24 });
@@ -273,6 +274,7 @@ export class MSCell extends Component<MSApp> {
 
 	public animatePlaceFlagCancel() {
 		// getCurrent does seem to be there, just a type issue
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		if ((this.animation.state as any).getCurrent(AnimTrack.Flag).animation.name === "flag-place-start") {
 			this.animation.state.setAnimation(AnimTrack.Flag, "flag-destroy", false);
 			this.app.audio.play("blop", { transpose: 24 });

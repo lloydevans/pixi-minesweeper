@@ -10,10 +10,12 @@ declare namespace createjs {
 		_getPaused(): void;
 		_setTimeScale(value: number): void;
 		_getTimeScale(): void;
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		get(target: any, props?: any): Tween;
 		add(tween: Tween): Tween;
 		remove(tween: Tween): void;
 		reset(keepGroups?: boolean): void;
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		_onComplete(evt: any): void;
 
 		constructor(paused: boolean, timeScale: number);

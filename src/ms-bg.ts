@@ -3,7 +3,6 @@ import { Component } from "./common/component";
 import { MSApp } from "./ms-app";
 import { Ease } from "./common/ease";
 
-const REF_BG_WIDTH = 320;
 const REF_BG_HEIGHT = 180;
 
 type BGSet = "bg-green" | "bg-swamp";
@@ -24,7 +23,7 @@ export class MSBg extends Component<MSApp> {
 			this.createBgLayer(bgSet + "-a"),
 			this.createBgLayer(bgSet + "-b"),
 			this.createBgLayer(bgSet + "-c"),
-			this.createBgLayer(bgSet + "-d")
+			this.createBgLayer(bgSet + "-d"),
 		);
 
 		this.addChild(...this.layers);

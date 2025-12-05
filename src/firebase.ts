@@ -13,5 +13,5 @@ const firebaseApp = initializeApp({
 	measurementId: "G-5SBBB77D8V",
 });
 
-export let performance = getPerformance(firebaseApp);
-export let analytics = getAnalytics(firebaseApp);
+export const performance = getPerformance(firebaseApp);
+export const analytics = getAnalytics(firebaseApp);

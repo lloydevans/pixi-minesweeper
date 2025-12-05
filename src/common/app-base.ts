@@ -7,7 +7,7 @@ import { Tween } from "./tween";
 import { TweenGroup } from "./tween-group";
 import { TweenOptions } from "./tween-props";
 import { UiElement } from "./ui-element";
-import { ISkeletonData } from "pixi-spine";
+import { IAnimationState, IAnimationStateData, ISkeleton, ISkeletonData, SpineBase } from "pixi-spine";
 import { Dict } from "./types";
 
 export const MAX_DPR = 4;
@@ -75,10 +75,10 @@ export class AppBase extends PIXI.Application {
 	private initialized = false;
 
 	private assets: {
-		json: Dict<any>;
-		atlas: Dict<any>;
-		bmfont: Dict<any>;
-		spine: Dict<any>;
+		json: Dict<unknown>;
+		atlas: Dict<PIXI.Spritesheet>;
+		bmfont: Dict<PIXI.BitmapFont>;
+		spine: Dict<SpineBase<ISkeleton, ISkeletonData, IAnimationState, IAnimationStateData>>;
 	} = {
 		json: {},
 		atlas: {},
@@ -111,10 +111,6 @@ export class AppBase extends PIXI.Application {
 		}
 
 		this.events.emit("update", dt);
-	}
-
-	public log(...args: any[]) {
-		console.log(...args);
 	}
 
 	public tween<T>(target: T, options?: TweenOptions): Tween<T> {
@@ -160,8 +156,11 @@ export class AppBase extends PIXI.Application {
 		this._height = height;
 		this._dpr = dpr;
 
-		this.view!.style!.width = this.width + "px";
-		this.view!.style!.height = this.height + "px";
+		if (this.view && this.view.style) {
+			this.view.style.width = this.width + "px";
+			this.view.style.height = this.height + "px";
+		}
+
 		this.renderer.resolution = this.dpr;
 		// this.renderer.plugins.interaction.resolution = this.dpr;
 		this.renderer.resize(this.width, this.height);
@@ -292,7 +291,7 @@ export class AppBase extends PIXI.Application {
 	 * @param spinePath
 	 * @param scale
 	 */
-	public async addSpine(spinePath: string, scale: number = this.getTextureDpr()) {
+	public async addSpine(spinePath: string) {
 		const res = await PIXI.Assets.load(spinePath + ".json");
 		this.assets.spine[spinePath] = res;
 	}

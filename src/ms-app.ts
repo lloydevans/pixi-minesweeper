@@ -60,7 +60,7 @@ export class MSApp extends AppBase {
 		this.root.addChild(this.scenes.game);
 	}
 
-	private onUpdate(dt: number) {
+	private onUpdate() {
 		// Generate cell view instances in the background.
 		const maxCells = MAX_GRID_WIDTH * MAX_GRID_HEIGHT;
 		const length = this.cellPool.length;
@@ -71,8 +71,7 @@ export class MSApp extends AppBase {
 					break;
 				}
 
-				const [x, y] = this.state.coordsOf(idx);
-				this.cellPool[idx] = this.createCellView(x, y);
+				this.cellPool[idx] = this.createCellView();
 			}
 		}
 	}
@@ -92,7 +91,7 @@ export class MSApp extends AppBase {
 		return defaults(config, MS_CONFIG_DEFAULT);
 	}
 
-	private createCellView(x: number, y: number): MSCell {
+	private createCellView(): MSCell {
 		const msCell = new MSCell(this);
 		return msCell;
 	}

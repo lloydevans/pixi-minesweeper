@@ -64,7 +64,7 @@ export class UiButton extends UiElement {
 			try {
 				await Tone.start();
 			} catch (err) {
-				console.log(err);
+				console.error(err);
 			}
 		}
 	}

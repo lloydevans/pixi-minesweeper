@@ -84,7 +84,7 @@ export class ToneAudio {
 			// TODO: Concurrent request limit.
 			await Promise.all(requests);
 		} catch (err) {
-			console.log(err);
+			console.error(err);
 		}
 	}
 
@@ -242,7 +242,9 @@ export class ToneAudio {
 			if (track.notes.length === 0) continue;
 
 			while (track.notes[0].time + start + duration * track.loops < now + BUFFER_TIME) {
-				const note = track.notes.shift()!;
+				const note = track.notes.shift();
+
+				if (!note) break;
 
 				// Loop note array.
 				if (track.notes.length === 0) {
@@ -273,7 +275,7 @@ export class ToneAudio {
 						note.velocity * 0.333, // TODO: config
 					);
 				} catch (err) {
-					console.log(err);
+					console.error(err);
 				}
 			}
 		}
@@ -287,7 +289,7 @@ const unlock = async () => {
 	try {
 		await Tone.start();
 	} catch (err) {
-		console.log(err);
+		console.error(err);
 	}
 };
 document.body.addEventListener("click", unlock);

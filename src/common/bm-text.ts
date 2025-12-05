@@ -28,7 +28,7 @@ export class BmText extends PIXI.BitmapText {
 	protected options: BmTextOptions;
 
 	constructor(app: AppBase, options: BmTextOptions = {}) {
-		super(options.text || "", options as any);
+		super(options.text || "", options as Partial<PIXI.IBitmapTextStyle>);
 
 		this.app = app;
 

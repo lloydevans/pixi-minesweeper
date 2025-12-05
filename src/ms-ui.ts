@@ -53,7 +53,7 @@ export class MSUi extends Component<MSApp> {
 		this.buttonRestart.on("pointertap", () => this.emit("restart"));
 	}
 
-	protected update(dt: number) {
+	protected update() {
 		const flagCount = this.app.state.flagCount.toString();
 		if (flagCount !== this.flagsCount.text) {
 			this.flagsCount.text = flagCount;

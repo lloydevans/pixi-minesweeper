@@ -27,7 +27,9 @@ export class MSGrid extends Component<MSApp> {
 				const y = cell.y - i;
 
 				if (this.app.state.coordsInBounds(x, y)) {
-					cb(this.app.getCellView(x, y)) && _break && (_break = false);
+					if (cb(this.app.getCellView(x, y))) {
+						if (_break) _break = false;
+					}
 				}
 			}
 			for (let c = 0; c < t; c++) {
@@ -35,7 +37,9 @@ export class MSGrid extends Component<MSApp> {
 				const y = cell.y - i + c;
 
 				if (this.app.state.coordsInBounds(x, y)) {
-					cb(this.app.getCellView(x, y)) && _break && (_break = false);
+					if (cb(this.app.getCellView(x, y))) {
+						if (_break) _break = false;
+					}
 				}
 			}
 			for (let c = 0; c < t; c++) {
@@ -43,7 +47,9 @@ export class MSGrid extends Component<MSApp> {
 				const y = cell.y + i;
 
 				if (this.app.state.coordsInBounds(x, y)) {
-					cb(this.app.getCellView(x, y)) && _break && (_break = false);
+					if (cb(this.app.getCellView(x, y))) {
+						if (_break) _break = false;
+					}
 				}
 			}
 			for (let c = 0; c < t; c++) {
@@ -51,7 +57,9 @@ export class MSGrid extends Component<MSApp> {
 				const y = cell.y - i + c;
 
 				if (this.app.state.coordsInBounds(x, y)) {
-					cb(this.app.getCellView(x, y)) && _break && (_break = false);
+					if (cb(this.app.getCellView(x, y))) {
+						if (_break) _break = false;
+					}
 				}
 			}
 
@@ -92,7 +100,10 @@ export class MSGrid extends Component<MSApp> {
 			const idx = (Math.random() * indexes.length) | 0;
 			const cellIdx = indexes.splice(idx, 1)[0];
 			const [x, y] = this.app.state.coordsOf(cellIdx);
-			const cellState = this.app.state.cellAt(x, y)!;
+			const cellState = this.app.state.cellAt(x, y);
+
+			if (!cellState) throw new Error(`No cell state at ${x},${y}`);
+
 			const msCell = this.app.getCellView(x, y);
 			msCell.setState(cellState);
 
@@ -112,9 +123,14 @@ export class MSGrid extends Component<MSApp> {
 		}
 
 		while (indexes.length > 0) {
-			const cellIdx = direction === "down" ? indexes.shift()! : indexes.pop()!;
+			const cellIdx = direction === "down" ? indexes.shift() : indexes.pop();
+			if (cellIdx === undefined) break;
+
 			const [x, y] = this.app.state.coordsOf(cellIdx);
-			const cellState = this.app.state.cellAt(x, y)!;
+			const cellState = this.app.state.cellAt(x, y);
+
+			if (!cellState) throw new Error(`No cell state at ${x},${y}`);
+
 			const msCell = this.app.getCellView(x, y);
 			msCell.setState(cellState);
 

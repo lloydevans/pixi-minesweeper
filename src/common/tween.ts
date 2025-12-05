@@ -5,13 +5,10 @@ import { Ease } from "./ease";
  * This serves as an alias to the namespaced Tween class.
  * Experimental - Adding type safety to createjs tweenjs API.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export class Tween<T = any> extends createjs.Tween {
 	public static get<T>(target: T, options?: TweenOptions): Tween<T> {
 		return new Tween(target, options);
-	}
-
-	constructor(target: T, options?: TweenOptions) {
-		super(target, options);
 	}
 
 	wait(duration: number, passive?: boolean) {
@@ -26,6 +23,7 @@ export class Tween<T = any> extends createjs.Tween {
 		return super.label(name);
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	call(callback: (...params: any[]) => void, params?: Partial<T>[], scope?: unknown) {
 		return super.call(callback, params, scope);
 	}

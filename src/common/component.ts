@@ -46,20 +46,20 @@ export class Component<T extends AppBase> extends PIXI.Container {
 
 	private ready() {
 		// Call init function if it exists.
-		this.init && this.init();
+		if (this.init) this.init();
 
 		// Call resize function if it exists.
-		this.resize && this.resize(this.app.width, this.app.height);
+		if (this.resize) this.resize(this.app.width, this.app.height);
 
 		// Add listeners
-		this.update && this.app.events.on("update", this.update, this);
-		this.resize && this.app.events.on("resize", this.resize, this);
+		if (this.update) this.app.events.on("update", this.update, this);
+		if (this.resize) this.app.events.on("resize", this.resize, this);
 	}
 
 	public destroy(options?: ComponentDestroyOptions) {
-		this.update && this.app.events.off("update", this.update, this);
-		this.resize && this.app.events.off("resize", this.resize, this);
-		this.cleanup && this.cleanup();
+		if (this.update) this.app.events.off("update", this.update, this);
+		if (this.resize) this.app.events.off("resize", this.resize, this);
+		if (this.cleanup) this.cleanup();
 		this.clearTweens();
 		this.emit("destroy");
 		super.destroy(options);
