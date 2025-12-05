@@ -7,23 +7,13 @@ export default tseslint.config(
 	...tseslint.configs.strict,
 	prettierConfig,
 	{
-		files: ["src/**/*.ts"],
-		languageOptions: {
-			parserOptions: {
-				project: "./tsconfig.json",
-			},
-		},
-	},
-	{
 		rules: {
 			"no-console": ["warn", { allow: ["warn", "error"] }],
 		},
 	},
 	{
 		ignores: [
-			"node_modules/**",
 			"build/**",
-			"dist/**",
 			"dts/**",
 			"static/**",
 			"libs/**",
