@@ -13,9 +13,7 @@ export interface LossData {
 	correct: MSCellState[];
 }
 
-/**
- * Class handles Minesweeper game state and logic.
- */
+/** Class handles Minesweeper game state and logic. */
 export class MSState {
 	public width: number = 0;
 	public height: number = 0;
@@ -108,16 +106,12 @@ export class MSState {
 		return this.cells[x + y * this.width];
 	}
 
-	/**
-	 * Returns the value of the first cell where predicate is true, and undefined otherwise.
-	 */
+	/** Returns the value of the first cell where predicate is true, and undefined otherwise. */
 	public find(predicate: (value: MSCellState, index: number) => boolean): MSCellState | undefined {
 		return this.cells.find(predicate);
 	}
 
-	/**
-	 * Place a flag at given coords.
-	 */
+	/** Place a flag at given coords. */
 	public placeFlag(x: number, y: number) {
 		const cell = this.cellAt(x, y);
 
@@ -128,9 +122,7 @@ export class MSState {
 		cell.flag = true;
 	}
 
-	/**
-	 * Clear flag at given coords.
-	 */
+	/** Clear flag at given coords. */
 	public clearFlag(x: number, y: number) {
 		const cell = this.cellAt(x, y);
 
@@ -141,9 +133,7 @@ export class MSState {
 		cell.flag = false;
 	}
 
-	/**
-	 * Place a mine at given coords.
-	 */
+	/** Place a mine at given coords. */
 	public placeMine(x: number, y: number) {
 		const cell = this.cellAt(x, y);
 
@@ -154,9 +144,7 @@ export class MSState {
 		cell.mine = true;
 	}
 
-	/**
-	 * Clear a mine at given coords.
-	 */
+	/** Clear a mine at given coords. */
 	public clearMine(x: number, y: number) {
 		const cell = this.cellAt(x, y);
 
@@ -169,9 +157,7 @@ export class MSState {
 		}
 	}
 
-	/**
-	 * Clear mines.
-	 */
+	/** Clear mines. */
 	public clearAllMines() {
 		for (let x = 0; x < this.width; x++) {
 			for (let y = 0; y < this.height; y++) {
@@ -180,9 +166,7 @@ export class MSState {
 		}
 	}
 
-	/**
-	 * Check and get losing cell states.
-	 */
+	/** Check and get losing cell states. */
 	public getLossData() {
 		const lossData: LossData = {
 			correct: [],
@@ -206,16 +190,12 @@ export class MSState {
 		return lossData;
 	}
 
-	/**
-	 * Return array of unplaced flags.
-	 */
+	/** Return array of unplaced flags. */
 	public getUnplacedFlags() {
 		return this.cells.filter((el) => el.mine && !el.flag);
 	}
 
-	/**
-	 * Return array of unplaced flags.
-	 */
+	/** Return array of unplaced flags. */
 	public getCorrectFlags() {
 		return this.cells.filter((el) => el.covered && el.mine && el.flag);
 	}
@@ -403,9 +383,7 @@ export class MSState {
 		}
 	}
 
-	/**
-	 * Calculate number of adjacent mines for all cells.
-	 */
+	/** Calculate number of adjacent mines for all cells. */
 	public calculateAdjacent() {
 		const width = this.width;
 		const height = this.height;
