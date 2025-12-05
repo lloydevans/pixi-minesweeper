@@ -60,9 +60,13 @@ export class Component<T extends AppBase> extends PIXI.Container {
 		this.update && this.app.events.off("update", this.update, this);
 		this.resize && this.app.events.off("resize", this.resize, this);
 		this.cleanup && this.cleanup();
-		this.tweenGroup.reset();
+		this.clearTweens();
 		this.emit("destroy");
 		super.destroy(options);
+	}
+
+	public clearTweens() {
+		this.tweenGroup.reset();
 	}
 
 	protected tween<T>(target: T, options?: TweenOptions): Tween<T> {

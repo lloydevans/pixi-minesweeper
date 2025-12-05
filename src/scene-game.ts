@@ -248,6 +248,7 @@ export class SceneGame extends Scene<MSApp> {
 		this.time = 0;
 		this.app.state.init(config);
 		this.grid.interactiveChildren = false;
+		this.grid.clearTweens();
 		this.gameConfig = { ...config };
 		this.isFirstClick = true;
 		this.touchUi.hide();
