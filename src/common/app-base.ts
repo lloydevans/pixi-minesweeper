@@ -7,7 +7,7 @@ import { Tween } from "./tween";
 import { TweenGroup } from "./tween-group";
 import { TweenOptions } from "./tween-props";
 import { UiElement } from "./ui-element";
-import { SkeletonBounds, Spine, ISkeletonData } from "pixi-spine";
+import { ISkeletonData } from "pixi-spine";
 import { Dict } from "./types";
 
 export const MAX_DPR = 4;
