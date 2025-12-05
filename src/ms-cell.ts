@@ -70,9 +70,6 @@ export class MSCell extends Component<MSApp> {
 	public setState(state: MSCellState) {
 		this.state = state;
 
-		// this.tabIndex = this.app.state.indexOf(this.ix, this.iy);
-		// this.accessibleHint = `cell:${this.ix},${this.iy}`;
-
 		this.reset();
 		this.updateViewState();
 		this.updateGridPosition();
@@ -206,7 +203,6 @@ export class MSCell extends Component<MSApp> {
 		}
 
 		this.eventMode = enabled ? "static" : "none";
-		// this.accessible = enabled;
 	}
 
 	public setMineEnabled(enabled = true) {
