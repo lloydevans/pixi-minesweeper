@@ -5,8 +5,6 @@ import { Spine } from "./common/spine";
 import { MSApp } from "./ms-app";
 import { Component } from "./common/component";
 
-const MAX_TIME = 999;
-
 /** Class handle UI elements. */
 export class MSUi extends Component<MSApp> {
 	private buttonRestart!: UiButton;
