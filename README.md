@@ -31,9 +31,15 @@ npm install
 - **`npm test`** - Run the test suite
 - **`npm run test-watch`** - Run tests in watch mode (automatically re-runs on file changes)
 
+### Code Quality
+
+- **`npm run lint`** - Check code for linting errors using ESLint
+- **`npm run lint:fix`** - Automatically fix linting errors where possible
+- **`npm run prettier`** - Check TypeScript source files formatting
+- **`npm run prettier:fix`** - Format TypeScript source files
+
 ### Utilities
 
-- **`npm run prettier`** - Format TypeScript source files
 - **`npm run midi`** - Run the MIDI converter utility
 
 ## Development Server

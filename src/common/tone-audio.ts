@@ -1,7 +1,6 @@
 import { Midi } from "@tonejs/midi";
 import clamp from "lodash-es/clamp";
 import defaults from "lodash-es/defaults";
-import * as PIXI from "pixi.js";
 import * as Tone from "tone";
 import type { Dict } from "./types";
 

@@ -70,7 +70,7 @@ export class Component<T extends AppBase> extends PIXI.Container {
 	}
 
 	protected tween<T>(target: T, options?: TweenOptions): Tween<T> {
-		let tween = this.tweenGroup.get(target, options);
+		const tween = this.tweenGroup.get(target, options);
 		return tween;
 	}
 

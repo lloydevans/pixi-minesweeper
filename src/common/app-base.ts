@@ -171,9 +171,9 @@ export class AppBase extends PIXI.Application {
 		this.root.y = this.renderer.height / this.dpr / 2;
 
 		if (this.referenceSize) {
-			let refSize = lerp(this.referenceSize.width, this.referenceSize.height, this.referenceSize.blend);
-			let refWindow = lerp(width, height, this.referenceSize.blend);
-			let r = refSize / refWindow;
+			const refSize = lerp(this.referenceSize.width, this.referenceSize.height, this.referenceSize.blend);
+			const refWindow = lerp(width, height, this.referenceSize.blend);
+			const r = refSize / refWindow;
 			this.root.scale.set(1 / r);
 			this._width *= r;
 			this._height *= r;
