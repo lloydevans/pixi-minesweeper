@@ -32,8 +32,6 @@ async function start() {
 	await app.addJson("audio", "audio.json");
 	await app.audio.init(app.getJson("audio") as ToneAudioConfig);
 
-	(window as any).app = app;
-
 	app.onLoad();
 	app.init();
 
