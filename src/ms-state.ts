@@ -8,9 +8,6 @@ export const MAX_GRID_WIDTH = PIXI.utils.isMobile.any ? 24 : 32;
 export const MAX_GRID_HEIGHT = PIXI.utils.isMobile.any ? 24 : 32;
 export const MIN_EMPTY = 2;
 
-/**
- *
- */
 export interface LossData {
 	incorrect: MSCellState[];
 	correct: MSCellState[];

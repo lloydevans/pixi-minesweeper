@@ -55,23 +55,14 @@ export class MSTouchUi extends Component<MSApp> {
 		});
 	}
 
-	/**
-	 * Set current target cell.
-	 */
 	public setTargetCell(cell: MSCellState) {
 		this.targetCell = cell;
 	}
 
-	/**
-	 * TODO: animation
-	 */
 	public hide() {
 		this.visible = false;
 	}
 
-	/**
-	 * TODO: animation
-	 */
 	public show() {
 		this.visible = true;
 	}

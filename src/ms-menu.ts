@@ -32,7 +32,6 @@ export class MSMenu extends Component<MSApp> {
 			text: "START",
 		});
 		this.buttonStart.position.set(0, 180);
-		// this.buttonStart.anchor.set(0.5);
 
 		this.widthScroller = new UiButtonScroller(this.app, {
 			arrowTexture: this.app.getFrame("textures", "button-arrow"),
