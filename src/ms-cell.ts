@@ -38,7 +38,7 @@ export class MSCell extends Component<MSApp> {
 	private anim: Spine;
 	private state: MSCellState;
 	private viewState: MSCellState;
-	private adjacentText: BmText;
+	private adjacentMineCounterText: BmText;
 
 	constructor(app: MSApp) {
 		super(app);
@@ -51,10 +51,10 @@ export class MSCell extends Component<MSApp> {
 		this.anim.stateData.setMix("flag-destroy", "flag-place-start", 0);
 		this.anim.stateData.defaultMix = 0;
 
-		this.adjacentText = new BmText(this.app, { fontName: "bmfont", fontSize: 38 });
-		this.adjacentText.anchor.set(0.5);
+		this.adjacentMineCounterText = new BmText(this.app, { fontName: "bmfont", fontSize: 38 });
+		this.adjacentMineCounterText.anchor.set(0.5);
 
-		this.addChild(this.adjacentText);
+		this.addChild(this.adjacentMineCounterText);
 		this.addChild(this.anim);
 
 		this.hitArea = new PIXI.Rectangle(-REF_WIDTH / 2, -REF_HEIGHT / 2, REF_WIDTH, REF_HEIGHT);
@@ -160,7 +160,7 @@ export class MSCell extends Component<MSApp> {
 			this.setText(state.adjacent);
 		} //
 		else {
-			this.adjacentText.visible = false;
+			this.adjacentMineCounterText.visible = false;
 		}
 
 		if (this.viewState.x !== state.x || this.viewState.y !== state.y) {
@@ -173,9 +173,9 @@ export class MSCell extends Component<MSApp> {
 	private setText(total: number) {
 		total = Math.floor(clamp(total, 0, 8));
 		const key = total.toString() as NumberKey;
-		this.adjacentText.tint = hexToNum(this.app.config.colorNumbers[key]);
-		this.adjacentText.visible = true;
-		this.adjacentText.text = key;
+		this.adjacentMineCounterText.tint = hexToNum(this.app.config.colorNumbers[key]);
+		this.adjacentMineCounterText.visible = true;
+		this.adjacentMineCounterText.text = key;
 	}
 
 	public setCoveredEnabled(enabled = true) {
@@ -232,7 +232,7 @@ export class MSCell extends Component<MSApp> {
 		}
 
 		if (!this.state.mine && this.state.flag) {
-			this.adjacentText.text = "";
+			this.adjacentMineCounterText.text = "";
 			this.animateIncorrect();
 		}
 	}
