@@ -35,7 +35,7 @@ export class MSCell extends Component<MSApp> {
 		return this.viewState.y;
 	}
 
-	private anim: Spine;
+	private animation: Spine;
 	private state: MSCellState;
 	private viewState: MSCellState;
 	private adjacentMineCounterText: BmText;
@@ -46,16 +46,16 @@ export class MSCell extends Component<MSApp> {
 		this.state = { ...CELL_STATE_DEFAULT };
 		this.viewState = { ...CELL_STATE_DEFAULT };
 
-		this.anim = new Spine(this.app.getSpine("grid-square@1x"));
-		this.anim.stateData.setMix("flag-hidden", "flag-place-start", 0);
-		this.anim.stateData.setMix("flag-destroy", "flag-place-start", 0);
-		this.anim.stateData.defaultMix = 0;
+		this.animation = new Spine(this.app.getSpine("grid-square@1x"));
+		this.animation.stateData.setMix("flag-hidden", "flag-place-start", 0);
+		this.animation.stateData.setMix("flag-destroy", "flag-place-start", 0);
+		this.animation.stateData.defaultMix = 0;
 
 		this.adjacentMineCounterText = new BmText(this.app, { fontName: "bmfont", fontSize: 38 });
 		this.adjacentMineCounterText.anchor.set(0.5);
 
 		this.addChild(this.adjacentMineCounterText);
-		this.addChild(this.anim);
+		this.addChild(this.animation);
 
 		this.hitArea = new PIXI.Rectangle(-REF_WIDTH / 2, -REF_HEIGHT / 2, REF_WIDTH, REF_HEIGHT);
 
@@ -76,22 +76,22 @@ export class MSCell extends Component<MSApp> {
 	public reset() {
 		// Clear tracks instead of hidden states?
 		const coverType = (this.state.x + this.state.y) % 2 === 0 ? "even" : "odd";
-		this.anim.state.setAnimation(AnimTrack.FillColor, "fill-" + coverType, false);
-		this.anim.state.setAnimation(AnimTrack.Flag, "flag-hidden", false);
-		this.anim.state.setAnimation(AnimTrack.Mine, "mine-hidden", false);
-		this.anim.state.setAnimation(AnimTrack.Feedback, "feedback-hidden", false);
-		this.anim.state.setAnimation(AnimTrack.Hover, "hover-hidden", false);
-		this.anim.state.setAnimation(AnimTrack.Dig, "dig-hidden", false);
-		this.anim.state.setAnimation(AnimTrack.EdgeL, "edge-l-hidden", false);
-		this.anim.state.setAnimation(AnimTrack.EdgeR, "edge-r-hidden", false);
-		this.anim.state.setAnimation(AnimTrack.EdgeU, "edge-u-hidden", false);
-		this.anim.state.setAnimation(AnimTrack.EdgeD, "edge-d-hidden", false);
+		this.animation.state.setAnimation(AnimTrack.FillColor, "fill-" + coverType, false);
+		this.animation.state.setAnimation(AnimTrack.Flag, "flag-hidden", false);
+		this.animation.state.setAnimation(AnimTrack.Mine, "mine-hidden", false);
+		this.animation.state.setAnimation(AnimTrack.Feedback, "feedback-hidden", false);
+		this.animation.state.setAnimation(AnimTrack.Hover, "hover-hidden", false);
+		this.animation.state.setAnimation(AnimTrack.Dig, "dig-hidden", false);
+		this.animation.state.setAnimation(AnimTrack.EdgeL, "edge-l-hidden", false);
+		this.animation.state.setAnimation(AnimTrack.EdgeR, "edge-r-hidden", false);
+		this.animation.state.setAnimation(AnimTrack.EdgeU, "edge-u-hidden", false);
+		this.animation.state.setAnimation(AnimTrack.EdgeD, "edge-d-hidden", false);
 	}
 
 	public setEdgeVisible(edge: "l" | "r" | "u" | "d", visible: boolean) {
 		const stateName = "edge-" + edge + "-" + (visible ? "visible" : "hidden");
 		const animTrackKey = ("Edge" + edge.toUpperCase()) as keyof typeof AnimTrack;
-		this.anim.state.setAnimation(AnimTrack[animTrackKey], stateName, false);
+		this.animation.state.setAnimation(AnimTrack[animTrackKey], stateName, false);
 	}
 
 	public needsUpdate(): boolean {
@@ -104,7 +104,7 @@ export class MSCell extends Component<MSApp> {
 	}
 
 	public updateEdgeSprites() {
-		this.anim.setSkinByName(this.viewState.covered ? "front" : "back");
+		this.animation.setSkinByName(this.viewState.covered ? "front" : "back");
 
 		if (this.ix - 1 > -1) {
 			const l = this.app.getCellView(this.ix - 1, this.iy);
@@ -182,11 +182,11 @@ export class MSCell extends Component<MSApp> {
 		this.viewState.covered = enabled;
 		if (enabled) {
 			const stateName = this.app.state.config.cheatMode ? "covered-cheat" : "covered";
-			this.anim.state.setAnimation(AnimTrack.Cover, stateName, false);
+			this.animation.state.setAnimation(AnimTrack.Cover, stateName, false);
 			this.setInteractiveEnabled(true);
 		} else {
-			this.anim.state.clearTrack(AnimTrack.FillColor);
-			this.anim.state.setAnimation(AnimTrack.Cover, "covered-out", false);
+			this.animation.state.clearTrack(AnimTrack.FillColor);
+			this.animation.state.setAnimation(AnimTrack.Cover, "covered-out", false);
 			this.setInteractiveEnabled(false);
 		}
 
@@ -204,9 +204,9 @@ export class MSCell extends Component<MSApp> {
 	public setMineEnabled(enabled = true) {
 		this.viewState.mine = enabled;
 		if (enabled) {
-			this.anim.state.setAnimation(AnimTrack.Mine, "mine-explode", false);
+			this.animation.state.setAnimation(AnimTrack.Mine, "mine-explode", false);
 		} else {
-			this.anim.state.setAnimation(AnimTrack.Mine, "mine-hidden", false);
+			this.animation.state.setAnimation(AnimTrack.Mine, "mine-hidden", false);
 		}
 	}
 
@@ -214,9 +214,9 @@ export class MSCell extends Component<MSApp> {
 		this.viewState.flag = enabled;
 
 		if (enabled) {
-			this.anim.state.setAnimation(AnimTrack.Flag, "flag-place-end", false);
+			this.animation.state.setAnimation(AnimTrack.Flag, "flag-place-end", false);
 		} else {
-			this.anim.state.setAnimation(AnimTrack.Flag, "flag-destroy", false);
+			this.animation.state.setAnimation(AnimTrack.Flag, "flag-destroy", false);
 		}
 	}
 
@@ -238,33 +238,33 @@ export class MSCell extends Component<MSApp> {
 	}
 
 	public animatePress() {
-		this.anim.state.setAnimation(AnimTrack.Hover, "hover-press", false);
+		this.animation.state.setAnimation(AnimTrack.Hover, "hover-press", false);
 	}
 
 	public animateHoverStart() {
-		this.anim.state.setAnimation(AnimTrack.Hover, "hover-over", false);
+		this.animation.state.setAnimation(AnimTrack.Hover, "hover-over", false);
 	}
 
 	public animateHoverEnd() {
-		this.anim.state.setAnimation(AnimTrack.Hover, "hover-out", false);
+		this.animation.state.setAnimation(AnimTrack.Hover, "hover-out", false);
 	}
 
 	public animatePlaceFlagStart() {
-		this.anim.state.setAnimation(AnimTrack.Flag, "flag-place-start", false);
+		this.animation.state.setAnimation(AnimTrack.Flag, "flag-place-start", false);
 	}
 
 	public animateDigStart() {
-		this.anim.state.setAnimation(AnimTrack.Dig, "dig-start", false);
+		this.animation.state.setAnimation(AnimTrack.Dig, "dig-start", false);
 	}
 
 	public animateDigEnd() {
-		this.anim.state.setAnimation(AnimTrack.Dig, "dig-end", false);
+		this.animation.state.setAnimation(AnimTrack.Dig, "dig-end", false);
 	}
 
 	public animateDigCancel() {
 		// getCurrent does seem to be there, just a type issue
-		if ((this.anim.state as any).getCurrent(AnimTrack.Dig).animation.name === "dig-start") {
-			this.anim.state.setAnimation(AnimTrack.Dig, "dig-cancel", false);
+		if ((this.animation.state as any).getCurrent(AnimTrack.Dig).animation.name === "dig-start") {
+			this.animation.state.setAnimation(AnimTrack.Dig, "dig-cancel", false);
 			this.app.audio.play("blop", { transpose: 24 });
 			this.app.audio.play("drip", { delay: 0.1 });
 			this.animateHoverEnd();
@@ -273,8 +273,8 @@ export class MSCell extends Component<MSApp> {
 
 	public animatePlaceFlagCancel() {
 		// getCurrent does seem to be there, just a type issue
-		if ((this.anim.state as any).getCurrent(AnimTrack.Flag).animation.name === "flag-place-start") {
-			this.anim.state.setAnimation(AnimTrack.Flag, "flag-destroy", false);
+		if ((this.animation.state as any).getCurrent(AnimTrack.Flag).animation.name === "flag-place-start") {
+			this.animation.state.setAnimation(AnimTrack.Flag, "flag-destroy", false);
 			this.app.audio.play("blop", { transpose: 24 });
 			this.app.audio.play("drip", { delay: 0.1 });
 			this.animateHoverEnd();
@@ -282,14 +282,14 @@ export class MSCell extends Component<MSApp> {
 	}
 
 	public animateCorrect() {
-		this.anim.state.setAnimation(AnimTrack.Feedback, "feedback-correct", false);
+		this.animation.state.setAnimation(AnimTrack.Feedback, "feedback-correct", false);
 	}
 
 	public animateIncorrect() {
-		this.anim.state.setAnimation(AnimTrack.Feedback, "feedback-incorrect", false);
+		this.animation.state.setAnimation(AnimTrack.Feedback, "feedback-incorrect", false);
 	}
 
 	public explodeMine() {
-		this.anim.state.setAnimation(AnimTrack.Mine, "mine-explode", false);
+		this.animation.state.setAnimation(AnimTrack.Mine, "mine-explode", false);
 	}
 }
