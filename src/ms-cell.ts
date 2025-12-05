@@ -10,9 +10,6 @@ import { CELL_STATE_DEFAULT } from "./ms-cell-state";
 import type { MSCellState } from "./ms-cell-state";
 import type { NumberKey } from "./ms-config";
 
-export const REF_WIDTH = 64;
-export const REF_HEIGHT = 64;
-
 enum AnimTrack {
 	Cover,
 	FillColor,
@@ -26,6 +23,78 @@ enum AnimTrack {
 	EdgeU,
 	EdgeD,
 }
+
+enum AnimState {
+	// Flag states
+	FlagHidden = "flag-hidden",
+	FlagPlaceStart = "flag-place-start",
+	FlagPlaceEnd = "flag-place-end",
+	FlagDestroy = "flag-destroy",
+
+	// Mine states
+	MineHidden = "mine-hidden",
+	MineExplode = "mine-explode",
+
+	// Feedback states
+	FeedbackHidden = "feedback-hidden",
+	FeedbackCorrect = "feedback-correct",
+	FeedbackIncorrect = "feedback-incorrect",
+
+	// Hover states
+	HoverHidden = "hover-hidden",
+	HoverOver = "hover-over",
+	HoverOut = "hover-out",
+	HoverPress = "hover-press",
+
+	// Dig states
+	DigHidden = "dig-hidden",
+	DigStart = "dig-start",
+	DigEnd = "dig-end",
+	DigCancel = "dig-cancel",
+
+	// Edge states
+	EdgeLHidden = "edge-l-hidden",
+	EdgeLVisible = "edge-l-visible",
+	EdgeRHidden = "edge-r-hidden",
+	EdgeRVisible = "edge-r-visible",
+	EdgeUHidden = "edge-u-hidden",
+	EdgeUVisible = "edge-u-visible",
+	EdgeDHidden = "edge-d-hidden",
+	EdgeDVisible = "edge-d-visible",
+
+	// Fill states
+	FillEven = "fill-even",
+	FillOdd = "fill-odd",
+
+	// Cover states
+	Covered = "covered",
+	CoveredCheat = "covered-cheat",
+	CoveredOut = "covered-out",
+}
+
+enum SkinName {
+	Front = "front",
+	Back = "back",
+}
+
+type EdgeID = "l" | "r" | "u" | "d";
+
+export const REF_WIDTH = 64;
+export const REF_HEIGHT = 64;
+
+const EDGE_STATES_HIDDEN = {
+	l: AnimState.EdgeLHidden,
+	r: AnimState.EdgeRHidden,
+	u: AnimState.EdgeUHidden,
+	d: AnimState.EdgeDHidden,
+};
+
+const EDGE_STATES_VISIBLE = {
+	l: AnimState.EdgeLVisible,
+	r: AnimState.EdgeRVisible,
+	u: AnimState.EdgeUVisible,
+	d: AnimState.EdgeDVisible,
+};
 
 export class MSCell extends Component<MSApp> {
 	public get ix(): number {
@@ -47,8 +116,8 @@ export class MSCell extends Component<MSApp> {
 		this.viewState = { ...CELL_STATE_DEFAULT };
 
 		this.animation = new Spine(this.app.getSpine("grid-square@1x"));
-		this.animation.stateData.setMix("flag-hidden", "flag-place-start", 0);
-		this.animation.stateData.setMix("flag-destroy", "flag-place-start", 0);
+		this.animation.stateData.setMix(AnimState.FlagHidden, AnimState.FlagPlaceStart, 0);
+		this.animation.stateData.setMix(AnimState.FlagDestroy, AnimState.FlagPlaceStart, 0);
 		this.animation.stateData.defaultMix = 0;
 
 		this.adjacentMineCounterText = new BmText(this.app, { fontName: "bmfont", fontSize: 38 });
@@ -75,23 +144,23 @@ export class MSCell extends Component<MSApp> {
 
 	public reset() {
 		// Clear tracks instead of hidden states?
-		const coverType = (this.state.x + this.state.y) % 2 === 0 ? "even" : "odd";
-		this.animation.state.setAnimation(AnimTrack.FillColor, "fill-" + coverType, false);
-		this.animation.state.setAnimation(AnimTrack.Flag, "flag-hidden", false);
-		this.animation.state.setAnimation(AnimTrack.Mine, "mine-hidden", false);
-		this.animation.state.setAnimation(AnimTrack.Feedback, "feedback-hidden", false);
-		this.animation.state.setAnimation(AnimTrack.Hover, "hover-hidden", false);
-		this.animation.state.setAnimation(AnimTrack.Dig, "dig-hidden", false);
-		this.animation.state.setAnimation(AnimTrack.EdgeL, "edge-l-hidden", false);
-		this.animation.state.setAnimation(AnimTrack.EdgeR, "edge-r-hidden", false);
-		this.animation.state.setAnimation(AnimTrack.EdgeU, "edge-u-hidden", false);
-		this.animation.state.setAnimation(AnimTrack.EdgeD, "edge-d-hidden", false);
+		const fillState = (this.state.x + this.state.y) % 2 === 0 ? AnimState.FillEven : AnimState.FillOdd;
+		this.animation.state.setAnimation(AnimTrack.FillColor, fillState, false);
+		this.animation.state.setAnimation(AnimTrack.Flag, AnimState.FlagHidden, false);
+		this.animation.state.setAnimation(AnimTrack.Mine, AnimState.MineHidden, false);
+		this.animation.state.setAnimation(AnimTrack.Feedback, AnimState.FeedbackHidden, false);
+		this.animation.state.setAnimation(AnimTrack.Hover, AnimState.HoverHidden, false);
+		this.animation.state.setAnimation(AnimTrack.Dig, AnimState.DigHidden, false);
+		this.animation.state.setAnimation(AnimTrack.EdgeL, AnimState.EdgeLHidden, false);
+		this.animation.state.setAnimation(AnimTrack.EdgeR, AnimState.EdgeRHidden, false);
+		this.animation.state.setAnimation(AnimTrack.EdgeU, AnimState.EdgeUHidden, false);
+		this.animation.state.setAnimation(AnimTrack.EdgeD, AnimState.EdgeDHidden, false);
 	}
 
-	public setEdgeVisible(edge: "l" | "r" | "u" | "d", visible: boolean) {
-		const stateName = "edge-" + edge + "-" + (visible ? "visible" : "hidden");
+	public setEdgeVisible(edge: EdgeID, visible: boolean) {
+		const edgeStateMap = visible ? EDGE_STATES_VISIBLE : EDGE_STATES_HIDDEN;
 		const animTrackKey = ("Edge" + edge.toUpperCase()) as keyof typeof AnimTrack;
-		this.animation.state.setAnimation(AnimTrack[animTrackKey], stateName, false);
+		this.animation.state.setAnimation(AnimTrack[animTrackKey], edgeStateMap[edge], false);
 	}
 
 	public needsUpdate(): boolean {
@@ -104,7 +173,7 @@ export class MSCell extends Component<MSApp> {
 	}
 
 	public updateEdgeSprites() {
-		this.animation.setSkinByName(this.viewState.covered ? "front" : "back");
+		this.animation.setSkinByName(this.viewState.covered ? SkinName.Front : SkinName.Back);
 
 		if (this.ix - 1 > -1) {
 			const l = this.app.getCellView(this.ix - 1, this.iy);
@@ -181,12 +250,12 @@ export class MSCell extends Component<MSApp> {
 	public setCoveredEnabled(enabled = true) {
 		this.viewState.covered = enabled;
 		if (enabled) {
-			const stateName = this.app.state.config.cheatMode ? "covered-cheat" : "covered";
-			this.animation.state.setAnimation(AnimTrack.Cover, stateName, false);
+			const coverState = this.app.state.config.cheatMode ? AnimState.CoveredCheat : AnimState.Covered;
+			this.animation.state.setAnimation(AnimTrack.Cover, coverState, false);
 			this.setInteractiveEnabled(true);
 		} else {
 			this.animation.state.clearTrack(AnimTrack.FillColor);
-			this.animation.state.setAnimation(AnimTrack.Cover, "covered-out", false);
+			this.animation.state.setAnimation(AnimTrack.Cover, AnimState.CoveredOut, false);
 			this.setInteractiveEnabled(false);
 		}
 
@@ -204,9 +273,9 @@ export class MSCell extends Component<MSApp> {
 	public setMineEnabled(enabled = true) {
 		this.viewState.mine = enabled;
 		if (enabled) {
-			this.animation.state.setAnimation(AnimTrack.Mine, "mine-explode", false);
+			this.animation.state.setAnimation(AnimTrack.Mine, AnimState.MineExplode, false);
 		} else {
-			this.animation.state.setAnimation(AnimTrack.Mine, "mine-hidden", false);
+			this.animation.state.setAnimation(AnimTrack.Mine, AnimState.MineHidden, false);
 		}
 	}
 
@@ -214,9 +283,9 @@ export class MSCell extends Component<MSApp> {
 		this.viewState.flag = enabled;
 
 		if (enabled) {
-			this.animation.state.setAnimation(AnimTrack.Flag, "flag-place-end", false);
+			this.animation.state.setAnimation(AnimTrack.Flag, AnimState.FlagPlaceEnd, false);
 		} else {
-			this.animation.state.setAnimation(AnimTrack.Flag, "flag-destroy", false);
+			this.animation.state.setAnimation(AnimTrack.Flag, AnimState.FlagDestroy, false);
 		}
 	}
 
@@ -238,34 +307,34 @@ export class MSCell extends Component<MSApp> {
 	}
 
 	public animatePress() {
-		this.animation.state.setAnimation(AnimTrack.Hover, "hover-press", false);
+		this.animation.state.setAnimation(AnimTrack.Hover, AnimState.HoverPress, false);
 	}
 
 	public animateHoverStart() {
-		this.animation.state.setAnimation(AnimTrack.Hover, "hover-over", false);
+		this.animation.state.setAnimation(AnimTrack.Hover, AnimState.HoverOver, false);
 	}
 
 	public animateHoverEnd() {
-		this.animation.state.setAnimation(AnimTrack.Hover, "hover-out", false);
+		this.animation.state.setAnimation(AnimTrack.Hover, AnimState.HoverOut, false);
 	}
 
 	public animatePlaceFlagStart() {
-		this.animation.state.setAnimation(AnimTrack.Flag, "flag-place-start", false);
+		this.animation.state.setAnimation(AnimTrack.Flag, AnimState.FlagPlaceStart, false);
 	}
 
 	public animateDigStart() {
-		this.animation.state.setAnimation(AnimTrack.Dig, "dig-start", false);
+		this.animation.state.setAnimation(AnimTrack.Dig, AnimState.DigStart, false);
 	}
 
 	public animateDigEnd() {
-		this.animation.state.setAnimation(AnimTrack.Dig, "dig-end", false);
+		this.animation.state.setAnimation(AnimTrack.Dig, AnimState.DigEnd, false);
 	}
 
 	public animateDigCancel() {
 		// getCurrent does seem to be there, just a type issue
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		if ((this.animation.state as any).getCurrent(AnimTrack.Dig).animation.name === "dig-start") {
-			this.animation.state.setAnimation(AnimTrack.Dig, "dig-cancel", false);
+		if ((this.animation.state as any).getCurrent(AnimTrack.Dig).animation.name === AnimState.DigStart) {
+			this.animation.state.setAnimation(AnimTrack.Dig, AnimState.DigCancel, false);
 			this.app.audio.play("blop", { transpose: 24 });
 			this.app.audio.play("drip", { delay: 0.1 });
 			this.animateHoverEnd();
@@ -275,8 +344,8 @@ export class MSCell extends Component<MSApp> {
 	public animatePlaceFlagCancel() {
 		// getCurrent does seem to be there, just a type issue
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		if ((this.animation.state as any).getCurrent(AnimTrack.Flag).animation.name === "flag-place-start") {
-			this.animation.state.setAnimation(AnimTrack.Flag, "flag-destroy", false);
+		if ((this.animation.state as any).getCurrent(AnimTrack.Flag).animation.name === AnimState.FlagPlaceStart) {
+			this.animation.state.setAnimation(AnimTrack.Flag, AnimState.FlagDestroy, false);
 			this.app.audio.play("blop", { transpose: 24 });
 			this.app.audio.play("drip", { delay: 0.1 });
 			this.animateHoverEnd();
@@ -284,14 +353,14 @@ export class MSCell extends Component<MSApp> {
 	}
 
 	public animateCorrect() {
-		this.animation.state.setAnimation(AnimTrack.Feedback, "feedback-correct", false);
+		this.animation.state.setAnimation(AnimTrack.Feedback, AnimState.FeedbackCorrect, false);
 	}
 
 	public animateIncorrect() {
-		this.animation.state.setAnimation(AnimTrack.Feedback, "feedback-incorrect", false);
+		this.animation.state.setAnimation(AnimTrack.Feedback, AnimState.FeedbackIncorrect, false);
 	}
 
 	public explodeMine() {
-		this.animation.state.setAnimation(AnimTrack.Mine, "mine-explode", false);
+		this.animation.state.setAnimation(AnimTrack.Mine, AnimState.MineExplode, false);
 	}
 }
