@@ -51,11 +51,7 @@ export class MSCell extends Component<MSApp> {
 		this.anim.stateData.setMix("flag-destroy", "flag-place-start", 0);
 		this.anim.stateData.defaultMix = 0;
 
-		this.adjacentText = new BmText(this.app, {
-			text: "",
-			fontName: "bmfont",
-			fontSize: 38,
-		});
+		this.adjacentText = new BmText(this.app, { fontName: "bmfont", fontSize: 38 });
 		this.adjacentText.anchor.set(0.5);
 
 		this.addChild(this.adjacentText);
