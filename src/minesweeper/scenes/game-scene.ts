@@ -15,6 +15,7 @@ import { CellGrid } from "../cell-grid";
 import { GridConfigUi } from "../ui/grid-config-ui";
 import { ScrollingBackground } from "../scrolling-background";
 import { TouchscreenUi } from "../ui/touchscreen-ui";
+import { BmText } from "../../common/bm-text";
 
 export class GameScene extends Scene<MinesweeperApp> {
 	private transitionIdx = 0;
@@ -30,6 +31,7 @@ export class GameScene extends Scene<MinesweeperApp> {
 	private gridConfigUi = new GridConfigUi(this.app);
 	private touchscreenUi = new TouchscreenUi(this.app);
 	private scrollingBackground = new ScrollingBackground(this.app);
+	private versionReadout = new BmText(this.app, { style: { fontFamily: "bmfont" } });
 
 	init() {
 		this.cellGrid.interactiveChildren = false;
@@ -56,6 +58,10 @@ export class GameScene extends Scene<MinesweeperApp> {
 			this.newGame(this.gridConfig);
 		});
 
+		this.versionReadout.text = `PixiJS - ${PIXI.VERSION} - ${PIXI.RendererType[this.app.renderer.type]}`;
+		this.versionReadout.anchor.set(0.5);
+		this.versionReadout.alpha = 0.75;
+
 		this.hud.visible = false;
 
 		this.container.addChild(this.boardFrame);
@@ -66,6 +72,7 @@ export class GameScene extends Scene<MinesweeperApp> {
 		this.addChild(this.hud);
 		this.addChild(this.touchscreenUi);
 		this.addChild(this.gridConfigUi);
+		this.addChild(this.versionReadout);
 	}
 
 	resize({ width, height }: ResizeEventData) {
@@ -86,6 +93,8 @@ export class GameScene extends Scene<MinesweeperApp> {
 
 		this.cellWidth = REF_WIDTH * scale;
 		this.cellHeight = REF_HEIGHT * scale;
+
+		this.versionReadout.y = -this.app.height / 2 + 128;
 
 		const dimensionsX = this.app.state.width * this.cellWidth;
 		const dimensionsY = this.app.state.height * this.cellHeight;
