@@ -22,7 +22,7 @@ export class HudUi extends Component<MinesweeperApp> {
 	protected init() {
 		this.flagsContainer = new PIXI.Container();
 
-		this.flagsGraphic = Spine.from(this.app.getSpine("grid-square@1x"));
+		this.flagsGraphic = Spine.from(this.app.getSpine("grid-square"));
 		this.flagsGraphic.state.setAnimation(0, "flag-idle", false);
 		this.flagsGraphic.scale.set(0.75);
 

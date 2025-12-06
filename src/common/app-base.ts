@@ -298,8 +298,8 @@ export class AppBase extends PIXI.Application {
 	}
 
 	/** Add a spine asset to the loader. */
-	public async addSpine(spinePath: string) {
-		PIXI.Assets.add({ alias: `${spinePath}-atlas`, src: `${spinePath}.atlas` });
+	public async addSpine(spinePath: string, scale: number = this.getTextureDpr()) {
+		PIXI.Assets.add({ alias: `${spinePath}-atlas`, src: `${spinePath}@${scale}x.atlas` });
 		PIXI.Assets.add({ alias: `${spinePath}-data`, src: `${spinePath}.json` });
 		await PIXI.Assets.load([`${spinePath}-data`, `${spinePath}-atlas`], LOAD_OPTIONS);
 
@@ -312,13 +312,13 @@ export class AppBase extends PIXI.Application {
 
 	/** Add an atlas asset to the loader. */
 	public async addAtlas(atlasPath: string, scale: number = this.getTextureDpr()) {
-		const res = (await PIXI.Assets.load(atlasPath + "@" + scale + "x.json", LOAD_OPTIONS)) as PIXI.Spritesheet;
+		const res = (await PIXI.Assets.load(`${atlasPath}@${scale}x.json`, LOAD_OPTIONS)) as PIXI.Spritesheet;
 		this.assets.atlas[atlasPath] = res;
 	}
 
 	/** Add an atlas asset to the loader. */
 	public async addBitmapFont(assetPath: string, scale: number = this.getTextureDpr()) {
-		const res = (await PIXI.Assets.load(assetPath + "@" + scale + "x.fnt", LOAD_OPTIONS)) as PIXI.BitmapFont;
+		const res = (await PIXI.Assets.load(`${assetPath}@${scale}x.fnt`, LOAD_OPTIONS)) as PIXI.BitmapFont;
 		this.assets.bmfont[assetPath] = res;
 	}
 

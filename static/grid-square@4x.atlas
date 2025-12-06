@@ -1,83 +1,38 @@
-
 grid-square@4x.png
-size: 1024,1024
-format: RGBA8888
-filter: Linear,Linear
-repeat: none
+size:1024,512
+filter:Linear,Linear
+pma:true
 back-edge-0
-  rotate: false
-  xy: 628, 518
-  size: 256, 256
-  orig: 256, 256
-  offset: 0, 0
-  index: -1
+bounds:707,411,24,240
+offsets:0,16,256,256
+rotate:90
 border
-  rotate: false
-  xy: 2, 435
-  size: 256, 256
-  orig: 256, 256
-  offset: 0, 0
-  index: -1
+bounds:2,221,256,256
 cross
-  rotate: false
-  xy: 260, 358
-  size: 256, 256
-  orig: 256, 256
-  offset: 0, 0
-  index: -1
+bounds:138,66,153,153
+offsets:52,51,256,256
 dirt
-  rotate: false
-  xy: 2, 726
-  size: 78, 48
-  orig: 78, 48
-  offset: 0, 0
-  index: -1
+bounds:138,25,69,39
+offsets:5,4,78,48
 fill
-  rotate: false
-  xy: 518, 260
-  size: 256, 256
-  orig: 256, 256
-  offset: 0, 0
-  index: -1
+bounds:260,221,256,256
 flag-cloth
-  rotate: false
-  xy: 310, 684
-  size: 92, 90
-  orig: 92, 90
-  offset: 0, 0
-  index: -1
+bounds:293,81,92,63
+offsets:0,20,92,90
 flag-pole
-  rotate: true
-  xy: 404, 616
-  size: 158, 222
-  orig: 158, 222
-  offset: 0, 0
-  index: -1
+bounds:2,2,134,217
+offsets:10,4,158,222
 front-edge-0
-  rotate: false
-  xy: 2, 177
-  size: 256, 256
-  orig: 256, 256
-  offset: 0, 0
-  index: -1
+bounds:707,437,40,256
+offsets:0,0,256,256
+rotate:90
 mine
-  rotate: false
-  xy: 260, 100
-  size: 256, 256
-  orig: 256, 256
-  offset: 0, 0
-  index: -1
+bounds:518,211,128,128
+offsets:65,63,256,256
 spade
-  rotate: true
-  xy: 82, 693
-  size: 81, 226
-  orig: 81, 226
-  offset: 0, 0
-  index: -1
+bounds:293,146,73,217
+offsets:4,4,81,226
+rotate:90
 tick
-  rotate: false
-  xy: 518, 2
-  size: 256, 256
-  orig: 256, 256
-  offset: 0, 0
-  index: -1
+bounds:518,341,187,136
+offsets:35,60,256,256

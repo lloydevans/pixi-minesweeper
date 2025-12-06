@@ -116,7 +116,7 @@ export class MinesweeperCell extends Component<MinesweeperApp> {
 		this.state = { ...CELL_STATE_DEFAULT };
 		this.viewState = { ...CELL_STATE_DEFAULT };
 
-		this.animation = Spine.from(this.app.getSpine("grid-square@1x"));
+		this.animation = Spine.from(this.app.getSpine("grid-square"));
 		this.animation.state.data.setMix(AnimState.FlagHidden, AnimState.FlagPlaceStart, 0);
 		this.animation.state.data.setMix(AnimState.FlagDestroy, AnimState.FlagPlaceStart, 0);
 		this.animation.state.data.defaultMix = 0;

@@ -26,8 +26,7 @@ async function start() {
 	minesweeper.startApp();
 
 	await Promise.allSettled([
-		minesweeper.addSpine("grid-square@1x"),
-		minesweeper.addSpine("timer@1x"),
+		minesweeper.addSpine("grid-square"),
 		minesweeper.addAtlas("textures"),
 		minesweeper.addAtlas("tiles"),
 		minesweeper.addAtlas("bg", 1),
