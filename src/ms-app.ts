@@ -6,7 +6,7 @@ import { MSCell } from "./ms-cell";
 import type { MSConfig, MSGameConfig } from "./ms-config";
 import { MS_CONFIG_DEFAULT } from "./ms-config";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MSState } from "./ms-state";
-import { SceneGame } from "./scene-game";
+import { GameScene } from "./scenes/game-scene";
 
 export const INITIAL_GAME_CONFIG: MSGameConfig = {
 	startMines: 32,
@@ -22,7 +22,7 @@ export class MSApp extends AppBase {
 	public cellPool: MSCell[] = [];
 	public config: MSConfig;
 	public scenes: {
-		game?: SceneGame;
+		game?: GameScene;
 	} = {};
 
 	private isLoaded = false;
@@ -56,7 +56,7 @@ export class MSApp extends AppBase {
 			bgAtlas.baseTexture.update();
 		}
 
-		this.scenes.game = new SceneGame(this);
+		this.scenes.game = new GameScene(this);
 		this.root.addChild(this.scenes.game);
 	}
 

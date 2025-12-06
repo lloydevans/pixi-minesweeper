@@ -1,22 +1,22 @@
 import clamp from "lodash-es/clamp";
 import * as PIXI from "pixi.js";
-import { hexToNum } from "./common/color";
-import { Ease } from "./common/ease";
-import { Scene } from "./common/scene";
-import { analytics } from "./firebase";
-import { MSApp } from "./ms-app";
-import { MSBg } from "./ms-bg";
-import { REF_HEIGHT, REF_WIDTH, MSCell } from "./ms-cell";
-import { CELL_STATE_DEFAULT, MSCellState } from "./ms-cell-state";
-import type { MSGameConfig } from "./ms-config";
-import { MSGrid } from "./ms-grid";
-import { MSMenu } from "./ms-menu";
-import { MSTouchUi } from "./ms-touch-ui";
-import { MSUi } from "./ms-ui";
+import { hexToNum } from "../common/color";
+import { Ease } from "../common/ease";
+import { Scene } from "../common/scene";
+import { analytics } from "../firebase";
+import { MSApp } from "../ms-app";
+import { MSBg } from "../ms-bg";
+import { REF_HEIGHT, REF_WIDTH, MSCell } from "../ms-cell";
+import { CELL_STATE_DEFAULT, MSCellState } from "../ms-cell-state";
+import type { MSGameConfig } from "../ms-config";
+import { MSGrid } from "../ms-grid";
+import { MSMenu } from "../ms-menu";
+import { MSTouchUi } from "../ms-touch-ui";
+import { MSUi } from "../ms-ui";
 import { logEvent } from "firebase/analytics";
-import { ResizeEventData } from "./common/app-base";
+import { ResizeEventData } from "../common/app-base";
 
-export class SceneGame extends Scene<MSApp> {
+export class GameScene extends Scene<MSApp> {
 	public get currentTime() {
 		return this.time;
 	}
