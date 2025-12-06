@@ -2,6 +2,8 @@
 
 Classic Minesweeper created with PixiJS.
 
+This repository is for demonstration purposes only. Firebase API config in this sourcecode is deployed to the publicly visible front-end code and not a secret, but it will not work for you locally or when deployed to other domains. If you want to run this yourself you will want to stub the Firebase method calls.
+
 [Play the game](https://minesweeper.page)
 
 ## Getting Started
