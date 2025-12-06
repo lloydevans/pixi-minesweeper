@@ -37,13 +37,13 @@ export class UiButton extends UiElement {
 
 		this.addChild(this.back);
 
-		this.on("mouseover", this.onPointerOver, this);
-		this.on("pointerout", this.onPointerOut, this);
-		this.on("pointertap", this.onPointerTap, this);
-		this.on("pointerdown", this.onPointerDown, this);
-		this.on("pointerup", this.onPointerUp, this);
-		this.on("pointerupoutside", this.onPointerCancel, this);
-		this.on("pointercancel", this.onPointerCancel, this);
+		this.on("mouseover", this.handlePointerOver, this);
+		this.on("pointerout", this.handlePointerOut, this);
+		this.on("pointertap", this.handlePointerTap, this);
+		this.on("pointerdown", this.handlePointerDown, this);
+		this.on("pointerup", this.handlePointerUp, this);
+		this.on("pointerupoutside", this.handlePointerCancel, this);
+		this.on("pointercancel", this.handlePointerCancel, this);
 
 		// Start Tone.js context on first interaction.
 		if (Tone.getContext().state !== "running") {
@@ -70,15 +70,15 @@ export class UiButton extends UiElement {
 		}
 	}
 
-	protected onPointerOut() {
+	protected handlePointerOut() {
 		this.back.texture = this.config.textureUp;
 	}
 
-	protected onPointerOver() {
+	protected handlePointerOver() {
 		this.back.texture = this.config.textureUp;
 	}
 
-	protected async onPointerUp() {
+	protected async handlePointerUp() {
 		this.back.texture = this.config.textureUp;
 
 		if (Tone.getContext().state === "running") {
@@ -87,7 +87,7 @@ export class UiButton extends UiElement {
 		}
 	}
 
-	protected async onPointerDown() {
+	protected async handlePointerDown() {
 		this.back.texture = this.config.textureDown;
 
 		if (Tone.getContext().state === "running") {
@@ -96,9 +96,9 @@ export class UiButton extends UiElement {
 		}
 	}
 
-	protected onPointerCancel() {
+	protected handlePointerCancel() {
 		this.alpha = 1;
 	}
 
-	protected onPointerTap() {}
+	protected handlePointerTap() {}
 }
