@@ -24,6 +24,10 @@ module.exports = (env = {}) => {
 			assets: false,
 		},
 
+		optimization: {
+			concatenateModules: true,
+		},
+
 		devServer: {
 			host: "0.0.0.0",
 			port: 3000,
@@ -35,6 +39,7 @@ module.exports = (env = {}) => {
 		output: {
 			filename: "bundle.js",
 			path: path.join(__dirname, "build"),
+			chunkFormat: false,
 		},
 
 		module: {
