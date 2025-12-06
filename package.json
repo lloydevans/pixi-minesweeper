@@ -24,7 +24,7 @@
 		"@esotericsoftware/spine-pixi-v8": "^4.2.95",
 		"@types/createjs": "0.0.32",
 		"@types/lodash-es": "^4.17.12",
-		"core-js": "^3.37.0",
+		"core-js": "^3.47.0",
 		"firebase": "^12.6.0",
 		"keycode": "^2.2.1",
 		"lodash-es": "^4.17.21",
