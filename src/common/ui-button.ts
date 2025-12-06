@@ -45,7 +45,7 @@ export class UiButton extends UiElement {
 		this.on("pointerupoutside", this.onPointerCancel, this);
 		this.on("pointercancel", this.onPointerCancel, this);
 
-		if (Tone.context.state !== "running") {
+		if (Tone.getContext().state !== "running") {
 			this.on("pointerdown", this.toneStart, this);
 			this.on("pointerup", this.toneStart, this);
 		}
@@ -60,7 +60,7 @@ export class UiButton extends UiElement {
 	private async toneStart() {
 		this.off("pointerdown", this.toneStart, this);
 		this.off("pointerup", this.toneStart, this);
-		if (Tone.context.state !== "running") {
+		if (Tone.getContext().state !== "running") {
 			try {
 				await Tone.start();
 			} catch (err) {
@@ -80,7 +80,7 @@ export class UiButton extends UiElement {
 	protected async onPointerUp() {
 		this.back.texture = this.config.textureUp;
 
-		if (Tone.context.state === "running") {
+		if (Tone.getContext().state === "running") {
 			// TODO: Configuration.
 			this.app.audio.play("blop", { transpose: 24, delay: 0.01 });
 		}
@@ -89,7 +89,7 @@ export class UiButton extends UiElement {
 	protected async onPointerDown() {
 		this.back.texture = this.config.textureDown;
 
-		if (Tone.context.state === "running") {
+		if (Tone.getContext().state === "running") {
 			// TODO: Configuration.
 			this.app.audio.play("blop", { transpose: 12 });
 		}

@@ -75,7 +75,7 @@ export class ToneAudio {
 				const el = entries[i][1];
 
 				if (!ToneAudio.buffers[el.url]) {
-					const buffer = new Tone.Buffer();
+					const buffer = new Tone.ToneAudioBuffer();
 					requests.push(buffer.load(el.url));
 					ToneAudio.buffers[el.url] = buffer;
 				}
@@ -111,7 +111,7 @@ export class ToneAudio {
 	}
 
 	public update() {
-		if (!document.hasFocus() || Tone.context.state !== "running") {
+		if (!document.hasFocus() || Tone.getContext().state !== "running") {
 			return;
 		}
 
