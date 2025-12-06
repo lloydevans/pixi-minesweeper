@@ -1,10 +1,10 @@
 import clamp from "lodash-es/clamp";
 import isEqual from "lodash-es/isEqual";
 import * as PIXI from "pixi.js";
-import { hexToNum } from "./common/color";
-import { Component } from "./common/component";
-import { BmText } from "./common/bm-text";
-import { Spine } from "./common/spine";
+import { hexToNum } from "../common/color";
+import { Component } from "../common/component";
+import { BmText } from "../common/bm-text";
+import { Spine } from "../common/spine";
 import { MSApp } from "./ms-app";
 import { CELL_STATE_DEFAULT } from "./ms-cell-state";
 import type { MSCellState } from "./ms-cell-state";

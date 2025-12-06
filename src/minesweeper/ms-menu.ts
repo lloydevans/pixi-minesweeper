@@ -1,12 +1,12 @@
 import * as PIXI from "pixi.js";
-import { UiButtonScroller } from "./common/ui-button-scroller";
-import { UiButtonText } from "./common/ui-button-text";
-import { Component } from "./common/component";
-import { BmText } from "./common/bm-text";
+import { UiButtonScroller } from "../common/ui-button-scroller";
+import { UiButtonText } from "../common/ui-button-text";
+import { Component } from "../common/component";
+import { BmText } from "../common/bm-text";
 import { INITIAL_GAME_CONFIG, MSApp } from "./ms-app";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MIN_GRID_HEIGHT, MIN_GRID_WIDTH, MIN_EMPTY } from "./ms-state";
-import { EventEmitter } from "./common/event-emitter";
-import { ResizeEventData } from "./common/app-base";
+import { EventEmitter } from "../common/event-emitter";
+import { ResizeEventData } from "../common/app-base";
 
 export interface GameConfigData {
 	startMines: number;

@@ -11,7 +11,7 @@ createjs.Ticker.timingMode = createjs.Ticker.RAF;
 createjs.Ticker.maxDelta = 100;
 
 import { ToneAudioConfig } from "./common/tone-audio";
-import { MSApp } from "./ms-app";
+import { MSApp } from "./minesweeper/ms-app";
 
 async function start() {
 	window.document.body.style.background = "black";

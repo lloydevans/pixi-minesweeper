@@ -1,12 +1,12 @@
 import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js";
-import { AppBase } from "./common/app-base";
-import { preventContextMenu } from "./common/utils";
+import { AppBase } from "../common/app-base";
+import { preventContextMenu } from "../common/utils";
 import { MSCell } from "./ms-cell";
 import type { MSConfig, MSGameConfig } from "./ms-config";
 import { MS_CONFIG_DEFAULT } from "./ms-config";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MSState } from "./ms-state";
-import { GameScene } from "./scenes/game-scene";
+import { GameScene } from "../scenes/game-scene";
 
 export const INITIAL_GAME_CONFIG: MSGameConfig = {
 	startMines: 32,
@@ -32,7 +32,7 @@ export class MSApp extends AppBase {
 
 		preventContextMenu();
 
-		this.config = { ...MS_CONFIG_DEFAULT };
+		this.config = this.parseConfig();
 
 		this.onUpdate.on(this.handleUpdate, this);
 

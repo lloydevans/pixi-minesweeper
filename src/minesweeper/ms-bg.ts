@@ -1,7 +1,7 @@
 import * as PIXI from "pixi.js";
-import { ResizeEventData } from "./common/app-base";
-import { Component } from "./common/component";
-import { Ease } from "./common/ease";
+import { ResizeEventData } from "../common/app-base";
+import { Component } from "../common/component";
+import { Ease } from "../common/ease";
 import { MSApp } from "./ms-app";
 
 const REF_BG_HEIGHT = 180;

@@ -1,6 +1,6 @@
 import * as PIXI from "pixi.js";
-import { UiButton } from "./common/ui-button";
-import { Component } from "./common/component";
+import { UiButton } from "../common/ui-button";
+import { Component } from "../common/component";
 import { MSApp } from "./ms-app";
 import { MSCellState } from "./ms-cell-state";
 

@@ -1,11 +1,11 @@
 import * as PIXI from "pixi.js";
-import { UiButton } from "./common/ui-button";
-import { BmText } from "./common/bm-text";
-import { Spine } from "./common/spine";
+import { UiButton } from "../common/ui-button";
+import { BmText } from "../common/bm-text";
+import { Spine } from "../common/spine";
 import { MSApp } from "./ms-app";
-import { Component } from "./common/component";
-import { EventEmitter } from "./common/event-emitter";
-import { ResizeEventData } from "./common/app-base";
+import { Component } from "../common/component";
+import { EventEmitter } from "../common/event-emitter";
+import { ResizeEventData } from "../common/app-base";
 
 /** Class handle UI elements. */
 export class MSUi extends Component<MSApp> {

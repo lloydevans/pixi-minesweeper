@@ -1,4 +1,4 @@
-import { Component } from "./common/component";
+import { Component } from "../common/component";
 import { MSApp } from "./ms-app";
 import { MSCell } from "./ms-cell";
 import { MSCellState } from "./ms-cell-state";
