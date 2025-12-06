@@ -81,6 +81,8 @@ export class UiButton extends UiElement {
 	protected async handlePointerUp() {
 		this.back.texture = this.config.textureUp;
 
+		this.back.scale.set(1);
+
 		if (Tone.getContext().state === "running") {
 			// TODO: Configuration.
 			this.app.audio.play("blop", { transpose: 24, delay: 0.01 });
@@ -89,6 +91,8 @@ export class UiButton extends UiElement {
 
 	protected async handlePointerDown() {
 		this.back.texture = this.config.textureDown;
+
+		this.back.scale.set(0.9);
 
 		if (Tone.getContext().state === "running") {
 			// TODO: Configuration.

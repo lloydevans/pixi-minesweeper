@@ -1,11 +1,11 @@
+import { Spine } from "@esotericsoftware/spine-pixi-v8";
 import * as PIXI from "pixi.js";
-import { UiButton } from "../../common/ui-button";
+import { ResizeEventData } from "../../common/app-base";
 import { BmText } from "../../common/bm-text";
-import { Spine } from "../../common/spine";
-import { MinesweeperApp } from "../minesweeper-app";
 import { Component } from "../../common/component";
 import { EventEmitter } from "../../common/event-emitter";
-import { ResizeEventData } from "../../common/app-base";
+import { UiButton } from "../../common/ui-button";
+import { MinesweeperApp } from "../minesweeper-app";
 
 /** Class handle UI elements. */
 export class HudUi extends Component<MinesweeperApp> {
@@ -17,24 +17,18 @@ export class HudUi extends Component<MinesweeperApp> {
 	private flagsContainer!: PIXI.Container;
 	private flagsGraphic!: Spine;
 	private flagsCount!: BmText;
-	private timeContainer!: PIXI.Container;
 
 	/** Initialisation must be called after assets are loaded. */
 	protected init() {
 		this.flagsContainer = new PIXI.Container();
-		this.flagsContainer.y = -8;
 
-		this.flagsGraphic = new Spine(this.app.getSpine("grid-square@1x"));
+		this.flagsGraphic = Spine.from(this.app.getSpine("grid-square@1x"));
 		this.flagsGraphic.state.setAnimation(0, "flag-idle", false);
-		this.flagsGraphic.y = -24;
+		this.flagsGraphic.scale.set(0.75);
 
-		this.flagsCount = new BmText(this.app, { fontName: "bmfont", fontSize: 38 });
-		this.flagsCount.anchor.set(0, 0.5);
-		this.flagsCount.x = 38;
-		this.flagsCount.y = -24;
-
-		this.timeContainer = new PIXI.Container();
-		this.timeContainer.y = -8;
+		this.flagsCount = new BmText(this.app, {
+			style: { fontFamily: "bmfont", fontSize: 64 },
+		});
 
 		this.buttonCross = new UiButton(this.app, {
 			textureUp: this.app.getFrame("textures", "button-cross"),
@@ -46,10 +40,15 @@ export class HudUi extends Component<MinesweeperApp> {
 			textureDown: this.app.getFrame("textures", "button-restart"),
 		});
 
+		this.buttonCross.scale.set(0.9);
+		this.buttonRestart.scale.set(0.9);
+		this.flagsCount.anchor.set(0, 0.5);
+		this.flagsCount.x = 110;
+		this.flagsGraphic.x = 32;
+
 		this.flagsContainer.addChild(this.flagsGraphic);
 		this.flagsContainer.addChild(this.flagsCount);
 
-		this.addChild(this.timeContainer);
 		this.addChild(this.flagsContainer);
 		this.addChild(this.buttonRestart);
 		this.addChild(this.buttonCross);
@@ -66,13 +65,11 @@ export class HudUi extends Component<MinesweeperApp> {
 	}
 
 	protected resize({ width, height }: ResizeEventData) {
-		this.buttonCross.x = width / 2 - 48;
-		this.buttonCross.y = -height / 2 + 42;
-		this.buttonRestart.x = width / 2 - 128;
-		this.buttonRestart.y = -height / 2 + 42;
-		this.flagsContainer.x = -width / 2 + 32;
-		this.flagsContainer.y = -height / 2 + 64;
-		this.timeContainer.x = -width / 2 + 170;
-		this.timeContainer.y = -height / 2 + 64;
+		this.buttonCross.x = width / 2 - 128;
+		this.buttonCross.y = -height / 2 + 128;
+		this.buttonRestart.x = width / 2 - 350;
+		this.buttonRestart.y = -height / 2 + 128;
+		this.flagsContainer.x = -width / 2 + 64;
+		this.flagsContainer.y = -height / 2 + 128;
 	}
 }

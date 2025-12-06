@@ -1,4 +1,3 @@
-import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js";
 import { AppBase } from "./app-base";
 
@@ -22,18 +21,22 @@ export const BmTextOptionDefaults: BmTextOptions = {
 	maxWidth: undefined,
 };
 
+export const DEFAULT_TEXT_STYLE: Partial<PIXI.TextStyle> = {
+	align: "left",
+	fill: 0xffffff,
+	fontFamily: "Arial",
+	fontSize: 24,
+};
+
 export class BmText extends PIXI.BitmapText {
 	private app: AppBase;
 
-	protected options: BmTextOptions;
-
-	constructor(app: AppBase, options: BmTextOptions = {}) {
-		super(options.text || "", options as Partial<PIXI.IBitmapTextStyle>);
+	constructor(app: AppBase, options: Partial<{ text: string; style: PIXI.TextStyleOptions }> = {}) {
+		super({
+			text: options.text || "",
+			style: options.style,
+		});
 
 		this.app = app;
-
-		this.options = defaults(options, BmTextOptionDefaults);
-
-		this.scale.set(this.app.dpr);
 	}
 }

@@ -15,24 +15,23 @@ export class TouchscreenUi extends Component<MinesweeperApp> {
 		this.visible = false;
 
 		const cursor = new PIXI.Graphics();
-		cursor.beginFill(0x00ff00);
-		cursor.drawCircle(0, 0, 8);
+		cursor.circle(0, 0, 8);
+		cursor.fill(0x00ff00);
 
 		this.buttonFlag = new UiButton(this.app, {
 			textureUp: this.app.getFrame("textures", "button-flag"),
 			textureDown: this.app.getFrame("textures", "button-flag"),
 		});
-		this.buttonFlag.tint = 0x444444;
-		this.buttonFlag.x = -64;
-		this.buttonFlag.y = 0;
 
 		this.buttonDig = new UiButton(this.app, {
 			textureUp: this.app.getFrame("textures", "button-dig"),
 			textureDown: this.app.getFrame("textures", "button-dig"),
 		});
-		this.buttonDig.tint = 0x444444;
+		
+		this.buttonFlag.x = -100;
+		this.buttonFlag.y = 4;
 		this.buttonDig.x = 0;
-		this.buttonDig.y = 64;
+		this.buttonDig.y = 104;
 
 		this.addChild(this.buttonFlag);
 		this.addChild(this.buttonDig);

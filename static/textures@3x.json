@@ -2,50 +2,50 @@
 
 "button-arrow":
 {
-	"frame": {"x":250,"y":120,"w":116,"h":152},
+	"frame": {"x":100,"y":2,"w":80,"h":104},
 	"rotated": true,
 	"trimmed": true,
-	"spriteSourceSize": {"x":38,"y":20,"w":116,"h":152},
+	"spriteSourceSize": {"x":56,"y":44,"w":80,"h":104},
 	"sourceSize": {"w":192,"h":192}
 },
 "button-cross":
 {
-	"frame": {"x":250,"y":238,"w":118,"h":118},
+	"frame": {"x":100,"y":84,"w":88,"h":88},
 	"rotated": false,
 	"trimmed": true,
-	"spriteSourceSize": {"x":38,"y":38,"w":118,"h":118},
+	"spriteSourceSize": {"x":52,"y":52,"w":88,"h":88},
 	"sourceSize": {"w":192,"h":192}
 },
 "button-dig":
 {
-	"frame": {"x":250,"y":2,"w":156,"h":116},
+	"frame": {"x":100,"y":174,"w":74,"h":70},
 	"rotated": false,
 	"trimmed": true,
-	"spriteSourceSize": {"x":18,"y":38,"w":156,"h":116},
-	"sourceSize": {"w":192,"h":192}
+	"spriteSourceSize": {"x":8,"y":10,"w":74,"h":70},
+	"sourceSize": {"w":96,"h":96}
 },
 "button-flag":
 {
-	"frame": {"x":142,"y":772,"w":106,"h":164},
+	"frame": {"x":176,"y":174,"w":74,"h":70},
 	"rotated": false,
 	"trimmed": true,
-	"spriteSourceSize": {"x":64,"y":14,"w":106,"h":164},
-	"sourceSize": {"w":192,"h":192}
+	"spriteSourceSize": {"x":8,"y":10,"w":74,"h":70},
+	"sourceSize": {"w":96,"h":96}
 },
 "button-long":
 {
-	"frame": {"x":2,"y":2,"w":768,"h":192},
+	"frame": {"x":2,"y":2,"w":384,"h":96},
 	"rotated": true,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":768,"h":192},
-	"sourceSize": {"w":768,"h":192}
+	"spriteSourceSize": {"x":0,"y":0,"w":384,"h":96},
+	"sourceSize": {"w":384,"h":96}
 },
 "button-restart":
 {
-	"frame": {"x":2,"y":772,"w":164,"h":138},
+	"frame": {"x":2,"y":388,"w":114,"h":96},
 	"rotated": true,
 	"trimmed": true,
-	"spriteSourceSize": {"x":26,"y":28,"w":164,"h":138},
+	"spriteSourceSize": {"x":50,"y":48,"w":114,"h":96},
 	"sourceSize": {"w":192,"h":192}
 }},
 "meta": {
@@ -53,8 +53,8 @@
 	"version": "1.0",
 	"image": "textures@3x.png",
 	"format": "RGBA8888",
-	"size": {"w":512,"h":1024},
-	"scale": "0.1875",
-	"smartupdate": "$TexturePacker:SmartUpdate:9ffe287c70176eb1bf9fbed21fcb68f9:5e5fe95602511d1fa80a042725f18aa2:0d4797ab0a62cbf7baf7b92840fcf112$"
+	"size": {"w":256,"h":512},
+	"scale": "0.75",
+	"smartupdate": "$TexturePacker:SmartUpdate:c161e06270fc3b8be0ac93b4ffd69c5d:e474d11c5be9d8d547546bcd7edda36d:0d4797ab0a62cbf7baf7b92840fcf112$"
 }
 }

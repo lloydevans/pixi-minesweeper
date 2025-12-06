@@ -18,9 +18,9 @@ export class GridConfigUi extends Component<MinesweeperApp> {
 	public readonly onStartGame = new EventEmitter<GameConfigData>();
 	public readonly onPreviewGrid = new EventEmitter<GameConfigData>();
 
-	private title!: BmText;
+	private title!: PIXI.BitmapText;
 	private background!: PIXI.Graphics;
-	private buttonStart!: UiButtonText;
+	private startButton!: UiButtonText;
 	private widthScroller!: UiButtonScroller;
 	private heightScroller!: UiButtonScroller;
 	private minesScroller!: UiButtonScroller;
@@ -31,18 +31,20 @@ export class GridConfigUi extends Component<MinesweeperApp> {
 
 		this.title = new BmText(this.app, {
 			text: "MINESWEEPER",
-			fontName: "bmfont",
-			fontSize: 72,
+			style: {
+				fontFamily: "bmfont",
+				fontSize: 128,
+			},
 		});
-		this.title.y = -190;
 		this.title.anchor.set(0.5);
 
-		this.buttonStart = new UiButtonText(this.app, {
+		this.startButton = new UiButtonText(this.app, {
 			textureUp: this.app.getFrame("textures", "button-long"),
 			textureDown: this.app.getFrame("textures", "button-long"),
+			fontSize: 72,
 			text: "START",
 		});
-		this.buttonStart.position.set(0, 180);
+		this.startButton.position.set(0, 550);
 
 		this.widthScroller = new UiButtonScroller(this.app, {
 			arrowTexture: this.app.getFrame("textures", "button-arrow"),
@@ -68,16 +70,16 @@ export class GridConfigUi extends Component<MinesweeperApp> {
 			max: INITIAL_GAME_CONFIG.gridWidth * INITIAL_GAME_CONFIG.gridHeight - MIN_EMPTY,
 		});
 
-		this.widthScroller.x = 64;
-		this.widthScroller.y = -80;
-		this.heightScroller.x = 64;
-		this.heightScroller.y = 0;
-		this.minesScroller.x = 64;
-		this.minesScroller.y = 80;
+		this.title.y = -600;
+		this.widthScroller.y = -280;
+		this.heightScroller.y = -20;
+		this.minesScroller.y = 240;
+
+		this.container.scale.set(0.75);
 
 		this.addChild(this.background);
 		this.addChild(this.container);
-		this.container.addChild(this.buttonStart);
+		this.container.addChild(this.startButton);
 		this.container.addChild(this.title);
 		this.container.addChild(this.widthScroller);
 		this.container.addChild(this.heightScroller);
@@ -87,7 +89,7 @@ export class GridConfigUi extends Component<MinesweeperApp> {
 		this.heightScroller.onSet.on(this.updatePreview, this);
 		this.updatePreview();
 
-		this.buttonStart.on("pointertap", () => {
+		this.startButton.on("pointertap", () => {
 			const gridWidth = this.widthScroller.currentValue;
 			const gridHeight = this.heightScroller.currentValue;
 			const startMines = this.minesScroller.currentValue;
@@ -97,18 +99,8 @@ export class GridConfigUi extends Component<MinesweeperApp> {
 
 	protected resize({ width, height }: ResizeEventData) {
 		this.background.clear();
-		this.background.beginFill(0, 0.5);
-		this.background.drawRect(-width / 2, -height / 2, width, height);
-		this.background.endFill();
-
-		// It's not great to resize like this but this menu is a temporary tingleberry.
-		if (width > height) {
-			this.container.height = Math.min(height - 128, 410);
-			this.container.scale.x = this.container.scale.y;
-		} else {
-			this.container.width = Math.min(width - 128, 410);
-			this.container.scale.y = this.container.scale.x;
-		}
+		this.background.rect(-width / 2, -height / 2, width, height);
+		this.background.fill({ color: 0x000000, alpha: 0.75 });
 	}
 
 	protected updatePreview() {

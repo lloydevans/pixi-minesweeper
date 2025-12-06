@@ -2,50 +2,50 @@
 
 "button-arrow":
 {
-	"frame": {"x":132,"y":252,"w":76,"h":104},
+	"frame": {"x":2,"y":68,"w":56,"h":72},
 	"rotated": true,
 	"trimmed": true,
-	"spriteSourceSize": {"x":26,"y":12,"w":76,"h":104},
+	"spriteSourceSize": {"x":36,"y":28,"w":56,"h":72},
 	"sourceSize": {"w":128,"h":128}
 },
 "button-cross":
 {
-	"frame": {"x":132,"y":330,"w":80,"h":80},
+	"frame": {"x":2,"y":384,"w":60,"h":60},
 	"rotated": false,
 	"trimmed": true,
-	"spriteSourceSize": {"x":24,"y":24,"w":80,"h":80},
+	"spriteSourceSize": {"x":34,"y":34,"w":60,"h":60},
 	"sourceSize": {"w":128,"h":128}
 },
 "button-dig":
 {
-	"frame": {"x":132,"y":170,"w":104,"h":80},
-	"rotated": false,
+	"frame": {"x":76,"y":68,"w":52,"h":48},
+	"rotated": true,
 	"trimmed": true,
-	"spriteSourceSize": {"x":12,"y":24,"w":104,"h":80},
-	"sourceSize": {"w":128,"h":128}
+	"spriteSourceSize": {"x":4,"y":6,"w":52,"h":48},
+	"sourceSize": {"w":64,"h":64}
 },
 "button-flag":
 {
-	"frame": {"x":132,"y":2,"w":72,"h":112},
+	"frame": {"x":76,"y":122,"w":52,"h":48},
 	"rotated": true,
 	"trimmed": true,
-	"spriteSourceSize": {"x":42,"y":8,"w":72,"h":112},
-	"sourceSize": {"w":128,"h":128}
+	"spriteSourceSize": {"x":4,"y":6,"w":52,"h":48},
+	"sourceSize": {"w":64,"h":64}
 },
 "button-long":
 {
-	"frame": {"x":2,"y":2,"w":512,"h":128},
+	"frame": {"x":2,"y":126,"w":256,"h":64},
 	"rotated": true,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":512,"h":128},
-	"sourceSize": {"w":512,"h":128}
+	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":64},
+	"sourceSize": {"w":256,"h":64}
 },
 "button-restart":
 {
-	"frame": {"x":132,"y":76,"w":110,"h":92},
+	"frame": {"x":2,"y":2,"w":76,"h":64},
 	"rotated": false,
 	"trimmed": true,
-	"spriteSourceSize": {"x":16,"y":18,"w":110,"h":92},
+	"spriteSourceSize": {"x":34,"y":32,"w":76,"h":64},
 	"sourceSize": {"w":128,"h":128}
 }},
 "meta": {
@@ -53,8 +53,8 @@
 	"version": "1.0",
 	"image": "textures@2x.png",
 	"format": "RGBA8888",
-	"size": {"w":256,"h":1024},
-	"scale": "0.125",
-	"smartupdate": "$TexturePacker:SmartUpdate:9ffe287c70176eb1bf9fbed21fcb68f9:5e5fe95602511d1fa80a042725f18aa2:0d4797ab0a62cbf7baf7b92840fcf112$"
+	"size": {"w":128,"h":512},
+	"scale": "0.5",
+	"smartupdate": "$TexturePacker:SmartUpdate:c161e06270fc3b8be0ac93b4ffd69c5d:e474d11c5be9d8d547546bcd7edda36d:0d4797ab0a62cbf7baf7b92840fcf112$"
 }
 }

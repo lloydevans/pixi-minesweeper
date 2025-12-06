@@ -69,8 +69,8 @@ export class GameScene extends Scene<MinesweeperApp> {
 	}
 
 	resize({ width, height }: ResizeEventData) {
-		const marginX = 64;
-		const marginY = 96;
+		const marginX = 256;
+		const marginY = 256;
 		const maxWidth = width - marginX * 2;
 		const maxHeight = height - marginY * 2;
 		const refBoardWidth = REF_WIDTH * this.app.state.width;

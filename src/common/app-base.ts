@@ -1,5 +1,5 @@
-import clamp from "lodash-es/clamp";
 import * as PIXI from "pixi.js";
+import * as SPINE from "@esotericsoftware/spine-pixi-v8";
 import * as screenfull from "screenfull";
 import { lerp } from "../maths/lerp";
 import { ToneAudio } from "./tone-audio";
@@ -8,8 +8,13 @@ import { TweenGroup } from "./tween-group";
 import { TweenOptions } from "./tween-props";
 import { UiElement } from "./ui-element";
 import { EventEmitter } from "./event-emitter";
-import { IAnimationState, IAnimationStateData, ISkeleton, ISkeletonData, SpineBase } from "pixi-spine";
 import { Dict } from "./types";
+
+const LOAD_OPTIONS: PIXI.LoadOptions = {
+	strategy: "retry",
+	retryDelay: 3,
+	retryCount: 10,
+};
 
 export const MAX_DPR = 4;
 export const MIN_DPR = 0.5;
@@ -18,6 +23,10 @@ export interface AppReferenceSize {
 	width: number;
 	height: number;
 	blend: number;
+	resolutionBreakpoints: Array<{
+		maxSideSizeThreshold: number;
+		resolution: number;
+	}>;
 }
 
 export interface ResizeEventData {
@@ -34,8 +43,8 @@ export class AppBase extends PIXI.Application {
 	/** App audio manager reference */
 	public readonly audio = new ToneAudio();
 
-	/** Reference size of the app. If this is not defined, no root scaling is applied. */
-	public referenceSize?: AppReferenceSize;
+	/** Root container. */
+	public readonly root = new PIXI.Container();
 
 	/** Current app ready state. Modified via setReady, */
 	public get ready() {
@@ -64,11 +73,10 @@ export class AppBase extends PIXI.Application {
 	/** Global app tween group. */
 	protected readonly tweenGroup = new TweenGroup(false, 1);
 
-	/** Root container. */
-	protected readonly root = new PIXI.Container();
-
 	/** List of all UI elements currently added to app instance. */
 	protected readonly uiElements: UiElement[] = [];
+
+	private readonly selectedDpr: number;
 
 	private initialized = false;
 
@@ -76,7 +84,7 @@ export class AppBase extends PIXI.Application {
 		json: Dict<unknown>;
 		atlas: Dict<PIXI.Spritesheet>;
 		bmfont: Dict<PIXI.BitmapFont>;
-		spine: Dict<SpineBase<ISkeleton, ISkeletonData, IAnimationState, IAnimationStateData>>;
+		spine: Dict<SPINE.SpineFromOptions>;
 	} = {
 		json: {},
 		atlas: {},
@@ -84,8 +92,18 @@ export class AppBase extends PIXI.Application {
 		spine: {},
 	};
 
+	constructor(
+		/** Reference size of the app. If this is not defined, no root scaling is applied. */
+		private readonly referenceSize: AppReferenceSize,
+		selectedDpr?: number,
+	) {
+		super();
+
+		this.selectedDpr = selectedDpr ?? this.getSelectedDpr();
+	}
+
 	/** Initialize the app */
-	public init() {
+	public startApp() {
 		if (!this.initialized) {
 			this.initialized = true;
 			this.stage.addChild(this.root);
@@ -97,18 +115,12 @@ export class AppBase extends PIXI.Application {
 		}
 	}
 
-	private update(dt: number) {
-		const currentDpr = this.getWindowDpr();
-
-		if (
-			window.innerWidth !== this.width || //
-			window.innerHeight !== this.height ||
-			this.dpr !== currentDpr
-		) {
-			this.resizeRoot(window.innerWidth, window.innerHeight, currentDpr);
+	private update(ticker: PIXI.Ticker) {
+		if (window.innerWidth !== this.width || window.innerHeight !== this.height) {
+			this.resizeRoot(window.innerWidth, window.innerHeight, this.selectedDpr);
 		}
 
-		this.onUpdate.emit(dt);
+		this.onUpdate.emit(ticker.deltaTime);
 	}
 
 	public tween<T>(target: T, options?: TweenOptions): Tween<T> {
@@ -129,54 +141,56 @@ export class AppBase extends PIXI.Application {
 
 	public requestFullscreen(): Promise<void> {
 		if (screenfull.isEnabled) {
-			return screenfull.request(this.view as unknown as Element);
+			return screenfull.request(this.canvas as unknown as Element);
 		} else {
 			return Promise.resolve();
 		}
 	}
 
-	private getWindowDpr(): number {
-		let dpr = clamp(window.devicePixelRatio, MIN_DPR, MAX_DPR);
-
-		if (PIXI.isMobile.amazon.device) {
-			dpr = 1;
+	private getSelectedDpr(): number {
+		for (let i = this.referenceSize.resolutionBreakpoints.length - 1; i >= 0; i--) {
+			const el = this.referenceSize.resolutionBreakpoints[i];
+			const maxSideSize = Math.max(window.innerWidth, window.innerHeight) * window.devicePixelRatio;
+			if (maxSideSize > el.maxSideSizeThreshold || i === 0) {
+				return el.resolution;
+			}
 		}
 
-		return dpr;
+		return 1;
 	}
 
 	private getTextureDpr(): number {
-		return this.getWindowDpr() | 0;
+		return this.selectedDpr;
 	}
 
-	private resizeRoot(width: number, height: number, dpr: number) {
-		this._width = width;
-		this._height = height;
+	private resizeRoot(windowWidth: number, windowHeight: number, dpr: number) {
+		this._width = windowWidth;
+		this._height = windowHeight;
 		this._dpr = dpr;
 
-		if (this.view && this.view.style) {
-			this.view.style.width = this.width + "px";
-			this.view.style.height = this.height + "px";
+		if (this.canvas && this.canvas.style) {
+			this.canvas.style.width = this.width + "px";
+			this.canvas.style.height = this.height + "px";
 		}
 
 		this.renderer.resolution = this.dpr;
-		// this.renderer.plugins.interaction.resolution = this.dpr;
 		this.renderer.resize(this.width, this.height);
 
 		// Center root container but this could be made optional.
-		this.root.x = this.renderer.width / this.dpr / 2;
-		this.root.y = this.renderer.height / this.dpr / 2;
+		this.root.x = this._width / 2;
+		this.root.y = this._height / 2;
 
-		if (this.referenceSize) {
-			const refSize = lerp(this.referenceSize.width, this.referenceSize.height, this.referenceSize.blend);
-			const refWindow = lerp(width, height, this.referenceSize.blend);
-			const r = refSize / refWindow;
-			this.root.scale.set(1 / r);
-			this._width *= r;
-			this._height *= r;
-		}
+		const refSize = lerp(this.referenceSize.width, this.referenceSize.height, this.referenceSize.blend);
+		const refWindow = lerp(windowWidth, windowHeight, this.referenceSize.blend);
+		const r = refSize / refWindow;
+		this.root.scale.set(1 / r);
+		this._width *= r;
+		this._height *= r;
 
-		this.onResize.emit(this);
+		this.onResize.emit({
+			width: this.renderer.width * r,
+			height: this.renderer.height * r,
+		});
 	}
 
 	/**
@@ -263,14 +277,14 @@ export class AppBase extends PIXI.Application {
 		return atlas.textures[frameName];
 	}
 
-	public getSpine(spinePath: string): ISkeletonData {
+	public getSpine(spinePath: string): SPINE.SpineFromOptions {
 		const spine = this.assets.spine[spinePath];
 
 		if (!spine) {
 			throw new Error(`Can't find spine: "${spinePath}"`);
 		}
 
-		return spine.spineData;
+		return spine;
 	}
 
 	public getJson(name: string): unknown {
@@ -283,47 +297,34 @@ export class AppBase extends PIXI.Application {
 		return this.assets.json[name];
 	}
 
-	/**
-	 * Add a spine asset to the loader.
-	 *
-	 * @param spinePath
-	 * @param scale
-	 */
+	/** Add a spine asset to the loader. */
 	public async addSpine(spinePath: string) {
-		const res = await PIXI.Assets.load(spinePath + ".json");
-		this.assets.spine[spinePath] = res;
+		PIXI.Assets.add({ alias: `${spinePath}-atlas`, src: `${spinePath}.atlas` });
+		PIXI.Assets.add({ alias: `${spinePath}-data`, src: `${spinePath}.json` });
+		await PIXI.Assets.load([`${spinePath}-data`, `${spinePath}-atlas`], LOAD_OPTIONS);
+
+		this.assets.spine[spinePath] = {
+			atlas: `${spinePath}-atlas`,
+			skeleton: `${spinePath}-data`,
+			scale: 1,
+		};
 	}
 
-	/**
-	 * Add an atlas asset to the loader.
-	 *
-	 * @param atlasPath
-	 * @param scale
-	 */
+	/** Add an atlas asset to the loader. */
 	public async addAtlas(atlasPath: string, scale: number = this.getTextureDpr()) {
-		const res = await PIXI.Assets.load(atlasPath + "@" + scale + "x.json");
+		const res = (await PIXI.Assets.load(atlasPath + "@" + scale + "x.json", LOAD_OPTIONS)) as PIXI.Spritesheet;
 		this.assets.atlas[atlasPath] = res;
 	}
 
-	/**
-	 * Add an atlas asset to the loader.
-	 *
-	 * @param assetPath
-	 * @param scale
-	 */
+	/** Add an atlas asset to the loader. */
 	public async addBitmapFont(assetPath: string, scale: number = this.getTextureDpr()) {
-		const res = await PIXI.Assets.load(assetPath + "@" + scale + "x.fnt");
+		const res = (await PIXI.Assets.load(assetPath + "@" + scale + "x.fnt", LOAD_OPTIONS)) as PIXI.BitmapFont;
 		this.assets.bmfont[assetPath] = res;
 	}
 
-	/**
-	 * Add an JSON asset to the loader.
-	 *
-	 * @param jsonName
-	 * @param scale
-	 */
+	/** Add an JSON asset to the loader. */
 	public async addJson(jsonName: string, url: string) {
-		const res = await PIXI.Assets.load(url);
+		const res = await PIXI.Assets.load(url, LOAD_OPTIONS);
 		this.assets.json[jsonName] = res;
 	}
 }

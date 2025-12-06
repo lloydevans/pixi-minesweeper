@@ -1,9 +1,8 @@
 import defaults from "lodash-es/defaults";
-import * as PIXI from "pixi.js";
 import { AppBase } from "../common/app-base";
 import { preventContextMenu } from "../common/utils";
 import { MinesweeperCell } from "./minesweeper-cell";
-import type { MinesweeperStyleConfig, MinesweeperGridConfig } from "./minesweeper-config";
+import type { MinesweeperGridConfig, MinesweeperStyleConfig } from "./minesweeper-config";
 import { MS_CONFIG_DEFAULT } from "./minesweeper-config";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MinesweeperState } from "./minesweeper-state";
 import { GameScene } from "./scenes/game-scene";
@@ -28,33 +27,35 @@ export class MinesweeperApp extends AppBase {
 	private isLoaded = false;
 
 	constructor() {
-		super();
+		super({
+			// 4K 16:9 reference resolution
+			width: 4096,
+			height: 2160,
+			blend: 1,
+			resolutionBreakpoints: [
+				// Approximate breakpoints still need refinement
+				{ maxSideSizeThreshold: 0, resolution: 1 },
+				{ maxSideSizeThreshold: 1200, resolution: 2 },
+				{ maxSideSizeThreshold: 3200, resolution: 4 },
+			],
+		});
 
 		preventContextMenu();
 
 		this.config = this.parseConfig();
 
 		this.onUpdate.on(this.handleUpdate, this);
-
-		this.setReady();
+		this.onReady.on(this.handleReady, this);
 	}
 
-	public onLoad() {
+	public handleReady() {
 		this.isLoaded = true;
 
 		const tilesAtlas = this.getAtlas("tiles");
-		if (tilesAtlas) {
-			tilesAtlas.baseTexture.mipmap = PIXI.MIPMAP_MODES.OFF;
-			tilesAtlas.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
-			tilesAtlas.baseTexture.update();
-		}
+		if (tilesAtlas) tilesAtlas.textureSource.scaleMode = "nearest";
 
 		const bgAtlas = this.getAtlas("bg");
-		if (bgAtlas) {
-			bgAtlas.baseTexture.mipmap = PIXI.MIPMAP_MODES.OFF;
-			bgAtlas.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
-			bgAtlas.baseTexture.update();
-		}
+		if (bgAtlas) bgAtlas.textureSource.scaleMode = "nearest";
 
 		this.scenes.game = new GameScene(this);
 		this.root.addChild(this.scenes.game);

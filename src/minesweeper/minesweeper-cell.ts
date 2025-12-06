@@ -4,11 +4,12 @@ import * as PIXI from "pixi.js";
 import { hexToNum } from "../common/color";
 import { Component } from "../common/component";
 import { BmText } from "../common/bm-text";
-import { Spine } from "../common/spine";
+// import { Spine } from "../common/spine";
 import { MinesweeperApp } from "./minesweeper-app";
 import { CELL_STATE_DEFAULT } from "./minesweeper-cell-state";
 import type { MinesweeperCellState } from "./minesweeper-cell-state";
 import type { NumberKey } from "./minesweeper-config";
+import { Spine } from "@esotericsoftware/spine-pixi-v8";
 
 enum AnimTrack {
 	Cover,
@@ -79,8 +80,8 @@ enum SkinName {
 
 type EdgeID = "l" | "r" | "u" | "d";
 
-export const REF_WIDTH = 64;
-export const REF_HEIGHT = 64;
+export const REF_WIDTH = 256;
+export const REF_HEIGHT = 256;
 
 const EDGE_STATES_HIDDEN = {
 	l: AnimState.EdgeLHidden,
@@ -115,13 +116,16 @@ export class MinesweeperCell extends Component<MinesweeperApp> {
 		this.state = { ...CELL_STATE_DEFAULT };
 		this.viewState = { ...CELL_STATE_DEFAULT };
 
-		this.animation = new Spine(this.app.getSpine("grid-square@1x"));
-		this.animation.stateData.setMix(AnimState.FlagHidden, AnimState.FlagPlaceStart, 0);
-		this.animation.stateData.setMix(AnimState.FlagDestroy, AnimState.FlagPlaceStart, 0);
-		this.animation.stateData.defaultMix = 0;
+		this.animation = Spine.from(this.app.getSpine("grid-square@1x"));
+		this.animation.state.data.setMix(AnimState.FlagHidden, AnimState.FlagPlaceStart, 0);
+		this.animation.state.data.setMix(AnimState.FlagDestroy, AnimState.FlagPlaceStart, 0);
+		this.animation.state.data.defaultMix = 0;
 
-		this.adjacentMineCounterText = new BmText(this.app, { fontName: "bmfont", fontSize: 38 });
+		this.adjacentMineCounterText = new BmText(this.app, {
+			style: { fontFamily: "bmfont", fontSize: 128 },
+		});
 		this.adjacentMineCounterText.anchor.set(0.5);
+		this.adjacentMineCounterText.y = -16;
 
 		this.addChild(this.adjacentMineCounterText);
 		this.addChild(this.animation);
@@ -173,7 +177,7 @@ export class MinesweeperCell extends Component<MinesweeperApp> {
 	}
 
 	public updateEdgeSprites() {
-		this.animation.setSkinByName(this.viewState.covered ? SkinName.Front : SkinName.Back);
+		this.animation.skeleton.setSkinByName(this.viewState.covered ? SkinName.Front : SkinName.Back);
 
 		if (this.ix - 1 > -1) {
 			const l = this.app.getCellView(this.ix - 1, this.iy);

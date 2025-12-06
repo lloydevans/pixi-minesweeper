@@ -53,7 +53,7 @@ export class UiButtonScroller extends Container {
 	private number: BmText;
 	private buttonLeft: UiButton;
 	private buttonRight: UiButton;
-	private label: BmText;
+	private buttonLabel: BmText;
 
 	constructor(app: AppBase, options: ButtonScrollerOptions) {
 		super();
@@ -70,30 +70,34 @@ export class UiButtonScroller extends Container {
 			textureDown: options.arrowTexture,
 		});
 		this.buttonLeft.rotation = Math.PI;
-		this.buttonLeft.x = -64;
+		this.buttonLeft.x = -360;
 
 		this.buttonRight = new UiButton(this.app, {
 			textureUp: options.arrowTexture,
 			textureDown: options.arrowTexture,
 		});
-		this.buttonRight.x = 64;
+		this.buttonRight.x = 360;
 
 		this.number = new BmText(this.app, {
 			text: this.default.toString(),
-			fontName: "bmfont",
-			fontSize: 38,
+			style: {
+				fontFamily: "bmfont",
+				fontSize: 72,
+			},
 		});
-		this.number.anchor.set(0.5);
+		this.number.anchor.set(0, 0.5);
+		this.number.x = 120;
 
-		this.label = new BmText(this.app, {
+		this.buttonLabel = new BmText(this.app, {
 			text: options.label,
-			fontName: "bmfont",
-			fontSize: 38,
+			style: {
+				fontFamily: "bmfont",
+				fontSize: 72,
+			},
 		});
-		this.label.anchor.set(1, 0.5);
-		this.label.position.set(-106, 0);
+		this.buttonLabel.anchor.set(1, 0.5);
 
-		this.addChild(this.label, this.number, this.buttonLeft, this.buttonRight);
+		this.addChild(this.buttonLabel, this.number, this.buttonLeft, this.buttonRight);
 
 		this.buttonLeft.on("pointertap", () => this.set(this.currentValue - 1));
 		this.buttonRight.on("pointertap", () => this.set(this.currentValue + 1));
