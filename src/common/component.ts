@@ -1,8 +1,9 @@
 import * as PIXI from "pixi.js";
-import { AppBase } from "./app-base";
+import { AppBase, ResizeEventData } from "./app-base";
+import { EventEmitter } from "./event-emitter";
+import { Tween } from "./tween";
 import { TweenGroup } from "./tween-group";
 import { TweenOptions } from "./tween-props";
-import { Tween } from "./tween";
 
 // These are copied from the Container inline type.
 export type ComponentDestroyOptions = {
@@ -23,6 +24,9 @@ export class Component<T extends AppBase> extends PIXI.Container {
 		return this.app.audio;
 	}
 
+	public readonly onInit = new EventEmitter();
+	public readonly onDestroy = new EventEmitter();
+
 	protected readonly tweenGroup = new TweenGroup(false, 1);
 
 	/**
@@ -40,28 +44,31 @@ export class Component<T extends AppBase> extends PIXI.Container {
 			this.app.ticker.addOnce(this.ready, this);
 		} //
 		else {
-			this.app.events.once("ready", this.ready, this);
+			this.app.onReady.once(this.ready, this);
 		}
 	}
 
 	private ready() {
 		// Call init function if it exists.
-		if (this.init) this.init();
+		if (this.init) {
+			this.onInit.emit();
+			this.init();
+		}
 
 		// Call resize function if it exists.
-		if (this.resize) this.resize(this.app.width, this.app.height);
+		if (this.resize) this.resize({ width: this.app.width, height: this.app.height });
 
 		// Add listeners
-		if (this.update) this.app.events.on("update", this.update, this);
-		if (this.resize) this.app.events.on("resize", this.resize, this);
+		if (this.update) this.app.onUpdate.on(this.update, this);
+		if (this.resize) this.app.onResize.on(this.resize, this);
 	}
 
 	public destroy(options?: ComponentDestroyOptions) {
-		if (this.update) this.app.events.off("update", this.update, this);
-		if (this.resize) this.app.events.off("resize", this.resize, this);
+		if (this.update) this.app.onUpdate.off(this.update, this);
+		if (this.resize) this.app.onResize.off(this.resize, this);
 		if (this.cleanup) this.cleanup();
 		this.clearTweens();
-		this.emit("destroy");
+		this.onDestroy.emit();
 		super.destroy(options);
 	}
 
@@ -103,5 +110,5 @@ export class Component<T extends AppBase> extends PIXI.Container {
 	 * @param width - App virtual width.
 	 * @param height - App virtual height.
 	 */
-	protected resize?(width: number, height: number): void;
+	protected resize?(data: ResizeEventData): void;
 }

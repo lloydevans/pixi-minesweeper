@@ -5,8 +5,19 @@ import { Component } from "./common/component";
 import { BmText } from "./common/bm-text";
 import { INITIAL_GAME_CONFIG, MSApp } from "./ms-app";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MIN_GRID_HEIGHT, MIN_GRID_WIDTH, MIN_EMPTY } from "./ms-state";
+import { EventEmitter } from "./common/event-emitter";
+import { ResizeEventData } from "./common/app-base";
+
+export interface GameConfigData {
+	startMines: number;
+	gridWidth: number;
+	gridHeight: number;
+}
 
 export class MSMenu extends Component<MSApp> {
+	public readonly onStart = new EventEmitter<GameConfigData>();
+	public readonly onPreview = new EventEmitter<GameConfigData>();
+
 	private title!: BmText;
 	private background!: PIXI.Graphics;
 	private buttonStart!: UiButtonText;
@@ -72,19 +83,19 @@ export class MSMenu extends Component<MSApp> {
 		this.container.addChild(this.heightScroller);
 		this.container.addChild(this.minesScroller);
 
-		this.widthScroller.on("set", this.updatePreview, this);
-		this.heightScroller.on("set", this.updatePreview, this);
+		this.widthScroller.onSet.on(this.updatePreview, this);
+		this.heightScroller.onSet.on(this.updatePreview, this);
 		this.updatePreview();
 
 		this.buttonStart.on("pointertap", () => {
-			const gridWidth = this.widthScroller.current;
-			const gridHeight = this.heightScroller.current;
-			const startMines = this.minesScroller.current;
-			this.emit("start", { startMines, gridWidth, gridHeight });
+			const gridWidth = this.widthScroller.currentValue;
+			const gridHeight = this.heightScroller.currentValue;
+			const startMines = this.minesScroller.currentValue;
+			this.onStart.emit({ startMines, gridWidth, gridHeight });
 		});
 	}
 
-	protected resize(width: number, height: number) {
+	protected resize({ width, height }: ResizeEventData) {
 		this.background.clear();
 		this.background.beginFill(0, 0.5);
 		this.background.drawRect(-width / 2, -height / 2, width, height);
@@ -101,10 +112,10 @@ export class MSMenu extends Component<MSApp> {
 	}
 
 	protected updatePreview() {
-		const gridWidth = this.widthScroller.current;
-		const gridHeight = this.heightScroller.current;
-		const startMines = this.minesScroller.current;
+		const gridWidth = this.widthScroller.currentValue;
+		const gridHeight = this.heightScroller.currentValue;
+		const startMines = this.minesScroller.currentValue;
 		this.minesScroller.max = gridWidth * gridHeight - MIN_EMPTY;
-		this.emit("preview", { startMines, gridWidth, gridHeight });
+		this.onPreview.emit({ startMines, gridWidth, gridHeight });
 	}
 }

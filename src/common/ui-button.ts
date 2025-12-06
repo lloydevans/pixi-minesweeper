@@ -45,6 +45,7 @@ export class UiButton extends UiElement {
 		this.on("pointerupoutside", this.onPointerCancel, this);
 		this.on("pointercancel", this.onPointerCancel, this);
 
+		// Start Tone.js context on first interaction.
 		if (Tone.getContext().state !== "running") {
 			this.on("pointerdown", this.toneStart, this);
 			this.on("pointerup", this.toneStart, this);

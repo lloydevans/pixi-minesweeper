@@ -1,7 +1,11 @@
 import { AppBase } from "./app-base";
 import { Component } from "./component";
+import { EventEmitter } from "./event-emitter";
 
 export class UiElement<T extends AppBase = AppBase> extends Component<T> {
+	public readonly onFocusChange = new EventEmitter<boolean>();
+	public readonly onActiveChange = new EventEmitter<boolean>();
+
 	public get focused() {
 		return this._focused;
 	}
@@ -11,7 +15,7 @@ export class UiElement<T extends AppBase = AppBase> extends Component<T> {
 			if (this._focused) {
 				this.app.blurAllUiElements();
 			}
-			this.emit("focus", this._focused);
+			this.onFocusChange.emit(this._focused);
 		}
 	}
 
@@ -26,7 +30,7 @@ export class UiElement<T extends AppBase = AppBase> extends Component<T> {
 			} else {
 				this.alpha = 0.5;
 			}
-			this.emit("active", this._active);
+			this.onActiveChange.emit(this._active);
 			this.eventMode = this._active ? "static" : "none";
 		}
 	}
@@ -41,12 +45,7 @@ export class UiElement<T extends AppBase = AppBase> extends Component<T> {
 			this.focused = true;
 		});
 
-		this.once("init", () => {
-			this.app.registerUiElement(this);
-		});
-
-		this.once("destroy", () => {
-			this.app.unregisterUiElement(this);
-		});
+		this.onInit.once(() => this.app.registerUiElement(this));
+		this.onDestroy.once(() => this.app.unregisterUiElement(this));
 	}
 }

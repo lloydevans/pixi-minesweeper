@@ -7,6 +7,7 @@ import { Tween } from "./tween";
 import { TweenGroup } from "./tween-group";
 import { TweenOptions } from "./tween-props";
 import { UiElement } from "./ui-element";
+import { EventEmitter } from "./event-emitter";
 import { IAnimationState, IAnimationStateData, ISkeleton, ISkeletonData, SpineBase } from "pixi-spine";
 import { Dict } from "./types";
 
@@ -19,19 +20,16 @@ export interface AppReferenceSize {
 	blend: number;
 }
 
+export interface ResizeEventData {
+	width: number;
+	height: number;
+}
+
 export class AppBase extends PIXI.Application {
-	/**
-	 * Global event emitter.
-	 *
-	 * "init" () => void
-	 *
-	 * "ready" () => void
-	 *
-	 * "update" (dt: number) => void
-	 *
-	 * "resize" (width: number, height: number) => void
-	 */
-	public readonly events = new PIXI.utils.EventEmitter();
+	public readonly onInit = new EventEmitter<void>();
+	public readonly onReady = new EventEmitter<void>();
+	public readonly onUpdate = new EventEmitter<number>();
+	public readonly onResize = new EventEmitter<ResizeEventData>();
 
 	/** App audio manager reference */
 	public readonly audio = new ToneAudio();
@@ -93,7 +91,7 @@ export class AppBase extends PIXI.Application {
 			this.stage.addChild(this.root);
 			this.ticker.add(this.update, this);
 			this.ticker.add(this.audio.update, this.audio);
-			this.events.emit("init");
+			this.onInit.emit();
 		} else {
 			throw new Error("App already initialized!");
 		}
@@ -110,7 +108,7 @@ export class AppBase extends PIXI.Application {
 			this.resizeRoot(window.innerWidth, window.innerHeight, currentDpr);
 		}
 
-		this.events.emit("update", dt);
+		this.onUpdate.emit(dt);
 	}
 
 	public tween<T>(target: T, options?: TweenOptions): Tween<T> {
@@ -125,7 +123,7 @@ export class AppBase extends PIXI.Application {
 	public setReady() {
 		if (!this.ready) {
 			this._ready = true;
-			this.events.emit("ready");
+			this.onReady.emit();
 		}
 	}
 
@@ -178,7 +176,7 @@ export class AppBase extends PIXI.Application {
 			this._height *= r;
 		}
 
-		this.events.emit("resize", this.width, this.height);
+		this.onResize.emit(this);
 	}
 
 	/**

@@ -4,9 +4,14 @@ import { BmText } from "./common/bm-text";
 import { Spine } from "./common/spine";
 import { MSApp } from "./ms-app";
 import { Component } from "./common/component";
+import { EventEmitter } from "./common/event-emitter";
+import { ResizeEventData } from "./common/app-base";
 
 /** Class handle UI elements. */
 export class MSUi extends Component<MSApp> {
+	public readonly onClose = new EventEmitter<void>();
+	public readonly onRestart = new EventEmitter<void>();
+
 	private buttonRestart!: UiButton;
 	private buttonCross!: UiButton;
 	private flagsContainer!: PIXI.Container;
@@ -49,8 +54,8 @@ export class MSUi extends Component<MSApp> {
 		this.addChild(this.buttonRestart);
 		this.addChild(this.buttonCross);
 
-		this.buttonCross.on("pointertap", () => this.emit("close"));
-		this.buttonRestart.on("pointertap", () => this.emit("restart"));
+		this.buttonCross.on("pointertap", () => this.onClose.emit());
+		this.buttonRestart.on("pointertap", () => this.onRestart.emit());
 	}
 
 	protected update() {
@@ -60,7 +65,7 @@ export class MSUi extends Component<MSApp> {
 		}
 	}
 
-	protected resize(width: number, height: number) {
+	protected resize({ width, height }: ResizeEventData) {
 		this.buttonCross.x = width / 2 - 48;
 		this.buttonCross.y = -height / 2 + 42;
 		this.buttonRestart.x = width / 2 - 128;

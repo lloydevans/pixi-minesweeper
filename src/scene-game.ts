@@ -14,6 +14,7 @@ import { MSMenu } from "./ms-menu";
 import { MSTouchUi } from "./ms-touch-ui";
 import { MSUi } from "./ms-ui";
 import { logEvent } from "firebase/analytics";
+import { ResizeEventData } from "./common/app-base";
 
 export class SceneGame extends Scene<MSApp> {
 	public get currentTime() {
@@ -43,20 +44,20 @@ export class SceneGame extends Scene<MSApp> {
 
 		this.board.tint = hexToNum(this.app.config.colorBoard);
 
-		this.menu.on("start", (config: MSGameConfig) => {
+		this.menu.onStart.on((config: MSGameConfig) => {
 			this.newGame(config);
 			this.showGame();
 		});
 
-		this.menu.on("preview", (config: MSGameConfig) => {
+		this.menu.onPreview.on((config: MSGameConfig) => {
 			this.previewGame(config);
 		});
 
-		this.ui.on("close", () => {
+		this.ui.onClose.on(() => {
 			this.showMenu();
 		});
 
-		this.ui.on("restart", () => {
+		this.ui.onRestart.on(() => {
 			this.app.audio.play("dirt-thud-0", { delay: 0.005, transpose: 12 });
 			this.newGame(this.gameConfig);
 		});
@@ -79,7 +80,7 @@ export class SceneGame extends Scene<MSApp> {
 		}
 	}
 
-	resize(width: number, height: number) {
+	resize({ width, height }: ResizeEventData) {
 		const marginX = 64;
 		const marginY = 96;
 		const maxWidth = width - marginX * 2;
@@ -312,7 +313,7 @@ export class SceneGame extends Scene<MSApp> {
 
 	public previewGame(config: MSGameConfig = this.gameConfig) {
 		this.app.state.init(config);
-		this.resize(this.app.width, this.app.height);
+		this.resize(this.app);
 		if (this.gridBack) {
 			this.gridBack.visible = true;
 		}

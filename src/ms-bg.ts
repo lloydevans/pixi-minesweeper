@@ -1,7 +1,8 @@
 import * as PIXI from "pixi.js";
+import { ResizeEventData } from "./common/app-base";
 import { Component } from "./common/component";
-import { MSApp } from "./ms-app";
 import { Ease } from "./common/ease";
+import { MSApp } from "./ms-app";
 
 const REF_BG_HEIGHT = 180;
 
@@ -40,7 +41,7 @@ export class MSBg extends Component<MSApp> {
 		}
 	}
 
-	protected resize(width: number, height: number) {
+	protected resize({ width, height }: ResizeEventData) {
 		for (let i = 0; i < this.layers.length; i++) {
 			const el = this.layers[i];
 			el.tileScale.set((height / REF_BG_HEIGHT) * this.tileScale);

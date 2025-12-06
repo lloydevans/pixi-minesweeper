@@ -34,7 +34,7 @@ export class MSApp extends AppBase {
 
 		this.config = { ...MS_CONFIG_DEFAULT };
 
-		this.events.on("update", this.onUpdate, this);
+		this.onUpdate.on(this.handleUpdate, this);
 
 		this.setReady();
 	}
@@ -60,7 +60,7 @@ export class MSApp extends AppBase {
 		this.root.addChild(this.scenes.game);
 	}
 
-	private onUpdate() {
+	private handleUpdate() {
 		// Generate cell view instances in the background.
 		const maxCells = MAX_GRID_WIDTH * MAX_GRID_HEIGHT;
 		const length = this.cellPool.length;

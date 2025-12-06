@@ -3,6 +3,7 @@ import { Container, Texture } from "pixi.js";
 import { AppBase } from "./app-base";
 import { UiButton } from "./ui-button";
 import { BmText } from "./bm-text";
+import { EventEmitter } from "./event-emitter";
 
 export interface ButtonScrollerOptions {
 	arrowTexture: Texture;
@@ -15,13 +16,15 @@ export interface ButtonScrollerOptions {
 export class UiButtonScroller extends Container {
 	app: AppBase;
 
+	public readonly onSet = new EventEmitter<number>();
+
 	private _min: number;
 	get min(): number {
 		return this._min;
 	}
 	set min(value: number) {
 		this._min = value;
-		if (this.current > this._min) {
+		if (this.currentValue > this._min) {
 			this.set(this._min);
 		}
 	}
@@ -32,14 +35,14 @@ export class UiButtonScroller extends Container {
 	}
 	set max(value: number) {
 		this._max = value;
-		if (this.current > this._max) {
+		if (this.currentValue > this._max) {
 			this.set(this._max);
 		}
 	}
 
-	private _current: number;
-	get current(): number {
-		return this._current;
+	private _currentValue: number;
+	get currentValue(): number {
+		return this._currentValue;
 	}
 
 	private _default: number;
@@ -60,7 +63,7 @@ export class UiButtonScroller extends Container {
 		this._min = options.min;
 		this._max = options.max;
 		this._default = options.default;
-		this._current = this.default;
+		this._currentValue = this.default;
 
 		this.buttonLeft = new UiButton(this.app, {
 			textureUp: options.arrowTexture,
@@ -92,20 +95,20 @@ export class UiButtonScroller extends Container {
 
 		this.addChild(this.label, this.number, this.buttonLeft, this.buttonRight);
 
-		this.buttonLeft.on("pointertap", () => this.set(this.current - 1));
-		this.buttonRight.on("pointertap", () => this.set(this.current + 1));
+		this.buttonLeft.on("pointertap", () => this.set(this.currentValue - 1));
+		this.buttonRight.on("pointertap", () => this.set(this.currentValue + 1));
 
 		this.set(this.default);
 	}
 
 	set(value: number) {
-		this._current = Math.floor(clamp(value, this.min, this.max));
-		this.number.text = this.current.toString();
-		this.buttonLeft.eventMode = this.current !== this.min ? "static" : "none";
-		this.buttonLeft.alpha = this.current !== this.min ? 1 : 0.5;
-		this.buttonRight.eventMode = this.current !== this.max ? "static" : "none";
-		this.buttonRight.alpha = this.current !== this.max ? 1 : 0.5;
+		this._currentValue = Math.floor(clamp(value, this.min, this.max));
+		this.number.text = this.currentValue.toString();
+		this.buttonLeft.eventMode = this.currentValue !== this.min ? "static" : "none";
+		this.buttonLeft.alpha = this.currentValue !== this.min ? 1 : 0.5;
+		this.buttonRight.eventMode = this.currentValue !== this.max ? "static" : "none";
+		this.buttonRight.alpha = this.currentValue !== this.max ? 1 : 0.5;
 
-		this.emit("set", this.current);
+		this.onSet.emit(this.currentValue);
 	}
 }
