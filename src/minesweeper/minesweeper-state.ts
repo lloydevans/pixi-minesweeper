@@ -1,11 +1,10 @@
 import type { MinesweeperCellState } from "./minesweeper-cell-state";
 import type { MinesweeperGridConfig } from "./minesweeper-config";
-import * as PIXI from "pixi.js";
 
 export const MIN_GRID_WIDTH = 4;
 export const MIN_GRID_HEIGHT = 4;
-export const MAX_GRID_WIDTH = PIXI.isMobile.any ? 24 : 32;
-export const MAX_GRID_HEIGHT = PIXI.isMobile.any ? 24 : 32;
+export const MAX_GRID_WIDTH = 32;
+export const MAX_GRID_HEIGHT = 32;
 export const MIN_EMPTY = 2;
 
 export interface LossData {

@@ -78,12 +78,12 @@ describe("MSState tests", () => {
 
 	it("should error placing flag at -1,0", () => {
 		const state = getState();
-		expect(() => state.placeFlag(-1, 0)).toThrowError();
+		expect(() => state.placeFlag(-1, 0)).toThrow();
 	});
 
 	it("should error clearing flag at -1,0", () => {
 		const state = getState();
-		expect(() => state.clearFlag(-1, 0)).toThrowError();
+		expect(() => state.clearFlag(-1, 0)).toThrow();
 	});
 
 	it("should remove all mines", () => {
@@ -100,7 +100,7 @@ describe("MSState tests", () => {
 		const oob: [number, number] = [-1, 0];
 
 		state.placeMine(...coords);
-		expect(() => state.placeMine(...oob)).toThrowError();
+		expect(() => state.placeMine(...oob)).toThrow();
 
 		const cell = state.cellAt(...coords);
 		expect(cell?.mine).toBe(true);
@@ -112,7 +112,7 @@ describe("MSState tests", () => {
 		state.clearMine(...coords);
 
 		const oob: [number, number] = [-1, 0];
-		expect(() => state.clearMine(...oob)).toThrowError();
+		expect(() => state.clearMine(...oob)).toThrow();
 
 		const cell = state.cellAt(...coords);
 		expect(cell?.mine).toBe(false);
