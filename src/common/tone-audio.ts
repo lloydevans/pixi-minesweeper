@@ -93,7 +93,6 @@ export class ToneAudio {
 	}
 
 	private samplers: Dict<Tone.Sampler> = {};
-	private players: Dict<Tone.Player> = {};
 	private sources: Dict<SourceEntry> = {};
 	private currentMidiPlayback?: MidiPlaybackData;
 	private currentMidiData?: Midi;
