@@ -1,14 +1,14 @@
 import * as PIXI from "pixi.js";
-import { UiButton } from "../common/ui-button";
-import { BmText } from "../common/bm-text";
-import { Spine } from "../common/spine";
-import { MSApp } from "./ms-app";
-import { Component } from "../common/component";
-import { EventEmitter } from "../common/event-emitter";
-import { ResizeEventData } from "../common/app-base";
+import { UiButton } from "../../common/ui-button";
+import { BmText } from "../../common/bm-text";
+import { Spine } from "../../common/spine";
+import { MinesweeperApp } from "../minesweeper-app";
+import { Component } from "../../common/component";
+import { EventEmitter } from "../../common/event-emitter";
+import { ResizeEventData } from "../../common/app-base";
 
 /** Class handle UI elements. */
-export class MSUi extends Component<MSApp> {
+export class HudUi extends Component<MinesweeperApp> {
 	public readonly onClose = new EventEmitter<void>();
 	public readonly onRestart = new EventEmitter<void>();
 

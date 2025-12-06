@@ -11,7 +11,7 @@ createjs.Ticker.timingMode = createjs.Ticker.RAF;
 createjs.Ticker.maxDelta = 100;
 
 import { ToneAudioConfig } from "./common/tone-audio";
-import { MSApp } from "./minesweeper/ms-app";
+import { MinesweeperApp } from "./minesweeper/minesweeper-app";
 
 async function start() {
 	window.document.body.style.background = "black";
@@ -20,25 +20,25 @@ async function start() {
 	window.document.body.style.padding = "0px";
 	window.document.body.style.border = "0px";
 
-	const app = new MSApp();
+	const minesweeper = new MinesweeperApp();
 
 	await Promise.allSettled([
-		app.addSpine("grid-square@1x"),
-		app.addSpine("timer@1x"),
-		app.addAtlas("textures"),
-		app.addAtlas("tiles"),
-		app.addAtlas("bg", 1),
-		app.addBitmapFont("bmfont"),
-		app.addJson("config", "config.json"),
-		app.addJson("audio", "audio.json"),
+		minesweeper.addSpine("grid-square@1x"),
+		minesweeper.addSpine("timer@1x"),
+		minesweeper.addAtlas("textures"),
+		minesweeper.addAtlas("tiles"),
+		minesweeper.addAtlas("bg", 1),
+		minesweeper.addBitmapFont("bmfont"),
+		minesweeper.addJson("config", "config.json"),
+		minesweeper.addJson("audio", "audio.json"),
 	]);
 
-	await app.audio.init(app.getJson("audio") as ToneAudioConfig);
+	await minesweeper.audio.init(minesweeper.getJson("audio") as ToneAudioConfig);
 
-	app.onLoad();
-	app.init();
+	minesweeper.onLoad();
+	minesweeper.init();
 
-	window.document.body.appendChild(app.view as HTMLCanvasElement);
+	window.document.body.appendChild(minesweeper.view as HTMLCanvasElement);
 }
 
 if (window.document.readyState === "loading") {

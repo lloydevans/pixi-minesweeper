@@ -1,10 +1,10 @@
 import { Component } from "../common/component";
-import { MSApp } from "./ms-app";
-import { MSCell } from "./ms-cell";
-import { MSCellState } from "./ms-cell-state";
+import { MinesweeperApp } from "./minesweeper-app";
+import { MinesweeperCell } from "./minesweeper-cell";
+import { MinesweeperCellState } from "./minesweeper-cell-state";
 
-export class MSGrid extends Component<MSApp> {
-	children: MSCell[] = [];
+export class CellGrid extends Component<MinesweeperApp> {
+	children: MinesweeperCell[] = [];
 
 	/**
 	 * Animate cell updates outwards from a target position.
@@ -12,7 +12,7 @@ export class MSGrid extends Component<MSApp> {
 	 * @param cell - Cell to animate outwards from.
 	 * @param cb - Runs once for each cell. One cell per round updated must return true to continue the animation.
 	 */
-	public async animateUpdateFrom(cell: MSCellState, delay = 80, cb = this.cellUpdateCb): Promise<void> {
+	public async animateUpdateFrom(cell: MinesweeperCellState, delay = 80, cb = this.cellUpdateCb): Promise<void> {
 		this.interactiveChildren = false;
 
 		const maxSide = Math.max(this.app.state.width, this.app.state.height);
@@ -82,7 +82,7 @@ export class MSGrid extends Component<MSApp> {
 	 *
 	 * @param cell - Current MSCell instance.
 	 */
-	private cellUpdateCb(cell: MSCell): boolean {
+	private cellUpdateCb(cell: MinesweeperCell): boolean {
 		const needsUpdate = cell.needsUpdate();
 		if (needsUpdate) {
 			cell.updateViewState();

@@ -1,14 +1,12 @@
 import * as PIXI from "pixi.js";
-import { UiButton } from "../common/ui-button";
-import { Component } from "../common/component";
-import { MSApp } from "./ms-app";
-import { MSCellState } from "./ms-cell-state";
+import { UiButton } from "../../common/ui-button";
+import { Component } from "../../common/component";
+import { MinesweeperApp } from "../minesweeper-app";
+import { MinesweeperCellState } from "../minesweeper-cell-state";
 
-/**
- * UI overlay for touch and accesible controls.
- */
-export class MSTouchUi extends Component<MSApp> {
-	public targetCell?: MSCellState;
+/** UI overlay for touch and accesible controls. */
+export class TouchscreenUi extends Component<MinesweeperApp> {
+	public targetCell?: MinesweeperCellState;
 
 	private buttonFlag!: UiButton;
 	private buttonDig!: UiButton;
@@ -55,7 +53,7 @@ export class MSTouchUi extends Component<MSApp> {
 		});
 	}
 
-	public setTargetCell(cell: MSCellState) {
+	public setTargetCell(cell: MinesweeperCellState) {
 		this.targetCell = cell;
 	}
 

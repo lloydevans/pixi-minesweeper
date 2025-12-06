@@ -1,12 +1,12 @@
 import * as PIXI from "pixi.js";
-import { UiButtonScroller } from "../common/ui-button-scroller";
-import { UiButtonText } from "../common/ui-button-text";
-import { Component } from "../common/component";
-import { BmText } from "../common/bm-text";
-import { INITIAL_GAME_CONFIG, MSApp } from "./ms-app";
-import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MIN_GRID_HEIGHT, MIN_GRID_WIDTH, MIN_EMPTY } from "./ms-state";
-import { EventEmitter } from "../common/event-emitter";
-import { ResizeEventData } from "../common/app-base";
+import { ResizeEventData } from "../../common/app-base";
+import { BmText } from "../../common/bm-text";
+import { Component } from "../../common/component";
+import { EventEmitter } from "../../common/event-emitter";
+import { UiButtonScroller } from "../../common/ui-button-scroller";
+import { UiButtonText } from "../../common/ui-button-text";
+import { INITIAL_GAME_CONFIG, MinesweeperApp } from "../minesweeper-app";
+import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MIN_EMPTY, MIN_GRID_HEIGHT, MIN_GRID_WIDTH } from "../minesweeper-state";
 
 export interface GameConfigData {
 	startMines: number;
@@ -14,9 +14,9 @@ export interface GameConfigData {
 	gridHeight: number;
 }
 
-export class MSMenu extends Component<MSApp> {
-	public readonly onStart = new EventEmitter<GameConfigData>();
-	public readonly onPreview = new EventEmitter<GameConfigData>();
+export class GridConfigUi extends Component<MinesweeperApp> {
+	public readonly onStartGame = new EventEmitter<GameConfigData>();
+	public readonly onPreviewGrid = new EventEmitter<GameConfigData>();
 
 	private title!: BmText;
 	private background!: PIXI.Graphics;
@@ -91,7 +91,7 @@ export class MSMenu extends Component<MSApp> {
 			const gridWidth = this.widthScroller.currentValue;
 			const gridHeight = this.heightScroller.currentValue;
 			const startMines = this.minesScroller.currentValue;
-			this.onStart.emit({ startMines, gridWidth, gridHeight });
+			this.onStartGame.emit({ startMines, gridWidth, gridHeight });
 		});
 	}
 
@@ -116,6 +116,6 @@ export class MSMenu extends Component<MSApp> {
 		const gridHeight = this.heightScroller.currentValue;
 		const startMines = this.minesScroller.currentValue;
 		this.minesScroller.max = gridWidth * gridHeight - MIN_EMPTY;
-		this.onPreview.emit({ startMines, gridWidth, gridHeight });
+		this.onPreviewGrid.emit({ startMines, gridWidth, gridHeight });
 	}
 }

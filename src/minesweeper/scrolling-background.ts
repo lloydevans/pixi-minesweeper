@@ -2,7 +2,7 @@ import * as PIXI from "pixi.js";
 import { ResizeEventData } from "../common/app-base";
 import { Component } from "../common/component";
 import { Ease } from "../common/ease";
-import { MSApp } from "./ms-app";
+import { MinesweeperApp } from "./minesweeper-app";
 
 const REF_BG_HEIGHT = 180;
 
@@ -11,7 +11,7 @@ type BGSet = "bg-green" | "bg-swamp";
 /**
  * Tiling background graphics with simple paralax effect.
  */
-export class MSBg extends Component<MSApp> {
+export class ScrollingBackground extends Component<MinesweeperApp> {
 	public offset = new PIXI.Point();
 	private layers: PIXI.TilingSprite[] = [];
 	private speed: number = 0.25;

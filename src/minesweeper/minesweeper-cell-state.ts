@@ -1,7 +1,4 @@
-/**
- *
- */
-export interface MSCellState {
+export interface MinesweeperCellState {
 	/** X index of the cell. */
 	x: number;
 

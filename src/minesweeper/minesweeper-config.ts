@@ -2,14 +2,14 @@ export type NumberKey = "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8";
 
 export type GameDifficulty = "easy" | "medium" | "hard";
 
-export interface MSGameConfig {
+export interface MinesweeperGridConfig {
 	startMines: number;
 	gridWidth: number;
 	gridHeight: number;
 	cheatMode?: boolean;
 }
 
-export interface MSConfig {
+export interface MinesweeperStyleConfig {
 	colorBackground: string;
 	colorBoard: string;
 	numberFont: string;
@@ -26,7 +26,7 @@ export interface MSConfig {
 	};
 }
 
-export const MS_CONFIG_DEFAULT: MSConfig = {
+export const MS_CONFIG_DEFAULT: MinesweeperStyleConfig = {
 	colorBackground: "#303030",
 	colorBoard: "#bda355",
 	numberFont: "Arial",

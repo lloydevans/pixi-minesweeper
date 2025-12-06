@@ -1,5 +1,5 @@
-import type { MSCellState } from "./ms-cell-state";
-import type { MSGameConfig } from "./ms-config";
+import type { MinesweeperCellState } from "./minesweeper-cell-state";
+import type { MinesweeperGridConfig } from "./minesweeper-config";
 import * as PIXI from "pixi.js";
 
 export const MIN_GRID_WIDTH = 4;
@@ -9,15 +9,15 @@ export const MAX_GRID_HEIGHT = PIXI.utils.isMobile.any ? 24 : 32;
 export const MIN_EMPTY = 2;
 
 export interface LossData {
-	incorrect: MSCellState[];
-	correct: MSCellState[];
+	incorrect: MinesweeperCellState[];
+	correct: MinesweeperCellState[];
 }
 
 /** Class handles Minesweeper game state and logic. */
-export class MSState {
+export class MinesweeperState {
 	public width: number = 0;
 	public height: number = 0;
-	public config: MSGameConfig = {
+	public config: MinesweeperGridConfig = {
 		startMines: 1,
 		gridWidth: 4,
 		gridHeight: 4,
@@ -35,9 +35,9 @@ export class MSState {
 		return this.totalMines - this.totalFlags;
 	}
 
-	private cells: MSCellState[] = [];
+	private cells: MinesweeperCellState[] = [];
 
-	public init(config: MSGameConfig) {
+	public init(config: MinesweeperGridConfig) {
 		if (config.gridWidth < MIN_GRID_WIDTH) {
 			throw new Error("Grid width below " + MIN_GRID_WIDTH);
 		}
@@ -98,16 +98,16 @@ export class MSState {
 		}
 	}
 
-	public forEach(cb: (cell: MSCellState, i: number) => void) {
+	public forEach(cb: (cell: MinesweeperCellState, i: number) => void) {
 		this.cells.forEach(cb);
 	}
 
-	public cellAt(x: number, y: number): MSCellState | undefined {
+	public cellAt(x: number, y: number): MinesweeperCellState | undefined {
 		return this.cells[x + y * this.width];
 	}
 
 	/** Returns the value of the first cell where predicate is true, and undefined otherwise. */
-	public find(predicate: (value: MSCellState, index: number) => boolean): MSCellState | undefined {
+	public find(predicate: (value: MinesweeperCellState, index: number) => boolean): MinesweeperCellState | undefined {
 		return this.cells.find(predicate);
 	}
 
@@ -254,14 +254,14 @@ export class MSState {
 	 * @param x
 	 * @param y
 	 */
-	public select(x: number, y: number): MSCellState[] {
+	public select(x: number, y: number): MinesweeperCellState[] {
 		const cell = this.cellAt(x, y);
 
 		if (!cell) {
 			throw new Error(`Can't find cell at ${x},${y}`);
 		}
 
-		const result: MSCellState[] = [];
+		const result: MinesweeperCellState[] = [];
 
 		if (cell.adjacent === 0 && !cell.mine) {
 			this.fill(x, y, result);
@@ -284,7 +284,7 @@ export class MSState {
 	 * @param x
 	 * @param y
 	 */
-	public selectFirst(x: number, y: number): MSCellState[] {
+	public selectFirst(x: number, y: number): MinesweeperCellState[] {
 		const cell = this.cellAt(x, y);
 
 		if (!cell) {
@@ -334,7 +334,7 @@ export class MSState {
 	 * @param x
 	 * @param y
 	 */
-	private fill(x: number, y: number, result: MSCellState[]) {
+	private fill(x: number, y: number, result: MinesweeperCellState[]) {
 		const cell = this.cellAt(x, y);
 
 		if (!cell) {

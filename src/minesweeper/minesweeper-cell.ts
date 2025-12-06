@@ -5,10 +5,10 @@ import { hexToNum } from "../common/color";
 import { Component } from "../common/component";
 import { BmText } from "../common/bm-text";
 import { Spine } from "../common/spine";
-import { MSApp } from "./ms-app";
-import { CELL_STATE_DEFAULT } from "./ms-cell-state";
-import type { MSCellState } from "./ms-cell-state";
-import type { NumberKey } from "./ms-config";
+import { MinesweeperApp } from "./minesweeper-app";
+import { CELL_STATE_DEFAULT } from "./minesweeper-cell-state";
+import type { MinesweeperCellState } from "./minesweeper-cell-state";
+import type { NumberKey } from "./minesweeper-config";
 
 enum AnimTrack {
 	Cover,
@@ -96,7 +96,7 @@ const EDGE_STATES_VISIBLE = {
 	d: AnimState.EdgeDVisible,
 };
 
-export class MSCell extends Component<MSApp> {
+export class MinesweeperCell extends Component<MinesweeperApp> {
 	public get ix(): number {
 		return this.viewState.x;
 	}
@@ -105,11 +105,11 @@ export class MSCell extends Component<MSApp> {
 	}
 
 	private animation: Spine;
-	private state: MSCellState;
-	private viewState: MSCellState;
+	private state: MinesweeperCellState;
+	private viewState: MinesweeperCellState;
 	private adjacentMineCounterText: BmText;
 
-	constructor(app: MSApp) {
+	constructor(app: MinesweeperApp) {
 		super(app);
 
 		this.state = { ...CELL_STATE_DEFAULT };
@@ -132,7 +132,7 @@ export class MSCell extends Component<MSApp> {
 		this.on("mouseout", this.animateHoverEnd, this);
 	}
 
-	public setState(state: MSCellState) {
+	public setState(state: MinesweeperCellState) {
 		this.state = state;
 
 		this.reset();
@@ -209,7 +209,7 @@ export class MSCell extends Component<MSApp> {
 		}
 	}
 
-	public updateViewState(state: MSCellState = this.state) {
+	public updateViewState(state: MinesweeperCellState = this.state) {
 		if (state.flag !== this.viewState.flag) {
 			this.setFlagEnabled(state.flag);
 		}

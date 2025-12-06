@@ -1,4 +1,4 @@
-import { MSState } from "./ms-state";
+import { MinesweeperState } from "./minesweeper-state";
 
 const MOCK_CONFIG = {
 	startMines: 10,
@@ -8,7 +8,7 @@ const MOCK_CONFIG = {
 };
 
 function getState() {
-	const state = new MSState();
+	const state = new MinesweeperState();
 	state.init(MOCK_CONFIG);
 	return state;
 }

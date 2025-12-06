@@ -1,83 +1,71 @@
 import { logEvent } from "firebase/analytics";
 import clamp from "lodash-es/clamp";
 import * as PIXI from "pixi.js";
-import { ResizeEventData } from "../common/app-base";
-import { hexToNum } from "../common/color";
-import { Ease } from "../common/ease";
-import { Scene } from "../common/scene";
-import { analytics } from "../firebase";
-import { MSApp } from "../minesweeper/ms-app";
-import { MSBg } from "../minesweeper/ms-bg";
-import { MSCell, REF_HEIGHT, REF_WIDTH } from "../minesweeper/ms-cell";
-import { CELL_STATE_DEFAULT, MSCellState } from "../minesweeper/ms-cell-state";
-import type { MSGameConfig } from "../minesweeper/ms-config";
-import { MSGrid } from "../minesweeper/ms-grid";
-import { MSMenu } from "../minesweeper/ms-menu";
-import { MSTouchUi } from "../minesweeper/ms-touch-ui";
-import { MSUi } from "../minesweeper/ms-ui";
+import { ResizeEventData } from "../../common/app-base";
+import { hexToNum } from "../../common/color";
+import { Ease } from "../../common/ease";
+import { Scene } from "../../common/scene";
+import { analytics } from "../../firebase";
+import { HudUi } from "../ui/hud-ui";
+import { MinesweeperApp } from "../minesweeper-app";
+import { MinesweeperCell, REF_HEIGHT, REF_WIDTH } from "../minesweeper-cell";
+import { CELL_STATE_DEFAULT, MinesweeperCellState } from "../minesweeper-cell-state";
+import { MinesweeperGridConfig } from "../minesweeper-config";
+import { CellGrid } from "../cell-grid";
+import { GridConfigUi } from "../ui/grid-config-ui";
+import { ScrollingBackground } from "../scrolling-background";
+import { TouchscreenUi } from "../ui/touchscreen-ui";
 
-export class GameScene extends Scene<MSApp> {
-	public get currentTime() {
-		return this.time;
-	}
-
-	private time = 0;
-	private timeActive = false;
+export class GameScene extends Scene<MinesweeperApp> {
 	private transitionIdx = 0;
-	private gameConfig!: MSGameConfig;
-	private board = PIXI.Sprite.from(PIXI.Texture.WHITE);
+	private gridConfig!: MinesweeperGridConfig;
+	private boardFrame = PIXI.Sprite.from(PIXI.Texture.WHITE);
 	private cellWidth = REF_WIDTH;
 	private cellHeight = REF_HEIGHT;
 	private container = new PIXI.Container();
 	private isFirstClick = true;
-	private gridBack?: PIXI.TilingSprite;
-	private grid = new MSGrid(this.app);
-	private touchUi = new MSTouchUi(this.app);
-	private menu = new MSMenu(this.app);
-	private ui = new MSUi(this.app);
-	private bg = new MSBg(this.app);
+	private gridBack!: PIXI.TilingSprite;
+	private hud = new HudUi(this.app);
+	private cellGrid = new CellGrid(this.app);
+	private gridConfigUi = new GridConfigUi(this.app);
+	private touchscreenUi = new TouchscreenUi(this.app);
+	private scrollingBackground = new ScrollingBackground(this.app);
 
 	init() {
-		this.grid.interactiveChildren = false;
+		this.cellGrid.interactiveChildren = false;
 
 		this.gridBack = new PIXI.TilingSprite(this.app.getFrame("tiles", "back-0"));
 
-		this.board.tint = hexToNum(this.app.config.colorBoard);
+		this.boardFrame.tint = hexToNum(this.app.config.colorBoard);
 
-		this.menu.onStart.on((config: MSGameConfig) => {
+		this.gridConfigUi.onStartGame.on((config: MinesweeperGridConfig) => {
 			this.newGame(config);
 			this.showGame();
 		});
 
-		this.menu.onPreview.on((config: MSGameConfig) => {
+		this.gridConfigUi.onPreviewGrid.on((config: MinesweeperGridConfig) => {
 			this.previewGame(config);
 		});
 
-		this.ui.onClose.on(() => {
+		this.hud.onClose.on(() => {
 			this.showMenu();
 		});
 
-		this.ui.onRestart.on(() => {
+		this.hud.onRestart.on(() => {
 			this.app.audio.play("dirt-thud-0", { delay: 0.005, transpose: 12 });
-			this.newGame(this.gameConfig);
+			this.newGame(this.gridConfig);
 		});
 
-		this.ui.visible = false;
+		this.hud.visible = false;
 
-		this.container.addChild(this.board);
+		this.container.addChild(this.boardFrame);
 		this.container.addChild(this.gridBack);
-		this.container.addChild(this.grid);
-		this.addChild(this.bg);
+		this.container.addChild(this.cellGrid);
+		this.addChild(this.scrollingBackground);
 		this.addChild(this.container);
-		this.addChild(this.ui);
-		this.addChild(this.touchUi);
-		this.addChild(this.menu);
-	}
-
-	update() {
-		if (this.timeActive) {
-			this.time += this.app.ticker.elapsedMS / 1000;
-		}
+		this.addChild(this.hud);
+		this.addChild(this.touchscreenUi);
+		this.addChild(this.gridConfigUi);
 	}
 
 	resize({ width, height }: ResizeEventData) {
@@ -103,13 +91,13 @@ export class GameScene extends Scene<MSApp> {
 		const dimensionsY = this.app.state.height * this.cellHeight;
 		const boardWidth = dimensionsX + this.cellWidth / 2;
 		const boardHeight = dimensionsY + this.cellHeight / 2;
-		this.board.x = -boardWidth / 2;
-		this.board.y = -boardHeight / 2;
-		this.board.width = boardWidth;
-		this.board.height = boardHeight;
-		this.grid.scale.set(this.cellWidth / REF_WIDTH);
-		this.grid.x = -(this.app.state.width / 2) * this.cellWidth;
-		this.grid.y = -(this.app.state.height / 2) * this.cellHeight;
+		this.boardFrame.x = -boardWidth / 2;
+		this.boardFrame.y = -boardHeight / 2;
+		this.boardFrame.width = boardWidth;
+		this.boardFrame.height = boardHeight;
+		this.cellGrid.scale.set(this.cellWidth / REF_WIDTH);
+		this.cellGrid.x = -(this.app.state.width / 2) * this.cellWidth;
+		this.cellGrid.y = -(this.app.state.height / 2) * this.cellHeight;
 
 		if (this.gridBack) {
 			this.gridBack.tileScale.set(2 * (this.cellWidth / REF_WIDTH));
@@ -123,7 +111,7 @@ export class GameScene extends Scene<MSApp> {
 	private async initGrid() {
 		this.transitionIdx = (this.transitionIdx + 1) % 3;
 
-		this.grid.removeChildren().forEach((el) => {
+		this.cellGrid.removeChildren().forEach((el) => {
 			el.off("pointertap", this.onPointerTap, this);
 			el.off("pointerdown", this.onPointerDown, this);
 			el.off("pointerout", this.onPointerOut, this);
@@ -136,7 +124,7 @@ export class GameScene extends Scene<MSApp> {
 		for (let i = 0; i < this.app.state.totalCells; i++) {
 			const [x, y] = this.app.state.coordsOf(i);
 			const msCell = this.app.getCellView(x, y);
-			this.grid.addChild(msCell);
+			this.cellGrid.addChild(msCell);
 			this.app.cellPool[i].setState({
 				...CELL_STATE_DEFAULT,
 				...{ x, y, covered: false },
@@ -152,7 +140,7 @@ export class GameScene extends Scene<MSApp> {
 	}
 
 	private onPointerTap(e: PIXI.FederatedPointerEvent) {
-		const msCell = e.currentTarget as MSCell;
+		const msCell = e.currentTarget as MinesweeperCell;
 
 		const cellState = this.app.state.cellAt(msCell.ix, msCell.iy);
 
@@ -176,15 +164,15 @@ export class GameScene extends Scene<MSApp> {
 				if (this.isFirstClick) {
 					this.leftClick(cellState);
 				} //
-				else if (cellState === this.touchUi.targetCell) {
-					this.touchUi.hide();
+				else if (cellState === this.touchscreenUi.targetCell) {
+					this.touchscreenUi.hide();
 				} //
 				else {
-					this.touchUi.show();
-					this.touchUi.setTargetCell(cellState);
+					this.touchscreenUi.show();
+					this.touchscreenUi.setTargetCell(cellState);
 					const local = this.toLocal(msCell.getGlobalPosition());
-					this.touchUi.x = local.x;
-					this.touchUi.y = local.y;
+					this.touchscreenUi.x = local.x;
+					this.touchscreenUi.y = local.y;
 				}
 
 				break;
@@ -192,7 +180,7 @@ export class GameScene extends Scene<MSApp> {
 	}
 
 	private onPointerDown(e: PIXI.FederatedPointerEvent) {
-		const msCell = e.currentTarget as MSCell;
+		const msCell = e.currentTarget as MinesweeperCell;
 
 		const cellState = this.app.state.cellAt(msCell.ix, msCell.iy);
 
@@ -220,7 +208,7 @@ export class GameScene extends Scene<MSApp> {
 	}
 
 	private onPointerOut(e: PIXI.FederatedPointerEvent) {
-		const msCell = e.currentTarget as MSCell;
+		const msCell = e.currentTarget as MinesweeperCell;
 
 		const cellState = this.app.state.cellAt(msCell.ix, msCell.iy);
 
@@ -232,7 +220,6 @@ export class GameScene extends Scene<MSApp> {
 			case "mouse":
 				msCell.animatePlaceFlagCancel();
 				msCell.animateDigCancel();
-
 				break;
 		}
 	}
@@ -241,27 +228,25 @@ export class GameScene extends Scene<MSApp> {
 		switch (this.transitionIdx) {
 			default:
 			case 0:
-				return this.grid.noiseWipe();
+				return this.cellGrid.noiseWipe();
 		}
 	}
 
-	public async newGame(config: MSGameConfig = this.gameConfig) {
+	public async newGame(config: MinesweeperGridConfig = this.gridConfig) {
 		this.tweenGroup.reset();
 
-		this.time = 0;
 		this.app.state.init(config);
-		this.grid.interactiveChildren = false;
-		this.grid.clearTweens();
-		this.gameConfig = { ...config };
+		this.cellGrid.interactiveChildren = false;
+		this.cellGrid.clearTweens();
+		this.gridConfig = { ...config };
 		this.isFirstClick = true;
-		this.touchUi.hide();
+		this.touchscreenUi.hide();
 
 		logEvent(analytics, "new_game", this.app.state.config);
 
 		await this.initGrid();
 
-		this.timeActive = true;
-		this.grid.interactiveChildren = true;
+		this.cellGrid.interactiveChildren = true;
 	}
 
 	public screenShake(amp = 8, duration = 0.75, hz = 16) {
@@ -290,8 +275,8 @@ export class GameScene extends Scene<MSApp> {
 		tween = tween.to({ x: 0, y: 0 }, periodMs / 2, Ease.sineInOut);
 
 		tween.on("change", () => {
-			this.bg.offset.x = this.container.pivot.x;
-			this.bg.offset.y = this.container.pivot.y * 0.5;
+			this.scrollingBackground.offset.x = this.container.pivot.x;
+			this.scrollingBackground.offset.y = this.container.pivot.y * 0.5;
 		});
 	}
 
@@ -299,19 +284,19 @@ export class GameScene extends Scene<MSApp> {
 		this.app.audio.playMidi("minesweeper.mid");
 
 		this.tween(this.container.position).to({ y: 32 }, 300, Ease.sineInOut);
-		this.menu.visible = false;
-		this.grid.visible = true;
-		this.ui.visible = true;
+		this.gridConfigUi.visible = false;
+		this.cellGrid.visible = true;
+		this.hud.visible = true;
 	}
 
 	public showMenu() {
 		this.tween(this.container.position).to({ y: 0 }, 300, Ease.sineInOut);
-		this.menu.visible = true;
-		this.grid.visible = false;
-		this.ui.visible = false;
+		this.gridConfigUi.visible = true;
+		this.cellGrid.visible = false;
+		this.hud.visible = false;
 	}
 
-	public previewGame(config: MSGameConfig = this.gameConfig) {
+	public previewGame(config: MinesweeperGridConfig = this.gridConfig) {
 		this.app.state.init(config);
 		this.resize(this.app);
 		if (this.gridBack) {
@@ -319,7 +304,7 @@ export class GameScene extends Scene<MSApp> {
 		}
 	}
 
-	public rightClick(cellState: MSCellState) {
+	public rightClick(cellState: MinesweeperCellState) {
 		cellState.flag = !cellState.flag;
 
 		if (cellState.flag) {
@@ -334,7 +319,7 @@ export class GameScene extends Scene<MSApp> {
 		msCell.updateViewState();
 	}
 
-	public async leftClick(cellState: MSCellState) {
+	public async leftClick(cellState: MinesweeperCellState) {
 		const msCell = this.app.getCellView(cellState.x, cellState.y);
 		const x = msCell.ix;
 		const y = msCell.iy;
@@ -373,7 +358,7 @@ export class GameScene extends Scene<MSApp> {
 				this.audio.play("rumble", { type: "attack", volume: s });
 				this.audio.play("dirt-thud-0", { delay: 0.005, volume: s });
 
-				await this.grid.animateUpdateFrom(cellState);
+				await this.cellGrid.animateUpdateFrom(cellState);
 
 				this.audio.play("rumble", { type: "release" });
 			} else {
@@ -421,7 +406,7 @@ export class GameScene extends Scene<MSApp> {
 		}
 	}
 
-	private async animateLose(firstMine: MSCellState) {
+	private async animateLose(firstMine: MinesweeperCellState) {
 		logEvent(analytics, "lose_game", this.app.state.config);
 
 		this.endGame();
@@ -465,8 +450,7 @@ export class GameScene extends Scene<MSApp> {
 	}
 
 	private endGame() {
-		this.timeActive = false;
-		this.grid.interactiveChildren = false;
+		this.cellGrid.interactiveChildren = false;
 	}
 
 	private checkWin() {

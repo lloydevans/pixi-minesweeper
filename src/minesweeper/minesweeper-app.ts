@@ -2,13 +2,13 @@ import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js";
 import { AppBase } from "../common/app-base";
 import { preventContextMenu } from "../common/utils";
-import { MSCell } from "./ms-cell";
-import type { MSConfig, MSGameConfig } from "./ms-config";
-import { MS_CONFIG_DEFAULT } from "./ms-config";
-import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MSState } from "./ms-state";
-import { GameScene } from "../scenes/game-scene";
+import { MinesweeperCell } from "./minesweeper-cell";
+import type { MinesweeperStyleConfig, MinesweeperGridConfig } from "./minesweeper-config";
+import { MS_CONFIG_DEFAULT } from "./minesweeper-config";
+import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MinesweeperState } from "./minesweeper-state";
+import { GameScene } from "./scenes/game-scene";
 
-export const INITIAL_GAME_CONFIG: MSGameConfig = {
+export const INITIAL_GAME_CONFIG: MinesweeperGridConfig = {
 	startMines: 32,
 	gridWidth: 26,
 	gridHeight: 14,
@@ -17,10 +17,10 @@ export const INITIAL_GAME_CONFIG: MSGameConfig = {
 /**
  * Core App class.
  */
-export class MSApp extends AppBase {
-	public state: MSState = new MSState();
-	public cellPool: MSCell[] = [];
-	public config: MSConfig;
+export class MinesweeperApp extends AppBase {
+	public state: MinesweeperState = new MinesweeperState();
+	public cellPool: MinesweeperCell[] = [];
+	public config: MinesweeperStyleConfig;
 	public scenes: {
 		game?: GameScene;
 	} = {};
@@ -76,7 +76,7 @@ export class MSApp extends AppBase {
 		}
 	}
 
-	public getCellView(x: number, y: number): MSCell {
+	public getCellView(x: number, y: number): MinesweeperCell {
 		const idx = this.state.indexOf(x, y);
 		const cell = this.cellPool[idx];
 
@@ -87,12 +87,12 @@ export class MSApp extends AppBase {
 		return cell;
 	}
 
-	private parseConfig(config: Partial<MSConfig> = {}): MSConfig {
+	private parseConfig(config: Partial<MinesweeperStyleConfig> = {}): MinesweeperStyleConfig {
 		return defaults(config, MS_CONFIG_DEFAULT);
 	}
 
-	private createCellView(): MSCell {
-		const msCell = new MSCell(this);
+	private createCellView(): MinesweeperCell {
+		const msCell = new MinesweeperCell(this);
 		return msCell;
 	}
 }
