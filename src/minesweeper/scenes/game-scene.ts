@@ -188,10 +188,10 @@ export class GameScene extends Scene<MinesweeperApp> {
 			throw new Error(`Can't find cell at ${msCell.ix},${msCell.iy}`);
 		}
 
-		switch (e.data.pointerType) {
+		switch (e.pointerType) {
 			case "mouse":
 				{
-					const isRightClick = e.data.button === 2;
+					const isRightClick = e.button === 2;
 
 					this.audio.play("blop");
 
@@ -216,7 +216,7 @@ export class GameScene extends Scene<MinesweeperApp> {
 			throw new Error(`Can't find cell at ${msCell.ix},${msCell.iy}`);
 		}
 
-		switch (e.data.pointerType) {
+		switch (e.pointerType) {
 			case "mouse":
 				msCell.animatePlaceFlagCancel();
 				msCell.animateDigCancel();
