@@ -343,7 +343,7 @@ export class GameScene extends Scene<MinesweeperApp> {
 			this.audio.play("dirt-thud-2", { delay: 0.005, transpose: 12 });
 
 			msCell.updateViewState();
-			this.animateLose(cellState);
+			await this.animateLose(cellState);
 		} //
 		else {
 			this.audio.play("blop", { transpose: 12 });
