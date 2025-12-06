@@ -13,8 +13,7 @@
 		"lint": "npx --no-install eslint .",
 		"lint:fix": "npx --no-install eslint . --fix",
 		"prettier": "npx --no-install prettier src/**/*.ts",
-		"prettier:fix": "npx --no-install prettier src/**/*.ts --write",
-		"midi": "node ./builder/midi-converter.js"
+		"prettier:fix": "npx --no-install prettier src/**/*.ts --write"
 	},
 	"prettier": {
 		"printWidth": 120,
@@ -28,7 +27,6 @@
 		"firebase": "^10.11.1",
 		"keycode": "^2.2.1",
 		"lodash-es": "^4.17.21",
-		"pixi-particles": "^4.3.0",
 		"pixi-spine": "^4.0.4",
 		"pixi.js": "^7.4.0",
 		"reset-css": "^5.0.2",
