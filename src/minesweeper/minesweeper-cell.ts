@@ -134,6 +134,8 @@ export class MinesweeperCell extends Component<MinesweeperApp> {
 
 		this.on("mouseover", this.animateHoverStart, this);
 		this.on("mouseout", this.animateHoverEnd, this);
+
+		this.animation.skeleton.setSkinByName(SkinName.Back);
 	}
 
 	public setState(state: MinesweeperCellState) {
@@ -177,8 +179,6 @@ export class MinesweeperCell extends Component<MinesweeperApp> {
 	}
 
 	public updateEdgeSprites() {
-		this.animation.skeleton.setSkinByName(this.viewState.covered ? SkinName.Front : SkinName.Back);
-
 		if (this.ix - 1 > -1) {
 			const l = this.app.getCellView(this.ix - 1, this.iy);
 			const visible = l.viewState.covered !== this.viewState.covered;
