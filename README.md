@@ -38,19 +38,17 @@ npm install
 - **`npm run prettier`** - Check TypeScript source files formatting
 - **`npm run prettier:fix`** - Format TypeScript source files
 
-### Utilities
-
-- **`npm run midi`** - Run the MIDI converter utility
-
 ## Development Server
 
 When running the development server, the application will be available at:
+
 - **URL:** `http://localhost:3000`
 - The server runs on all network interfaces (`0.0.0.0`), making it accessible from other devices on your local network
 
 ## Build Output
 
 Production builds are output to the `build/` directory and include:
+
 - Optimized JavaScript bundle
 - Source maps for debugging
 - All static assets from the `static/` folder
