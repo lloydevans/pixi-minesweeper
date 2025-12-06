@@ -112,7 +112,7 @@ export class ToneAudio {
 	}
 
 	public update() {
-		if (Tone.context.state !== "running") {
+		if (!document.hasFocus() || Tone.context.state !== "running") {
 			return;
 		}
 
