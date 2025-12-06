@@ -121,24 +121,6 @@ export class ToneAudio {
 		}
 	}
 
-	private initPlayers(options: ToneAudioConfig) {
-		const sources = Object.entries(options.sources);
-
-		for (let i = 0; i < sources.length; i++) {
-			const entry = sources[i];
-			const key = entry[0];
-			const el = entry[1];
-			const buffer = ToneAudio.buffers[el.url];
-			const player = new Tone.Player(buffer).toDestination();
-
-			const duration = player.buffer.duration;
-
-			this.sources[key] = { ...el, ...{ duration } };
-
-			this.players[key] = player;
-		}
-	}
-
 	private initInstruments(options: ToneAudioConfig) {
 		const sources = Object.entries(options.sources);
 
