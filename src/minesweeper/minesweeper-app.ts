@@ -8,9 +8,9 @@ import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MinesweeperState } from "./minesweeper
 import { GameScene } from "./scenes/game-scene";
 
 export const INITIAL_GAME_CONFIG: MinesweeperGridConfig = {
-	startMines: 64,
-	gridWidth: 24,
-	gridHeight: 24,
+	startMines: 16,
+	gridWidth: 16,
+	gridHeight: 12,
 };
 
 /**
