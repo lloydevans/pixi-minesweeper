@@ -2,7 +2,7 @@ import * as PIXI from "pixi.js";
 import { ResizeEventData } from "../../common/app-base";
 import { BmText } from "../../common/bm-text";
 import { Component } from "../../common/component";
-import { CustomEmitter } from "../../common/custom-emitter";
+import { TypedEmitter } from "../../common/typed-emitter";
 import { UiButtonScroller } from "../../common/ui-button-scroller";
 import { UiButtonText } from "../../common/ui-button-text";
 import { INITIAL_GAME_CONFIG, MinesweeperApp } from "../minesweeper-app";
@@ -15,8 +15,8 @@ export interface GameConfigData {
 }
 
 export class GridConfigUi extends Component<MinesweeperApp> {
-	public readonly onStartGame = new CustomEmitter<GameConfigData>();
-	public readonly onPreviewGrid = new CustomEmitter<GameConfigData>();
+	public readonly onStartGame = new TypedEmitter<GameConfigData>();
+	public readonly onPreviewGrid = new TypedEmitter<GameConfigData>();
 
 	private title!: PIXI.BitmapText;
 	private background!: PIXI.Graphics;

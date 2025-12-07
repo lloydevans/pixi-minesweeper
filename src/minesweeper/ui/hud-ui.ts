@@ -3,14 +3,14 @@ import * as PIXI from "pixi.js";
 import { ResizeEventData } from "../../common/app-base";
 import { BmText } from "../../common/bm-text";
 import { Component } from "../../common/component";
-import { CustomEmitter } from "../../common/custom-emitter";
+import { TypedEmitter } from "../../common/typed-emitter";
 import { UiButton } from "../../common/ui-button";
 import { MinesweeperApp } from "../minesweeper-app";
 
 /** Class handle UI elements. */
 export class HudUi extends Component<MinesweeperApp> {
-	public readonly onClose = new CustomEmitter<void>();
-	public readonly onRestart = new CustomEmitter<void>();
+	public readonly onClose = new TypedEmitter<void>();
+	public readonly onRestart = new TypedEmitter<void>();
 
 	private buttonRestart!: UiButton;
 	private buttonCross!: UiButton;

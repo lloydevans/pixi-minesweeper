@@ -1,6 +1,6 @@
 import * as PIXI from "pixi.js";
 import { AppBase, ResizeEventData } from "./app-base";
-import { CustomEmitter } from "./custom-emitter";
+import { TypedEmitter } from "./typed-emitter";
 import { Tween } from "./tween";
 import { TweenGroup } from "./tween-group";
 import { TweenOptions } from "./tween-props";
@@ -24,8 +24,8 @@ export class Component<T extends AppBase> extends PIXI.Container {
 		return this.app.audio;
 	}
 
-	public readonly onInit = new CustomEmitter();
-	public readonly onDestroy = new CustomEmitter();
+	public readonly onInit = new TypedEmitter();
+	public readonly onDestroy = new TypedEmitter();
 
 	protected readonly tweenGroup = new TweenGroup(false, 1);
 
