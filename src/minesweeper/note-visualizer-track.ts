@@ -25,6 +25,7 @@ export class NoteVisualizerTrack extends Component<MinesweeperApp> {
 				fontSize: 32,
 			},
 		});
+		notePip.visible = false;
 		notePip.anchor.set(0.5);
 		this.addChild(notePip);
 		return notePip;
