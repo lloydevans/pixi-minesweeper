@@ -122,6 +122,9 @@ export class ToneAudio {
 		await ToneAudio.loadBuffers(config);
 
 		this.initInstruments(config);
+
+		window.addEventListener("focus", () => Tone.getDestination().volume.rampTo(0, 0.1));
+		window.addEventListener("blur", () => Tone.getDestination().volume.rampTo(-Infinity, 0.1));
 	}
 
 	public update() {
