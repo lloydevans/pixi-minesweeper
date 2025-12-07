@@ -261,7 +261,7 @@ export class GameScene extends Scene<MinesweeperApp> {
 		this.isFirstClick = true;
 		this.touchscreenUi.hide();
 
-		logEvent(analytics, "new_game", this.app.state.config);
+		if (analytics) logEvent(analytics, "new_game", this.app.state.config);
 
 		await this.initGrid();
 
@@ -388,7 +388,7 @@ export class GameScene extends Scene<MinesweeperApp> {
 	}
 
 	private async animateWin() {
-		logEvent(analytics, "win_game", this.app.state.config);
+		if (analytics) logEvent(analytics, "win_game", this.app.state.config);
 
 		this.endGame();
 
@@ -424,7 +424,7 @@ export class GameScene extends Scene<MinesweeperApp> {
 	}
 
 	private async animateLose(firstMine: MinesweeperCellState) {
-		logEvent(analytics, "lose_game", this.app.state.config);
+		if (analytics) logEvent(analytics, "lose_game", this.app.state.config);
 
 		this.endGame();
 

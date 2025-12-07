@@ -54,6 +54,9 @@ module.exports = (env = {}) => {
 					options: {
 						compilerOptions: {
 							target: env.modern ? "ES2019" : "ES5",
+							jsx: "react",
+							jsxFactory: "h",
+							jsxFragmentFactory: "Fragment",
 						},
 					},
 				},

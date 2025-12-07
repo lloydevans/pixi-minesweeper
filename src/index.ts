@@ -1,4 +1,5 @@
 import "./firebase";
+import "./privacy";
 
 // CreateJS lib imports.
 import "tweenjs/lib/tweenjs";
