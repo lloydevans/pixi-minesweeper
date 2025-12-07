@@ -63,6 +63,9 @@ export class NoteVisualizerTrack extends Component<MinesweeperApp> {
 
 		const timeUntilNote = absoluteScheduledTime - this.app.audio.now();
 
+		// No scheduled note should be this far in the future.
+		if (timeUntilNote > 10) return;
+
 		const velocityColor = velocityToColor(noteData.velocity);
 
 		notePip.y = 2000;
