@@ -271,6 +271,7 @@ export class MinesweeperCell extends Component<MinesweeperApp> {
 			this.animateHoverEnd();
 		}
 
+		this.cursor = enabled ? "pointer" : "auto";
 		this.eventMode = enabled ? "static" : "none";
 	}
 

@@ -56,6 +56,7 @@ export class UiButton extends UiElement {
 
 	public setInteractive(value: boolean) {
 		this.eventMode = value ? "static" : "none";
+		this.cursor = value ? "pointer" : "auto";
 	}
 
 	private async toneStart() {
