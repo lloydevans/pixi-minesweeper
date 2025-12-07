@@ -14,7 +14,7 @@ type BGSet = "bg-green" | "bg-swamp";
 export class ScrollingBackground extends Component<MinesweeperApp> {
 	public offset = new PIXI.Point();
 	private layers: PIXI.TilingSprite[] = [];
-	private speed: number = 0.25;
+	private speed: number = 1;
 	private scroll: number = 0;
 	private bgSet: BGSet = "bg-swamp";
 	private tileScale = 1.15;
