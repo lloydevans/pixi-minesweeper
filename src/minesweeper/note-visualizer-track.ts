@@ -4,9 +4,11 @@ import { MinesweeperApp } from "./minesweeper-app";
 import { NoteJSON } from "../common/tone-audio";
 import { Ease } from "../common/ease";
 import { BmText } from "../common/bm-text";
+import { velocityToColor } from "../common/color";
+import { Tween } from "../common/tween";
 
 const NOTE_PIP_POOL_SIZE = 20;
-const INSTRUMENT_IMAGE_SIZE = 64;
+const INSTRUMENT_IMAGE_SCALE = 0.5;
 
 export interface NoteVisualizerTrackConfig {
 	instrumentFrameID: string;
@@ -42,8 +44,7 @@ export class NoteVisualizerTrack extends Component<MinesweeperApp> {
 	}
 
 	protected init() {
-		this.instrumentImage.width = INSTRUMENT_IMAGE_SIZE;
-		this.instrumentImage.height = INSTRUMENT_IMAGE_SIZE;
+		this.instrumentImage.scale.set(INSTRUMENT_IMAGE_SCALE);
 		this.addChild(this.instrumentImage);
 	}
 
@@ -54,7 +55,10 @@ export class NoteVisualizerTrack extends Component<MinesweeperApp> {
 
 		const timeUntilNote = absoluteScheduledTime - this.app.audio.now();
 
+		const velocityColor = velocityToColor(noteData.velocity);
+
 		notePip.y = 2000;
+		notePip.tint = velocityColor;
 		notePip.scale.set(0.25 + noteData.velocity * 0.75);
 		notePip.visible = true;
 		notePip.alpha = 0;
@@ -63,7 +67,7 @@ export class NoteVisualizerTrack extends Component<MinesweeperApp> {
 			.to({ x: 0, y: 0, alpha: 1 }, timeUntilNote * 1000, Ease.linear)
 			.call(() => {
 				notePip.visible = false;
-				this.animateNoteLands();
+				this.animateNoteLands(velocityColor, noteData.duration);
 			});
 	}
 
@@ -73,14 +77,18 @@ export class NoteVisualizerTrack extends Component<MinesweeperApp> {
 		return notePip;
 	}
 
-	private animateNoteLands() {
-		this.instrumentImage.width = INSTRUMENT_IMAGE_SIZE + 16;
-		this.instrumentImage.height = INSTRUMENT_IMAGE_SIZE + 16;
+	private animateNoteLands(velocityColor: number, noteDuration: number) {
+		this.instrumentImage.tint = velocityColor;
 
-		this.tween(this.instrumentImage).to(
-			{ width: INSTRUMENT_IMAGE_SIZE, height: INSTRUMENT_IMAGE_SIZE },
-			500,
-			Ease.elasticOut,
-		);
+		const tweenDuration = Math.max(noteDuration * 1000, 500);
+
+		this.tween(this.instrumentImage.scale)
+			.to({ x: 0.6, y: 0.6 }, 100, Ease.circOut)
+			.to({ x: INSTRUMENT_IMAGE_SCALE, y: INSTRUMENT_IMAGE_SCALE }, tweenDuration - 100, Ease.elasticOut);
+
+		Tween.removeTweens(this.instrumentImage);
+		this.tween(this.instrumentImage)
+			.wait(tweenDuration)
+			.call(() => (this.instrumentImage.tint = 0xffffff));
 	}
 }
