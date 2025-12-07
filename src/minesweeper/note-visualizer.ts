@@ -112,7 +112,7 @@ export class NoteVisualizer extends Component<MinesweeperApp> {
 				continue;
 			}
 
-			const visualizerTrack = new NoteVisualizerTrack(this.app, TRACK_CONFIGS[track.name]);
+			const visualizerTrack = new NoteVisualizerTrack(this.app, track.name, TRACK_CONFIGS[track.name]);
 			this.visualizerTracks[track.name] = visualizerTrack;
 
 			this.addChild(visualizerTrack);

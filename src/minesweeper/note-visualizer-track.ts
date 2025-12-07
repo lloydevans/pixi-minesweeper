@@ -34,6 +34,7 @@ export class NoteVisualizerTrack extends Component<MinesweeperApp> {
 
 	constructor(
 		app: MinesweeperApp,
+		private readonly instrumentTrackName: string,
 		private readonly config: NoteVisualizerTrackConfig,
 	) {
 		super(app);
@@ -46,6 +47,13 @@ export class NoteVisualizerTrack extends Component<MinesweeperApp> {
 	protected init() {
 		this.instrumentImage.scale.set(INSTRUMENT_IMAGE_SCALE);
 		this.addChild(this.instrumentImage);
+
+		this.instrumentImage.interactive = true;
+		this.instrumentImage.cursor = "pointer";
+		this.instrumentImage.on("pointertap", () => {
+			this.app.audio.play(this.instrumentTrackName, { volume: 0.5 });
+			this.animateNoteLands(velocityToColor(0.5), 1);
+		});
 	}
 
 	public animateScheduledNote(absoluteScheduledTime: number, noteData: NoteJSON): void {
