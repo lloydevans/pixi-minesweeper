@@ -1,10 +1,5 @@
 {
-	"include": [
-		//
-		"src/index.ts",
-		"custom.d.ts",
-		"node_modules/pixi-spine/dist/pixi-spine.d.ts"
-	],
+	"include": ["src/index.ts", "custom.d.ts"],
 	"compilerOptions": {
 		"strict": true,
 		"lib": ["DOM", "ES2019"],
