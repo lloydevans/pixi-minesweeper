@@ -2,15 +2,15 @@
 
 "button-arrow":
 {
-	"frame": {"x":2,"y":130,"w":104,"h":140},
-	"rotated": true,
+	"frame": {"x":918,"y":208,"w":104,"h":140},
+	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":76,"y":58,"w":104,"h":140},
 	"sourceSize": {"w":256,"h":256}
 },
 "button-cross":
 {
-	"frame": {"x":132,"y":236,"w":114,"h":114},
+	"frame": {"x":392,"y":376,"w":114,"h":114},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":72,"y":72,"w":114,"h":114},
@@ -18,7 +18,7 @@
 },
 "button-dig":
 {
-	"frame": {"x":154,"y":2,"w":100,"h":92},
+	"frame": {"x":740,"y":528,"w":100,"h":92},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":10,"y":14,"w":100,"h":92},
@@ -26,7 +26,7 @@
 },
 "button-flag":
 {
-	"frame": {"x":154,"y":96,"w":100,"h":92},
+	"frame": {"x":842,"y":598,"w":100,"h":92},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":10,"y":14,"w":100,"h":92},
@@ -34,27 +34,195 @@
 },
 "button-long":
 {
-	"frame": {"x":2,"y":236,"w":512,"h":128},
-	"rotated": true,
+	"frame": {"x":2,"y":2,"w":512,"h":128},
+	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":512,"h":128},
 	"sourceSize": {"w":512,"h":128}
 },
+"button-pause":
+{
+	"frame": {"x":516,"y":2,"w":216,"h":248},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":20,"y":4,"w":216,"h":248},
+	"sourceSize": {"w":256,"h":256}
+},
+"button-play":
+{
+	"frame": {"x":766,"y":2,"w":204,"h":244},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":26,"y":6,"w":204,"h":244},
+	"sourceSize": {"w":256,"h":256}
+},
 "button-restart":
 {
-	"frame": {"x":2,"y":2,"w":150,"h":126},
+	"frame": {"x":766,"y":208,"w":150,"h":126},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":68,"y":66,"w":150,"h":126},
 	"sourceSize": {"w":256,"h":256}
+},
+"instrument_ahh":
+{
+	"frame": {"x":766,"y":336,"w":116,"h":128},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":6,"y":0,"w":116,"h":128},
+	"sourceSize": {"w":128,"h":128}
+},
+"instrument_boom":
+{
+	"frame": {"x":392,"y":132,"w":120,"h":128},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":4,"y":0,"w":120,"h":128},
+	"sourceSize": {"w":128,"h":128}
+},
+"instrument_cabassa":
+{
+	"frame": {"x":888,"y":472,"w":124,"h":124},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":2,"w":124,"h":124},
+	"sourceSize": {"w":128,"h":128}
+},
+"instrument_chimes":
+{
+	"frame": {"x":514,"y":220,"w":128,"h":120},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":4,"w":128,"h":120},
+	"sourceSize": {"w":128,"h":128}
+},
+"instrument_clap":
+{
+	"frame": {"x":392,"y":262,"w":112,"h":120},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":4,"w":112,"h":120},
+	"sourceSize": {"w":128,"h":128}
+},
+"instrument_dull":
+{
+	"frame": {"x":514,"y":342,"w":128,"h":88},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":20,"w":128,"h":88},
+	"sourceSize": {"w":128,"h":128}
+},
+"instrument_guzheng":
+{
+	"frame": {"x":638,"y":478,"w":124,"h":100},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":14,"w":124,"h":100},
+	"sourceSize": {"w":128,"h":128}
+},
+"instrument_hatopen":
+{
+	"frame": {"x":132,"y":132,"w":128,"h":124},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":2,"w":128,"h":124},
+	"sourceSize": {"w":128,"h":128}
+},
+"instrument_kick":
+{
+	"frame": {"x":2,"y":132,"w":128,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":128,"h":128},
+	"sourceSize": {"w":128,"h":128}
+},
+"instrument_pitchydrum":
+{
+	"frame": {"x":2,"y":262,"w":108,"h":128},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":10,"y":0,"w":108,"h":128},
+	"sourceSize": {"w":128,"h":128}
+},
+"instrument_pizz":
+{
+	"frame": {"x":644,"y":220,"w":120,"h":128},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":4,"y":0,"w":120,"h":128},
+	"sourceSize": {"w":128,"h":128}
+},
+"instrument_rim":
+{
+	"frame": {"x":758,"y":454,"w":72,"h":128},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":28,"y":0,"w":72,"h":128},
+	"sourceSize": {"w":128,"h":128}
+},
+"instrument_rimba":
+{
+	"frame": {"x":262,"y":364,"w":128,"h":96},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":16,"w":128,"h":96},
+	"sourceSize": {"w":128,"h":128}
+},
+"instrument_shaker":
+{
+	"frame": {"x":896,"y":350,"w":120,"h":126},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":4,"y":0,"w":120,"h":126},
+	"sourceSize": {"w":128,"h":128}
+},
+"instrument_snare":
+{
+	"frame": {"x":644,"y":350,"w":126,"h":112},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":8,"w":126,"h":112},
+	"sourceSize": {"w":128,"h":128}
+},
+"instrument_steel":
+{
+	"frame": {"x":262,"y":132,"w":124,"h":128},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":0,"w":124,"h":128},
+	"sourceSize": {"w":128,"h":128}
+},
+"instrument_timpani":
+{
+	"frame": {"x":262,"y":258,"w":104,"h":128},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":12,"y":0,"w":104,"h":128},
+	"sourceSize": {"w":128,"h":128}
+},
+"instrument_vibraphone":
+{
+	"frame": {"x":508,"y":432,"w":128,"h":84},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":22,"w":128,"h":84},
+	"sourceSize": {"w":128,"h":128}
+},
+"intrument_hat":
+{
+	"frame": {"x":132,"y":258,"w":112,"h":128},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":0,"w":112,"h":128},
+	"sourceSize": {"w":128,"h":128}
 }},
 "meta": {
 	"app": "https://www.codeandweb.com/texturepacker",
 	"version": "1.0",
 	"image": "textures@4x.png",
 	"format": "RGBA8888",
-	"size": {"w":256,"h":1024},
+	"size": {"w":1024,"h":1024},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:c161e06270fc3b8be0ac93b4ffd69c5d:e474d11c5be9d8d547546bcd7edda36d:0d4797ab0a62cbf7baf7b92840fcf112$"
+	"smartupdate": "$TexturePacker:SmartUpdate:c47dc89718c30aa533b0b52ab3410d26:0a6f87f95c723b4fc5272fbd83ce241b:0d4797ab0a62cbf7baf7b92840fcf112$"
 }
 }

@@ -10,7 +10,7 @@
 },
 "button-cross":
 {
-	"frame": {"x":2,"y":384,"w":60,"h":60},
+	"frame": {"x":324,"y":182,"w":60,"h":60},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":34,"y":34,"w":60,"h":60},
@@ -18,7 +18,7 @@
 },
 "button-dig":
 {
-	"frame": {"x":76,"y":68,"w":52,"h":48},
+	"frame": {"x":208,"y":68,"w":52,"h":48},
 	"rotated": true,
 	"trimmed": true,
 	"spriteSourceSize": {"x":4,"y":6,"w":52,"h":48},
@@ -26,7 +26,7 @@
 },
 "button-flag":
 {
-	"frame": {"x":76,"y":122,"w":52,"h":48},
+	"frame": {"x":208,"y":122,"w":52,"h":48},
 	"rotated": true,
 	"trimmed": true,
 	"spriteSourceSize": {"x":4,"y":6,"w":52,"h":48},
@@ -34,27 +34,195 @@
 },
 "button-long":
 {
-	"frame": {"x":2,"y":126,"w":256,"h":64},
-	"rotated": true,
+	"frame": {"x":2,"y":2,"w":256,"h":64},
+	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":64},
 	"sourceSize": {"w":256,"h":64}
 },
+"button-pause":
+{
+	"frame": {"x":260,"y":2,"w":112,"h":124},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":2,"w":112,"h":124},
+	"sourceSize": {"w":128,"h":128}
+},
+"button-play":
+{
+	"frame": {"x":386,"y":2,"w":104,"h":124},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":12,"y":2,"w":104,"h":124},
+	"sourceSize": {"w":128,"h":128}
+},
 "button-restart":
 {
-	"frame": {"x":2,"y":2,"w":76,"h":64},
+	"frame": {"x":386,"y":108,"w":76,"h":64},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":34,"y":32,"w":76,"h":64},
 	"sourceSize": {"w":128,"h":128}
+},
+"instrument_ahh":
+{
+	"frame": {"x":324,"y":116,"w":60,"h":64},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":0,"w":60,"h":64},
+	"sourceSize": {"w":64,"h":64}
+},
+"instrument_boom":
+{
+	"frame": {"x":2,"y":192,"w":60,"h":64},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":0,"w":60,"h":64},
+	"sourceSize": {"w":64,"h":64}
+},
+"instrument_cabassa":
+{
+	"frame": {"x":76,"y":68,"w":64,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
+	"sourceSize": {"w":64,"h":64}
+},
+"instrument_chimes":
+{
+	"frame": {"x":68,"y":134,"w":64,"h":60},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":2,"w":64,"h":60},
+	"sourceSize": {"w":64,"h":64}
+},
+"instrument_clap":
+{
+	"frame": {"x":324,"y":244,"w":56,"h":60},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":4,"y":2,"w":56,"h":60},
+	"sourceSize": {"w":64,"h":64}
+},
+"instrument_dull":
+{
+	"frame": {"x":464,"y":108,"w":64,"h":44},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":10,"w":64,"h":44},
+	"sourceSize": {"w":64,"h":64}
+},
+"instrument_guzheng":
+{
+	"frame": {"x":386,"y":240,"w":64,"h":52},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":6,"w":64,"h":52},
+	"sourceSize": {"w":64,"h":64}
+},
+"instrument_hatopen":
+{
+	"frame": {"x":2,"y":126,"w":64,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
+	"sourceSize": {"w":64,"h":64}
+},
+"instrument_kick":
+{
+	"frame": {"x":142,"y":68,"w":64,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
+	"sourceSize": {"w":64,"h":64}
+},
+"instrument_pitchydrum":
+{
+	"frame": {"x":452,"y":174,"w":56,"h":64},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":4,"y":0,"w":56,"h":64},
+	"sourceSize": {"w":64,"h":64}
+},
+"instrument_pizz":
+{
+	"frame": {"x":134,"y":134,"w":60,"h":64},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":0,"w":60,"h":64},
+	"sourceSize": {"w":64,"h":64}
+},
+"instrument_rim":
+{
+	"frame": {"x":452,"y":306,"w":36,"h":64},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":14,"y":0,"w":36,"h":64},
+	"sourceSize": {"w":64,"h":64}
+},
+"instrument_rimba":
+{
+	"frame": {"x":452,"y":240,"w":64,"h":52},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":6,"w":64,"h":52},
+	"sourceSize": {"w":64,"h":64}
+},
+"instrument_shaker":
+{
+	"frame": {"x":258,"y":116,"w":64,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
+	"sourceSize": {"w":64,"h":64}
+},
+"instrument_snare":
+{
+	"frame": {"x":258,"y":182,"w":64,"h":56},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":4,"w":64,"h":56},
+	"sourceSize": {"w":64,"h":64}
+},
+"instrument_steel":
+{
+	"frame": {"x":386,"y":174,"w":64,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
+	"sourceSize": {"w":64,"h":64}
+},
+"instrument_timpani":
+{
+	"frame": {"x":200,"y":176,"w":56,"h":64},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":4,"y":0,"w":56,"h":64},
+	"sourceSize": {"w":64,"h":64}
+},
+"instrument_vibraphone":
+{
+	"frame": {"x":386,"y":294,"w":64,"h":44},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":10,"w":64,"h":44},
+	"sourceSize": {"w":64,"h":64}
+},
+"intrument_hat":
+{
+	"frame": {"x":258,"y":240,"w":56,"h":64},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":4,"y":0,"w":56,"h":64},
+	"sourceSize": {"w":64,"h":64}
 }},
 "meta": {
 	"app": "https://www.codeandweb.com/texturepacker",
 	"version": "1.0",
 	"image": "textures@2x.png",
 	"format": "RGBA8888",
-	"size": {"w":128,"h":512},
+	"size": {"w":512,"h":512},
 	"scale": "0.5",
-	"smartupdate": "$TexturePacker:SmartUpdate:c161e06270fc3b8be0ac93b4ffd69c5d:e474d11c5be9d8d547546bcd7edda36d:0d4797ab0a62cbf7baf7b92840fcf112$"
+	"smartupdate": "$TexturePacker:SmartUpdate:c47dc89718c30aa533b0b52ab3410d26:0a6f87f95c723b4fc5272fbd83ce241b:0d4797ab0a62cbf7baf7b92840fcf112$"
 }
 }

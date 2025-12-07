@@ -3,6 +3,7 @@ import clamp from "lodash-es/clamp";
 import defaults from "lodash-es/defaults";
 import * as Tone from "tone";
 import type { Dict } from "./types";
+import { TypedEmitter } from "./typed-emitter";
 
 const CENTER_NOTE = "A3";
 const MAX_QUEUE = 64;
@@ -62,6 +63,16 @@ export interface MidiPlaybackTrackData {
 	loops: number;
 }
 
+export interface MidiStartedEventData {
+	midi: Midi;
+}
+
+export interface NoteScheduledEventData {
+	absoluteScheduledTime: number;
+	trackName: string;
+	noteData: NoteJSON;
+}
+
 export class ToneAudio {
 	private static buffers: Dict<Tone.ToneAudioBuffer> = {};
 
@@ -92,6 +103,9 @@ export class ToneAudio {
 		return Math.exp((semitones * Math.log(2)) / 12);
 	}
 
+	public readonly onMidiStarted = new TypedEmitter<MidiStartedEventData>();
+	public readonly onNoteScheduled = new TypedEmitter<NoteScheduledEventData>();
+
 	private samplers: Dict<Tone.Sampler> = {};
 	private sources: Dict<SourceEntry> = {};
 	private currentMidiPlayback?: MidiPlaybackData;
@@ -118,6 +132,10 @@ export class ToneAudio {
 		if (this.currentMidiPlayback) {
 			this.updateMusic(this.currentMidiPlayback);
 		}
+	}
+
+	public now() {
+		return Tone.now();
 	}
 
 	private initInstruments(options: ToneAudioConfig) {
@@ -206,6 +224,8 @@ export class ToneAudio {
 				};
 			}),
 		};
+
+		this.onMidiStarted.emit({ midi });
 	}
 
 	private updateMusic(midi: MidiPlaybackData) {
@@ -248,15 +268,15 @@ export class ToneAudio {
 				const loopOffset = duration * track.loops;
 
 				try {
-					sampler.triggerAttackRelease(
-						//
-						note.name,
-						note.duration,
-						note.time + start + loopOffset,
-						note.velocity * 0.333, // TODO: config
-					);
+					sampler.triggerAttackRelease(note.name, note.duration, note.time + start + loopOffset, note.velocity * 0.333);
 				} catch (err) {
 					console.error(err);
+				} finally {
+					this.onNoteScheduled.emit({
+						absoluteScheduledTime: note.time + loopOffset + start,
+						trackName: track.name,
+						noteData: note,
+					});
 				}
 			}
 		}

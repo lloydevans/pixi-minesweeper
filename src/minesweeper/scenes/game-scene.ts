@@ -13,9 +13,15 @@ import { CELL_STATE_DEFAULT, MinesweeperCellState } from "../minesweeper-cell-st
 import { MinesweeperGridConfig } from "../minesweeper-config";
 import { CellGrid } from "../cell-grid";
 import { GridConfigUi } from "../ui/grid-config-ui";
+import { NoteVisualizer } from "../note-visualizer";
 import { ScrollingBackground } from "../scrolling-background";
 import { TouchscreenUi } from "../ui/touchscreen-ui";
 import { BmText } from "../../common/bm-text";
+import { Tone } from "tone/build/esm/core/Tone";
+
+const getInfoText = (app: MinesweeperApp) => `PixiJS - ${PIXI.VERSION} - ${PIXI.RendererType[app.renderer.type]}
+MIDI music playback implementation using ToneJS ${Tone.version}
+Music credit: Lloyd Evans`;
 
 export class GameScene extends Scene<MinesweeperApp> {
 	private transitionIdx = 0;
@@ -30,8 +36,9 @@ export class GameScene extends Scene<MinesweeperApp> {
 	private cellGrid = new CellGrid(this.app);
 	private gridConfigUi = new GridConfigUi(this.app);
 	private touchscreenUi = new TouchscreenUi(this.app);
+	private musicNoteVisualizer = new NoteVisualizer(this.app);
 	private scrollingBackground = new ScrollingBackground(this.app);
-	private versionReadout = new BmText(this.app, { style: { fontFamily: "bmfont" } });
+	private versionReadout = new BmText(this.app, { style: { fontFamily: "bmfont", align: "center", lineHeight: 48 } });
 
 	init() {
 		this.cellGrid.interactiveChildren = false;
@@ -58,16 +65,19 @@ export class GameScene extends Scene<MinesweeperApp> {
 			this.newGame(this.gridConfig);
 		});
 
-		this.versionReadout.text = `PixiJS - ${PIXI.VERSION} - ${PIXI.RendererType[this.app.renderer.type]}`;
+		this.versionReadout.text = getInfoText(this.app);
 		this.versionReadout.anchor.set(0.5);
 		this.versionReadout.alpha = 0.75;
 
 		this.hud.visible = false;
 
+		this.container.y = 128;
+
 		this.container.addChild(this.boardFrame);
 		this.container.addChild(this.gridBack);
 		this.container.addChild(this.cellGrid);
 		this.addChild(this.scrollingBackground);
+		this.addChild(this.musicNoteVisualizer);
 		this.addChild(this.container);
 		this.addChild(this.hud);
 		this.addChild(this.touchscreenUi);
@@ -77,7 +87,7 @@ export class GameScene extends Scene<MinesweeperApp> {
 
 	resize({ width, height }: ResizeEventData) {
 		const marginX = 150;
-		const marginY = 256;
+		const marginY = 300;
 		const maxWidth = width - marginX * 2;
 		const maxHeight = height - marginY * 2;
 		const refBoardWidth = REF_WIDTH * this.app.state.width;
@@ -292,14 +302,12 @@ export class GameScene extends Scene<MinesweeperApp> {
 	public showGame() {
 		this.app.audio.playMidi("minesweeper.mid");
 
-		this.tween(this.container.position).to({ y: 32 }, 300, Ease.sineInOut);
 		this.gridConfigUi.visible = false;
 		this.cellGrid.visible = true;
 		this.hud.visible = true;
 	}
 
 	public showMenu() {
-		this.tween(this.container.position).to({ y: 0 }, 300, Ease.sineInOut);
 		this.gridConfigUi.visible = true;
 		this.cellGrid.visible = false;
 		this.hud.visible = false;
