@@ -4,7 +4,6 @@ import * as PIXI from "pixi.js";
 import { hexToNum } from "../common/utils/color";
 import { Component } from "../common/component";
 import { BmText } from "../common/bm-text";
-// import { Spine } from "../common/spine";
 import { MinesweeperApp } from "./minesweeper-app";
 import { CELL_STATE_DEFAULT } from "./minesweeper-cell-state";
 import type { MinesweeperCellState } from "./minesweeper-cell-state";
@@ -336,9 +335,7 @@ export class MinesweeperCell extends Component<MinesweeperApp> {
 	}
 
 	public animateDigCancel() {
-		// getCurrent does seem to be there, just a type issue
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		if ((this.animation.state as any).getCurrent(AnimTrack.Dig).animation.name === AnimState.DigStart) {
+		if (this.animation.state.getCurrent(AnimTrack.Dig)?.animation?.name === AnimState.DigStart) {
 			this.animation.state.setAnimation(AnimTrack.Dig, AnimState.DigCancel, false);
 			this.app.audio.play("blop", { transpose: 24 });
 			this.app.audio.play("drip", { delay: 0.1 });
@@ -347,9 +344,7 @@ export class MinesweeperCell extends Component<MinesweeperApp> {
 	}
 
 	public animatePlaceFlagCancel() {
-		// getCurrent does seem to be there, just a type issue
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		if ((this.animation.state as any).getCurrent(AnimTrack.Flag).animation.name === AnimState.FlagPlaceStart) {
+		if (this.animation.state.getCurrent(AnimTrack.Flag)?.animation?.name === AnimState.FlagPlaceStart) {
 			this.animation.state.setAnimation(AnimTrack.Flag, AnimState.FlagDestroy, false);
 			this.app.audio.play("blop", { transpose: 24 });
 			this.app.audio.play("drip", { delay: 0.1 });
