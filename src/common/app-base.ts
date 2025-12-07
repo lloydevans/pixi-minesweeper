@@ -7,7 +7,7 @@ import { Tween } from "./tween";
 import { TweenGroup } from "./tween-group";
 import { TweenOptions } from "./tween-props";
 import { UiElement } from "./ui-element";
-import { EventEmitter } from "./event-emitter";
+import { CustomEmitter } from "./custom-emitter";
 import { Dict } from "./types";
 
 const LOAD_OPTIONS: PIXI.LoadOptions = {
@@ -35,10 +35,10 @@ export interface ResizeEventData {
 }
 
 export class AppBase extends PIXI.Application {
-	public readonly onInit = new EventEmitter<void>();
-	public readonly onReady = new EventEmitter<void>();
-	public readonly onUpdate = new EventEmitter<number>();
-	public readonly onResize = new EventEmitter<ResizeEventData>();
+	public readonly onInit = new CustomEmitter<void>();
+	public readonly onReady = new CustomEmitter<void>();
+	public readonly onUpdate = new CustomEmitter<number>();
+	public readonly onResize = new CustomEmitter<ResizeEventData>();
 
 	/** App audio manager reference */
 	public readonly audio = new ToneAudio();

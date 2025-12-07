@@ -9,7 +9,7 @@ interface ListenerEntry<T> {
 /**
  * Individual event instance that can be subscribed to and emitted.
  */
-export class EventEmitter<T = undefined> {
+export class CustomEmitter<T = undefined> {
 	private listeners: ListenerEntry<T>[] = [];
 
 	/**

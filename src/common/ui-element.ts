@@ -1,10 +1,10 @@
 import { AppBase } from "./app-base";
 import { Component } from "./component";
-import { EventEmitter } from "./event-emitter";
+import { CustomEmitter } from "./custom-emitter";
 
 export class UiElement<T extends AppBase = AppBase> extends Component<T> {
-	public readonly onFocusChange = new EventEmitter<boolean>();
-	public readonly onActiveChange = new EventEmitter<boolean>();
+	public readonly onFocusChange = new CustomEmitter<boolean>();
+	public readonly onActiveChange = new CustomEmitter<boolean>();
 
 	public get focused() {
 		return this._focused;

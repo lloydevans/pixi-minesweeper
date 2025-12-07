@@ -3,7 +3,7 @@ import { Container, Texture } from "pixi.js";
 import { AppBase } from "./app-base";
 import { UiButton } from "./ui-button";
 import { BmText } from "./bm-text";
-import { EventEmitter } from "./event-emitter";
+import { CustomEmitter } from "./custom-emitter";
 
 export interface ButtonScrollerOptions {
 	arrowTexture: Texture;
@@ -16,7 +16,7 @@ export interface ButtonScrollerOptions {
 export class UiButtonScroller extends Container {
 	app: AppBase;
 
-	public readonly onSet = new EventEmitter<number>();
+	public readonly onSet = new CustomEmitter<number>();
 
 	private _min: number;
 	get min(): number {
