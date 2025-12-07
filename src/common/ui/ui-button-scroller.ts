@@ -37,6 +37,8 @@ export class UiButtonScroller extends Container {
 		this._max = value;
 		if (this.currentValue > this._max) {
 			this.set(this._max);
+		} else {
+			this.updateScrollerButtonInteractivity();
 		}
 	}
 
@@ -107,12 +109,19 @@ export class UiButtonScroller extends Container {
 
 	set(value: number) {
 		this._currentValue = Math.floor(clamp(value, this.min, this.max));
+
 		this.number.text = this.currentValue.toString();
-		this.buttonLeft.eventMode = this.currentValue !== this.min ? "static" : "none";
-		this.buttonLeft.alpha = this.currentValue !== this.min ? 1 : 0.5;
-		this.buttonRight.eventMode = this.currentValue !== this.max ? "static" : "none";
-		this.buttonRight.alpha = this.currentValue !== this.max ? 1 : 0.5;
+
+		this.updateScrollerButtonInteractivity();
 
 		this.onSet.emit(this.currentValue);
+	}
+
+	private updateScrollerButtonInteractivity(): void {
+		this.buttonLeft.eventMode = this.currentValue !== this.min ? "static" : "none";
+		this.buttonLeft.alpha = this.currentValue !== this.min ? 1 : 0.5;
+
+		this.buttonRight.eventMode = this.currentValue !== this.max ? "static" : "none";
+		this.buttonRight.alpha = this.currentValue !== this.max ? 1 : 0.5;
 	}
 }

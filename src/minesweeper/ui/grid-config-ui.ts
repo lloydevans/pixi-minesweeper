@@ -6,7 +6,13 @@ import { TypedEmitter } from "../../common/typed-emitter";
 import { UiButtonScroller } from "../../common/ui/ui-button-scroller";
 import { UiButtonText } from "../../common/ui/ui-button-text";
 import { INITIAL_GAME_CONFIG, MinesweeperApp } from "../minesweeper-app";
-import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MIN_EMPTY, MIN_GRID_HEIGHT, MIN_GRID_WIDTH } from "../minesweeper-state";
+import {
+	MAX_GRID_HEIGHT,
+	MAX_GRID_WIDTH,
+	MIN_EMPTY_CELLS,
+	MIN_GRID_HEIGHT,
+	MIN_GRID_WIDTH,
+} from "../minesweeper-state";
 
 export interface GameConfigData {
 	startMines: number;
@@ -67,7 +73,7 @@ export class GridConfigUi extends Component<MinesweeperApp> {
 			label: "Mines",
 			default: INITIAL_GAME_CONFIG.startMines,
 			min: 1,
-			max: INITIAL_GAME_CONFIG.gridWidth * INITIAL_GAME_CONFIG.gridHeight - MIN_EMPTY,
+			max: INITIAL_GAME_CONFIG.gridWidth * INITIAL_GAME_CONFIG.gridHeight - MIN_EMPTY_CELLS,
 		});
 
 		this.title.y = -600;
@@ -106,8 +112,11 @@ export class GridConfigUi extends Component<MinesweeperApp> {
 	protected updatePreview() {
 		const gridWidth = this.widthScroller.currentValue;
 		const gridHeight = this.heightScroller.currentValue;
+
+		this.minesScroller.max = gridWidth * gridHeight - MIN_EMPTY_CELLS;
+
 		const startMines = this.minesScroller.currentValue;
-		this.minesScroller.max = gridWidth * gridHeight - MIN_EMPTY;
+
 		this.onPreviewGrid.emit({ startMines, gridWidth, gridHeight });
 	}
 }
