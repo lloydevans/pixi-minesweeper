@@ -3,8 +3,8 @@ import { ResizeEventData } from "../../common/app-base";
 import { BmText } from "../../common/bm-text";
 import { Component } from "../../common/component";
 import { TypedEmitter } from "../../common/typed-emitter";
-import { UiButtonScroller } from "../../common/ui-button-scroller";
-import { UiButtonText } from "../../common/ui-button-text";
+import { UiButtonScroller } from "../../common/ui/ui-button-scroller";
+import { UiButtonText } from "../../common/ui/ui-button-text";
 import { INITIAL_GAME_CONFIG, MinesweeperApp } from "../minesweeper-app";
 import { MAX_GRID_HEIGHT, MAX_GRID_WIDTH, MIN_EMPTY, MIN_GRID_HEIGHT, MIN_GRID_WIDTH } from "../minesweeper-state";
 

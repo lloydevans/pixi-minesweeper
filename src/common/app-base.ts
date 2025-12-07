@@ -6,7 +6,7 @@ import { ToneAudio } from "./tone-audio";
 import { Tween } from "./tween";
 import { TweenGroup } from "./tween-group";
 import { TweenOptions } from "./tween-props";
-import { UiElement } from "./ui-element";
+import { UiElement } from "./ui/ui-element";
 import { TypedEmitter } from "./typed-emitter";
 import { Dict } from "./types";
 

@@ -4,7 +4,7 @@ import { ResizeEventData } from "../../common/app-base";
 import { BmText } from "../../common/bm-text";
 import { Component } from "../../common/component";
 import { TypedEmitter } from "../../common/typed-emitter";
-import { UiButton } from "../../common/ui-button";
+import { UiButton } from "../../common/ui/ui-button";
 import { MinesweeperApp } from "../minesweeper-app";
 
 /** Class handle UI elements. */

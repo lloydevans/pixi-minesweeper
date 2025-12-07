@@ -1,6 +1,6 @@
-import { AppBase } from "./app-base";
-import { Component } from "./component";
-import { TypedEmitter } from "./typed-emitter";
+import { AppBase } from "../app-base";
+import { Component } from "../component";
+import { TypedEmitter } from "../typed-emitter";
 
 export class UiElement<T extends AppBase = AppBase> extends Component<T> {
 	public readonly onFocusChange = new TypedEmitter<boolean>();

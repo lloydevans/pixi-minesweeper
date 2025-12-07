@@ -1,7 +1,7 @@
 import clamp from "lodash-es/clamp";
 import isEqual from "lodash-es/isEqual";
 import * as PIXI from "pixi.js";
-import { hexToNum } from "../common/color";
+import { hexToNum } from "../common/utils/color";
 import { Component } from "../common/component";
 import { BmText } from "../common/bm-text";
 // import { Spine } from "../common/spine";

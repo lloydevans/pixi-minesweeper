@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js";
-import { UiButton } from "../../common/ui-button";
+import { UiButton } from "../../common/ui/ui-button";
 import { Component } from "../../common/component";
 import { MinesweeperApp } from "../minesweeper-app";
 import { MinesweeperCellState } from "../minesweeper-cell-state";

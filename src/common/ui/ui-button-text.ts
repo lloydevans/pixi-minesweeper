@@ -1,7 +1,7 @@
 import defaults from "lodash-es/defaults";
 import * as PIXI from "pixi.js";
-import { AppBase } from "./app-base";
-import { BmText } from "./bm-text";
+import { AppBase } from "../app-base";
+import { BmText } from "../bm-text";
 import { UiButton, ButtonOptions } from "./ui-button";
 
 export interface ButtonTextOptions extends Partial<PIXI.TextStyle>, ButtonOptions {

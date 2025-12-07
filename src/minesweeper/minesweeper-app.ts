@@ -1,6 +1,6 @@
 import defaults from "lodash-es/defaults";
 import { AppBase } from "../common/app-base";
-import { preventContextMenu } from "../common/utils";
+import { preventContextMenu } from "../common/utils/utils";
 import { MinesweeperCell } from "./minesweeper-cell";
 import type { MinesweeperGridConfig, MinesweeperStyleConfig } from "./minesweeper-config";
 import { MS_CONFIG_DEFAULT } from "./minesweeper-config";

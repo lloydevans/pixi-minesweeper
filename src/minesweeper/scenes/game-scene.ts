@@ -2,7 +2,7 @@ import { logEvent } from "firebase/analytics";
 import clamp from "lodash-es/clamp";
 import * as PIXI from "pixi.js";
 import { ResizeEventData } from "../../common/app-base";
-import { hexToNum } from "../../common/color";
+import { hexToNum } from "../../common/utils/color";
 import { Ease } from "../../common/ease";
 import { Scene } from "../../common/scene";
 import { analytics } from "../../firebase";

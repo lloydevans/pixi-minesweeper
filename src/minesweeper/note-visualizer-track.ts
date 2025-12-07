@@ -4,7 +4,7 @@ import { MinesweeperApp } from "./minesweeper-app";
 import { NoteJSON } from "../common/tone-audio";
 import { Ease } from "../common/ease";
 import { BmText } from "../common/bm-text";
-import { velocityToColor } from "../common/color";
+import { velocityToColor } from "../common/utils/color";
 import { Tween } from "../common/tween";
 
 const NOTE_PIP_POOL_SIZE = 20;

@@ -1,9 +1,9 @@
 import clamp from "lodash-es/clamp";
 import { Container, Texture } from "pixi.js";
-import { AppBase } from "./app-base";
+import { AppBase } from "../app-base";
 import { UiButton } from "./ui-button";
-import { BmText } from "./bm-text";
-import { TypedEmitter } from "./typed-emitter";
+import { BmText } from "../bm-text";
+import { TypedEmitter } from "../typed-emitter";
 
 export interface ButtonScrollerOptions {
 	arrowTexture: Texture;
