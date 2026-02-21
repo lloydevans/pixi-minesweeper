@@ -70,6 +70,9 @@ export class AppBase extends PIXI.Application {
 	}
 	private _height = 0;
 
+	private _windowWidth = 0;
+	private _windowHeight = 0;
+
 	/** Global app tween group. */
 	protected readonly tweenGroup = new TweenGroup(false, 1);
 
@@ -116,7 +119,7 @@ export class AppBase extends PIXI.Application {
 	}
 
 	private update(ticker: PIXI.Ticker) {
-		if (window.innerWidth !== this.width || window.innerHeight !== this.height) {
+		if (window.innerWidth !== this._windowWidth || window.innerHeight !== this._windowHeight) {
 			this.resizeRoot(window.innerWidth, window.innerHeight, this.selectedDpr);
 		}
 
@@ -164,6 +167,8 @@ export class AppBase extends PIXI.Application {
 	}
 
 	private resizeRoot(windowWidth: number, windowHeight: number, dpr: number) {
+		this._windowWidth = windowWidth;
+		this._windowHeight = windowHeight;
 		this._width = windowWidth;
 		this._height = windowHeight;
 		this._dpr = dpr;
