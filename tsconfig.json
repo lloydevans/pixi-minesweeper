@@ -1,5 +1,5 @@
 {
-	"include": ["src/index.ts", "custom.d.ts", "src/**/*.tsx"],
+	"include": ["src/index.ts", "custom.d.ts"],
 	"compilerOptions": {
 		"strict": true,
 		"lib": ["DOM", "ES2019"],
@@ -18,9 +18,6 @@
 		"noImplicitReturns": true,
 		"resolveJsonModule": true,
 		"esModuleInterop": true,
-		"skipLibCheck": true,
-		"jsx": "react",
-		"jsxFactory": "h",
-		"jsxFragmentFactory": "Fragment"
+		"skipLibCheck": true
 	}
 }

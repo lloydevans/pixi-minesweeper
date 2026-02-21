@@ -1,11 +1,9 @@
-import { logEvent } from "firebase/analytics";
 import clamp from "lodash-es/clamp";
 import * as PIXI from "pixi.js";
 import { ResizeEventData } from "../../common/app-base";
 import { hexToNum } from "../../common/utils/color";
 import { Ease } from "../../common/ease";
 import { Scene } from "../../common/scene";
-import { analytics } from "../../firebase";
 import { HudUi } from "../ui/hud-ui";
 import { MinesweeperApp } from "../minesweeper-app";
 import { MinesweeperCell, REF_HEIGHT, REF_WIDTH } from "../minesweeper-cell";
@@ -261,8 +259,6 @@ export class GameScene extends Scene<MinesweeperApp> {
 		this.isFirstClick = true;
 		this.touchscreenUi.hide();
 
-		if (analytics) logEvent(analytics, "new_game", this.app.state.config);
-
 		await this.initGrid();
 
 		this.cellGrid.interactiveChildren = true;
@@ -388,8 +384,6 @@ export class GameScene extends Scene<MinesweeperApp> {
 	}
 
 	private async animateWin() {
-		if (analytics) logEvent(analytics, "win_game", this.app.state.config);
-
 		this.endGame();
 
 		this.audio.play("chime-rattle-a");
@@ -424,8 +418,6 @@ export class GameScene extends Scene<MinesweeperApp> {
 	}
 
 	private async animateLose(firstMine: MinesweeperCellState) {
-		if (analytics) logEvent(analytics, "lose_game", this.app.state.config);
-
 		this.endGame();
 
 		const result = this.app.state.getLossData();
