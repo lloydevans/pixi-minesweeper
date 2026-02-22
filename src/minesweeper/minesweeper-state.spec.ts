@@ -23,7 +23,7 @@ function getState(config: MinesweeperGridConfig = MOCK_CONFIG) {
 /** Create a state and manually set up mines in known positions for deterministic tests. */
 function getDeterministicState() {
 	const state = new MinesweeperState();
-	state.init({ startMines: 1, gridWidth: 5, gridHeight: 5 });
+	state.init({ startMines: 2, gridWidth: 5, gridHeight: 5 });
 	state.clearAllMines();
 	// Place mines at known positions:
 	//   0 1 2 3 4
@@ -99,8 +99,9 @@ describe("MinesweeperState", () => {
 		});
 
 		it("should throw if too many mines for the grid size", () => {
-			// 5x5 = 25 cells, max mines = 25 - MIN_EMPTY_CELLS = 23
-			expect(() => getState({ startMines: 24, gridWidth: 5, gridHeight: 5 })).toThrow("Too many mines");
+			// 5x5 = 25 cells, max mines = 25 - MIN_EMPTY_CELLS; use maxMines + 1 to exceed the limit
+			const maxMines = 5 * 5 - MIN_EMPTY_CELLS;
+			expect(() => getState({ startMines: maxMines + 1, gridWidth: 5, gridHeight: 5 })).toThrow("Too many mines");
 		});
 
 		it("should accept the maximum valid mine count", () => {
