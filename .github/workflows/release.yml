@@ -16,8 +16,14 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
+      - name: Inject version override into config
+        if: inputs.version != ''
+        run: |
+          jq --arg v "${{ inputs.version }}" '.packages["."]["release-as"] = $v' release-config.json > tmp.json && mv tmp.json release-config.json
+
       - uses: googleapis/release-please-action@v4
         with:
           config-file: release-config.json
           manifest-file: .release-manifest.json
-          release-as: ${{ inputs.version || '' }}
