@@ -14,5 +14,6 @@ jobs:
     steps:
       - uses: googleapis/release-please-action@v4
         with:
-          config-file: release-config.json
-          manifest-file: .release-manifest.json
+          release-type: node
+          bump-minor-pre-major: true
+          bump-patch-for-minor-pre-major: true
