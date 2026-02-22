@@ -20,10 +20,6 @@ function getState(config: MinesweeperGridConfig = MOCK_CONFIG) {
 	return state;
 }
 
-function getRandomCoords(): [number, number] {
-	return [Math.floor(Math.random() * MOCK_CONFIG.gridWidth), Math.floor(Math.random() * MOCK_CONFIG.gridHeight)];
-}
-
 /** Create a state and manually set up mines in known positions for deterministic tests. */
 function getDeterministicState() {
 	const state = new MinesweeperState();
@@ -40,6 +36,13 @@ function getDeterministicState() {
 	state.placeMine(2, 2);
 	state.calculateAdjacent();
 	return state;
+}
+
+/** Helper to get a cell and assert it exists. */
+function assertCellAt(state: MinesweeperState, x: number, y: number) {
+	const cell = state.cellAt(x, y);
+	expect(cell).toBeDefined();
+	return cell as NonNullable<typeof cell>;
 }
 
 describe("MinesweeperState", () => {
@@ -254,10 +257,9 @@ describe("MinesweeperState", () => {
 	describe("cellAt", () => {
 		it("should return a cell at valid coords", () => {
 			const state = getState();
-			const cell = state.cellAt(0, 0);
-			expect(cell).toBeDefined();
-			expect(cell!.x).toBe(0);
-			expect(cell!.y).toBe(0);
+			const cell = assertCellAt(state, 0, 0);
+			expect(cell.x).toBe(0);
+			expect(cell.y).toBe(0);
 		});
 
 		it("should return undefined for out-of-bounds coords", () => {
@@ -270,10 +272,9 @@ describe("MinesweeperState", () => {
 			const state = getState();
 			for (let x = 0; x < state.width; x++) {
 				for (let y = 0; y < state.height; y++) {
-					const cell = state.cellAt(x, y);
-					expect(cell).toBeDefined();
-					expect(cell!.x).toBe(x);
-					expect(cell!.y).toBe(y);
+					const cell = assertCellAt(state, x, y);
+					expect(cell.x).toBe(x);
+					expect(cell.y).toBe(y);
 				}
 			}
 		});
@@ -325,14 +326,16 @@ describe("MinesweeperState", () => {
 			const state = getState();
 			state.clearAllMines();
 			state.placeMine(0, 0);
-			expect(state.cellAt(0, 0)!.mine).toBe(true);
+			const cell = assertCellAt(state, 0, 0);
+			expect(cell.mine).toBe(true);
 		});
 
 		it("should clear a mine", () => {
 			const state = getState();
 			state.placeMine(0, 0);
 			state.clearMine(0, 0);
-			expect(state.cellAt(0, 0)!.mine).toBe(false);
+			const cell = assertCellAt(state, 0, 0);
+			expect(cell.mine).toBe(false);
 		});
 
 		it("should clear all mines", () => {
@@ -355,7 +358,7 @@ describe("MinesweeperState", () => {
 		it("clearMine on a non-mine cell should be a no-op", () => {
 			const state = getState();
 			state.clearAllMines();
-			const cell = state.cellAt(0, 0)!;
+			const cell = assertCellAt(state, 0, 0);
 			expect(cell.mine).toBe(false);
 			state.clearMine(0, 0);
 			expect(cell.mine).toBe(false);
@@ -366,16 +369,18 @@ describe("MinesweeperState", () => {
 		it("should uncover a cell", () => {
 			const state = getState();
 			state.uncover(0, 0);
-			expect(state.cellAt(0, 0)!.covered).toBe(false);
+			const cell = assertCellAt(state, 0, 0);
+			expect(cell.covered).toBe(false);
 		});
 
 		it("should remove flag when uncovering a flagged cell", () => {
 			const state = getState();
 			state.placeFlag(0, 0);
-			expect(state.cellAt(0, 0)!.flag).toBe(true);
+			const cell = assertCellAt(state, 0, 0);
+			expect(cell.flag).toBe(true);
 			state.uncover(0, 0);
-			expect(state.cellAt(0, 0)!.flag).toBe(false);
-			expect(state.cellAt(0, 0)!.covered).toBe(false);
+			expect(cell.flag).toBe(false);
+			expect(cell.covered).toBe(false);
 		});
 
 		it("should throw when uncovering out of bounds", () => {
@@ -389,35 +394,33 @@ describe("MinesweeperState", () => {
 			const state = getDeterministicState();
 
 			// Cell (0,0) is adjacent to mine at (1,1) => 1
-			expect(state.cellAt(0, 0)!.adjacent).toBe(1);
+			expect(assertCellAt(state, 0, 0).adjacent).toBe(1);
 
 			// Cell (1,1) is a mine, adjacent to mine at (2,2) => 1
-			expect(state.cellAt(1, 1)!.adjacent).toBe(1);
+			expect(assertCellAt(state, 1, 1).adjacent).toBe(1);
 
 			// Cell (2,2) is a mine, adjacent to mine at (1,1) => 1
-			expect(state.cellAt(2, 2)!.adjacent).toBe(1);
+			expect(assertCellAt(state, 2, 2).adjacent).toBe(1);
 
 			// Cell (1,2) is between both mines => 2
-			expect(state.cellAt(1, 2)!.adjacent).toBe(2);
+			expect(assertCellAt(state, 1, 2).adjacent).toBe(2);
 
 			// Cell (2,1) is between both mines => 2
-			expect(state.cellAt(2, 1)!.adjacent).toBe(2);
+			expect(assertCellAt(state, 2, 1).adjacent).toBe(2);
 
 			// Cell (4,4) is far from all mines => 0
-			expect(state.cellAt(4, 4)!.adjacent).toBe(0);
+			expect(assertCellAt(state, 4, 4).adjacent).toBe(0);
 
-			// Cell (0,2) is adjacent to mine at (1,1) and (2,2) diag => should be 2 actually
-			// (0,2) neighbors: (1,1), (1,2), (0,1), (0,3), (1,3)
+			// Cell (0,2) neighbors: (1,1), (1,2), (0,1), (0,3), (1,3)
 			// mines at (1,1) => 1
-			expect(state.cellAt(0, 2)!.adjacent).toBe(1);
+			expect(assertCellAt(state, 0, 2).adjacent).toBe(1);
 		});
 
 		it("should set zero for cells far from mines", () => {
 			const state = getDeterministicState();
-			// Cells at far corners
-			expect(state.cellAt(4, 4)!.adjacent).toBe(0);
-			expect(state.cellAt(4, 0)!.adjacent).toBe(0);
-			expect(state.cellAt(0, 4)!.adjacent).toBe(0);
+			expect(assertCellAt(state, 4, 4).adjacent).toBe(0);
+			expect(assertCellAt(state, 4, 0).adjacent).toBe(0);
+			expect(assertCellAt(state, 0, 4).adjacent).toBe(0);
 		});
 
 		it("should handle corner cells (fewer neighbors)", () => {
@@ -430,14 +433,14 @@ describe("MinesweeperState", () => {
 			state.calculateAdjacent();
 
 			// Only (1,0), (0,1), (1,1) should be affected
-			expect(state.cellAt(1, 0)!.adjacent).toBe(1);
-			expect(state.cellAt(0, 1)!.adjacent).toBe(1);
-			expect(state.cellAt(1, 1)!.adjacent).toBe(1);
+			expect(assertCellAt(state, 1, 0).adjacent).toBe(1);
+			expect(assertCellAt(state, 0, 1).adjacent).toBe(1);
+			expect(assertCellAt(state, 1, 1).adjacent).toBe(1);
 
 			// Non-adjacent cells should be 0
-			expect(state.cellAt(2, 0)!.adjacent).toBe(0);
-			expect(state.cellAt(0, 2)!.adjacent).toBe(0);
-			expect(state.cellAt(3, 3)!.adjacent).toBe(0);
+			expect(assertCellAt(state, 2, 0).adjacent).toBe(0);
+			expect(assertCellAt(state, 0, 2).adjacent).toBe(0);
+			expect(assertCellAt(state, 3, 3).adjacent).toBe(0);
 		});
 
 		it("should count up to 8 adjacent mines", () => {
@@ -456,7 +459,7 @@ describe("MinesweeperState", () => {
 			state.placeMine(3, 3);
 			state.calculateAdjacent();
 
-			expect(state.cellAt(2, 2)!.adjacent).toBe(8);
+			expect(assertCellAt(state, 2, 2).adjacent).toBe(8);
 		});
 	});
 
@@ -466,7 +469,7 @@ describe("MinesweeperState", () => {
 			const result = state.select(1, 1); // mine cell
 			expect(result.length).toBe(1);
 			expect(result[0].mine).toBe(true);
-			expect(state.cellAt(1, 1)!.covered).toBe(false);
+			expect(assertCellAt(state, 1, 1).covered).toBe(false);
 		});
 
 		it("should uncover a numbered cell and return it", () => {
@@ -475,7 +478,7 @@ describe("MinesweeperState", () => {
 			const result = state.select(0, 0);
 			expect(result.length).toBe(1);
 			expect(result[0].adjacent).toBe(1);
-			expect(state.cellAt(0, 0)!.covered).toBe(false);
+			expect(assertCellAt(state, 0, 0).covered).toBe(false);
 		});
 
 		it("should flood-fill when selecting an empty cell", () => {
@@ -528,8 +531,9 @@ describe("MinesweeperState", () => {
 
 				if (mine) {
 					const result = state.selectFirst(mine.x, mine.y);
-					expect(state.cellAt(mine.x, mine.y)!.mine).toBe(false);
-					expect(state.cellAt(mine.x, mine.y)!.covered).toBe(false);
+					const cell = assertCellAt(state, mine.x, mine.y);
+					expect(cell.mine).toBe(false);
+					expect(cell.covered).toBe(false);
 					expect(result.length).toBeGreaterThan(0);
 				}
 			}
@@ -537,8 +541,9 @@ describe("MinesweeperState", () => {
 
 		it("should return uncovered cells", () => {
 			const state = getState();
-			const cell = state.find((el) => !el.mine)!;
-			const result = state.selectFirst(cell.x, cell.y);
+			const found = state.find((el) => !el.mine);
+			expect(found).toBeDefined();
+			const result = state.selectFirst(found?.x ?? 0, found?.y ?? 0);
 			expect(result.length).toBeGreaterThan(0);
 			for (const c of result) {
 				expect(c.covered).toBe(false);
@@ -591,7 +596,7 @@ describe("MinesweeperState", () => {
 					state.uncover(cell.x, cell.y);
 				}
 			});
-			expect(state.cellAt(1, 1)!.covered).toBe(true); // mine still covered
+			expect(assertCellAt(state, 1, 1).covered).toBe(true); // mine still covered
 			expect(state.isWin()).toBe(true);
 		});
 	});
@@ -672,7 +677,7 @@ describe("MinesweeperState", () => {
 			const state = getState();
 			const mine = state.find((el) => el.mine);
 			expect(mine).toBeDefined();
-			expect(mine!.mine).toBe(true);
+			expect(mine?.mine).toBe(true);
 		});
 
 		it("should return undefined when find has no match", () => {
@@ -700,11 +705,6 @@ describe("MinesweeperState", () => {
 
 		it("should recalculate adjacent counts", () => {
 			const state = getState();
-			state.clearAllMines();
-			state.placeMine(0, 0);
-			state.calculateAdjacent();
-			const adj = state.cellAt(1, 0)!.adjacent;
-
 			state.shuffleMines(5);
 			// After shuffle, adjacent counts should be recalculated
 			// We just verify that no cell has adjacent > 8
@@ -730,7 +730,7 @@ describe("MinesweeperState", () => {
 		it("should not fill already uncovered cells", () => {
 			const state = getDeterministicState();
 			// First select to fill
-			const result1 = state.select(4, 4);
+			state.select(4, 4);
 			// Select same area again — already-uncovered cells won't be returned
 			const result2 = state.select(4, 4);
 			expect(result2.length).toBe(0);
