@@ -1,6 +1,6 @@
 {
 	"name": "pixi-minesweeper",
-	"version": "0.0.0",
+	"version": "0.0.1",
 	"scripts": {
 		"start": "npm run serve-modern",
 		"test": "npx --no-install jest",
