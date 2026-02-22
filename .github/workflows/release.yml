@@ -2,6 +2,10 @@ name: Release
 
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        description: "Override version (e.g. 1.0.0). Leave blank to auto-determine from commits."
+        required: false
 
 permissions:
   contents: write
@@ -16,3 +20,4 @@ jobs:
         with:
           config-file: release-config.json
           manifest-file: .release-manifest.json
+          release-as: ${{ inputs.version || '' }}
