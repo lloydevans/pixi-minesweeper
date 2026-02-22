@@ -4,9 +4,15 @@ Classic Minesweeper created with PixiJS. [Play the game here!](https://minesweep
 
 Now with PixiV8 and WebGPU support.
 
-This repository is for demonstration purposes only. Firebase API config in this sourcecode is deployed to the publicly visible front-end code and not a secret, but it will not work for you locally or when deployed to other domains.
-
 ## Getting Started
+
+### Prerequisites
+
+- **Node.js 20** (see `.nvmrc`) — use [nvm](https://github.com/nvm-sh/nvm) to install the correct version:
+  ```bash
+  nvm install
+  nvm use
+  ```
 
 ### Installation
 
@@ -30,7 +36,7 @@ npm install
 
 ### Testing
 
-- **`npm test`** - Run the test suite
+- **`npm test`** - Run the test suite (6 suites covering game state logic, color utilities, math helpers, event system, and utility functions)
 - **`npm run test-watch`** - Run tests in watch mode (automatically re-runs on file changes)
 
 ### Code Quality
@@ -75,7 +81,7 @@ The project uses GitHub Actions for continuous integration and deployment to Fir
 | Workflow | Trigger | Purpose |
 |----------|---------|---------|
 | **Lint & Test** | PRs to master | Runs `npm run lint` and `npm test` |
-| **Release** | Push to master / manual | Creates release PRs (manual) and tags + deploys (on push after release PR merge) |
+| **Release** | Push to master / manual | On **push to master**: creates tags, GitHub releases, and triggers deploy (PRs are skipped). On **manual dispatch**: creates release PRs via release-please |
 | **Deploy** | Manual / called by Release | Builds and deploys to Firebase Hosting |
 
 ### Release Process
@@ -95,7 +101,7 @@ Version is determined from commit prefixes:
 | `feat:` | Minor (patch while pre-1.0) | 0.0.1 → 0.0.2 |
 | `feat!:` / `BREAKING CHANGE:` | Major (minor while pre-1.0) | 0.0.2 → 0.1.0 |
 
-To override the version, add `"release-as": "x.y.z"` to the package config in `release-config.json` and commit it before running the Release workflow. Remove it after the release PR is created.
+To override the version, include a `Release-As: x.y.z` footer in a commit message (e.g., `chore: prepare release\n\nRelease-As: 1.0.0`) before running the Release workflow.
 
 ### Required Secrets
 
@@ -111,3 +117,6 @@ To override the version, add `"release-as": "x.y.z"` to the package config in `r
 - **Jest** - Testing framework
 - **Spine** - 2D skeletal animation
 - **Tone.js** - Web Audio framework for interactive music and sound
+- **tweenjs** - Animation tweening
+- **@tonejs/midi** - MIDI file parsing and playback
+- **ESLint + Prettier** - Code linting and formatting
