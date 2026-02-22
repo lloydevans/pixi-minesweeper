@@ -17,7 +17,8 @@ import { TouchscreenUi } from "../ui/touchscreen-ui";
 import { BmText } from "../../common/bm-text";
 import { Tone } from "tone/build/esm/core/Tone";
 
-const getInfoText = (app: MinesweeperApp) => `PixiJS - ${PIXI.VERSION} - ${PIXI.RendererType[app.renderer.type]}
+const getInfoText = (app: MinesweeperApp) => `v${ENV_VERSION}
+PixiJS - ${PIXI.VERSION} - ${PIXI.RendererType[app.renderer.type]}
 MIDI music playback implementation using ToneJS ${Tone.version}
 Music credit: Lloyd Evans`;
 
