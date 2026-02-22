@@ -65,17 +65,15 @@ The project uses GitHub Actions for continuous integration and deployment to Fir
 | Workflow | Trigger | Purpose |
 |----------|---------|---------|
 | **Lint & Test** | PRs to master | Runs `npm run lint` and `npm test` |
-| **Release** | Manual (Actions tab) | Creates a release PR with version bump and changelog |
-| **Deploy** | `v*` tag push or manual | Builds and deploys to Firebase Hosting |
+| **Release** | Push to master / manual | Creates release PRs (manual) and tags + deploys (on push after release PR merge) |
+| **Deploy** | Manual / called by Release | Builds and deploys to Firebase Hosting |
 
 ### Release Process
 
 1. Merge feature PRs to master using [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `chore:`, etc.)
 2. Go to **Actions > Release > Run workflow** to create a release PR
-3. Review and merge the release PR — this pushes a `v*` tag
-4. The Deploy workflow triggers automatically and deploys to Firebase
-
-To override the version, add `"release-as": "x.y.z"` to the package config in `release-config.json` and commit it before running the Release workflow. Remove it after the release PR is created.
+3. Review and merge the release PR (requires `--admin` to bypass checks)
+4. The Release workflow runs on the push, creates a `v*` tag and GitHub release, then automatically triggers the Deploy job
 
 ### Version Bumps
 
@@ -86,6 +84,8 @@ Version is determined from commit prefixes:
 | `fix:` | Patch | 0.0.1 → 0.0.2 |
 | `feat:` | Minor (patch while pre-1.0) | 0.0.1 → 0.0.2 |
 | `feat!:` / `BREAKING CHANGE:` | Major (minor while pre-1.0) | 0.0.2 → 0.1.0 |
+
+To override the version, add `"release-as": "x.y.z"` to the package config in `release-config.json` and commit it before running the Release workflow. Remove it after the release PR is created.
 
 ### Required Secrets
 
