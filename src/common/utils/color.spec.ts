@@ -1,5 +1,4 @@
 import { numToRgba, hexToRgba, rgbToHex, rgbToNum, hexToNum, velocityToColor } from "./color";
-import type { RgbaObject } from "./color";
 
 describe("Color utilities", () => {
 	describe("hexToNum", () => {
@@ -159,17 +158,14 @@ describe("Color utilities", () => {
 			const low = velocityToColor(0);
 			const mid = velocityToColor(0.5);
 			const high = velocityToColor(1);
-			// All three should be different colors
 			expect(low).not.toBe(mid);
 			expect(mid).not.toBe(high);
 			expect(low).not.toBe(high);
 		});
 
 		it("should use custom saturation", () => {
-			const defaultColor = velocityToColor(0.5);
 			const highSat = velocityToColor(0.5, { saturation: 1.0 });
 			const lowSat = velocityToColor(0.5, { saturation: 0.1 });
-			// Different saturation should produce different colors
 			expect(highSat).not.toBe(lowSat);
 		});
 
@@ -180,20 +176,18 @@ describe("Color utilities", () => {
 		});
 
 		it("should use custom hue range", () => {
-			const defaultColor = velocityToColor(0.5);
+			const defaultHue = velocityToColor(0.5);
 			const customHue = velocityToColor(0.5, { startHue: 0, endHue: 120 });
-			expect(defaultColor).not.toBe(customHue);
+			expect(defaultHue).not.toBe(customHue);
 		});
 
 		it("should handle forward hue direction", () => {
-			// startHue < endHue
 			const color = velocityToColor(0.5, { startHue: 0, endHue: 120 });
 			expect(typeof color).toBe("number");
 			expect(color).toBeGreaterThanOrEqual(0);
 		});
 
 		it("should handle backward hue direction (default)", () => {
-			// Default: startHue=260, endHue=0 (backward)
 			const color = velocityToColor(0.5);
 			expect(typeof color).toBe("number");
 			expect(color).toBeGreaterThanOrEqual(0);
@@ -210,14 +204,12 @@ describe("Color utilities", () => {
 		it("velocity 0 should produce a blue/purple hue by default", () => {
 			const color = velocityToColor(0);
 			const rgba = numToRgba(color);
-			// At hue=260 (blue/purple), blue channel should be dominant
 			expect(rgba.b).toBeGreaterThan(rgba.r);
 		});
 
 		it("velocity 1 should produce a red hue by default", () => {
 			const color = velocityToColor(1);
 			const rgba = numToRgba(color);
-			// At hue=0 (red), red channel should be dominant
 			expect(rgba.r).toBeGreaterThan(rgba.b);
 			expect(rgba.r).toBeGreaterThan(rgba.g);
 		});
