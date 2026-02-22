@@ -1,6 +1,8 @@
 name: Release
 
 on:
+  push:
+    branches: [master]
   workflow_dispatch:
 
 permissions:
@@ -16,3 +18,4 @@ jobs:
         with:
           config-file: release-config.json
           manifest-file: .release-manifest.json
+          skip-github-pull-request: ${{ github.event_name == 'push' }}
