@@ -72,9 +72,10 @@ The project uses GitHub Actions for continuous integration and deployment to Fir
 
 1. Merge feature PRs to master using [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `chore:`, etc.)
 2. Go to **Actions > Release > Run workflow** to create a release PR
-3. Optionally specify a version override, or leave blank to auto-determine from commits
-4. Review and merge the release PR — this pushes a `v*` tag
-5. The Deploy workflow triggers automatically and deploys to Firebase
+3. Review and merge the release PR — this pushes a `v*` tag
+4. The Deploy workflow triggers automatically and deploys to Firebase
+
+To override the version, add `"release-as": "x.y.z"` to the package config in `release-config.json` and commit it before running the Release workflow. Remove it after the release PR is created.
 
 ### Version Bumps
 
