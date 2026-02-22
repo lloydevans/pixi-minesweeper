@@ -13,9 +13,18 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
     steps:
       - uses: googleapis/release-please-action@v4
+        id: release
         with:
           config-file: release-config.json
           manifest-file: .release-manifest.json
           skip-github-pull-request: ${{ github.event_name == 'push' }}
+
+  deploy:
+    needs: release
+    if: needs.release.outputs.release_created == 'true'
+    uses: ./.github/workflows/deploy.yml
+    secrets: inherit
