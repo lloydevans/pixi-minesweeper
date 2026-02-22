@@ -1,9 +1,8 @@
 name: Deploy
 
 on:
-  push:
-    tags: ["v*"]
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read
